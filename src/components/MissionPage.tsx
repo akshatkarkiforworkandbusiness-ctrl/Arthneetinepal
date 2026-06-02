@@ -125,17 +125,17 @@ export default function AboutUsPage() {
       {/* What We Teach (Accordions) */}
       <section className="py-32 px-6">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-5xl text-navy mb-20 italic">What We Teach</h2>
+          <h2 className="text-5xl text-green-deep mb-20 italic">What We Teach</h2>
           <div className="space-y-6">
             {topics.map((t) => (
-              <div key={t.id} className="border-b border-navy/10 pb-8">
+              <div key={t.id} className="border-b border-[#1F2A3F] pb-8">
                 <div className="flex items-center gap-6 mb-6">
                   <span className="text-gold text-sm font-black tracking-widest">{t.id}</span>
-                  <h3 className="text-3xl text-navy">{t.title}</h3>
+                  <h3 className="text-3xl text-green-deep">{t.title}</h3>
                 </div>
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-12">
                   {t.items.map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-navy/60 text-sm font-sans">
+                    <li key={i} className="flex items-start gap-3 text-text-muted text-sm font-sans">
                       <span className="text-gold mt-1">→</span>
                       {item}
                     </li>
@@ -169,9 +169,9 @@ export default function AboutUsPage() {
       {/* Partner With Us */}
       <section className="py-32 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-cream rounded-2xl overflow-hidden shadow-sm border border-navy/5 grid grid-cols-1 md:grid-cols-2">
-            <div className="p-12 md:p-20 border-b md:border-b-0 md:border-r border-navy/10">
-              <h2 className="text-4xl text-navy mb-8">What We Provide</h2>
+          <div className="bg-cream rounded-2xl overflow-hidden shadow-sm border border-[#1F2A3F] grid grid-cols-1 md:grid-cols-2">
+            <div className="p-12 md:p-20 border-b md:border-b-0 md:border-r border-[#1F2A3F]">
+              <h2 className="text-4xl text-green-deep mb-8">What We Provide</h2>
               <ul className="space-y-4">
                 {[
                   'Full session curriculum & materials',
@@ -179,7 +179,7 @@ export default function AboutUsPage() {
                   'Interactive tools & simulated markets',
                   'Continuous mentorship for students'
                 ].map(item => (
-                  <li key={item} className="flex items-center gap-3 text-navy/60 font-sans italic">
+                  <li key={item} className="flex items-center gap-3 text-text-muted font-sans italic">
                     <div className="w-1.5 h-1.5 bg-gold rounded-full" />
                     {item}
                   </li>
@@ -187,7 +187,7 @@ export default function AboutUsPage() {
               </ul>
             </div>
             <div className="p-12 md:p-20 relative overflow-hidden">
-               <h2 className="text-4xl text-navy mb-8">What We Need From You</h2>
+               <h2 className="text-4xl text-green-deep mb-8">What We Need From You</h2>
                <ul className="space-y-4 mb-12">
                 {[
                   'A hall or classroom for the session',
@@ -195,7 +195,7 @@ export default function AboutUsPage() {
                   '1.5 - 2 hours of dedicated time',
                   'Enthusiastic students ready to learn!'
                 ].map(item => (
-                  <li key={item} className="flex items-center gap-3 text-navy/60 font-sans italic">
+                  <li key={item} className="flex items-center gap-3 text-text-muted font-sans italic">
                     <div className="w-1.5 h-1.5 bg-gold rounded-full" />
                     {item}
                   </li>
@@ -203,7 +203,7 @@ export default function AboutUsPage() {
               </ul>
               <a 
                 href="mailto:learnarthneeti@gmail.com"
-                className="inline-flex items-center gap-3 bg-crimson text-white px-10 py-4 rounded text-xs font-black uppercase tracking-widest hover:bg-royal transition-all"
+                className="inline-flex items-center gap-3 bg-crimson text-white px-10 py-4 rounded text-xs font-black uppercase tracking-widest hover:bg-white hover:text-crimson transition-all"
               >
                 Get In Touch <span className="material-symbols-outlined text-sm">arrow_forward</span>
               </a>

@@ -87,21 +87,21 @@ const mockVideos = [
     desc: 'Step-by-step guidance on DEMAT, Meroshare, IPO application criteria, and brokerage accounts.',
     duration: '25:12',
     videoUrl: 'https://www.youtube.com/embed/Wv-L63uD4m8',
-    thumbnail: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=600&q=80'
+    thumbnail: 'https://img.youtube.com/vi/Wv-L63uD4m8/hqdefault.jpg'
   },
   {
     title: 'Nepal Rastra Bank Monetary Policy Analysis & NEPSE Impact',
     desc: 'Deep-dive explanation of bank interest rates, liquidity constraints, and fiscal policies of Nepal Rastra Bank.',
     duration: '19:40',
     videoUrl: 'https://www.youtube.com/embed/vOenP8oQ_oI',
-    thumbnail: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=600&q=80'
+    thumbnail: 'https://img.youtube.com/vi/vOenP8oQ_oI/hqdefault.jpg'
   },
   {
     title: 'Stock Selection & Technical Analysis for Beginners',
     desc: 'Learn how to read candlestick charts, support/resistance, and find the best stock entry points.',
     duration: '18:02',
     videoUrl: 'https://www.youtube.com/embed/q6g4V52u1O8',
-    thumbnail: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=600&q=80'
+    thumbnail: 'https://img.youtube.com/vi/q6g4V52u1O8/hqdefault.jpg'
   }
 ];
 
