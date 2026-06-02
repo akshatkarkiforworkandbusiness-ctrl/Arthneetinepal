@@ -1,0 +1,151 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Playfair Display", serif;
+  --font-sans: "DM Sans", sans-serif;
+  --font-body: "DM Sans", sans-serif;
+  --font-mono: "Roboto Mono", monospace;
+
+  /* Map green-deep to cool white so that text-green-deep utilities display readably */
+  --color-green-deep: #F8FAFC;
+  --color-green-light: #10B981;
+  --color-crimson: #F43F5E;
+  --color-royal: #3B82F6;
+  --color-gold: #F59E0B;
+  --color-gold-light: #FCD34D;
+  --color-cream: #161F30;
+  --color-white: #FFFFFF;
+  
+  --color-navy: #161F30;
+  
+  --color-background: #0B0F19;
+  --color-text-primary: #F8FAFC;
+  --color-text-muted: #94A3B8;
+  
+  --color-gainer: #10B981;
+  --color-loser: #F43F5E;
+  --color-chart-grid: #1F2A3F;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-text-primary font-body antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.paper-texture {
+  background-color: #0B0F19;
+  background-image: radial-gradient(#1E293B 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.gold-divider {
+  @apply h-px w-full bg-gold/20;
+}
+
+/* Custom premium scrollbar for financial dark dashboard feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0B0F19;
+}
+::-webkit-scrollbar-thumb {
+  background: #1F2A3F;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3B82F6;
+}
+
+/* Selection Color */
+::selection {
+  background-color: #3B82F6;
+  color: #FFFFFF;
+}
+
+/* 
+  Override bg-green-deep classes in CSS.
+  This allows us to keep the background of major panels (Navigation, Footer, Modals)
+  dark (#0B0F19) while text-green-deep is light (#F8FAFC).
+*/
+.bg-green-deep {
+  background-color: #0B0F19 !important;
+}
+.bg-green-deep\/80 {
+  background-color: rgba(11, 15, 25, 0.8) !important;
+}
+.bg-green-deep\/40 {
+  background-color: rgba(11, 15, 25, 0.4) !important;
+}
+.bg-green-deep\/20 {
+  background-color: rgba(11, 15, 25, 0.2) !important;
+}
+.bg-green-deep\/5 {
+  background-color: rgba(11, 15, 25, 0.05) !important;
+}
+.hover\:bg-green-deep:hover {
+  background-color: #0B0F19 !important;
+}
+.hover\:text-green-deep:hover {
+  color: #F8FAFC !important;
+}
+
+/*
+  Override bg-white and bg-cream to transition light theme cards/modals to dark slate.
+*/
+.bg-white {
+  background-color: #161F30 !important;
+  border-color: #1F2A3F !important;
+}
+.bg-cream {
+  background-color: #161F30 !important;
+  border-color: #1F2A3F !important;
+}
+
+/* Allow hover states targeting white to be fully white for buttons/actions */
+.hover\:bg-white:hover {
+  background-color: #FFFFFF !important;
+  color: #0B0F19 !important;
+}
+
+/* Nested elements (like avatars, icon containers, or input highlights) should have contrasting backgrounds */
+.bg-cream .bg-white,
+.bg-white .bg-white,
+.bg-cream .bg-cream,
+.bg-white .bg-cream {
+  background-color: #0B0F19 !important;
+  border: 1px solid #1F2A3F !important;
+}
+
+/* RichText editor toolbar adjustments for dark theme */
+.ql-toolbar.ql-snow {
+  background-color: #161F30 !important;
+  border-color: #1F2A3F !important;
+}
+.ql-container.ql-snow {
+  border-color: #1F2A3F !important;
+}
+.ql-snow .ql-stroke {
+  stroke: #94A3B8 !important;
+}
+.ql-snow .ql-fill {
+  fill: #94A3B8 !important;
+}
+.ql-snow .ql-picker {
+  color: #94A3B8 !important;
+}
+.ql-editor {
+  color: #F8FAFC !important;
+}

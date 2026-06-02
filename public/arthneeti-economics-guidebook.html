@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Arthneeti — Economic Research Guidebook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #F8FAFC;
+    --paper: #0B0F19;
+    --cream: #161F30;
+    --rust: #F43F5E;
+    --rust-light: #F43F5E;
+    --gold: #F59E0B;
+    --gold-light: #FCD34D;
+    --teal: #10B981;
+    --teal-light: #34D399;
+    --muted: #94A3B8;
+    --border: #1F2A3F;
+    --shadow: 0 4px 32px rgba(0,0,0,0.5);
+    --shadow-lg: 0 12px 60px rgba(0,0,0,0.7);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(22, 31, 48, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-brand span { color: var(--rust); }
+  .nav-chapters {
+    display: flex; gap: 0.25rem;
+    list-style: none;
+  }
+  .nav-chapters a {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 0.4rem 0.75rem;
+    border-radius: 4px;
+    transition: color 0.2s, background 0.2s;
+  }
+  .nav-chapters a:hover { color: var(--ink); background: var(--cream); }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 7rem 4rem 5rem;
+    position: relative;
+    overflow: hidden;
+    background: var(--paper);
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 60% 40%, rgba(184,74,40,0.18) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 70% at 20% 80%, rgba(26,107,94,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 80% 80%, rgba(201,149,42,0.12) 0%, transparent 50%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(245,240,232,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245,240,232,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .hero-tag {
+    position: relative; z-index: 1;
+    display: inline-block;
+    font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--gold-light);
+    border: 1px solid rgba(201,149,42,0.4);
+    padding: 0.35rem 0.85rem;
+    border-radius: 2px;
+    margin-bottom: 1.8rem;
+    width: fit-content;
+  }
+  .hero-title {
+    position: relative; z-index: 1;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    font-weight: 900;
+    line-height: 1.0;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--rust-light);
+  }
+  .hero-subtitle {
+    position: relative; z-index: 1;
+    font-size: 1.05rem;
+    color: rgba(245,240,232,0.6);
+    font-weight: 300;
+    max-width: 560px;
+    margin-bottom: 3rem;
+    line-height: 1.8;
+  }
+  .hero-stats {
+    position: relative; z-index: 1;
+    display: flex; gap: 3rem; flex-wrap: wrap;
+  }
+  .hero-stat { }
+  .hero-stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; font-weight: 700;
+    color: var(--gold-light);
+    line-height: 1;
+  }
+  .hero-stat-label {
+    font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(245,240,232,0.45);
+    margin-top: 0.25rem;
+  }
+  .hero-devanagari {
+    position: absolute; right: 4rem; top: 50%; transform: translateY(-50%);
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(6rem, 18vw, 16rem);
+    color: rgba(245,240,232,0.025);
+    line-height: 1;
+    z-index: 0;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* ─── SECTION BASE ─── */
+  section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5rem 2.5rem;
+  }
+
+  .section-eyebrow {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .section-eyebrow::before {
+    content: '';
+    display: inline-block; width: 24px; height: 2px;
+    background: var(--rust);
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .section-lead {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 680px;
+    margin-bottom: 3rem;
+    line-height: 1.85;
+  }
+
+  /* ─── DIVIDER ─── */
+  .chapter-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ─── HOW TO USE ─── */
+  .how-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+  }
+  .how-card {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.75rem 1.5rem;
+    position: relative;
+  }
+  .how-card-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.75rem;
+  }
+  .how-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .how-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
+
+  /* ─── MODULE CARDS ─── */
+  .modules-list { display: flex; flex-direction: column; gap: 0; }
+
+  .module {
+    border-top: 1px solid var(--border);
+    padding: 0;
+    overflow: hidden;
+  }
+  .module:last-child { border-bottom: 1px solid var(--border); }
+
+  .module-header {
+    display: flex; align-items: center; gap: 1.5rem;
+    padding: 2rem 0;
+    cursor: pointer;
+    transition: color 0.2s;
+    user-select: none;
+  }
+  .module-header:hover .module-title { color: var(--rust); }
+
+  .module-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    min-width: 44px;
+    flex-shrink: 0;
+  }
+  .module-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    flex: 1;
+    transition: color 0.2s;
+    line-height: 1.3;
+  }
+  .module-tag {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.75rem;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .tag-macro { background: rgba(26,107,94,0.1); color: var(--teal); }
+  .tag-micro { background: rgba(184,74,40,0.1); color: var(--rust); }
+  .tag-global { background: rgba(201,149,42,0.1); color: var(--gold); }
+  .tag-nepal { background: rgba(15,14,12,0.08); color: var(--ink); }
+
+  .module-toggle {
+    font-size: 1.2rem;
+    color: var(--muted);
+    transition: transform 0.3s, color 0.2s;
+    flex-shrink: 0;
+  }
+  .module.open .module-toggle { transform: rotate(45deg); color: var(--rust); }
+
+  .module-body {
+    display: none;
+    padding: 0 0 2.5rem 3.5rem;
+  }
+  .module.open .module-body { display: block; }
+
+  .module-big-idea {
+    background: var(--cream);
+    color: var(--ink);
+    border-radius: 6px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .module-big-idea::before {
+    content: '"';
+    position: absolute;
+    top: -0.5rem; left: 1rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 8rem;
+    color: rgba(245,240,232,0.04);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .module-big-idea-label {
+    font-size: 0.65rem; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 0.6rem;
+  }
+  .module-big-idea p {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    line-height: 1.7;
+    color: rgba(245,240,232,0.9);
+  }
+
+  .module-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+  @media(max-width: 700px) {
+    .module-content-grid { grid-template-columns: 1fr; }
+  }
+
+  .content-block {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.4rem;
+  }
+  .content-block h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .content-block ul {
+    list-style: none;
+    padding: 0;
+  }
+  .content-block ul li {
+    font-size: 0.875rem;
+    color: var(--muted);
+    padding: 0.35rem 0;
+    border-bottom: 1px solid rgba(15,14,12,0.06);
+    line-height: 1.6;
+    padding-left: 1rem;
+    position: relative;
+  }
+  .content-block ul li:last-child { border-bottom: none; }
+  .content-block ul li::before {
+    content: '→';
+    position: absolute; left: 0;
+    color: var(--rust);
+    font-size: 0.75rem;
+  }
+
+  /* ─── DATA CALLOUT ─── */
+  .data-callout {
+    border-left: 3px solid var(--teal);
+    background: rgba(26,107,94,0.05);
+    border-radius: 0 6px 6px 0;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .data-callout-label {
+    font-size: 0.65rem; font-weight: 600;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 0.4rem;
+  }
+  .data-callout p {
+    font-size: 0.9rem; line-height: 1.65;
+    color: var(--ink);
+  }
+  .data-callout strong { color: var(--teal); }
+
+  .rust-callout {
+    border-left-color: var(--rust);
+    background: rgba(184,74,40,0.05);
+  }
+  .rust-callout .data-callout-label { color: var(--rust); }
+  .rust-callout strong { color: var(--rust); }
+
+  .gold-callout {
+    border-left-color: var(--gold);
+    background: rgba(201,149,42,0.05);
+  }
+  .gold-callout .data-callout-label { color: var(--gold); }
+  .gold-callout strong { color: var(--gold); }
+
+  /* ─── THINK BOX ─── */
+  .think-box {
+    background: var(--cream);
+    color: var(--ink);
+    border-radius: 6px;
+    padding: 1.75rem;
+    margin-top: 1.5rem;
+  }
+  .think-box-label {
+    font-size: 0.65rem; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .think-box-label::before { content: '⚡'; }
+  .think-box h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--ink);
+  }
+  .think-box ul {
+    list-style: none; padding: 0;
+  }
+  .think-box ul li {
+    font-size: 0.875rem;
+    color: rgba(245,240,232,0.7);
+    padding: 0.3rem 0 0.3rem 1.2rem;
+    position: relative;
+    line-height: 1.6;
+  }
+  .think-box ul li::before {
+    content: '?';
+    position: absolute; left: 0;
+    color: var(--gold-light);
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+  }
+
+  /* ─── CASE STUDY ─── */
+  .case-study {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 1.5rem;
+  }
+  .case-study-header {
+    background: var(--rust);
+    color: white;
+    padding: 0.85rem 1.4rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .case-study-header .cs-label {
+    font-size: 0.65rem; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    opacity: 0.8;
+  }
+  .case-study-header .cs-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+  .case-study-body {
+    background: var(--cream);
+    padding: 1.4rem;
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: var(--ink);
+  }
+  .case-study-body strong { color: var(--rust); }
+
+  .case-study-teal .case-study-header { background: var(--teal); }
+  .case-study-teal .case-study-body strong { color: var(--teal); }
+
+  .case-study-gold .case-study-header { background: var(--gold); }
+  .case-study-gold .case-study-body strong { color: var(--gold); }
+
+  /* ─── CONCEPT PILL ─── */
+  .concept-pills {
+    display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;
+  }
+  .pill {
+    font-size: 0.75rem; font-weight: 500;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    background: white;
+    color: var(--muted);
+  }
+
+  /* ─── VOCAB BLOCK ─── */
+  .vocab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .vocab-item {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1.2rem;
+  }
+  .vocab-term {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--rust);
+    margin-bottom: 0.35rem;
+    letter-spacing: 0.04em;
+  }
+  .vocab-def {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ─── RESEARCH TASK ─── */
+  .research-task {
+    border: 1.5px dashed rgba(184,74,40,0.35);
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    background: rgba(184,74,40,0.02);
+  }
+  .research-task-label {
+    font-size: 0.65rem; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .research-task-label::before { content: '📋'; }
+  .research-task h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+  .research-task ol {
+    padding-left: 1.25rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.75;
+  }
+  .research-task ol li { margin-bottom: 0.3rem; }
+
+  /* ─── OVERVIEW TABLE ─── */
+  .overview-table {
+    width: 100%; border-collapse: collapse;
+    margin-top: 2.5rem;
+    font-size: 0.875rem;
+  }
+  .overview-table th {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    padding: 0.85rem 1rem;
+    text-align: left;
+    font-size: 0.85rem;
+  }
+  .overview-table td {
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+  .overview-table tr:nth-child(even) td { background: var(--cream); }
+  .overview-table tr:hover td { background: rgba(184,74,40,0.04); }
+
+  /* ─── FINAL CTA ─── */
+  .cta-section {
+    background: var(--cream);
+    color: var(--ink);
+    padding: 5rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: 'अर्थनीति';
+    position: absolute;
+    bottom: -1rem; right: -1rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 12rem;
+    color: rgba(245,240,232,0.02);
+    pointer-events: none;
+  }
+  .cta-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    position: relative; z-index: 1;
+  }
+  .cta-section p {
+    color: rgba(245,240,232,0.55);
+    max-width: 520px;
+    margin: 0 auto 2rem;
+    font-size: 1rem;
+    position: relative; z-index: 1;
+  }
+  .cta-badge {
+    display: inline-block;
+    background: var(--rust);
+    color: white;
+    padding: 0.85rem 2.5rem;
+    border-radius: 2px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    font-size: 0.9rem;
+    position: relative; z-index: 1;
+  }
+
+  /* ─── CHAPTER INTRO BANNER ─── */
+  .chapter-banner {
+    background: var(--cream);
+    color: var(--ink);
+    padding: 3.5rem 2.5rem 3rem;
+    max-width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .chapter-banner-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative; z-index: 1;
+  }
+  .chapter-banner::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 80% at 90% 50%, rgba(184,74,40,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 60% at 10% 50%, rgba(201,149,42,0.08) 0%, transparent 60%);
+  }
+  .chapter-banner-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--rust-light);
+    margin-bottom: 0.5rem;
+  }
+  .chapter-banner-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 4vw, 2.8rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+  }
+  .chapter-banner-sub {
+    color: rgba(245,240,232,0.5);
+    font-size: 0.95rem;
+    max-width: 640px;
+  }
+
+  /* ─── SCROLL ANIMATION ─── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media(max-width: 768px) {
+    nav { padding: 0 1rem; }
+    .nav-chapters { display: none; }
+    .hero { padding: 5rem 1.5rem 3.5rem; }
+    section { padding: 3.5rem 1.5rem; }
+    .module-body { padding-left: 0; }
+    .chapter-banner { padding: 2.5rem 1.5rem; }
+    .cta-section { padding: 3.5rem 1.5rem; }
+  }
+
+  @media print {
+    *, *::before, *::after {
+      background: transparent !important;
+      color: #000000 !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+    }
+    html, body {
+      background: #ffffff !important;
+      color: #000000 !important;
+    }
+    :root {
+      --ink: #000000 !important;
+      --paper: #ffffff !important;
+      --cream: #f8fafc !important;
+      --rust: #000000 !important;
+      --rust-light: #000000 !important;
+      --gold: #000000 !important;
+      --gold-light: #000000 !important;
+      --teal: #000000 !important;
+      --teal-light: #000000 !important;
+      --muted: #475569 !important;
+      --border: #cbd5e1 !important;
+    }
+    nav, .nav-chapters, .hero-bg, .hero-grid, button, .cta-badge, .cta-section::before, .chapter-banner::before {
+      display: none !important;
+    }
+    section {
+      padding: 1rem 0 !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+    }
+    .hero {
+      min-height: auto !important;
+      padding: 2rem 0 !important;
+      margin-bottom: 2rem !important;
+      border-bottom: 2px solid #000000 !important;
+      background: #ffffff !important;
+    }
+    .hero-title {
+      color: #000000 !important;
+      font-size: 2.5rem !important;
+    }
+    .module, section, .chapter-banner, .cta-section {
+      page-break-inside: avoid !important;
+    }
+    .module-big-idea, .think-box, .cta-section, .chapter-banner, .how-card, .content-block, .data-callout {
+      background: #f8fafc !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #000000 !important;
+      page-break-inside: avoid !important;
+    }
+    .module-big-idea p, .think-box ul li, .cta-section p, .chapter-banner-sub, .how-card p, .content-block ul li, .data-callout p {
+      color: #000000 !important;
+    }
+    .think-box h4, .module-title, .section-title, .overview-table th, .overview-table td {
+      color: #000000 !important;
+    }
+    .module-body {
+      display: block !important;
+      padding-left: 0 !important;
+    }
+    .overview-table tr:nth-child(even) td {
+      background: #f8fafc !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="#top">Arth<span>neeti</span></a>
+  <ul class="nav-chapters">
+    <li><a href="#foundations">Foundations</a></li>
+    <li><a href="#nepal-economy">Nepal's Economy</a></li>
+    <li><a href="#global-forces">Global Forces</a></li>
+    <li><a href="#research">Research Methods</a></li>
+    <li><a href="#debates">Big Debates</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-devanagari" aria-hidden="true">अर्थ</div>
+
+  <div class="hero-tag">Arthneeti · Economic Research Guidebook</div>
+  <h1 class="hero-title">Think Like<br>an <em>Economist.</em></h1>
+  <p class="hero-subtitle">A student guide to understanding how Nepal's economy actually works — from remittances to NEPSE, from inflation to global trade. Not theory. Real economics.</p>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num">6</div>
+      <div class="hero-stat-label">Core Modules</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">Rs.1,445B</div>
+      <div class="hero-stat-label">Remittances FY 2023/24</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">4.6%</div>
+      <div class="hero-stat-label">Nepal GDP Growth FY 2024/25</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">20%+</div>
+      <div class="hero-stat-label">Youth Unemployment Rate</div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW TO USE -->
+<section>
+  <p class="section-eyebrow">Before You Begin</p>
+  <h2 class="section-title">How to Use This Guidebook</h2>
+  <p class="section-lead">This is not a textbook. Every module follows the same format: a big idea, real Nepal data, a global parallel, and a question you have to answer yourself.</p>
+  <div class="how-grid">
+    <div class="how-card fade-in">
+      <div class="how-card-num">01 / Read the Big Idea</div>
+      <h3 class="how-card-title">The Central Question</h3>
+      <p>Every module starts with one powerful question. Before reading, try to answer it yourself. Your first instinct is part of the learning.</p>
+    </div>
+    <div class="how-card fade-in">
+      <div class="how-card-num">02 / Study Nepal's Numbers</div>
+      <h3 class="how-card-title">Real Data, Real Nepal</h3>
+      <p>Every concept connects to live data from NRB, World Bank, or NEPSE. Learn to read actual economic reports, not just summaries.</p>
+    </div>
+    <div class="how-card fade-in">
+      <div class="how-card-num">03 / Compare Globally</div>
+      <h3 class="how-card-title">Nepal vs. The World</h3>
+      <p>See how Nepal compares to South Korea, India, Bangladesh. Understanding why some countries grew and others didn't is the real lesson.</p>
+    </div>
+    <div class="how-card fade-in">
+      <div class="how-card-num">04 / Do the Research Task</div>
+      <h3 class="how-card-title">Execute, Don't Memorize</h3>
+      <p>Each module ends with a short research task. These are things you present, debate, or investigate — not things you write down and forget.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="chapter-divider"/>
+
+<!-- CHAPTER BANNER: MACRO FOUNDATIONS -->
+<div class="chapter-banner" id="foundations">
+  <div class="chapter-banner-inner">
+    <div class="chapter-banner-num">Chapter 01 · Macroeconomic Foundations</div>
+    <h2 class="chapter-banner-title">The Big Picture:<br>How Economies Actually Work</h2>
+    <p class="chapter-banner-sub">Before analyzing Nepal or the world, you need the lens economists use to read an entire national economy in 30 minutes.</p>
+  </div>
+</div>
+
+<section>
+  <div class="modules-list">
+
+    <!-- MODULE 1 -->
+    <div class="module" id="m1">
+      <div class="module-header" onclick="toggleModule('m1')">
+        <span class="module-num">M-01</span>
+        <span class="module-title">GDP: The Most Argued Number in Economics</span>
+        <span class="module-tag tag-macro">Macro</span>
+        <span class="module-toggle">+</span>
+      </div>
+      <div class="module-body">
+        <div class="module-big-idea">
+          <div class="module-big-idea-label">The Big Idea</div>
+          <p>GDP tells you the size of an economy — but not how most people experience it. A country can grow at 5% while the average citizen gets poorer. Why? And what does that mean for Nepal?</p>
+        </div>
+
+        <div class="concept-pills">
+          <span class="pill">GDP vs GNP</span>
+          <span class="pill">Nominal vs Real GDP</span>
+          <span class="pill">GDP per capita</span>
+          <span class="pill">Purchasing Power Parity (PPP)</span>
+          <span class="pill">GDP components</span>
+        </div>
+
+        <div class="data-callout">
+          <div class="data-callout-label">🇳🇵 Nepal Right Now — FY 2024/25</div>
+          <p>Nepal's nominal GDP reached <strong>Rs. 6,107 billion (~$43 billion)</strong>. GDP growth came in at <strong>4.6%</strong> — up from 3.7% the year before. But GDP per capita sits at just <strong>$1,658</strong>. Compare that to India ($2,730), Bangladesh ($2,800), and South Korea ($35,000). Nepal's economy is growing — but slowly, and from a very low base.</p>
+        </div>
+
+        <div class="module-content-grid">
+          <div class="content-block">
+            <h4>📐 Core Concepts</h4>
+            <ul>
+              <li>GDP = C + I + G + (X–M): Consumption, Investment, Government spending, Net Exports</li>
+              <li>Nominal GDP uses current prices; Real GDP adjusts for inflation — always use real when comparing growth over time</li>
+              <li>PPP-adjusted GDP tells you what money actually buys locally — Nepal's PPP GDP is $194B, much higher than nominal</li>
+              <li>GDP doesn't measure inequality, happiness, or sustainability — it's a speedometer, not a health monitor</li>
+              <li>The "Output Gap" — difference between what an economy produces and what it could produce at full capacity</li>
+            </ul>
+          </div>
+          <div class="content-block">
+            <h4>🌍 Global Lesson: The South Korea Miracle</h4>
+            <ul>
+              <li>In 1960, South Korea's GDP per capita was $158 — similar to Nepal's today</li>
+              <li>By 2024, it reached $35,000. The key: exports, education, and state-directed investment</li>
+              <li>Nepal's government target is 6-7% growth — it has never sustained this for more than 2-3 years</li>
+              <li>Why? Political instability, low investment, and an economy too dependent on one source (remittances)</li>
+              <li>The lesson: GDP growth is mechanical — if you know the inputs, you can predict the outputs</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="case-study case-study-teal">
+          <div class="case-study-header">
+            <div>
+              <div class="cs-label">Case Study</div>
+              <div class="cs-title">The Remittance Paradox: How Nepal Can Have GDP Growth and Stagnation at Once</div>
+            </div>
+          </div>
+          <div class="case-study-body">
+            Nepal's consumption — one of the four GDP components — is massively funded by remittances from workers abroad. <strong>Remittances hit NPR 1,445 billion in FY2023/24</strong>, growing 19.2% last year. This boosts household spending, which boosts GDP. But here's the trap: this growth is imported. The workers earning it are not in Nepal. The businesses selling imported goods benefit. The productive capacity of the domestic economy barely changes. GDP grows, but factories aren't built, local entrepreneurs aren't funded, and the number of skilled workers in Nepal shrinks. This is called <strong>consumption-driven growth without productive transformation</strong> — economists consider it fragile, because if remittance flows slow (Gulf recession, policy change), the economy could contract sharply.
+          </div>
+        </div>
+
+        <div class="think-box">
+          <div class="think-box-label">Think & Discuss</div>
+          <h4>Questions You Should Be Able to Answer</h4>
+          <ul>
+            <li>Nepal's GDP is growing, but 55% of Grade 12 graduates now study abroad. Is the economy actually improving?</li>
+            <li>If remittances were excluded from consumption, how would Nepal's GDP growth number change — and what does that tell us?</li>
+            <li>Should Nepal measure GDP differently? What would a better measure include?</li>
+          </ul>
+        </div>
+
+        <div class="research-task">
+          <div class="research-task-label">Research Task</div>
+          <h4>Find Nepal's GDP Components</h4>
+          <ol>
+            <li>Go to the Nepal Rastra Bank website (nrb.org.np) and find the current year's macroeconomic report</li>
+            <li>Identify what % of GDP comes from: consumption, investment, government spending, and net exports</li>
+            <li>Compare this breakdown to India and Bangladesh using World Bank data</li>
+            <li>Present your finding as one chart and one sentence: "Nepal's economy is structurally different because ___"</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE 2 -->
+    <div class="module" id="m2">
+      <div class="module-header" onclick="toggleModule('m2')">
+        <span class="module-num">M-02</span>
+        <span class="module-title">Inflation: When Money Quietly Steals From You</span>
+        <span class="module-tag tag-macro">Macro</span>
+        <span class="module-toggle">+</span>
+      </div>
+      <div class="module-body">
+        <div class="module-big-idea">
+          <div class="module-big-idea-label">The Big Idea</div>
+          <p>Inflation is not just "prices going up." It's a redistribution of wealth — from savers to debtors, from fixed-income workers to asset owners. Understanding who wins and who loses from inflation is one of the most practical skills in economics.</p>
+        </div>
+
+        <div class="concept-pills">
+          <span class="pill">CPI</span>
+          <span class="pill">WPI</span>
+          <span class="pill">Core vs Headline Inflation</span>
+          <span class="pill">Cost-push vs Demand-pull</span>
+          <span class="pill">Hyperinflation</span>
+          <span class="pill">Real vs Nominal Returns</span>
+        </div>
+
+        <div class="data-callout">
+          <div class="data-callout-label">🇳🇵 Nepal's Inflation Picture — 2024/25</div>
+          <p>Nepal's consumer price inflation fell to approximately <strong>4.7%</strong> in 2024 — the lowest in recent years. The Kathmandu Valley saw y-o-y CPI of <strong>2.73%</strong>, while mountain regions hit <strong>4.18%</strong>. Wholesale price inflation on consumption goods stood at <strong>5.66%</strong>. This matters: a Nepali putting money in a savings account earning 5% interest is barely beating inflation — and in mountain regions, real returns are negative.</p>
+        </div>
+
+        <div class="module-content-grid">
+          <div class="content-block">
+            <h4>📐 Core Concepts</h4>
+            <ul>
+              <li>CPI measures the price of a fixed "basket" of goods a typical household buys — in Nepal, food dominates this basket (~55%)</li>
+              <li>Core inflation strips out food and energy (volatile) to show the underlying trend</li>
+              <li>Cost-push inflation: input costs rise (oil, imports) and businesses pass it to consumers</li>
+              <li>Demand-pull inflation: too much money chasing too few goods (remittance boom can cause this)</li>
+              <li>Real return = Nominal return − Inflation. If your FD earns 7% and inflation is 6%, you earned 1% in real terms</li>
+            </ul>
+          </div>
+          <div class="content-block">
+            <h4>🔗 Nepal's Imported Inflation Problem</h4>
+            <ul>
+              <li>Nepal imports ~85% of its fuel and a large share of food items — this means global oil price changes hit Nepali consumers directly</li>
+              <li>Nepal pegs its currency to the Indian Rupee — so India's monetary policy directly flows into Nepal's inflation</li>
+              <li>When NRB raises interest rates, it's partly trying to reduce demand in the economy to cool inflation</li>
+              <li>Mountain and rural regions see higher inflation partly due to transportation costs — this is called "spatial inflation inequality"</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="data-callout rust-callout">
+          <div class="data-callout-label">⚠️ The Real-World Impact Students Often Miss</div>
+          <p>A family in Humla receiving remittances in NPR, spending mostly on imported goods with 4–5% inflation, while keeping savings in a low-interest account — is <strong>losing real purchasing power every year</strong>. Remittances help, but if they aren't invested into assets that grow faster than inflation, families may be treading water economically even as the money flows in.</p>
+        </div>
+
+        <div class="case-study">
+          <div class="case-study-header">
+            <div>
+              <div class="cs-label">Global Case Study</div>
+              <div class="cs-title">Zimbabwe & Turkey: Two Very Different Inflation Disasters, Same Core Error</div>
+            </div>
+          </div>
+          <div class="case-study-body">
+            Zimbabwe printed money to pay government bills in the 2000s → hyperinflation peaked at <strong>89.7 sextillion percent</strong> in 2008. Turkey in 2021–2022 saw inflation hit <strong>85%</strong> because President Erdoğan refused to raise interest rates (against all economic consensus), believing high rates caused inflation. Both cases show what happens when monetary policy loses independence from political pressure. Nepal's NRB maintains formal independence — but student researchers should ask: does political pressure ever influence Nepal's monetary decisions?
+          </div>
+        </div>
+
+        <div class="think-box">
+          <div class="think-box-label">Think & Discuss</div>
+          <h4>Questions You Should Be Able to Answer</h4>
+          <ul>
+            <li>If your family saves NPR 100,000 in a bank this year and Nepal's inflation is 5%, what is the real value of that money in 10 years?</li>
+            <li>Nepal pegs to the Indian Rupee. If India's RBI raises interest rates aggressively, what happens to Nepal's inflation? What can NRB actually do about it?</li>
+            <li>Who benefits from moderate inflation in Nepal: borrowers or savers? Why?</li>
+          </ul>
+        </div>
+
+        <div class="research-task">
+          <div class="research-task-label">Research Task</div>
+          <h4>Track Nepal's Inflation vs. India's</h4>
+          <ol>
+            <li>Find Nepal's annual CPI data from NRB for the last 5 years</li>
+            <li>Find India's CPI data for the same period from RBI</li>
+            <li>Plot both on the same graph — what pattern do you notice?</li>
+            <li>Find one specific item in Nepal's CPI basket whose price you can verify locally (cooking oil, rice, bus fare)</li>
+            <li>Ask: does the CPI actually match what your family experiences? If not, why might it differ?</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="chapter-divider"/>
+
+<!-- CHAPTER BANNER: NEPAL'S ECONOMY -->
+<div class="chapter-banner" id="nepal-economy">
+  <div class="chapter-banner-inner">
+    <div class="chapter-banner-num">Chapter 02 · Nepal's Economic Structure</div>
+    <h2 class="chapter-banner-title">Nepal's Economy:<br>Four Truths Nobody Debates Enough</h2>
+    <p class="chapter-banner-sub">Remittances. Trade deficit. Hydropower. Brain drain. These four forces define Nepal's economic trajectory. Most students know the words. Very few understand the mechanics.</p>
+  </div>
+</div>
+
+<section>
+  <div class="modules-list">
+
+    <!-- MODULE 3 -->
+    <div class="module" id="m3">
+      <div class="module-header" onclick="toggleModule('m3')">
+        <span class="module-num">M-03</span>
+        <span class="module-title">Remittances: Nepal's Biggest Industry Is Not in Nepal</span>
+        <span class="module-tag tag-nepal">Nepal</span>
+        <span class="module-toggle">+</span>
+      </div>
+      <div class="module-body">
+        <div class="module-big-idea">
+          <div class="module-big-idea-label">The Big Idea</div>
+          <p>Remittances exceed Nepal's total government revenue. The single largest driver of Nepal's economy is Nepali workers in Qatar, Malaysia, and the UAE. This is not a development strategy — it is a dependency. The question isn't whether remittances help Nepal. They do. The question is: what happens next?</p>
+        </div>
+
+        <div class="concept-pills">
+          <span class="pill">Balance of Payments</span>
+          <span class="pill">Current Account</span>
+          <span class="pill">Dutch Disease</span>
+          <span class="pill">Human Capital Flight</span>
+          <span class="pill">Structural Transformation</span>
+        </div>
+
+        <div class="data-callout">
+          <div class="data-callout-label">🇳🇵 The Numbers That Should Shock You</div>
+          <p>Remittances hit <strong>NPR 1,445 billion in FY2023/24</strong> — growing 19.2% in NPR terms. That's roughly <strong>25–27% of Nepal's GDP</strong>. The government's total revenue collection in 2024/25 was <strong>Rs. 1,016 billion</strong> — less than what migrant workers sent home. Nepal's foreign exchange reserves at <strong>$19.5 billion</strong> can cover 15.4 months of imports — almost entirely because of remittances. Without them, Nepal's balance of payments would be in deep deficit.</p>
+        </div>
+
+        <div class="module-content-grid">
+          <div class="content-block">
+            <h4>📐 How the Mechanism Works</h4>
+            <ul>
+              <li>Workers go abroad (Malaysia, Qatar, UAE, South Korea) → earn in foreign currency → send money to families in Nepal</li>
+              <li>Families receive NPR → spend on food, education, housing, consumer goods → most of these goods are imported</li>
+              <li>This creates a cycle: remittances fund consumption, consumption drives imports, imports create a trade deficit</li>
+              <li>Nepal's trade deficit grew to Rs. 1,397 billion in FY2024/25 — the money flows in, then flows right back out through imports</li>
+              <li>Balance of Payments stays in surplus only because inflow (remittances) exceeds outflow (trade deficit)</li>
+            </ul>
+          </div>
+          <div class="content-block">
+            <h4>⚠️ The Dutch Disease Risk</h4>
+            <ul>
+              <li>"Dutch Disease" = large inflows of foreign currency make your exchange rate appreciate, which makes exports more expensive and kills domestic industries</li>
+              <li>Original case: Netherlands found North Sea oil in 1960s → manufacturing sector collapsed because the guilder became too expensive</li>
+              <li>Nepal parallel: high remittance inflows keep NPR relatively stable, making Nepali exports uncompetitive</li>
+              <li>Nepal's exports are only 15% of imports — one of the worst export-import ratios in South Asia</li>
+              <li>Young entrepreneurs leave instead of building businesses — the economy loses its most productive citizens</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="data-callout gold-callout">
+          <div class="data-callout-label">📊 The Brain Drain Data Point</div>
+          <p>In 2023, <strong>youth unemployment reached 22.7%</strong> — among South Asia's highest. Today, <strong>55% of Grade 12 graduates leave to study abroad</strong>. Over 1 million Nepali youth leave the country every year. This is not just economic — it's a demographic restructuring. The people most capable of building new industries are leaving because the economy doesn't create opportunities for them at home. Nepal loses the very human capital it needs to break the remittance dependency.</p>
+        </div>
+
+        <div class="case-study case-study-gold">
+          <div class="case-study-header">
+            <div>
+              <div class="cs-label">Comparison Case</div>
+              <div class="cs-title">Bangladesh's Garment Industry: Breaking Remittance Dependency Through Manufacturing</div>
+            </div>
+          </div>
+          <div class="case-study-body">
+            Bangladesh was in a similar position to Nepal in the 1980s — low GDP, high remittances, low exports. The difference: Bangladesh deliberately built the <strong>Ready-Made Garment (RMG) industry</strong>, which now employs 4 million workers (mostly women) and accounts for 83% of export earnings. Bangladesh's GDP per capita overtook India's in 2020. <strong>The mechanism: export earnings → foreign currency → investment → more jobs → higher wages → domestic demand.</strong> Nepal has the potential for similar moves in hydropower exports, IT services, and handicrafts — but investment, policy consistency, and infrastructure must come first.
+          </div>
+        </div>
+
+        <div class="think-box">
+          <div class="think-box-label">Think & Discuss</div>
+          <h4>Questions You Should Be Able to Answer</h4>
+          <ul>
+            <li>If Gulf countries (Qatar, UAE, Saudi Arabia) shift to solar energy and need fewer construction workers, what happens to Nepal's economy in 5 years?</li>
+            <li>Nepal's government wants to "channel remittances into productive investment." Name three specific policies that could achieve this.</li>
+            <li>Is brain drain always bad? Make the strongest possible argument that it benefits Nepal — then refute it.</li>
+          </ul>
+        </div>
+
+        <div class="research-task">
+          <div class="research-task-label">Research Task</div>
+          <h4>Map Nepal's Remittance Economy</h4>
+          <ol>
+            <li>Find NRB's data on top 5 countries sending remittances to Nepal — how has the ranking changed over 10 years?</li>
+            <li>Research: what industries employ most Nepali migrants abroad? What skills do they use?</li>
+            <li>Find one Nepali district where remittances make up more than 50% of household income — what is the local economy like?</li>
+            <li>Design a 2-slide argument: "Nepal should/should not make it easier for young people to work abroad." Use data, not opinions.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE 4 -->
+    <div class="module" id="m4">
+      <div class="module-header" onclick="toggleModule('m4')">
+        <span class="module-num">M-04</span>
+        <span class="module-title">Hydropower: Nepal's Untapped €77 Billion Bet</span>
+        <span class="module-tag tag-nepal">Nepal</span>
+        <span class="module-toggle">+</span>
+      </div>
+      <div class="module-body">
+        <div class="module-big-idea">
+          <div class="module-big-idea-label">The Big Idea</div>
+          <p>Nepal sits on 83,000 MW of theoretical hydropower potential. It has developed less than 3% of it. If Nepal exported power to India and Bangladesh instead of importing fuel, the trade deficit math changes completely. Hydropower is Nepal's most plausible path to economic transformation — but it requires understanding infrastructure economics, not just geography.</p>
+        </div>
+
+        <div class="concept-pills">
+          <span class="pill">Infrastructure Economics</span>
+          <span class="pill">Export-led Growth</span>
+          <span class="pill">FDI</span>
+          <span class="pill">Long-run Supply Curve</span>
+          <span class="pill">Strategic Sectors</span>
+        </div>
+
+        <div class="data-callout">
+          <div class="data-callout-label">🇳🇵 Hydropower by the Numbers</div>
+          <p>Nepal's 16th Five-Year Plan targets <strong>28,500 MW of capacity by 2035</strong>. Current installed capacity is around 3,000 MW — about <strong>3.6% of theoretical potential</strong>. Implementation cost: <strong>NPR 11.1 trillion ($77.83 billion)</strong>. The World Bank projects hydropower will be a significant export earner, but cautions: building generation capacity without transmission infrastructure creates "stranded assets" — power plants producing electricity no one can use.</p>
+        </div>
+
+        <div class="module-content-grid">
+          <div class="content-block">
+            <h4>📐 The Economic Logic of Hydropower Export</h4>
+            <ul>
+              <li>Nepal currently imports fuel worth billions annually — hydropower substitution reduces this import bill</li>
+              <li>Selling power to India/Bangladesh earns hard foreign currency — directly replacing remittance dependency</li>
+              <li>Hydropower is a capital-intensive, job-light industry — it creates wealth but not mass employment</li>
+              <li>Long gestation period: a hydropower project takes 8–12 years from planning to power — economic returns are slow</li>
+              <li>FDI in hydropower brings technology transfer and management expertise, not just capital</li>
+            </ul>
+          </div>
+          <div class="content-block">
+            <h4>🚧 Why It's Harder Than It Looks</h4>
+            <ul>
+              <li>Chronic implementation failure: Nepal consistently underspends its capital budget — money is allocated but projects stall</li>
+              <li>Seasonal supply gaps: most rivers are glacier-fed — power output drops sharply in winter when demand peaks</li>
+              <li>Transmission bottleneck: Nepal can build power plants faster than it builds transmission lines to export or distribute power</li>
+              <li>FDI remains subdued — political instability and regulatory uncertainty deter long-term investors</li>
+              <li>Private sector investment fell 9.6% in 2022–23 and recovered only partially — confidence is fragile</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="case-study case-study-teal">
+          <div class="case-study-header">
+            <div>
+              <div class="cs-label">Global Parallel</div>
+              <div class="cs-title">Bhutan's Hydropower Model: What Nepal Could Learn from Its Neighbor</div>
+            </div>
+          </div>
+          <div class="case-study-body">
+            Bhutan has a GDP per capita of ~$3,700 compared to Nepal's $1,658 — despite being smaller and more landlocked. The main reason: <strong>Bhutan has systematically monetized its hydropower</strong> through a state-controlled power trading model with India. Hydroelectricity accounts for around 25% of Bhutan's GDP and is the single largest export. The government uses power revenues to fund education and healthcare, keeping public debt manageable. Nepal has far more potential — but has struggled to replicate this model due to political fragmentation, slower private-sector engagement, and weaker India–Nepal power trade agreements. The question is structural, not natural.
+          </div>
+        </div>
+
+        <div class="think-box">
+          <div class="think-box-label">Think & Discuss</div>
+          <h4>Questions You Should Be Able to Answer</h4>
+          <ul>
+            <li>Nepal's government consistently fails to spend its capital budget — money for hydropower projects goes unused. What economic and political incentives cause this?</li>
+            <li>Should Nepal sell power to India at market rates or negotiated rates? Who benefits from each approach?</li>
+            <li>A hydropower project creates 500 jobs during construction and 20 permanent jobs after. Is it worth the NPR 10 billion investment? How do economists evaluate this?</li>
+          </ul>
+        </div>
+
+        <div class="research-task">
+          <div class="research-task-label">Research Task</div>
+          <h4>Analyze One Hydropower Project</h4>
+          <ol>
+            <li>Pick any operating Nepal hydropower project (Upper Tamakoshi, Chilime, Marsyangdi) and find its investment cost, installed capacity, and ownership structure</li>
+            <li>Find its stock listing on NEPSE — how has the share price performed versus the NEPSE index?</li>
+            <li>Calculate: at current electricity prices, how many years to recover the investment?</li>
+            <li>Find one obstacle that delayed its construction — was it financial, regulatory, or political?</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="chapter-divider"/>
+
+<!-- CHAPTER BANNER: GLOBAL FORCES -->
+<div class="chapter-banner" id="global-forces">
+  <div class="chapter-banner-inner">
+    <div class="chapter-banner-num">Chapter 03 · Global Economic Forces</div>
+    <h2 class="chapter-banner-title">The World Economy<br>& Why Nepal Can't Ignore It</h2>
+    <p class="chapter-banner-sub">Trade, monetary policy, and geopolitics don't stop at Nepal's borders. Understanding global economic forces is how you understand why Nepal is in the position it's in.</p>
+  </div>
+</div>
+
+<section>
+  <div class="modules-list">
+
+    <!-- MODULE 5 -->
+    <div class="module" id="m5">
+      <div class="module-header" onclick="toggleModule('m5')">
+        <span class="module-num">M-05</span>
+        <span class="module-title">Trade, Comparative Advantage & Nepal's Export Problem</span>
+        <span class="module-tag tag-global">Global</span>
+        <span class="module-toggle">+</span>
+      </div>
+      <div class="module-body">
+        <div class="module-big-idea">
+          <div class="module-big-idea-label">The Big Idea</div>
+          <p>Ricardo's law of comparative advantage is 200 years old and still the best explanation for why countries trade. But it assumes free trade, stable institutions, and infrastructure — none of which Nepal fully has. The real question: what does Nepal actually have a comparative advantage in, and why isn't it being exported?</p>
+        </div>
+
+        <div class="concept-pills">
+          <span class="pill">Comparative Advantage</span>
+          <span class="pill">Trade Deficit</span>
+          <span class="pill">Current Account</span>
+          <span class="pill">Export Competitiveness</span>
+          <span class="pill">Non-Tariff Barriers</span>
+          <span class="pill">WTO & SAFTA</span>
+        </div>
+
+        <div class="data-callout">
+          <div class="data-callout-label">🇳🇵 Nepal's Trade Reality — 2024/25</div>
+          <p>Total trade deficit: <strong>Rs. 1,397 billion</strong> (growing 6.3%). Export-import ratio: <strong>15.1%</strong> — meaning Nepal exports Rs. 15 for every Rs. 100 it imports. Exports jumped <strong>81.8%</strong> last year, but from a very low base. <strong>India accounts for ~65% of Nepal's trade</strong>. Top exports: carpets, pashmina, cardamom, herbs. Key imports: petroleum, vehicles, machinery, medicine. The diagnosis: Nepal imports finished goods and exports raw commodities — the classic "commodity trap" of underdeveloped economies.</p>
+        </div>
+
+        <div class="module-content-grid">
+          <div class="content-block">
+            <h4>📐 Ricardo's Law, Simply Explained</h4>
+            <ul>
+              <li>A country has comparative advantage in what it produces at lowest opportunity cost — not necessarily what it's best at in absolute terms</li>
+              <li>Example: Nepal may be less efficient than India at everything — but if Nepal's relative disadvantage is smallest in handicrafts, Nepal should specialize there and import the rest</li>
+              <li>The modern version: comparative advantage shifts over time through investment in education, infrastructure, and technology</li>
+              <li>South Korea had comparative advantage in cheap labor (1960s) → electronics (1980s) → semiconductors (2000s) — it upgraded its advantage deliberately</li>
+              <li>Nepal's challenge: identify where its comparative advantage lies today AND where it could lie in 20 years</li>
+            </ul>
+          </div>
+          <div class="content-block">
+            <h4>🚧 Why Nepal Struggles to Export</h4>
+            <ul>
+              <li>Landlocked geography: Nepal must route exports through India or China — adding cost, time, and dependency</li>
+              <li>Small market size limits scale — Nepali factories can't achieve the production volumes that lower per-unit costs</li>
+              <li>Non-tariff barriers: India's phytosanitary standards block many Nepali agricultural exports (technically legal barriers that aren't tariffs)</li>
+              <li>Energy costs: irregular electricity and fuel dependency raises production costs for manufacturers</li>
+              <li>Quality standards gap: many Nepali products don't meet international certification requirements for EU/US markets</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="case-study">
+          <div class="case-study-header">
+            <div>
+              <div class="cs-label">Nepal Case Study</div>
+              <div class="cs-title">Carpets & Pashmina: Nepal's Most Successful Exports and Why They're Still Small</div>
+            </div>
+          </div>
+          <div class="case-study-body">
+            Nepali carpets and pashmina shawls have global brand recognition — luxury products sold in Europe and the US for premium prices. Yet these industries remain artisan-scale, not industrial. Why? <strong>Land use restrictions, labour laws, limited financing for small producers, and inconsistent quality grading</strong> prevent these industries from scaling. Compare to the Indian diamond industry: Surat processes 90% of the world's diamonds, not because India found diamonds, but because it systematically built a cluster of skills, financing, infrastructure, and global trade connections. Nepal hasn't built that cluster for its comparative advantage industries. This is an economic policy failure, not a resource failure.
+          </div>
+        </div>
+
+        <div class="think-box">
+          <div class="think-box-label">Think & Discuss</div>
+          <h4>Questions You Should Be Able to Answer</h4>
+          <ul>
+            <li>Nepal's export-import ratio is 15:100. India's is roughly 80:100. What does this structural difference mean for Nepal's economic sovereignty?</li>
+            <li>Should Nepal try to industrialize (like South Korea) or focus on services (like India's IT sector)? What evidence would inform this choice?</li>
+            <li>If Nepal could export only 3 things to the world profitably at scale, what would they be? Make an evidence-based case.</li>
+          </ul>
+        </div>
+
+        <div class="research-task">
+          <div class="research-task-label">Research Task</div>
+          <h4>Find Nepal's Export Winners and Losers</h4>
+          <ol>
+            <li>Go to the Trade and Export Promotion Centre (TEPC) Nepal and find the top 10 export products by value</li>
+            <li>For each, determine: is this a raw material or finished product? Who is the primary buyer?</li>
+            <li>Identify one export that grew more than 50% in the last year — what caused the growth?</li>
+            <li>Find one export product Nepal had in 2000 that has since declined significantly. What happened to it?</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE 6 -->
+    <div class="module" id="m6">
+      <div class="module-header" onclick="toggleModule('m6')">
+        <span class="module-num">M-06</span>
+        <span class="module-title">Monetary Policy, Interest Rates & How NRB Controls Your Economy</span>
+        <span class="module-tag tag-macro">Macro</span>
+        <span class="module-toggle">+</span>
+      </div>
+      <div class="module-body">
+        <div class="module-big-idea">
+          <div class="module-big-idea-label">The Big Idea</div>
+          <p>When NRB changes its policy rate, the cost of every loan in Nepal changes. That affects whether a startup gets funded, whether you can afford a mortgage, whether the stock market goes up or down. Monetary policy is the most powerful lever in any modern economy — and most people have no idea it exists.</p>
+        </div>
+
+        <div class="concept-pills">
+          <span class="pill">Policy Rate</span>
+          <span class="pill">Open Market Operations</span>
+          <span class="pill">Reserve Requirement</span>
+          <span class="pill">Transmission Mechanism</span>
+          <span class="pill">Credit to Deposit Ratio</span>
+          <span class="pill">NPL (Non-Performing Loans)</span>
+        </div>
+
+        <div class="data-callout">
+          <div class="data-callout-label">🇳🇵 NRB's Current Monetary Stance — 2025</div>
+          <p>NRB's base rate dropped to <strong>5.72%</strong>, with average lending rates at <strong>7.66%</strong> — a low-interest environment by Nepal's historical standards. Broad money (M2) grew <strong>12%</strong> year-on-year. Credit-to-Deposit ratio eased below 85%. After a severe liquidity crunch in 2022–2023, the banking sector has stabilized. Non-performing loans (NPLs) hover around <strong>3.2%</strong> — elevated but manageable. Private sector credit grew only <strong>8.7%</strong> — indicating weak business investment despite cheap borrowing.</p>
+        </div>
+
+        <div class="module-content-grid">
+          <div class="content-block">
+            <h4>📐 How Monetary Policy Works</h4>
+            <ul>
+              <li>NRB sets the policy rate → commercial banks borrow from NRB at this rate → they lend to businesses at a markup</li>
+              <li>Lower rates: credit becomes cheaper → businesses borrow more → investment rises → GDP grows (but inflation risk rises)</li>
+              <li>Higher rates: credit gets expensive → investment slows → inflation cools (but growth slows too)</li>
+              <li>Open Market Operations: NRB buys/sells government securities to inject or drain liquidity from the system</li>
+              <li>Reserve Requirement: % of deposits banks must hold at NRB — raising this reduces how much banks can lend</li>
+            </ul>
+          </div>
+          <div class="content-block">
+            <h4>🔗 The Nepal-India Monetary Connection</h4>
+            <ul>
+              <li>Nepal pegs NPR to INR at NPR 1.6 = INR 1 — this limits NRB's monetary independence</li>
+              <li>If NRB cut rates far below India's RBI, capital would flow from Nepal to India seeking higher returns (capital flight)</li>
+              <li>NRB essentially shadows RBI's policy, with limited room to diverge significantly</li>
+              <li>This is the "Impossible Trinity" (Mundell's Trilemma): you can have free capital flows, fixed exchange rate, OR independent monetary policy — but not all three simultaneously</li>
+              <li>Nepal chose fixed exchange rate + some monetary independence = restricted capital flows</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="case-study case-study-teal">
+          <div class="case-study-header">
+            <div>
+              <div class="cs-label">Global Case Study</div>
+              <div class="cs-title">The 2022 Global Rate Hiking Cycle: How the US Fed Affected Nepal</div>
+            </div>
+          </div>
+          <div class="case-study-body">
+            When the US Federal Reserve raised interest rates from 0.25% to 5.25% (2022–2023) to fight post-pandemic inflation, the effects rippled globally. Dollar strengthened → NPR weakened relative to USD → Nepal's import costs rose (imports priced in USD became more expensive) → Nepal's inflation imported from global price rises. Meanwhile, remittances in USD, when converted to NPR, were worth more — a hidden benefit for receiving families. This is the global transmission of monetary policy: <strong>what the Fed does in Washington affects a family in Sindhupalchok</strong>. Every student in Nepal should understand this chain.
+          </div>
+        </div>
+
+        <div class="think-box">
+          <div class="think-box-label">Think & Discuss</div>
+          <h4>Questions You Should Be Able to Answer</h4>
+          <ul>
+            <li>NRB has cut interest rates — loans are cheap. But private sector credit is still growing slowly. Why might businesses not borrow even when rates are low?</li>
+            <li>Nepal's CD ratio was near 90% in 2023 (banks nearly maxed out lending). What does this mean for a Nepali entrepreneur trying to get a business loan?</li>
+            <li>Should Nepal float its currency (let it move freely)? What are the risks and benefits for ordinary Nepalis?</li>
+          </ul>
+        </div>
+
+        <div class="research-task">
+          <div class="research-task-label">Research Task</div>
+          <h4>Track NRB's Monetary Policy Decisions</h4>
+          <ol>
+            <li>Find NRB's Monetary Policy report for 2024/25 — what was the stated objective and the main tools used?</li>
+            <li>Find the base rate and average lending rate for the last 3 years — chart the trend</li>
+            <li>Find one specific sector (agriculture, manufacturing, tourism) that NRB has given concessional credit policy to — why?</li>
+            <li>Compare NRB's policy rate to India's RBI repo rate. How closely do they track each other? What does this tell you?</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="chapter-divider"/>
+
+<!-- CHAPTER BANNER: RESEARCH METHODS -->
+<div class="chapter-banner" id="research">
+  <div class="chapter-banner-inner">
+    <div class="chapter-banner-num">Chapter 04 · Economic Research Methods</div>
+    <h2 class="chapter-banner-title">How to Actually<br>Research an Economy</h2>
+    <p class="chapter-banner-sub">The difference between economic analysis and economic opinion is evidence and method. Here is the framework economists use — and the sources every Nepal researcher must know.</p>
+  </div>
+</div>
+
+<section>
+  <p class="section-eyebrow">Research Framework</p>
+  <h2 class="section-title">The Economist's Toolkit</h2>
+  <p class="section-lead">Economic research follows a clear structure: question → hypothesis → data → analysis → conclusion. Every step matters.</p>
+
+  <div class="module-content-grid" style="margin-bottom:2rem">
+    <div class="content-block">
+      <h4>📊 Primary Sources You Must Know</h4>
+      <ul>
+        <li><strong>NRB (Nepal Rastra Bank):</strong> nrb.org.np — Monthly macroeconomic reports, monetary policy, banking statistics</li>
+        <li><strong>CBS Nepal:</strong> National census data, household surveys, national accounts</li>
+        <li><strong>NEPSE:</strong> nepsetrading.com / nepse.com.np — live market data, company reports</li>
+        <li><strong>Ministry of Finance:</strong> mof.gov.np — annual budget, fiscal data, economic survey</li>
+        <li><strong>World Bank Nepal:</strong> Live country reports, development updates (Nov 2025 report is essential reading)</li>
+        <li><strong>TEPC:</strong> Trade and Export Promotion Centre — export/import data by product</li>
+        <li><strong>IMF World Economic Outlook:</strong> Global comparative data</li>
+      </ul>
+    </div>
+    <div class="content-block">
+      <h4>🔍 Research Question Framework</h4>
+      <ul>
+        <li><strong>Descriptive:</strong> "What is Nepal's youth unemployment rate and how has it changed?" — requires data collection</li>
+        <li><strong>Causal:</strong> "Does remittance income increase or decrease local entrepreneurship?" — requires comparison and evidence</li>
+        <li><strong>Predictive:</strong> "If Gulf construction slows by 30%, what happens to Nepal's GDP?" — requires modeling</li>
+        <li><strong>Normative:</strong> "Should Nepal prioritize hydropower exports over manufacturing?" — requires values + evidence</li>
+        <li>Always separate descriptive from normative — "what is" vs "what should be" — economists often confuse the two</li>
+        <li>Correlation ≠ Causation: the most common mistake in economic arguments</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="data-callout">
+    <div class="data-callout-label">📝 The One-Page Research Template</div>
+    <p><strong>1. Question:</strong> One specific, testable question about Nepal's economy<br>
+    <strong>2. Hypothesis:</strong> Your predicted answer and why<br>
+    <strong>3. Data sources:</strong> At least 2 primary sources (NRB, World Bank, CBS)<br>
+    <strong>4. Key finding:</strong> The one number or trend that most directly answers your question<br>
+    <strong>5. Competing explanations:</strong> What other factor could explain what you found?<br>
+    <strong>6. Conclusion:</strong> Was your hypothesis right? What does this mean for policy or decision-making?</p>
+  </div>
+
+  <h3 style="font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; margin: 2.5rem 0 1rem;">Essential Vocabulary for Economic Research</h3>
+  <div class="vocab-grid">
+    <div class="vocab-item">
+      <div class="vocab-term">Ceteris Paribus</div>
+      <div class="vocab-def">"All else equal" — isolating one variable while holding others constant. Essential for causal claims.</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-term">Elasticity</div>
+      <div class="vocab-def">How much quantity demanded/supplied changes in response to a price change. High elasticity = sensitive to price.</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-term">Opportunity Cost</div>
+      <div class="vocab-def">The value of the next-best alternative foregone. Every choice has one, even government spending.</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-term">Marginal Analysis</div>
+      <div class="vocab-def">Decisions at the margin: should I do one more unit? Beneficial if marginal benefit > marginal cost.</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-term">Market Failure</div>
+      <div class="vocab-def">When free markets produce an inefficient outcome — public goods, externalities, information asymmetry.</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-term">Fiscal Multiplier</div>
+      <div class="vocab-def">The effect on GDP of a NPR 1 increase in government spending. Can be greater or less than 1.</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-term">Structural vs Cyclical</div>
+      <div class="vocab-def">Structural problems are deep, long-term; cyclical are temporary economic fluctuations. Nepal's unemployment is largely structural.</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-term">Capital Flight</div>
+      <div class="vocab-def">When money (capital) moves out of a country due to poor conditions. Nepal experiences both financial and human capital flight.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="chapter-divider"/>
+
+<!-- CHAPTER BANNER: BIG DEBATES -->
+<div class="chapter-banner" id="debates">
+  <div class="chapter-banner-inner">
+    <div class="chapter-banner-num">Chapter 05 · The Big Economic Debates</div>
+    <h2 class="chapter-banner-title">Questions Without<br>Easy Answers</h2>
+    <p class="chapter-banner-sub">Economists disagree. On almost everything important. These are the live debates about Nepal and the world economy — your job is to form an evidence-based position, not repeat a textbook answer.</p>
+  </div>
+</div>
+
+<section>
+  <p class="section-eyebrow">Structured Debates</p>
+  <h2 class="section-title">Five Questions Nepal's Economic Future Depends On</h2>
+  <p class="section-lead">Each debate has a Nepal angle and a global dimension. For each, your research task is to find the strongest argument on both sides and decide — provisionally — which side the evidence currently supports.</p>
+
+  <table class="overview-table fade-in">
+    <thead>
+      <tr>
+        <th>The Debate</th>
+        <th>Side A</th>
+        <th>Side B</th>
+        <th>Nepal's Specific Stakes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Free Trade vs. Protectionism</strong></td>
+        <td>Open borders → competition → efficiency → lower prices for consumers</td>
+        <td>Infant industry protection → domestic firms grow → long-term competitiveness</td>
+        <td>Should Nepal protect domestic manufacturing from cheap Chinese/Indian imports while it develops?</td>
+      </tr>
+      <tr>
+        <td><strong>Austerity vs. Fiscal Stimulus</strong></td>
+        <td>Cut deficits → restore investor confidence → private investment fills gap</td>
+        <td>Government spending in downturns prevents recession spirals; private sector won't invest when demand is weak</td>
+        <td>Nepal's government underspends its capital budget — should it borrow more and spend more on infrastructure?</td>
+      </tr>
+      <tr>
+        <td><strong>Foreign Aid: Help or Harm?</strong></td>
+        <td>Aid fills financing gaps, funds essential services, builds capacity</td>
+        <td>Aid creates dependency, distorts local markets, funds corruption, and undermines domestic accountability</td>
+        <td>Nepal receives ~$1.4B in development aid annually — does this help Nepal develop or delay it?</td>
+      </tr>
+      <tr>
+        <td><strong>Urbanization: Opportunity or Crisis?</strong></td>
+        <td>Cities concentrate human capital, enable specialization, drive productivity</td>
+        <td>Unplanned urbanization creates slums, overloads infrastructure, and hollows out rural economies</td>
+        <td>Kathmandu's population grew 61% in a decade — is this Nepal's development engine or a planning disaster?</td>
+      </tr>
+      <tr>
+        <td><strong>Digital Economy: Leapfrog or Hype?</strong></td>
+        <td>Nepal can skip industrial phase and build services economy through digital tech (IT exports, fintech, e-commerce)</td>
+        <td>Without manufacturing base and stable power, digital economy remains too small and too elite</td>
+        <td>Nepal's IT exports are growing — can digital services replace remittances as a long-term development strategy?</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="think-box" style="margin-top:2.5rem">
+    <div class="think-box-label">The Most Important Debate of All</div>
+    <h4>Is Nepal's economy structurally changing — or just growing in size?</h4>
+    <ul>
+      <li>GDP growth of 4.6% sounds positive. But is Nepal becoming a different kind of economy, or just a bigger version of the same?</li>
+      <li>Structural transformation = moving workers from low-productivity (subsistence farming) to high-productivity (manufacturing, services). Has Nepal done this?</li>
+      <li>Bangladesh did it. Vietnam did it. What did they do that Nepal hasn't?</li>
+      <li>Your research project: track Nepal's employment share in agriculture vs industry vs services over the last 20 years. Is the structure changing?</li>
+    </ul>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>अर्थनीति<br>Financial Intelligence for Nepal's Youth</h2>
+  <p>This guidebook is a starting point. The real curriculum is Nepal's economy itself — read it in the newspapers, in the NRB reports, and in the choices being made around you every day.</p>
+  <span class="cta-badge">Think Big. Invest Smart. Lead Nepal.</span>
+</div>
+
+<!-- FOOTER -->
+<footer style="background:var(--cream); border-top:1px solid var(--border); padding:2.5rem; text-align:center;">
+  <p style="font-size:0.8rem; color:var(--muted); margin-bottom:0.5rem;">
+    <strong style="font-family:'Playfair Display',serif; color:var(--ink);">Arthneeti</strong> · अर्थनीति · Economic Research Curriculum Guide
+  </p>
+  <p style="font-size:0.75rem; color:rgba(107,99,86,0.6);">
+    Data sources: Nepal Rastra Bank · World Bank Nepal Development Update (2025) · NRB Macroeconomic Reports · South Asian Voices · IMF · FRED
+  </p>
+  <p style="font-size:0.75rem; color:rgba(107,99,86,0.6); margin-top:0.3rem;">
+    learnarthneeti@gmail.com &nbsp;·&nbsp; 9866898759
+  </p>
+</footer>
+
+<script>
+  // Module accordion
+  function toggleModule(id) {
+    const mod = document.getElementById(id);
+    mod.classList.toggle('open');
+  }
+
+  // Scroll fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Auto-open first module on load
+  window.addEventListener('load', () => {
+    const firstModule = document.getElementById('m1');
+    if (firstModule) firstModule.classList.add('open');
+  });
+</script>
+</body>
+</html>

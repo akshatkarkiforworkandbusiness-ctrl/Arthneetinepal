@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stock Market Investing in Practice — A NEPSE Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:         #0B0F19;
+      --surface:    #161F30;
+      --text:       #F8FAFC;
+      --muted:      #94A3B8;
+      --red:        #F43F5E;
+      --red-light:  rgba(244, 63, 94, 0.15);
+      --amber:      #F59E0B;
+      --amber-bg:   rgba(245, 158, 11, 0.15);
+      --amber-bdr:  #F59E0B;
+      --blue-bg:    rgba(59, 130, 246, 0.15);
+      --blue-bdr:   #3B82F6;
+      --green-bg:   rgba(16, 185, 129, 0.15);
+      --green-bdr:  #10B981;
+      --border:     #1F2A3F;
+      --sidebar-w:  260px;
+      --content-max:720px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* ─── TOP NAV ─── */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--surface);
+      color: #fff;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      border-bottom: 3px solid var(--red);
+    }
+    .top-nav .brand {
+      font-family: 'Lora', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: #fff;
+      text-decoration: none;
+    }
+    .top-nav .brand span { color: var(--red); }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .nav-links a { color: #ccc; text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: #fff; }
+    .menu-btn { display: none; background: none; border: none; cursor: pointer; color: #fff; font-size: 1.2rem; }
+
+    /* ─── LAYOUT ─── */
+    .page-wrap {
+      display: grid;
+      grid-template-columns: var(--sidebar-w) 1fr;
+      max-width: 1200px;
+      margin: 0 auto;
+      gap: 0;
+    }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar {
+      position: sticky;
+      top: 56px;
+      height: calc(100vh - 56px);
+      overflow-y: auto;
+      padding: 2rem 1.25rem 2rem 1.5rem;
+      border-right: 1px solid var(--border);
+      background: var(--bg);
+      scrollbar-width: thin;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .toc-title {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .toc-list { list-style: none; }
+    .toc-list li { margin-bottom: 0.1rem; }
+    .toc-list a {
+      display: block;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-decoration: none;
+      border-radius: 5px;
+      transition: all 0.15s;
+      border-left: 2px solid transparent;
+    }
+    .toc-list a:hover { color: var(--text); background: var(--surface); }
+    .toc-list a.active { color: var(--red); border-left-color: var(--red); background: var(--red-light); font-weight: 600; }
+    .toc-list .sub { padding-left: 1.2rem; font-size: 0.75rem; }
+    .toc-module-label {
+      display: block;
+      font-size: 0.63rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin: 1rem 0.6rem 0.25rem;
+    }
+
+    /* ─── MAIN CONTENT ─── */
+    .main-content {
+      padding: 3rem 3rem 5rem;
+      max-width: 800px;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      margin-bottom: 4rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--red);
+      background: var(--red-light);
+      padding: 0.3rem 0.75rem;
+      border-radius: 4px;
+      margin-bottom: 1.25rem;
+    }
+    .hero h1 {
+      font-family: 'Lora', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+    .hero h1 em { font-style: italic; color: var(--red); }
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+    .hero-meta {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .meta-item { font-size: 0.8rem; color: var(--muted); }
+    .meta-item strong { color: var(--text); font-weight: 600; }
+
+    /* ─── MODULES ─── */
+    .module { margin-bottom: 5rem; }
+    .module-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .module-num {
+      flex-shrink: 0;
+      width: 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      font-family: 'Lora', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+    .mod-1 .module-num { background: #FEF2F2; color: var(--red); }
+    .mod-2 .module-num { background: #F0FDF4; color: #15803D; }
+    .mod-3 .module-num { background: #FFF7ED; color: #C2410C; }
+    .mod-4 .module-num { background: #EFF6FF; color: #1D4ED8; }
+    .mod-5 .module-num { background: #FDF4FF; color: #7E22CE; }
+    .mod-6 .module-num { background: #F0FDFA; color: #0F766E; }
+
+    .module-header-text {}
+    .module-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+    .module-title {
+      font-family: 'Lora', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--text);
+    }
+
+    /* ─── SECTION HEADINGS ─── */
+    .section { margin-bottom: 2.5rem; }
+    .section h3 {
+      font-family: 'Lora', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .section h4 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 1.25rem 0 0.4rem;
+    }
+
+    p { margin-bottom: 0.9rem; font-size: 0.95rem; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ─── CALLOUT BOXES ─── */
+    .callout {
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+    .callout-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .callout p { margin-bottom: 0.5rem; }
+    .callout p:last-child { margin-bottom: 0; }
+
+    .callout.nepal {
+      background: var(--amber-bg);
+      border-left: 4px solid var(--amber-bdr);
+    }
+    .callout.nepal .callout-title { color: var(--amber); }
+
+    .callout.concept {
+      background: var(--blue-bg);
+      border-left: 4px solid var(--blue-bdr);
+    }
+    .callout.concept .callout-title { color: #1D4ED8; }
+
+    .callout.warning {
+      background: var(--red-light);
+      border-left: 4px solid var(--red);
+    }
+    .callout.warning .callout-title { color: var(--red); }
+
+    .callout.practice {
+      background: var(--green-bg);
+      border-left: 4px solid var(--green-bdr);
+    }
+    .callout.practice .callout-title { color: #15803D; }
+
+    /* ─── DEFINITION ─── */
+    .def {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.5rem 1rem;
+      font-size: 0.88rem;
+      margin: 1rem 0;
+    }
+    .def dt { font-weight: 700; color: var(--text); white-space: nowrap; }
+    .def dd { color: var(--muted); }
+
+    /* ─── TABLES ─── */
+    .table-wrap { overflow-x: auto; margin: 1.25rem 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    thead tr { background: var(--text); color: #fff; }
+    thead th { padding: 0.65rem 0.85rem; text-align: left; font-weight: 600; font-size: 0.8rem; letter-spacing: 0.04em; }
+    tbody tr { border-bottom: 1px solid var(--border); }
+    tbody tr:nth-child(even) { background: var(--bg); }
+    tbody tr:hover { background: var(--blue-bg); }
+    tbody td { padding: 0.6rem 0.85rem; color: var(--text); vertical-align: top; line-height: 1.5; }
+    tbody td:first-child { font-weight: 600; font-size: 0.82rem; }
+    tbody td em { color: var(--muted); font-style: normal; font-size: 0.8rem; display: block; }
+
+    /* ─── STEPS / PROCESS ─── */
+    .steps { list-style: none; margin: 1rem 0; }
+    .steps li {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 0.85rem;
+      font-size: 0.9rem;
+      align-items: flex-start;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--text);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.05rem;
+    }
+    .steps li strong { color: var(--text); }
+
+    /* ─── BULLET LIST ─── */
+    .bullet-list {
+      list-style: none;
+      margin: 0.75rem 0;
+    }
+    .bullet-list li {
+      padding-left: 1.2rem;
+      position: relative;
+      font-size: 0.9rem;
+      margin-bottom: 0.45rem;
+      color: var(--text);
+    }
+    .bullet-list li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    /* ─── DIVIDER ─── */
+    .module-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 4rem 0;
+    }
+
+    /* ─── GLOSSARY ─── */
+    .glossary { margin-top: 5rem; }
+    .glossary h2 {
+      font-family: 'Lora', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--text);
+    }
+    .glossary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .glossary-item {
+      padding: 0.65rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+    .glossary-item dt { font-weight: 700; color: var(--text); margin-bottom: 0.15rem; }
+    .glossary-item dd { color: var(--muted); font-size: 0.82rem; }
+
+    /* ─── INLINE CODE / FORMULA ─── */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      background: rgba(245, 158, 11, 0.1);
+      padding: 0.15em 0.4em;
+      border-radius: 3px;
+      color: var(--amber);
+    }
+
+    /* ─── PROGRESS BAR ─── */
+    .reading-progress {
+      position: fixed;
+      top: 56px;
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background: var(--red);
+      z-index: 200;
+      transition: width 0.1s linear;
+    }
+
+    /* ─── BADGE ─── */
+    .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+    .badge-nepal { background: var(--red-light); color: var(--red); }
+    .badge-key { background: var(--blue-bg); color: #1D4ED8; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 860px) {
+      .sidebar { display: none; }
+      .page-wrap { grid-template-columns: 1fr; }
+      .main-content { padding: 2rem 1.5rem 4rem; }
+      .hero h1 { font-size: 1.9rem; }
+      .nav-links { display: none; }
+      .menu-btn { display: block; }
+      .glossary-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 520px) {
+      .main-content { padding: 1.5rem 1rem 3rem; }
+      .module-header { gap: 0.85rem; }
+      .module-title { font-size: 1.3rem; }
+      table { font-size: 0.8rem; }
+    }
+
+    @media print {
+      *, *::before, *::after {
+        background: transparent !important;
+        color: #000000 !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+      }
+      html, body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+      :root {
+        --bg:         #ffffff !important;
+        --surface:    #f8fafc !important;
+        --text:       #000000 !important;
+        --muted:      #475569 !important;
+        --border:     #cbd5e1 !important;
+        --red:        #000000 !important;
+        --red-light:  #f8fafc !important;
+        --amber:      #000000 !important;
+        --amber-bg:   #f8fafc !important;
+        --amber-bdr:  #cbd5e1 !important;
+        --blue-bg:    #f8fafc !important;
+        --blue-bdr:   #cbd5e1 !important;
+        --green-bg:   #f8fafc !important;
+        --green-bdr:  #cbd5e1 !important;
+      }
+      nav, .top-nav, .reading-progress, .toc-list, .sidebar, .nav-links, .menu-btn, .top-nav .brand span {
+        display: none !important;
+      }
+      .page-wrap {
+        display: block !important;
+        grid-template-columns: 1fr !important;
+      }
+      .main-content {
+        padding: 1rem 0 !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+      }
+      .hero {
+        margin-bottom: 2rem !important;
+        padding-bottom: 2rem !important;
+        border-bottom: 2px solid #000000 !important;
+        background: #ffffff !important;
+      }
+      .hero h1 {
+        color: #000000 !important;
+        font-size: 2.5rem !important;
+      }
+      .module, .section {
+        page-break-inside: avoid !important;
+      }
+      .callout, table, tr, td, code, .glossary-item {
+        background: #f8fafc !important;
+        border: 1px solid #cbd5e1 !important;
+        color: #000000 !important;
+        page-break-inside: avoid !important;
+      }
+      .callout p, .glossary-item dd, table td {
+        color: #000000 !important;
+      }
+      .module-title, h3, h4, th, td {
+        color: #000000 !important;
+      }
+      button {
+        display: none !important;
+      }
+      .module-body {
+        display: block !important;
+        padding-left: 0 !important;
+      }
+      table tr:nth-child(even) {
+        background: #f8fafc !important;
+      }
+      .bullet-list li::before {
+        color: #000000 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="reading-progress" id="readingProgress"></div>
+
+  <!-- ─── NAV ─── -->
+  <nav class="top-nav">
+    <a href="#" class="brand">NEPSE<span>•</span>Investing Guide</a>
+    <ul class="nav-links">
+      <li><a href="#module-1">NEPSE Basics</a></li>
+      <li><a href="#module-2">Shares &amp; IPOs</a></li>
+      <li><a href="#module-3">Charts</a></li>
+      <li><a href="#module-4">Valuation</a></li>
+      <li><a href="#module-5">Risk</a></li>
+      <li><a href="#module-6">Practice</a></li>
+      <li><a href="#glossary">Glossary</a></li>
+    </ul>
+    <button class="menu-btn" aria-label="Menu">☰</button>
+  </nav>
+
+  <div class="page-wrap">
+
+    <!-- ─── SIDEBAR ─── -->
+    <aside class="sidebar">
+      <p class="toc-title">Table of Contents</p>
+      <ul class="toc-list">
+
+        <span class="toc-module-label">Module 1</span>
+        <li><a href="#module-1">Introduction to NEPSE</a></li>
+        <li><a href="#m1-what" class="sub">What is NEPSE?</a></li>
+        <li><a href="#m1-infra" class="sub">Market Infrastructure</a></li>
+        <li><a href="#m1-mechanics" class="sub">Trading Mechanics</a></li>
+        <li><a href="#m1-entry" class="sub">Getting Started</a></li>
+
+        <span class="toc-module-label">Module 2</span>
+        <li><a href="#module-2">Shares, IPOs &amp; Secondary Market</a></li>
+        <li><a href="#m2-what" class="sub">What Is a Share?</a></li>
+        <li><a href="#m2-ipo" class="sub">How IPOs Work in Nepal</a></li>
+        <li><a href="#m2-corporate" class="sub">Bonus &amp; Rights Issues</a></li>
+        <li><a href="#m2-secondary" class="sub">Secondary Market Trading</a></li>
+
+        <span class="toc-module-label">Module 3</span>
+        <li><a href="#module-3">Charts &amp; Technical Analysis</a></li>
+        <li><a href="#m3-index" class="sub">The NEPSE Index</a></li>
+        <li><a href="#m3-candles" class="sub">Candlestick Charts</a></li>
+        <li><a href="#m3-ma" class="sub">Moving Averages</a></li>
+        <li><a href="#m3-momentum" class="sub">Momentum Indicators</a></li>
+        <li><a href="#m3-tools" class="sub">Tools for Nepal</a></li>
+
+        <span class="toc-module-label">Module 4</span>
+        <li><a href="#module-4">Valuation &amp; Financials</a></li>
+        <li><a href="#m4-statements" class="sub">The Three Statements</a></li>
+        <li><a href="#m4-metrics" class="sub">Metrics That Matter</a></li>
+        <li><a href="#m4-sectors" class="sub">NEPSE Sector Deep Dives</a></li>
+        <li><a href="#m4-data" class="sub">Where to Find Data</a></li>
+
+        <span class="toc-module-label">Module 5</span>
+        <li><a href="#module-5">Portfolio &amp; Risk</a></li>
+        <li><a href="#m5-diversify" class="sub">Diversification</a></li>
+        <li><a href="#m5-sizing" class="sub">Position Sizing</a></li>
+        <li><a href="#m5-risks" class="sub">NEPSE-Specific Risks</a></li>
+        <li><a href="#m5-exit" class="sub">Exit Strategy</a></li>
+
+        <span class="toc-module-label">Module 6</span>
+        <li><a href="#module-6">Market Practice</a></li>
+        <li><a href="#m6-paper" class="sub">Paper Trading Protocol</a></li>
+        <li><a href="#m6-workflow" class="sub">Research Workflow</a></li>
+        <li><a href="#m6-watchlist" class="sub">Your First Watchlist</a></li>
+
+        <span class="toc-module-label">Reference</span>
+        <li><a href="#glossary">Key Terms Glossary</a></li>
+      </ul>
+    </aside>
+
+    <!-- ─── MAIN ─── -->
+    <main class="main-content">
+
+      <!-- HERO -->
+      <div class="hero">
+        <div class="hero-tag">Student Guide — All Levels</div>
+        <h1>Stock Market Investing in <em>Practice</em></h1>
+        <p class="hero-sub">A ground-up guide to investing in the Nepal Stock Exchange. Built for students with no prior finance background. Uses real NEPSE companies, Nepali instruments, and Nepal-specific market mechanics throughout.</p>
+        <div class="hero-meta">
+          <div class="meta-item"><strong>6 Modules</strong><br>Structured Curriculum</div>
+          <div class="meta-item"><strong>Context</strong><br>NEPSE / Nepal Market</div>
+          <div class="meta-item"><strong>Outcome</strong><br>Run a Simulated Portfolio</div>
+        </div>
+      </div>
+
+      <!-- ───────── MODULE 1 ───────── -->
+      <section class="module mod-1" id="module-1">
+        <div class="module-header">
+          <div class="module-num">01</div>
+          <div class="module-header-text">
+            <p class="module-label">Module 1</p>
+            <h2 class="module-title">Introduction to NEPSE and How Nepal's Stock Exchange Works</h2>
+          </div>
+        </div>
+
+        <div class="section" id="m1-what">
+          <h3>What Is NEPSE?</h3>
+          <p>Nepal Stock Exchange (NEPSE) is the country's only stock exchange, established in 1994 and located in Kathmandu. It operates under the regulatory authority of the <strong>Securities Board of Nepal (SEBON)</strong>. Today, NEPSE lists over 220 companies spanning banking, hydropower, insurance, manufacturing, and more.</p>
+          <p>The <strong>NEPSE Index</strong> is the benchmark gauge for the entire market. It was set at a base of 100 in 1994. When you see a headline like "NEPSE closes at 2,100," it means the aggregate value of listed companies has grown roughly 21× in nominal terms since the exchange opened.</p>
+          <div class="callout nepal">
+            <div class="callout-title">🏔 Nepal Context</div>
+            <p>NEPSE saw its all-time high above 3,200 points in late 2021, driven by a bull run in banking and hydropower stocks. It then corrected sharply. This cycle—euphoria, peak, crash, slow recovery—repeats in every market. Understanding it matters more than knowing any indicator.</p>
+          </div>
+        </div>
+
+        <div class="section" id="m1-infra">
+          <h3>The Three Institutions Behind Every Trade</h3>
+          <p>You cannot understand NEPSE without understanding this infrastructure layer. Three institutions govern how every transaction works:</p>
+
+          <dl class="def">
+            <dt>SEBON</dt><dd>Securities Board of Nepal — the regulator. It approves IPOs, licenses brokers, sets trading rules, and can suspend companies. Think of it as Nepal's capital market police and lawmaker combined.</dd>
+            <dt>NEPSE</dt><dd>The exchange itself — provides the electronic trading platform where buyers and sellers meet. Does not take sides in any trade.</dd>
+            <dt>CDSC</dt><dd>Central Depository System and Clearing Limited — holds your shares electronically. When you buy 100 shares of Nabil Bank, a digital record at CDSC is updated. There are no paper certificates.</dd>
+          </dl>
+
+          <div class="callout concept">
+            <div class="callout-title">🔑 Key Concept: Why CDSC Matters</div>
+            <p>Before CDSC, investors received physical share certificates that could be lost, forged, or stolen. CDSC eliminated this risk. Every share you ever buy on NEPSE lives in your CDSC-linked demat account as a digital entry.</p>
+          </div>
+        </div>
+
+        <div class="section" id="m1-mechanics">
+          <h3>How Trading Actually Works</h3>
+          <p>NEPSE's trading mechanics are specific to Nepal's market. Know them before you invest a single rupee.</p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Parameter</th>
+                  <th>Detail</th>
+                  <th>Why It Matters</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Trading Hours</td>
+                  <td>11:00 AM – 3:00 PM<br>Sunday – Thursday</td>
+                  <td><em>Nepal's work week starts Sunday. Friday–Saturday markets are closed.</em></td>
+                </tr>
+                <tr>
+                  <td>Settlement Cycle</td>
+                  <td>T+3 (Trade + 3 working days)</td>
+                  <td><em>Buying today means shares arrive in your demat account 3 working days later.</em></td>
+                </tr>
+                <tr>
+                  <td>Daily Price Band</td>
+                  <td>±10% for most securities</td>
+                  <td><em>A stock cannot rise or fall more than 10% in a single session. Acts as a circuit breaker.</em></td>
+                </tr>
+                <tr>
+                  <td>Minimum Lot</td>
+                  <td>10 shares for most listings</td>
+                  <td><em>You cannot buy 3 shares of a company — minimum is one lot (usually 10 shares).</em></td>
+                </tr>
+                <tr>
+                  <td>Brokerage Fee</td>
+                  <td>0.40% – 1.50% (SEBON regulated)</td>
+                  <td><em>Scales down for larger transaction amounts. Paid on both buy and sell sides.</em></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="callout nepal">
+            <div class="callout-title">🏔 Nepal Context: Taxes on Investments</div>
+            <p><strong>Capital gains tax</strong>: 5% on gains from shares held over 365 days; 7.5% on gains from shares held under 365 days (for individuals). Institutions pay a higher rate. This makes short-term trading more expensive after tax — a fact most new investors ignore until filing season.</p>
+            <p><strong>Dividend tax</strong>: 5% TDS (Tax Deducted at Source) is withheld before dividends reach you.</p>
+          </div>
+        </div>
+
+        <div class="section" id="m1-entry">
+          <h3>Getting Started: Your Three Requirements</h3>
+          <p>You need all three of these before you can trade a single share on NEPSE:</p>
+          <ol class="steps">
+            <li><div class="step-num">1</div><div><strong>Demat Account</strong> — Open at CDSC directly or through any commercial bank's capital market desk. Requires citizenship card, 2 passport photos, and a small fee (approximately NPR 200). This is where your shares will live.</div></li>
+            <li><div class="step-num">2</div><div><strong>Meroshare Account</strong> — The official CDSC portal at <code>meroshare.cdsc.com.np</code>. Used to apply for IPOs online, track your portfolio, collect dividends, and manage your demat holdings. Linked directly to your demat account.</div></li>
+            <li><div class="step-num">3</div><div><strong>SEBON-Licensed Broker</strong> — 50+ brokers are licensed by SEBON. You place buy/sell orders through them via phone, their branch, or increasingly through broker apps. You can compare brokers based on technology, service, and responsiveness. Fees are regulated — you can't negotiate them lower than the SEBON floor.</div></li>
+          </ol>
+
+          <div class="callout practice">
+            <div class="callout-title">✅ Module 1 Checkpoint</div>
+            <p>Before moving to Module 2, you should be able to: explain what SEBON, NEPSE, and CDSC each do; describe what happens from the moment you place a buy order to when shares arrive in your demat account; and identify Nepal's trading hours and settlement cycle.</p>
+          </div>
+        </div>
+      </section>
+
+      <hr class="module-divider" />
+
+      <!-- ───────── MODULE 2 ───────── -->
+      <section class="module mod-2" id="module-2">
+        <div class="module-header">
+          <div class="module-num">02</div>
+          <div class="module-header-text">
+            <p class="module-label">Module 2</p>
+            <h2 class="module-title">Understanding Shares, IPOs, and Secondary Market Trading</h2>
+          </div>
+        </div>
+
+        <div class="section" id="m2-what">
+          <h3>What Is a Share?</h3>
+          <p>A share represents fractional ownership of a company. If Himalayan Bank has 1 billion shares outstanding and you own 1,000 of them, you own 0.0001% of the bank. That ownership entitles you to three things:</p>
+          <ul class="bullet-list">
+            <li>A proportional share of any dividends the company distributes</li>
+            <li>Voting rights at Annual General Meetings (AGMs)</li>
+            <li>A residual claim on assets if the company is ever wound down — after all debts are settled first</li>
+          </ul>
+
+          <div class="callout concept">
+            <div class="callout-title">🔑 Key Concept: Face Value in Nepal</div>
+            <p>Almost all shares on NEPSE have a <strong>face value (FV) of NPR 100</strong>. This is the nominal value set at company incorporation — it has no direct relationship to the market price. Nabil Bank's face value is NPR 100, but it might trade at NPR 1,200 in the market. The difference (NPR 1,100) reflects the premium the market places on the company's earnings, assets, and growth prospects.</p>
+          </div>
+
+          <h4>Types of Shares</h4>
+          <ul class="bullet-list">
+            <li><strong>Ordinary (Common) Shares</strong> — The standard share type. Variable dividends, full voting rights. Most NEPSE-listed shares are ordinary shares.</li>
+            <li><strong>Preference Shares</strong> — Fixed dividend paid before ordinary shareholders, usually no voting rights. Rare but present on NEPSE (example: some development banks issue these).</li>
+            <li><strong>Promoter Shares</strong> — Held by founding shareholders. Subject to a lock-in period. When this lock-in expires, promoters are legally allowed to sell. Large promoter sell-offs can crash a stock.</li>
+          </ul>
+        </div>
+
+        <div class="section" id="m2-ipo">
+          <h3>How IPOs Work in Nepal</h3>
+          <p>When a company lists on NEPSE for the first time, it issues shares to the public through an Initial Public Offering (IPO). Nepal's IPO process is different from most other markets — you need to understand it specifically.</p>
+
+          <ol class="steps">
+            <li><div class="step-num">1</div><div><strong>SEBON Approval</strong> — The company files a prospectus with SEBON. SEBON reviews financial statements, business model, and legal compliance. Only after SEBON approval can the IPO open.</div></li>
+            <li><div class="step-num">2</div><div><strong>Application Window Opens</strong> — Typically 7–15 days. You apply via Meroshare (online) or a physical form at designated banks/brokers.</div></li>
+            <li><div class="step-num">3</div><div><strong>ASBA System</strong> — When you apply, your bank <em>blocks</em> (not debits) the application amount. Your money stays in your account earning interest — it's only transferred if you receive shares. If you're not allotted, nothing is charged.</div></li>
+            <li><div class="step-num">4</div><div><strong>Lottery Allotment</strong> — Nepal's IPO system is oversubscribed almost every time. If more people apply than shares are available, a lottery determines who gets shares. This means applying is a probabilistic exercise, not a guaranteed investment.</div></li>
+            <li><div class="step-num">5</div><div><strong>Listing and Trading</strong> — After allotment, shares are credited to your demat account and the company lists on NEPSE (typically 30–45 days after the IPO closes). You can sell immediately after listing.</div></li>
+          </ol>
+
+          <div class="callout nepal">
+            <div class="callout-title">🏔 Nepal Context: The IPO Lottery Culture</div>
+            <p>Many Nepali investors treat IPO applications as lottery tickets — cheap to apply, potential for quick listing gain. Some IPOs list at 50–100% above issue price on day one. Others list below. The listing price is dictated by market demand, not by how good the company fundamentally is. <strong>A profitable IPO lottery win is not evidence of investment skill.</strong></p>
+          </div>
+        </div>
+
+        <div class="section" id="m2-corporate">
+          <h3>Bonus Shares and Rights Issues</h3>
+          <p>These two corporate actions are very common in Nepal and confuse most new investors. Misunderstanding them leads to bad decisions.</p>
+
+          <h4>Bonus Shares (Stock Dividend)</h4>
+          <p>Instead of paying cash dividends, a company issues additional shares to existing shareholders. A <code>1:1 bonus</code> means for every 1 share you hold, you receive 1 additional share. Your 100 shares become 200.</p>
+          <p>Critical point: <strong>the total company value does not change</strong>. If you held 10% of the company before, you still hold 10% after. The share price adjusts downward proportionally (roughly halved in a 1:1 bonus). Nepali investors often celebrate bonus announcements without understanding this — share count doubles, price roughly halves, wealth stays the same.</p>
+
+          <h4>Rights Shares</h4>
+          <p>The company offers existing shareholders the right to buy new shares at a discount — usually at face value (NPR 100) even when the market price is much higher. A <code>1:5 rights</code> means for every 5 shares you hold, you can buy 1 new share at NPR 100.</p>
+          <ul class="bullet-list">
+            <li><strong>Exercise the rights</strong>: Pay NPR 100 per right share, receive new shares</li>
+            <li><strong>Sell the rights</strong>: Rights themselves are tradable on NEPSE for a period after announcement</li>
+            <li><strong>Let them lapse</strong>: Do nothing — you lose the option, but no money is taken from you</li>
+          </ul>
+        </div>
+
+        <div class="section" id="m2-secondary">
+          <h3>Secondary Market Trading</h3>
+          <p>After a company's IPO, its shares trade continuously on NEPSE's secondary market — this is where most investing activity happens. Prices are set by supply (sellers) and demand (buyers) in real time.</p>
+          <p>NEPSE uses a <strong>continuous double-auction system</strong>: the system automatically matches the highest buy bid with the lowest sell offer. You can place two types of orders:</p>
+          <ul class="bullet-list">
+            <li><strong>Market Order</strong>: Buy or sell immediately at the current best price. Fast but you don't control the exact price.</li>
+            <li><strong>Limit Order</strong>: You set your price. "Buy at NPR 850 maximum." The order waits until a seller matches your price — or expires if none does.</li>
+          </ul>
+
+          <div class="callout warning">
+            <div class="callout-title">⚠ Watch Out: Liquidity on NEPSE</div>
+            <p>NEPSE's daily trading volume is much lower than most Asian exchanges. Some smaller stocks trade only a few thousand shares per day. This means if you need to sell quickly, you may not find a buyer at your expected price — you'll have to lower your price to attract a buyer. Always check average daily volume before buying a stock.</p>
+          </div>
+
+          <div class="callout practice">
+            <div class="callout-title">✅ Module 2 Checkpoint</div>
+            <p>You should be able to: describe the ASBA IPO process end-to-end; explain why a bonus share announcement does not make you richer; and distinguish between a limit order and a market order.</p>
+          </div>
+        </div>
+      </section>
+
+      <hr class="module-divider" />
+
+      <!-- ───────── MODULE 3 ───────── -->
+      <section class="module mod-3" id="module-3">
+        <div class="module-header">
+          <div class="module-num">03</div>
+          <div class="module-header-text">
+            <p class="module-label">Module 3</p>
+            <h2 class="module-title">How to Read Stock Charts and Basic Technical Analysis</h2>
+          </div>
+        </div>
+
+        <div class="callout warning">
+          <div class="callout-title">⚠ Before You Proceed: An Honest Disclaimer</div>
+          <p>Technical analysis is a tool for identifying patterns and probabilities — it is not a prediction system. No chart pattern works all the time. Many active traders lose money applying technical analysis incorrectly. Use it to understand market context and timing, not as a standalone buy/sell signal.</p>
+        </div>
+
+        <div class="section" id="m3-index">
+          <h3>The NEPSE Index as Your Market Compass</h3>
+          <p>Before analyzing any individual stock, check the NEPSE Index direction. Buying individual stocks in a falling market is swimming against the tide. In a bear market, even fundamentally strong companies tend to fall.</p>
+          <ul class="bullet-list">
+            <li><strong>Bull Market</strong>: Index in an uptrend — rising highs, rising lows. Most stocks will be easier to profit from.</li>
+            <li><strong>Bear Market</strong>: Index in a downtrend — falling highs, falling lows. Even quality stocks decline. Not the environment to deploy large capital.</li>
+            <li><strong>Sideways/Consolidation</strong>: Market range-bound. Difficult for trend-following strategies.</li>
+          </ul>
+        </div>
+
+        <div class="section" id="m3-candles">
+          <h3>Candlestick Charts</h3>
+          <p>A candlestick chart is the standard visualization of price action. Each candle represents one trading session (or a defined period: 1 hour, 1 week, etc.).</p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Element</th><th>Meaning</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Body (Green/White)</td><td>Open-to-close range. Green = closed above open. Price rose during this period.</td></tr>
+                <tr><td>Body (Red/Black)</td><td>Closed below open. Price fell during this period.</td></tr>
+                <tr><td>Upper Wick/Shadow</td><td>Highest price reached. If wick is long, buyers pushed price up but sellers pushed it back down.</td></tr>
+                <tr><td>Lower Wick/Shadow</td><td>Lowest price touched. Long lower wick suggests buyers stepped in at lower prices.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h4>Three Patterns Worth Knowing</h4>
+          <ul class="bullet-list">
+            <li><strong>Doji</strong> — Open and close are nearly equal. Very small body. Signals indecision — neither buyers nor sellers are winning. Often precedes a reversal or continuation, but you need additional signals to act.</li>
+            <li><strong>Hammer</strong> — Small body at the top, long lower wick. Appears after a downtrend. Suggests sellers drove price down but buyers rejected lower prices strongly — potential reversal signal.</li>
+            <li><strong>Bullish Engulfing</strong> — A large green candle completely covers the previous red candle's body. Strong buying overcame the previous session's selling. One of the more reliable reversal signals.</li>
+          </ul>
+        </div>
+
+        <div class="section" id="m3-ma">
+          <h3>Moving Averages: Seeing the Trend</h3>
+          <p>A moving average (MA) smooths out daily price noise to show the underlying trend direction. It is the average price over a set number of days, recalculated each day.</p>
+
+          <dl class="def">
+            <dt>50-Day MA</dt><dd>Medium-term trend indicator. If price is above its 50-day MA, the medium-term trend is up. Used by swing traders.</dd>
+            <dt>200-Day MA</dt><dd>Long-term trend indicator. Price above 200-day MA = long-term uptrend. Below = long-term downtrend. Used by long-term investors.</dd>
+          </dl>
+
+          <div class="callout concept">
+            <div class="callout-title">🔑 Key Concept: Golden Cross and Death Cross</div>
+            <p><strong>Golden Cross</strong>: The 50-day MA crosses above the 200-day MA. Historically a bullish signal, often marking the start of a multi-month uptrend. Widely watched by NEPSE traders.</p>
+            <p><strong>Death Cross</strong>: The 50-day MA crosses below the 200-day MA. Bearish signal. The NEPSE correction of 2022–23 was preceded by a market-wide death cross.</p>
+          </div>
+        </div>
+
+        <div class="section" id="m3-momentum">
+          <h3>Momentum Indicators</h3>
+          <h4>RSI — Relative Strength Index</h4>
+          <p>The RSI oscillates between 0 and 100, measuring the speed and magnitude of recent price changes. The standard interpretation: above 70 = overbought, below 30 = oversold.</p>
+          <p><strong>Important caveat</strong>: In a strong uptrend, RSI can remain above 70 for weeks. Mechanically selling when RSI hits 70 has caused many Nepali traders to exit early and miss large moves. Use RSI as context, not a trigger.</p>
+
+          <h4>MACD — Moving Average Convergence Divergence</h4>
+          <p>MACD plots the relationship between two exponential moving averages (12-day and 26-day). A "signal line" (9-day MA of MACD) is plotted alongside. When the MACD line crosses above the signal line, it generates a buy signal; below generates a sell signal. Volume should confirm the crossover to reduce false signals.</p>
+        </div>
+
+        <div class="section" id="m3-tools">
+          <h3>Tools for Nepali Investors</h3>
+          <ul class="bullet-list">
+            <li><strong>Merolagani</strong> (merolagani.com) — Best for real-time quotes, technical charts, fundamental data, and IPO updates. The most comprehensive resource for NEPSE investors.</li>
+            <li><strong>Sharesansar</strong> (sharesansar.com) — Strong news feed, broker rankings, portfolio tracking. Good for staying current on company announcements.</li>
+            <li><strong>NEPSE Alpha</strong> (nepsealpha.com) — More advanced charting and screener tools for experienced traders.</li>
+            <li><strong>NEPSE Official</strong> (nepalstock.com) — Official exchange data, company filings, and market statistics.</li>
+          </ul>
+
+          <div class="callout practice">
+            <div class="callout-title">✅ Module 3 Exercise</div>
+            <p>On Merolagani, open the 1-year chart for any commercial bank (e.g., Nabil Bank). Identify: the current trend, one support level, one resistance level, and where the 50-day and 200-day moving averages sit relative to the current price. Write down what these signals suggest before you look up any news about the company.</p>
+          </div>
+        </div>
+      </section>
+
+      <hr class="module-divider" />
+
+      <!-- ───────── MODULE 4 ───────── -->
+      <section class="module mod-4" id="module-4">
+        <div class="module-header">
+          <div class="module-num">04</div>
+          <div class="module-header-text">
+            <p class="module-label">Module 4</p>
+            <h2 class="module-title">Fundamentals of Company Valuation and Financial Statements</h2>
+          </div>
+        </div>
+
+        <div class="section" id="m4-statements">
+          <h3>The Three Financial Statements</h3>
+          <p>Every listed company on NEPSE must publish quarterly and annual financial reports. These three documents form the foundation of fundamental analysis. You cannot evaluate a stock without reading them.</p>
+
+          <dl class="def">
+            <dt>Income Statement</dt><dd>Revenue → Operating Expenses → Net Profit. Shows whether the company is making money from its core business during the period. Net Profit = the bottom line investors care most about.</dd>
+            <dt>Balance Sheet</dt><dd>Assets = Liabilities + Equity. A snapshot of what the company owns (assets), what it owes (liabilities), and what belongs to shareholders (equity). Shows financial strength and leverage.</dd>
+            <dt>Cash Flow Statement</dt><dd>Tracks actual cash movement: operations, investing, and financing activities. More reliable than reported profit because profit can be distorted by accounting choices. If net profit is positive but cash flow from operations is consistently negative, investigate why.</dd>
+          </dl>
+
+          <div class="callout concept">
+            <div class="callout-title">🔑 Key Concept: Profit ≠ Cash</div>
+            <p>A company can report a profit on its income statement while simultaneously running out of cash. This happens through accounting timing differences (revenue recognized before cash is received, or expenses paid in cash before they're recorded). Always cross-reference profit with cash flow from operations. If they diverge dramatically, it's a red flag.</p>
+          </div>
+        </div>
+
+        <div class="section" id="m4-metrics">
+          <h3>Metrics That Matter on NEPSE</h3>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Formula</th>
+                  <th>What It Tells You</th>
+                  <th>Nepal Context</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>EPS <span class="badge badge-key">Key</span></td>
+                  <td><code>Net Profit ÷ Shares Outstanding</code></td>
+                  <td>Profit generated per share</td>
+                  <td><em>Primary driver of NEPSE stock prices. Watch quarterly EPS growth trend, not just one quarter.</em></td>
+                </tr>
+                <tr>
+                  <td>P/E Ratio</td>
+                  <td><code>Market Price ÷ EPS</code></td>
+                  <td>How much you pay per unit of earnings</td>
+                  <td><em>Large banks on NEPSE typically trade at 15–25× P/E. A P/E of 40× for a bank needs justification.</em></td>
+                </tr>
+                <tr>
+                  <td>P/B Ratio <span class="badge badge-nepal">Nepal Focus</span></td>
+                  <td><code>Market Price ÷ Book Value Per Share</code></td>
+                  <td>Premium/discount to net assets</td>
+                  <td><em>Nepali investors are deeply book-value conscious. Many use P/B as the primary buying trigger.</em></td>
+                </tr>
+                <tr>
+                  <td>Book Value Per Share</td>
+                  <td><code>Total Equity ÷ Shares Outstanding</code></td>
+                  <td>Net assets attributable to each share</td>
+                  <td><em>Often used as a "floor" price by conservative Nepali investors. Buying below book is considered low risk.</em></td>
+                </tr>
+                <tr>
+                  <td>DPS <span class="badge badge-nepal">Nepal Focus</span></td>
+                  <td><code>Total Dividends Declared ÷ Shares Outstanding</code></td>
+                  <td>Dividend per share (cash + bonus value)</td>
+                  <td><em>Many Nepali investors select stocks primarily based on dividend history and yield.</em></td>
+                </tr>
+                <tr>
+                  <td>ROE</td>
+                  <td><code>Net Profit ÷ Shareholders' Equity</code></td>
+                  <td>How efficiently company generates profit from shareholder capital</td>
+                  <td><em>Look for consistent ROE above 15% over multiple years. Improving ROE signals growing efficiency.</em></td>
+                </tr>
+                <tr>
+                  <td>NPL Ratio <span class="badge badge-nepal">Banking</span></td>
+                  <td><code>Non-Performing Loans ÷ Total Loans</code></td>
+                  <td>Percentage of loans going bad</td>
+                  <td><em>Critical for bank analysis. NRB considers anything above 5% concerning. Watch this more than P/E for banks.</em></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="section" id="m4-sectors">
+          <h3>NEPSE Sector Deep Dives</h3>
+
+          <h4>Commercial Banking — ~50% of Market Cap</h4>
+          <p>Nepal's banking sector is the most-traded and most-analyzed on NEPSE. Banks make money from the <strong>net interest margin (NIM)</strong> — the spread between what they charge borrowers and pay depositors. Key things to watch:</p>
+          <ul class="bullet-list">
+            <li><strong>NRB Regulation</strong>: Nepal Rastra Bank (NRB) is the central bank. Its interest rate policies, credit-to-deposit ratio requirements, and sector-specific lending restrictions directly move banking stock prices. One NRB circular can change the profitability outlook for the entire sector.</li>
+            <li><strong>Capital Adequacy Ratio (CAR)</strong>: NRB requires banks to maintain a minimum 11% CAR. Banks below this threshold face regulatory constraints on growth.</li>
+            <li><strong>NPL Ratio</strong>: During economic stress (post-COVID, high interest rate periods), NPLs rise. This erodes bank profits directly.</li>
+            <li><strong>Credit Growth</strong>: Loan growth drives revenue growth. But overly aggressive lending often comes back as NPLs later.</li>
+          </ul>
+
+          <h4>Hydropower — The Growth Sector</h4>
+          <p>Nepal has an estimated 40,000 MW of exploitable hydropower potential. Hydropower companies on NEPSE fall into two categories: operating projects (already generating revenue) and under-development projects (construction phase, no revenue yet). Key metrics:</p>
+          <ul class="bullet-list">
+            <li><strong>Power Purchase Agreement (PPA) rate</strong>: The fixed price per unit that NEA (Nepal Electricity Authority) pays to buy electricity. Higher PPA = better revenue visibility.</li>
+            <li><strong>Plant Load Factor (PLF)</strong>: Actual generation as a percentage of maximum capacity. Seasonal variations affect this significantly — most Nepal hydro projects generate less in winter.</li>
+            <li><strong>Debt structure</strong>: Large infrastructure projects carry significant debt. Evaluate debt-to-equity ratio and whether revenue is sufficient to service debt comfortably.</li>
+          </ul>
+
+          <h4>Insurance</h4>
+          <p>Nepal's insurance sector is growing but still underpenetrated. The <strong>Insurance Regulatory Authority</strong> oversees the sector. Key metrics: <strong>combined ratio</strong> (claims + expenses ÷ premiums — below 100% means the insurance business is profitable), <strong>solvency margin</strong>, and <strong>investment income</strong> (insurers invest premiums; investment portfolio quality matters).</p>
+
+          <div class="callout nepal">
+            <div class="callout-title">🏔 Nepal Context: Why Banking Dominates NEPSE</div>
+            <p>Nepal's capital market developed primarily through the banking sector liberalization of the 1990s–2000s. Banks were the first profitable companies to list. Today, if you hold only banking stocks, you are not diversified — you are fully exposed to NRB's monetary policy decisions and Nepal's credit cycle. Most retail NEPSE investors are unknowingly 80%+ in banking.</p>
+          </div>
+        </div>
+
+        <div class="section" id="m4-data">
+          <h3>Where to Find Financial Data</h3>
+          <ul class="bullet-list">
+            <li><strong>Company Annual Reports</strong> — Filed on company websites and submitted to SEBON (sebon.gov.np). The definitive source.</li>
+            <li><strong>Merolagani Fundamentals</strong> — Aggregates EPS, P/E, P/B, DPS, ROE for all listed companies. Good for quick comparisons.</li>
+            <li><strong>SEBON Portal</strong> — sebon.gov.np — Official regulatory filings, prospectuses, and company disclosures.</li>
+            <li><strong>Company AGM Reports</strong> — Presented at AGMs which you can attend as a shareholder. Often contain management guidance not in formal financial reports.</li>
+          </ul>
+
+          <div class="callout practice">
+            <div class="callout-title">✅ Module 4 Exercise</div>
+            <p>Pick any two commercial banks listed on NEPSE. On Merolagani, compare their EPS growth (last 4 quarters), P/B ratios, ROE, and NPL ratios. Write one paragraph explaining which bank you would rather own and why — using only the data you found.</p>
+          </div>
+        </div>
+      </section>
+
+      <hr class="module-divider" />
+
+      <!-- ───────── MODULE 5 ───────── -->
+      <section class="module mod-5" id="module-5">
+        <div class="module-header">
+          <div class="module-num">05</div>
+          <div class="module-header-text">
+            <p class="module-label">Module 5</p>
+            <h2 class="module-title">Portfolio Construction and Risk Management</h2>
+          </div>
+        </div>
+
+        <div class="section" id="m5-diversify">
+          <h3>Diversification: Why One Sector Is Dangerous</h3>
+          <p>Most Nepali retail investors hold 80–90% of their portfolio in banking stocks. This is not diversification — it is concentrated exposure to a single sector. When NRB tightens monetary policy, interest rates rise, loan demand falls, and every bank on NEPSE falls simultaneously. A diversified portfolio weathers this without catastrophic loss.</p>
+
+          <p>A starting framework for portfolio construction:</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Sector</th><th>Suggested Allocation</th><th>Rationale</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Commercial Banking</td><td>30–40%</td><td><em>Large, liquid, dividend-paying. But don't exceed 40% — NRB sensitivity is real.</em></td></tr>
+                <tr><td>Hydropower</td><td>20–25%</td><td><em>Long-term energy demand thesis. Lower correlation to banking cycle.</em></td></tr>
+                <tr><td>Insurance</td><td>10–15%</td><td><em>Growing sector, less NRB exposure than banks.</em></td></tr>
+                <tr><td>Other (Manufacturing, Hotels, Microfinance)</td><td>20–30%</td><td><em>Your research-driven selections. Highest potential but requires deeper analysis.</em></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="callout concept">
+            <div class="callout-title">🔑 Key Concept: Correlation</div>
+            <p>Two stocks are highly correlated when they tend to move in the same direction together. All banking stocks are highly correlated with NRB policy. Hydropower stocks are correlated with energy sector news and NEA policy. True diversification means owning assets whose prices are driven by different factors — so when one falls, the others are not necessarily dragged down with it.</p>
+          </div>
+        </div>
+
+        <div class="section" id="m5-sizing">
+          <h3>Position Sizing: The 5% Rule</h3>
+          <p>Position sizing is the discipline of deciding how much of your portfolio to allocate to any single holding. The core principle: <strong>no single stock should represent more than 5% of your total portfolio</strong>. For beginners, cap at 10% per position until you have significantly more experience.</p>
+          <p>The logic is simple: if any stock goes to zero (company collapse, fraud, regulatory action — all of which have happened in Nepal), you lose at most 5% of your total capital. You can recover from that. Losing 40% of your capital in one stock because you were overweight is far harder to recover from psychologically and financially.</p>
+
+          <div class="callout nepal">
+            <div class="callout-title">🏔 Nepal Context: The 2021–2023 Lesson</div>
+            <p>Investors who put 60–70% of their savings into banking stocks during the 2021 peak — when banks were making record profits — saw those positions fall 40–60% by 2022–23 as NRB raised interest rates and tightened liquidity. This was not a failure of stock selection. It was a failure of position sizing and sector concentration.</p>
+          </div>
+        </div>
+
+        <div class="section" id="m5-risks">
+          <h3>NEPSE-Specific Risks</h3>
+          <p>Every market has idiosyncratic risks. Know Nepal's:</p>
+
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Risk Type</th><th>What It Means in Nepal</th><th>How to Manage</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>Political Risk</td>
+                  <td><em>Nepal's political instability (frequent government changes, policy uncertainty) creates sudden market volatility. Budget announcements directly move sector prices.</em></td>
+                  <td><em>Diversify across sectors; don't hold concentrated bets before major political events.</em></td>
+                </tr>
+                <tr>
+                  <td>Liquidity Risk</td>
+                  <td><em>NEPSE's daily volume is thin. Small- and mid-cap stocks can be difficult to sell in size without moving the price against you.</em></td>
+                  <td><em>Check average daily volume before buying. Avoid stocks where daily volume is less than 10× your intended position size.</em></td>
+                </tr>
+                <tr>
+                  <td>Interest Rate Risk</td>
+                  <td><em>NRB's monetary policy decisions move banking stocks sharply. A 1% CRR increase can drop bank stocks 5–10% in a day.</em></td>
+                  <td><em>Monitor NRB's monetary policy statements quarterly. Don't overweight banking before rate decisions.</em></td>
+                </tr>
+                <tr>
+                  <td>Promoter Lock-in Expiry</td>
+                  <td><em>When promoter share lock-in periods expire, founders can sell large blocks. This can suppress a stock price for months.</em></td>
+                  <td><em>Check lock-in expiry dates in IPO prospectuses. Be cautious holding through expected large promoter sales.</em></td>
+                </tr>
+                <tr>
+                  <td>Behavioural Risk</td>
+                  <td><em>FOMO (Fear of Missing Out) during bull markets causes investors to buy at peaks. Panic during corrections causes selling at lows. The investor's own psychology is usually the biggest risk.</em></td>
+                  <td><em>Write down your buy thesis before purchasing. Don't check prices daily. Decide sell conditions in advance.</em></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="section" id="m5-exit">
+          <h3>Exit Strategy: Defining When to Sell</h3>
+          <p>Most investors know when they want to buy. Far fewer have a clear plan for when to sell. This asymmetry destroys more wealth than bad stock selection. Before you buy any stock, you must have answers to three questions:</p>
+
+          <ol class="steps">
+            <li><div class="step-num">1</div><div><strong>Price target</strong>: At what price does the stock represent fair or overvalue? "I will sell when the P/E exceeds 25×" or "I will sell when the price reaches NPR 1,500." Be specific.</div></li>
+            <li><div class="step-num">2</div><div><strong>Stop-loss</strong>: At what percentage loss will you exit to preserve capital? Common rule: 15–20% below purchase price. Write it down before you buy. Stick to it without negotiation.</div></li>
+            <li><div class="step-num">3</div><div><strong>Thesis broken</strong>: What specific event would invalidate your reason for owning the stock? "I bought this hydropower company because its PPA rate locked in strong revenue. If the PPA is renegotiated downward, I sell." Don't let your thesis become "I'll sell when I feel like it."</div></li>
+          </ol>
+
+          <div class="callout practice">
+            <div class="callout-title">✅ Module 5 Checkpoint</div>
+            <p>Design a hypothetical 10-stock portfolio. Ensure no single stock exceeds 10% of total value. Ensure no single sector exceeds 40%. For each position, write one sentence explaining the thesis and one sentence defining when you would sell.</p>
+          </div>
+        </div>
+      </section>
+
+      <hr class="module-divider" />
+
+      <!-- ───────── MODULE 6 ───────── -->
+      <section class="module mod-6" id="module-6">
+        <div class="module-header">
+          <div class="module-num">06</div>
+          <div class="module-header-text">
+            <p class="module-label">Module 6</p>
+            <h2 class="module-title">Live Market Observation and Simulated Investing</h2>
+          </div>
+        </div>
+
+        <div class="section" id="m6-paper">
+          <h3>Paper Trading Protocol</h3>
+          <p>Paper trading is investing with hypothetical money — following real market prices without committing real capital. It is not optional before you invest real money; it is mandatory. Three months of rigorous paper trading will teach you more than any textbook because you experience the psychology of watching your "portfolio" move daily.</p>
+
+          <ol class="steps">
+            <li><div class="step-num">1</div><div><strong>Set your starting capital</strong>: Hypothetical NPR 100,000. Treat it as if it were real. Every decision should carry the same rigor as if you would lose actual savings.</div></li>
+            <li><div class="step-num">2</div><div><strong>Maintain a trade journal</strong>: For every trade: record the date, stock name, price, quantity, and — critically — your reason for buying. One paragraph minimum. This forces clarity. "It seemed like a good time" is not a thesis.</div></li>
+            <li><div class="step-num">3</div><div><strong>Track against the benchmark</strong>: Compare your portfolio performance weekly against the NEPSE Index. If the index rose 8% and your portfolio rose 3%, you underperformed. Be honest about this.</div></li>
+            <li><div class="step-num">4</div><div><strong>Monthly review</strong>: Which positions were right? Was your thesis correct or did you get lucky? Which were wrong — and why? Write this down. The habit of honest self-review separates improving investors from those who repeat the same mistakes.</div></li>
+          </ol>
+
+          <div class="callout warning">
+            <div class="callout-title">⚠ The Psychology Warning</div>
+            <p>Paper trading is psychologically easier than real investing because you don't feel the loss. When you move to real money, emotions amplify every move. Many people who were successful paper traders became poor real-money traders because they couldn't handle the psychological pressure. Be aware of this transition. Start real investing with an amount you can emotionally afford to lose entirely.</p>
+          </div>
+        </div>
+
+        <div class="section" id="m6-workflow">
+          <h3>Your Research Workflow</h3>
+          <p>For any stock you are considering buying, run this five-step checklist:</p>
+
+          <ol class="steps">
+            <li><div class="step-num">1</div><div><strong>Financial health check</strong>: Pull the last 4 quarterly income statements from Merolagani. Is EPS growing quarter-over-quarter? Is revenue growing? Any warning signs in the balance sheet (rising debt, falling equity)?</div></li>
+            <li><div class="step-num">2</div><div><strong>Valuation check</strong>: What is the current P/E, P/B, and ROE? Compare these to the sector average. Is this stock cheap, fair-valued, or expensive relative to peers?</div></li>
+            <li><div class="step-num">3</div><div><strong>Technical context</strong>: What does the 1-year chart show? Is the stock in an uptrend or downtrend? Where are the nearest support and resistance levels? Buying a fundamentally strong stock in a clear downtrend often means catching a falling knife.</div></li>
+            <li><div class="step-num">4</div><div><strong>News scan</strong>: Check Sharesansar for the last 3 months of company news. Any material events — dividend announcements, bonus issues, management changes, regulatory actions?</div></li>
+            <li><div class="step-num">5</div><div><strong>Write the thesis</strong>: One paragraph. Why does this stock deserve to be in your portfolio? What specific factors will drive the price higher? What would prove you wrong?</div></li>
+          </ol>
+        </div>
+
+        <div class="section" id="m6-watchlist">
+          <h3>Building Your First Watchlist</h3>
+          <p>A watchlist is not a buy list — it's a research list. You are studying these companies, not yet buying. This separation is important: it prevents the common mistake of buying something just because you've been watching it.</p>
+          <p>Suggested starting composition for a 10-stock watchlist:</p>
+          <ul class="bullet-list">
+            <li>3 commercial banks — one large-cap (NABIL, NCCB, HBL), one mid-cap, one smaller private bank</li>
+            <li>2 hydropower companies — one operating project (generating revenue now), one under-development</li>
+            <li>1 life insurance company</li>
+            <li>1 non-life (general) insurance company</li>
+            <li>1 manufacturing or trading company</li>
+            <li>2 of your own selection based on your independent research</li>
+          </ul>
+          <p>Track the price, EPS, and any news for every stock weekly. After 8 weeks, you will have a working understanding of how these companies behave under different market conditions. Then you can make an informed first investment.</p>
+
+          <div class="callout nepal">
+            <div class="callout-title">🏔 One Rule That Matters Most</div>
+            <p>Track your performance <em>honestly</em>. The biggest structural error Nepali retail investors make is selectively remembering their wins and forgetting their losses. A formal trading journal — even a simple spreadsheet — forces accountability. Without it, you will consistently overestimate your skill and take risks that eventually result in serious losses.</p>
+          </div>
+
+          <div class="callout practice">
+            <div class="callout-title">✅ Final Assignment</div>
+            <p>Run a 90-day simulated portfolio using NPR 100,000 in hypothetical capital. Minimum 8 positions, no single position over 10%, no single sector over 40%. Submit a monthly review covering: top performer (and why), worst performer (and why), one thing you changed in your strategy after month one, and whether you are beating or trailing the NEPSE Index.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────── GLOSSARY ───────── -->
+      <section class="glossary" id="glossary">
+        <h2>Key Terms Reference</h2>
+        <div class="glossary-grid">
+          <dl class="glossary-item"><dt>ASBA</dt><dd>Application Supported by Blocked Amount — IPO funds are blocked, not debited, until allotment confirmation.</dd></dl>
+          <dl class="glossary-item"><dt>Bear Market</dt><dd>Sustained market decline of 20%+ from recent peak. Characterized by falling index levels and negative sentiment.</dd></dl>
+          <dl class="glossary-item"><dt>Book Value Per Share</dt><dd>Total shareholder equity divided by number of shares outstanding. Net asset value per share.</dd></dl>
+          <dl class="glossary-item"><dt>Bull Market</dt><dd>Sustained market rise of 20%+ from a recent trough. Positive sentiment, rising prices.</dd></dl>
+          <dl class="glossary-item"><dt>CAR</dt><dd>Capital Adequacy Ratio — NRB requires banks to maintain minimum 11% CAR to absorb potential losses.</dd></dl>
+          <dl class="glossary-item"><dt>CDSC</dt><dd>Central Depository System and Clearing Limited — holds all shares electronically on behalf of investors.</dd></dl>
+          <dl class="glossary-item"><dt>Circuit Breaker</dt><dd>Automatic trading halt when individual stocks move ±10% or when the NEPSE Index falls 3%/5%/7% in one session.</dd></dl>
+          <dl class="glossary-item"><dt>DPS</dt><dd>Dividend Per Share — total dividends (cash + bonus) distributed per share in a fiscal year.</dd></dl>
+          <dl class="glossary-item"><dt>EPS</dt><dd>Earnings Per Share — net profit divided by total shares outstanding. Primary valuation driver on NEPSE.</dd></dl>
+          <dl class="glossary-item"><dt>Face Value (FV)</dt><dd>Nominal value of a share at incorporation — almost universally NPR 100 on NEPSE. Unrelated to market price.</dd></dl>
+          <dl class="glossary-item"><dt>IPO</dt><dd>Initial Public Offering — first sale of company shares to the public, subject to SEBON approval.</dd></dl>
+          <dl class="glossary-item"><dt>Limit Order</dt><dd>Buy or sell order at a specified price. Only executes at that price or better.</dd></dl>
+          <dl class="glossary-item"><dt>Market Order</dt><dd>Buy or sell order executed immediately at the best available current price.</dd></dl>
+          <dl class="glossary-item"><dt>Meroshare</dt><dd>CDSC's official online portal for IPO applications, portfolio viewing, and dividend management.</dd></dl>
+          <dl class="glossary-item"><dt>NIM</dt><dd>Net Interest Margin — the spread between what a bank earns on loans and pays on deposits. Key bank profitability metric.</dd></dl>
+          <dl class="glossary-item"><dt>NPL Ratio</dt><dd>Non-Performing Loan ratio — loans where borrowers have defaulted, as a percentage of total loans.</dd></dl>
+          <dl class="glossary-item"><dt>NRB</dt><dd>Nepal Rastra Bank — Nepal's central bank. Its monetary policy decisions are the single biggest driver of banking sector stock prices.</dd></dl>
+          <dl class="glossary-item"><dt>P/B Ratio</dt><dd>Price-to-Book Ratio — market price divided by book value per share. A P/B below 1 means you buy at a discount to net assets.</dd></dl>
+          <dl class="glossary-item"><dt>P/E Ratio</dt><dd>Price-to-Earnings Ratio — market price divided by EPS. Measures how much you pay for each rupee of profit.</dd></dl>
+          <dl class="glossary-item"><dt>PPA</dt><dd>Power Purchase Agreement — fixed-price contract between a hydropower company and NEA (Nepal Electricity Authority).</dd></dl>
+          <dl class="glossary-item"><dt>ROE</dt><dd>Return on Equity — net profit divided by shareholders' equity. Measures how efficiently capital is deployed.</dd></dl>
+          <dl class="glossary-item"><dt>SEBON</dt><dd>Securities Board of Nepal — the capital market regulator. Approves IPOs, licenses brokers, enforces securities law.</dd></dl>
+          <dl class="glossary-item"><dt>Settlement (T+3)</dt><dd>Trade date + 3 working days. The time between placing a trade and the actual transfer of shares and funds.</dd></dl>
+          <dl class="glossary-item"><dt>Stop-Loss</dt><dd>Pre-set price at which you exit a position to limit losses. Must be decided before buying, not during a drawdown.</dd></dl>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // Reading progress bar
+    window.addEventListener('scroll', () => {
+      const docH = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (window.scrollY / docH) * 100;
+      document.getElementById('readingProgress').style.width = progress + '%';
+    });
+
+    // Active TOC link highlighting
+    const sections = document.querySelectorAll('section[id], div[id]');
+    const tocLinks = document.querySelectorAll('.toc-list a');
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          tocLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + entry.target.id) {
+              link.classList.add('active');
+            }
+          });
+        }
+      });
+    }, { rootMargin: '-15% 0px -70% 0px' });
+
+    sections.forEach(sec => observer.observe(sec));
+  </script>
+</body>
+</html>

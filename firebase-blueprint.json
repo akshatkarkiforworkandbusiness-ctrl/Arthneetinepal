@@ -1,0 +1,97 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Information about an Arthneeti member",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["member", "admin"] },
+        "topics": { "type": "array", "items": { "type": "string" } },
+        "joinedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "name", "email", "role", "topics", "joinedAt"]
+    },
+    "Post": {
+      "title": "Post",
+      "description": "A community contribution (Discussion, Research, or Question)",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["discussion", "research", "question"] },
+        "title": { "type": "string" },
+        "author": { "type": "string" },
+        "authorId": { "type": "string" },
+        "category": { "type": "string", "enum": ["Finance", "Economics", "Other"] },
+        "content": { "type": "string" },
+        "abstract": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "pdfUrl": { "type": "string" },
+        "likes": { "type": "integer" },
+        "commentCount": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "seeded": { "type": "boolean" }
+      },
+      "required": ["type", "author", "authorId", "category", "content", "likes", "commentCount", "createdAt"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "A comment on a post",
+      "type": "object",
+      "properties": {
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "text": { "type": "string" },
+        "likes": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "parentId": { "type": "string" }
+      },
+      "required": ["authorId", "authorName", "text", "likes", "createdAt"]
+    },
+    "Event": {
+      "title": "Event",
+      "description": "An upcoming Arthneeti activity",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "dateTime": { "type": "string", "format": "date-time" },
+        "location": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "dateTime", "location", "description", "category", "createdAt"]
+    },
+    "Meta": {
+       "title": "Meta",
+       "description": "System metadata",
+       "type": "object",
+       "properties": {
+         "seededAt": { "type": "string", "format": "date-time" }
+       }
+    }
+  },
+  "firestore": {
+    "users": {
+      "schema": "User",
+      "description": "Member profiles"
+    },
+    "posts": {
+      "schema": "Post",
+      "description": "Community posts"
+    },
+    "posts/{postId}/comments": {
+      "schema": "Comment",
+      "description": "Threaded discussions"
+    },
+    "events": {
+      "schema": "Event",
+      "description": "Upcoming activities"
+    },
+    "meta": {
+      "schema": "Meta",
+      "description": "System state"
+    }
+  }
+}

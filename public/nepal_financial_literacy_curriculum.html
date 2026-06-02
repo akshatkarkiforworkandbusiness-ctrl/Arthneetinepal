@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Literacy Guide — Nepal</title>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #F8FAFC;
+    --ink-secondary: #94A3B8;
+    --ink-muted: #64748B;
+    --surface: #0B0F19;
+    --surface-warm: #161F30;
+    --border: #1F2A3F;
+    --accent: #F43F5E;
+    --accent-soft: rgba(244, 63, 94, 0.12);
+    --accent-mid: rgba(244, 63, 94, 0.35);
+    --teal: #10B981;
+    --teal-soft: rgba(16, 185, 129, 0.12);
+    --teal-mid: rgba(16, 185, 129, 0.35);
+    --amber: #F59E0B;
+    --amber-soft: rgba(245, 158, 11, 0.12);
+    --amber-mid: rgba(245, 158, 11, 0.35);
+    --blue: #3B82F6;
+    --blue-soft: rgba(59, 130, 246, 0.12);
+    --blue-mid: rgba(59, 130, 246, 0.35);
+    --purple: #8B5CF6;
+    --purple-soft: rgba(139, 92, 246, 0.12);
+    --gold: #F59E0B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--ink);
+    background: var(--surface);
+  }
+  .cover {
+    background: var(--ink);
+    color: #f5f5f0;
+    padding: 72px 10% 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -80px;
+    width: 320px; height: 320px;
+    border: 1.5px solid rgba(255,255,255,0.08);
+    border-radius: 50%;
+  }
+  .cover-flag {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 28px;
+  }
+  .cover h1 {
+    font-family: 'Bitter', serif;
+    font-size: clamp(32px, 5vw, 54px);
+    font-weight: 700;
+    line-height: 1.15;
+    max-width: 600px;
+    margin-bottom: 20px;
+  }
+  .cover h1 em { font-style: normal; color: #d4a96a; }
+  .cover-sub {
+    font-size: 15px;
+    color: rgba(255,255,255,0.55);
+    max-width: 480px;
+    margin-bottom: 40px;
+    line-height: 1.65;
+  }
+  .cover-stats {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .cover-stat-n {
+    font-family: 'Bitter', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #d4a96a;
+  }
+  .cover-stat-l {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+  }
+  .toc-section {
+    background: var(--surface-warm);
+    border-bottom: 1px solid var(--border);
+    padding: 48px 10%;
+  }
+  .toc-section h2 {
+    font-family: 'Bitter', serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 24px;
+  }
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .toc-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 16px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    text-decoration: none;
+    transition: border-color 0.15s;
+  }
+  .toc-item:hover { border-color: var(--ink-secondary); }
+  .toc-num {
+    font-family: 'Bitter', serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink-muted);
+    min-width: 20px;
+    margin-top: 1px;
+  }
+  .toc-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  main { max-width: 900px; margin: 0 auto; padding: 0 5%; }
+  .module {
+    margin: 72px 0 0;
+    padding-bottom: 72px;
+    border-bottom: 1px solid var(--border);
+  }
+  .module:last-child { border-bottom: none; }
+  .module-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .module-num {
+    font-family: 'Bitter', serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: white;
+    background: var(--ink);
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+  .module-tag {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  .module h2 {
+    font-family: 'Bitter', serif;
+    font-size: clamp(24px, 3vw, 34px);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+  .module-intro {
+    font-size: 17px;
+    color: var(--ink-secondary);
+    max-width: 640px;
+    margin-bottom: 36px;
+    border-left: 3px solid var(--border);
+    padding-left: 16px;
+  }
+  .concept { margin-bottom: 40px; }
+  .concept h3 {
+    font-family: 'Bitter', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .concept p { color: var(--ink-secondary); margin-bottom: 12px; }
+  .concept p:last-child { margin-bottom: 0; }
+  .concept strong { color: var(--ink); }
+  .nepal-example {
+    background: var(--teal-soft);
+    border: 1px solid var(--teal-mid);
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .nepal-example .ex-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 8px;
+  }
+  .nepal-example p {
+    font-size: 15px;
+    color: #1f4a40;
+    line-height: 1.7;
+    margin-bottom: 8px;
+  }
+  .nepal-example p:last-child { margin-bottom: 0; }
+  .nepal-example strong { color: #0f302a; }
+  .myth-card {
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-mid);
+    border-radius: 6px;
+    padding: 18px 22px;
+    margin: 20px 0;
+  }
+  .myth-card .myth-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .myth-card p { font-size: 15px; color: #5c1f1a; line-height: 1.7; margin: 0; }
+  .formula-box {
+    background: var(--ink);
+    color: white;
+    border-radius: 6px;
+    padding: 22px 28px;
+    margin: 24px 0;
+    font-family: 'Bitter', serif;
+  }
+  .formula-box .f-label {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 8px;
+  }
+  .formula-box .f-eq {
+    font-size: 22px;
+    font-weight: 600;
+    color: #d4a96a;
+    letter-spacing: 0.02em;
+  }
+  .formula-box .f-note {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    margin-top: 8px;
+  }
+  .action-steps {
+    background: var(--amber-soft);
+    border: 1px solid var(--amber-mid);
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+  .action-steps .as-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 12px;
+  }
+  .action-steps ol { padding-left: 20px; color: #4a2c06; }
+  .action-steps ol li { font-size: 15px; margin-bottom: 8px; line-height: 1.6; }
+  .action-steps ol li:last-child { margin-bottom: 0; }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 15px;
+  }
+  .data-table thead th {
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    padding: 10px 14px;
+    border-bottom: 2px solid var(--border);
+  }
+  .data-table tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink-secondary);
+    vertical-align: top;
+  }
+  .data-table tbody td:first-child { font-weight: 600; color: var(--ink); }
+  .data-table tbody tr:last-child td { border-bottom: none; }
+  .budget-bar { margin: 20px 0; }
+  .budget-row { display: flex; align-items: center; margin-bottom: 10px; gap: 12px; }
+  .budget-label { font-size: 13px; font-weight: 600; color: var(--ink); min-width: 160px; }
+  .budget-track { flex: 1; height: 10px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .budget-fill { height: 100%; border-radius: 2px; }
+  .budget-pct { font-size: 13px; color: var(--ink-muted); min-width: 36px; text-align: right; }
+  .interest-demo {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 20px 0;
+    font-size: 14px;
+  }
+  .id-cell { background: white; padding: 12px 14px; }
+  .id-header {
+    background: var(--ink);
+    color: rgba(255,255,255,0.7);
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .id-year { background: var(--surface-warm); font-weight: 600; color: var(--ink); }
+  .id-good { color: var(--teal); font-weight: 600; }
+  .callout {
+    background: var(--purple-soft);
+    border-left: 4px solid var(--purple);
+    padding: 16px 20px;
+    margin: 24px 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .callout p { font-size: 15px; color: #2a1a50; margin: 0; line-height: 1.7; }
+  .callout strong { color: #1a0d35; }
+  .divider-line { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+  footer {
+    background: var(--ink);
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    font-size: 13px;
+    padding: 36px 10%;
+    margin-top: 80px;
+    line-height: 1.6;
+  }
+  footer a { color: rgba(255,255,255,0.6); text-decoration: none; }
+  @media (max-width: 640px) {
+    .cover, .toc-section { padding-left: 6%; padding-right: 6%; }
+    main { padding: 0 6%; }
+    .interest-demo { grid-template-columns: 1fr; }
+    .id-header { display: none; }
+    .budget-label { min-width: 100px; font-size: 12px; }
+  }
+
+  @media print {
+    *, *::before, *::after {
+      background: transparent !important;
+      color: #000000 !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+    }
+    html, body {
+      background: #ffffff !important;
+      color: #000000 !important;
+    }
+    :root {
+      --ink: #000000 !important;
+      --ink-secondary: #475569 !important;
+      --ink-muted: #64748b !important;
+      --surface: #ffffff !important;
+      --surface-warm: #f8fafc !important;
+      --border: #cbd5e1 !important;
+      --accent: #000000 !important;
+      --accent-soft: #f8fafc !important;
+      --accent-mid: #cbd5e1 !important;
+      --teal: #000000 !important;
+      --teal-soft: #f8fafc !important;
+      --teal-mid: #cbd5e1 !important;
+      --amber: #000000 !important;
+      --amber-soft: #f8fafc !important;
+      --amber-mid: #cbd5e1 !important;
+      --blue: #000000 !important;
+      --blue-soft: #f8fafc !important;
+      --blue-mid: #cbd5e1 !important;
+      --purple: #000000 !important;
+      --purple-soft: #f8fafc !important;
+      --gold: #000000 !important;
+    }
+    nav, .reading-progress, .toc-section, button, .menu-btn {
+      display: none !important;
+    }
+    main {
+      padding: 1rem 0 !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+    }
+    .cover {
+      min-height: auto !important;
+      padding: 2rem 0 !important;
+      margin-bottom: 2rem !important;
+      border-bottom: 2px solid #000000 !important;
+      background: #ffffff !important;
+    }
+    .cover h1 {
+      color: #000000 !important;
+      font-size: 2.5rem !important;
+    }
+    section, .chapter {
+      page-break-inside: avoid !important;
+    }
+    .interest-demo, .callout, .card, .calculator {
+      background: #f8fafc !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #000000 !important;
+      page-break-inside: avoid !important;
+    }
+    .callout p, .card p, .calculator p {
+      color: #000000 !important;
+    }
+    h2, h3, h4, th, td {
+      color: #000000 !important;
+    }
+    .budget-row {
+      border-bottom: 1px solid #cbd5e1 !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <p class="cover-flag">Nepal · Financial Literacy Series</p>
+  <h1>Money Works<br>When You <em>Understand</em> It</h1>
+  <p class="cover-sub">A practical guide to managing money, building savings, and making smart financial decisions — grounded in Nepal's real banking system and everyday Nepali life.</p>
+  <div class="cover-stats">
+    <div>
+      <div class="cover-stat-n">6</div>
+      <div class="cover-stat-l">Core modules</div>
+    </div>
+    <div>
+      <div class="cover-stat-n">30+</div>
+      <div class="cover-stat-l">Nepal-specific examples</div>
+    </div>
+    <div>
+      <div class="cover-stat-n">Beginner</div>
+      <div class="cover-stat-l">No prior knowledge needed</div>
+    </div>
+  </div>
+</header>
+
+<section class="toc-section">
+  <h2>What you will learn</h2>
+  <div class="toc-grid">
+    <a href="#module1" class="toc-item">
+      <span class="toc-num">01</span>
+      <div class="toc-title">How Money Works: Saving, Spending &amp; Budgeting</div>
+    </a>
+    <a href="#module2" class="toc-item">
+      <span class="toc-num">02</span>
+      <div class="toc-title">Interest, Inflation &amp; Purchasing Power</div>
+    </a>
+    <a href="#module3" class="toc-item">
+      <span class="toc-num">03</span>
+      <div class="toc-title">Personal Finance Planning &amp; Goal-Setting</div>
+    </a>
+    <a href="#module4" class="toc-item">
+      <span class="toc-num">04</span>
+      <div class="toc-title">Nepal's Banking System: NRB &amp; Commercial Banks</div>
+    </a>
+    <a href="#module5" class="toc-item">
+      <span class="toc-num">05</span>
+      <div class="toc-title">Credit, Loans &amp; Responsible Borrowing</div>
+    </a>
+    <a href="#module6" class="toc-item">
+      <span class="toc-num">06</span>
+      <div class="toc-title">Reading Financial News &amp; Economic Indicators</div>
+    </a>
+  </div>
+</section>
+
+<main>
+
+<!-- MODULE 1 -->
+<section class="module" id="module1">
+  <div class="module-eyebrow">
+    <span class="module-num">MODULE 01</span>
+    <span class="module-tag">Foundation</span>
+  </div>
+  <h2>How Money Works: Saving, Spending &amp; Budgeting</h2>
+  <p class="module-intro">Before any strategy, you need to understand what money actually is and what it does — because most people spend it before they think about it.</p>
+
+  <div class="concept">
+    <h3>What is money, really?</h3>
+    <p>Money is a tool for exchanging value. You give your time and skills to an employer or customer — they give you money. You use that money to get food, transport, and services from others. That is the entire system.</p>
+    <p>The key insight: <strong>money is neutral.</strong> It does not grow on its own. It only works for you if you understand and direct it. If you don't direct it, others will — through advertising, social pressure, or interest charges.</p>
+    <div class="nepal-example">
+      <div class="ex-label">Nepali Context</div>
+      <p>Imagine Sita earns Rs. 35,000/month as a school teacher in Pokhara. That number enters her account on the 28th. By the 10th of the following month, it is mostly gone — spent on rent, groceries, and some entertainment. She is not doing anything wrong exactly, but she has no direction. She is reacting to expenses rather than deciding in advance. This module is about changing that.</p>
+    </div>
+  </div>
+
+  <hr class="divider-line">
+
+  <div class="concept">
+    <h3>The three uses of money</h3>
+    <p>Every rupee you receive will be used in one of three ways:</p>
+    <table class="data-table">
+      <thead><tr><th>Use</th><th>What it means</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>Spending</td><td>Exchanging money for goods or services you consume now</td><td>Dal bhat, bus fare, phone recharge</td></tr>
+        <tr><td>Saving</td><td>Keeping money aside for a future use</td><td>Putting Rs. 5,000 in a savings account every month</td></tr>
+        <tr><td>Investing</td><td>Using money to generate more money over time</td><td>Buying shares in NEPSE, fixed deposits</td></tr>
+      </tbody>
+    </table>
+    <p>Most people only practice spending. Financially literate people consciously allocate across all three — even on small incomes.</p>
+  </div>
+
+  <hr class="divider-line">
+
+  <div class="concept">
+    <h3>Budgeting: deciding where your money goes before you spend it</h3>
+    <p>A budget is simply a plan for your money. It is not a restriction — it is permission. When you budget Rs. 6,000 for food, you don't have to feel guilty spending it on food. You already decided that was the right amount.</p>
+    <p>The most widely used framework is the <strong>50/30/20 rule</strong>, adapted here for a Nepali context:</p>
+    <div class="budget-bar">
+      <div class="budget-row">
+        <span class="budget-label">Needs (50%)</span>
+        <div class="budget-track"><div class="budget-fill" style="width:50%;background:#1a6b5a;"></div></div>
+        <span class="budget-pct">50%</span>
+      </div>
+      <div class="budget-row">
+        <span class="budget-label">Wants (30%)</span>
+        <div class="budget-track"><div class="budget-fill" style="width:30%;background:#d4a96a;"></div></div>
+        <span class="budget-pct">30%</span>
+      </div>
+      <div class="budget-row">
+        <span class="budget-label">Savings (20%)</span>
+        <div class="budget-track"><div class="budget-fill" style="width:20%;background:#c0392b;"></div></div>
+        <span class="budget-pct">20%</span>
+      </div>
+    </div>
+    <div class="nepal-example">
+      <div class="ex-label">Worked Example — Rs. 40,000 salary in Kathmandu</div>
+      <p><strong>Needs (Rs. 20,000):</strong> Rent Rs. 10,000 · Food Rs. 6,000 · Transport Rs. 2,500 · Utilities Rs. 1,500</p>
+      <p><strong>Wants (Rs. 12,000):</strong> Eating out Rs. 3,000 · Internet Rs. 2,000 · Clothes Rs. 3,000 · Social/misc Rs. 4,000</p>
+      <p><strong>Savings (Rs. 8,000):</strong> Emergency fund Rs. 3,000 · Goal savings Rs. 5,000</p>
+      <p>This is not rigid. If your rent is Rs. 14,000, adjust — cut wants, not savings.</p>
+    </div>
+    <div class="myth-card">
+      <div class="myth-label">Common Mistake</div>
+      <p>Many students think: "I will start saving once I earn more." This is the most dangerous financial belief in Nepal. A person earning Rs. 25,000 who saves 10% (Rs. 2,500/month) will have significantly better financial health than a person earning Rs. 60,000 who saves nothing. Income is not the deciding factor — habit is.</p>
+    </div>
+  </div>
+
+  <hr class="divider-line">
+
+  <div class="concept">
+    <h3>The emergency fund: your financial immune system</h3>
+    <p>Before any investment, before any goal, you need an emergency fund — money set aside that you do not touch unless something genuinely unexpected happens: job loss, medical emergency, family crisis.</p>
+    <p><strong>Target: 3 to 6 months of your essential expenses.</strong> If your essential expenses are Rs. 20,000/month, your emergency fund target is Rs. 60,000–1,20,000.</p>
+    <p>Keep this in a separate savings account — not in your regular account where you might spend it. NIC Asia, Global IME, and most commercial banks let you open a second account for exactly this purpose.</p>
+    <div class="action-steps">
+      <div class="as-label">Your Action Plan — Module 1</div>
+      <ol>
+        <li>Track every rupee you spend for 30 days. Use a notebook, spreadsheet, or a free app like Money Manager.</li>
+        <li>Categorize your spending into Needs, Wants, and Savings.</li>
+        <li>Create a monthly budget using the 50/30/20 framework — adjusted for your actual life.</li>
+        <li>Open a separate savings account and set up an automatic transfer of even Rs. 1,000–2,000 per month into it as your emergency fund.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- MODULE 2 -->
+<section class="module" id="module2">
+  <div class="module-eyebrow">
+    <span class="module-num">MODULE 02</span>
+    <span class="module-tag">Core Concepts</span>
+  </div>
+  <h2>Interest, Inflation &amp; Purchasing Power</h2>
+  <p class="module-intro">Three invisible forces are at work on your money at all times. If you don't understand them, they work against you. If you do, you can use at least one of them in your favor.</p>
+
+  <div class="concept">
+    <h3>Simple interest vs. compound interest</h3>
+    <p><strong>Simple interest</strong> is calculated only on the original amount (the principal). <strong>Compound interest</strong> is calculated on the principal plus all the interest already earned. The difference sounds small. Over time, it is enormous.</p>
+    <div class="formula-box">
+      <div class="f-label">Simple Interest</div>
+      <div class="f-eq">I = P &times; R &times; T</div>
+      <div class="f-note">P = Principal &nbsp;&middot;&nbsp; R = Annual rate &nbsp;&middot;&nbsp; T = Time in years</div>
+    </div>
+    <div class="formula-box">
+      <div class="f-label">Compound Interest (compounded annually)</div>
+      <div class="f-eq">A = P &times; (1 + R)<sup style="font-size:14px">T</sup></div>
+      <div class="f-note">A = Final amount &nbsp;&middot;&nbsp; Same variables as above</div>
+    </div>
+    <div class="nepal-example">
+      <div class="ex-label">Real Comparison — Rs. 1,00,000 over 10 years at 8% per year</div>
+      <div class="interest-demo">
+        <div class="id-header">Year</div><div class="id-header">Simple Interest</div><div class="id-header">Compound Interest</div>
+        <div class="id-cell id-year">Year 1</div><div class="id-cell">Rs. 1,08,000</div><div class="id-cell">Rs. 1,08,000</div>
+        <div class="id-cell id-year">Year 3</div><div class="id-cell">Rs. 1,24,000</div><div class="id-cell">Rs. 1,25,971</div>
+        <div class="id-cell id-year">Year 5</div><div class="id-cell">Rs. 1,40,000</div><div class="id-cell">Rs. 1,46,933</div>
+        <div class="id-cell id-year" style="color:var(--teal);font-weight:700;">Year 10</div>
+        <div class="id-cell"><span class="id-good">Rs. 1,80,000</span></div>
+        <div class="id-cell"><span class="id-good">Rs. 2,15,892</span></div>
+      </div>
+      <p>The compound version earns <strong>Rs. 35,892 more</strong> — without any additional deposits. That gap widens every year.</p>
+    </div>
+    <div class="myth-card">
+      <div class="myth-label">The Dangerous Side of Compound Interest</div>
+      <p>Compound interest works for you in savings and investments. It works against you in loans. A personal loan at 18% compounding monthly is not a simple 18% cost — the true cost is higher. This is why many Nepalis who take high-interest personal loans or microfinance loans find themselves owing more after years of payments.</p>
+    </div>
+  </div>
+
+  <hr class="divider-line">
+
+  <div class="concept">
+    <h3>Inflation: the silent tax on your savings</h3>
+    <p>Inflation means the general price level rises over time. The same Rs. 100 buys less next year than it does today. This is not a disaster — it is a normal economic process. But it has direct implications for how you save.</p>
+    <p>If Nepal's inflation rate is 6% per year and your savings account pays 5% interest, your money is <strong>losing purchasing power</strong> — even though the number in your account is growing.</p>
+    <div class="formula-box">
+      <div class="f-label">Real Return</div>
+      <div class="f-eq">Real Return &asymp; Nominal Rate &minus; Inflation Rate</div>
+      <div class="f-note">Example: 7% savings rate &minus; 6% inflation = 1% real return. You are barely ahead.</div>
+    </div>
+    <div class="nepal-example">
+      <div class="ex-label">What Inflation Looks Like in Nepal</div>
+      <p>In 2015, a plate of dal bhat in a mid-range Kathmandu restaurant cost around Rs. 100–120. By 2024, the same meal costs Rs. 180–220. That is roughly a 70–80% price increase over 9 years — averaging about 6–7% per year.</p>
+      <p>Your grandfather's Rs. 5 lakh kept as cash in 2005 has the purchasing power of roughly Rs. 1.5–2 lakh today. The cash did not disappear — but its value did.</p>
+    </div>
+    <p>This is why keeping large amounts of cash at home — a common practice in Nepal — is financially harmful over the long run. Money in a savings account at least partially offsets inflation. Money in a mattress loses to inflation completely.</p>
+  </div>
+
+  <hr class="divider-line">
+
+  <div class="concept">
+    <h3>Purchasing power: what your money can actually do</h3>
+    <p>Purchasing power is the real measure of your wealth — not the number in your account. Two people can both have Rs. 50,000 — but if one lives in Kathmandu and one in Dhankuta, their purchasing power is different. Similarly, Rs. 1,00,000 today will not buy what Rs. 1,00,000 could buy 10 years ago.</p>
+    <div class="callout">
+      <p><strong>Key insight:</strong> If you are saving Rs. 5,000 per month toward a goal of Rs. 5 lakhs — and it will take 8 years — you need to account for the fact that Rs. 5 lakhs in 8 years will not buy as much as Rs. 5 lakhs today. At 6% annual inflation, prices roughly double every 12 years. Plan accordingly.</p>
+    </div>
+    <div class="action-steps">
+      <div class="as-label">Your Action Plan — Module 2</div>
+      <ol>
+        <li>Check the current savings account interest rate at your bank. Ask at the branch or look it up on their website.</li>
+        <li>Compare it to Nepal's current inflation rate — available on nrb.org.np.</li>
+        <li>Calculate your real return. If it is near zero or negative, consider whether a fixed deposit might give you a better real return.</li>
+        <li>For any financial goal more than 3 years away, add a 6% annual inflation adjustment to your target amount.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- MODULE 3 -->
+<section class="module" id="module3">
+  <div class="module-eyebrow">
+    <span class="module-num">MODULE 03</span>
+    <span class="module-tag">Planning</span>
+  </div>
+  <h2>Personal Finance Planning &amp; Goal-Setting</h2>
+  <p class="module-intro">A goal without a financial plan is a wish. A plan without a specific goal is just vague saving. You need both — and they need to be concrete enough to drive your monthly decisions.</p>
+
+  <div class="concept">
+    <h3>Short, medium, and long-term financial goals</h3>
+    <p>Not all goals are the same. Mixing them — saving for a Pokhara trip in the same account as saving for a house — is a reliable way to spend the house fund on the trip.</p>
+    <table class="data-table">
+      <thead><tr><th>Horizon</th><th>Timeframe</th><th>Nepali Examples</th><th>Best Instrument</th></tr></thead>
+      <tbody>
+        <tr><td>Short-term</td><td>Under 1 year</td><td>New phone, Dashain expenses, semester fees</td><td>Savings account</td></tr>
+        <tr><td>Medium-term</td><td>1–5 years</td><td>Motorcycle, marriage fund, overseas education</td><td>Fixed deposit, recurring deposit</td></tr>
+        <tr><td>Long-term</td><td>5+ years</td><td>House/land, retirement, children's education</td><td>Property, NEPSE shares, Citizen Investment Trust (CIT)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider-line">
+
+  <div class="concept">
+    <h3>Making goals SMART</h3>
+    <p>The most common failure in personal finance is vague goals. "I want to save money" is not a plan. "I want to save Rs. 2,40,000 in 24 months for a motorcycle by depositing Rs. 10,000/month in a fixed deposit at 9% interest" — that is a plan.</p>
+    <table class="data-table">
+      <thead><tr><th>Letter</th><th>Meaning</th><th>Weak version</th><th>Strong version</th></tr></thead>
+      <tbody>
+        <tr><td>S</td><td>Specific</td><td>"Save money"</td><td>"Save for a Royal Enfield motorcycle"</td></tr>
+        <tr><td>M</td><td>Measurable</td><td>"A lot"</td><td>"Rs. 3,50,000"</td></tr>
+        <tr><td>A</td><td>Achievable</td><td>Requires saving 90% of income</td><td>Requires saving 25% of income</td></tr>
+        <tr><td>R</td><td>Relevant</td><td>A goal copied from someone else</td><td>A goal that matters to your actual life</td></tr>
+        <tr><td>T</td><td>Time-bound</td><td>"Someday"</td><td>"By December 2027"</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider-line">
+
+  <div class="concept">
+    <h3>Your personal net worth: the real scorecard</h3>
+    <p>Net worth is the single most important number in your financial life. It tells you where you actually stand.</p>
+    <div class="formula-box">
+      <div class="f-label">Net Worth</div>
+      <div class="f-eq">Net Worth = Assets &minus; Liabilities</div>
+      <div class="f-note">Assets: what you own &nbsp;&middot;&nbsp; Liabilities: what you owe</div>
+    </div>
+    <div class="nepal-example">
+      <div class="ex-label">Example — Ramesh, 28, Kathmandu</div>
+      <p><strong>Assets:</strong> Savings account Rs. 80,000 · Fixed deposit Rs. 1,50,000 · Motorcycle resale value Rs. 90,000 · NEPSE shares Rs. 40,000 — Total: Rs. 3,60,000</p>
+      <p><strong>Liabilities:</strong> Motorcycle loan remaining Rs. 1,20,000 · Personal loan Rs. 50,000 — Total: Rs. 1,70,000</p>
+      <p><strong>Net Worth: Rs. 1,90,000.</strong> Ramesh has a positive net worth. His goal now is to reduce liabilities and increase assets. Net worth should grow every year.</p>
+    </div>
+    <div class="callout">
+      <p><strong>Why this matters more than income:</strong> A government officer earning Rs. 60,000/month with Rs. 20 lakhs in loans has a lower net worth than a shopkeeper earning Rs. 30,000/month who owns their shop and has no debt. Income is a flow. Net worth is your actual wealth.</p>
+    </div>
+    <div class="action-steps">
+      <div class="as-label">Your Action Plan — Module 3</div>
+      <ol>
+        <li>Write down one goal for each time horizon (short, medium, long-term). Make each one SMART.</li>
+        <li>Calculate your current net worth honestly — include all debts.</li>
+        <li>Open a separate savings account for each medium-term goal so the funds stay separate.</li>
+        <li>Set a reminder to recalculate your net worth every 6 months to track progress.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- MODULE 4 -->
+<section class="module" id="module4">
+  <div class="module-eyebrow">
+    <span class="module-num">MODULE 04</span>
+    <span class="module-tag">Nepal's Banking System</span>
+  </div>
+  <h2>Nepal's Banking System: NRB &amp; Commercial Banks</h2>
+  <p class="module-intro">Most people use a bank without understanding how banking works or who sets the rules. Understanding the system makes you a more informed customer and protects you from common mistakes.</p>
+
+  <div class="concept">
+    <h3>The three-tier structure</h3>
+    <table class="data-table">
+      <thead><tr><th>Class</th><th>Type</th><th>Role</th><th>Examples</th></tr></thead>
+      <tbody>
+        <tr><td>"A" class</td><td>Commercial Banks</td><td>Full-service banking for individuals and businesses</td><td>Nepal Bank Ltd, Nabil Bank, Global IME, NIC Asia, Himalayan Bank</td></tr>
+        <tr><td>"B" class</td><td>Development Banks</td><td>Regional focus, agricultural and project loans</td><td>Muktinath Bikas Bank, Shine Resunga</td></tr>
+        <tr><td>"C" class</td><td>Finance Companies</td><td>Hire-purchase and consumer financing</td><td>ICFC Finance, Janaki Finance</td></tr>
+      </tbody>
+    </table>
+    <p>There are also <strong>Microfinance Institutions (MFIs)</strong> serving rural areas and lower-income households, and <strong>Cooperative Societies</strong> — member-owned savings and credit unions that operate under separate regulation.</p>
+  </div>
+
+  <hr class="divider-line">
+
+  <div class="concept">
+    <h3>Nepal Rastra Bank (NRB): the regulator</h3>
+    <p>Nepal Rastra Bank is Nepal's central bank. It does not deal with ordinary customers — you cannot open an account at NRB. Instead, NRB controls the entire banking system from above.</p>
+    <table class="data-table">
+      <thead><tr><th>NRB Function</th><th>What it means for you</th></tr></thead>
+      <tbody>
+        <tr><td>Sets the Cash Reserve Ratio (CRR)</td><td>Determines how much of your deposits banks must keep in reserve vs. can lend out</td></tr>
+        <tr><td>Sets the Policy Rate</td><td>Indirectly influences what interest rate your bank offers on loans and savings</td></tr>
+        <tr><td>Issues currency</td><td>NRB is the only institution that can print and issue Nepali rupees</td></tr>
+        <tr><td>Manages foreign exchange reserves</td><td>Controls how many USD, INR, and other currencies Nepal holds — affects import capacity</td></tr>
+        <tr><td>Licenses and supervises banks</td><td>If a bank is caught doing something illegal, NRB can revoke its license</td></tr>
+      </tbody>
+    </table>
+    <div class="nepal-example">
+      <div class="ex-label">Why NRB Policy Affects Your Life Directly</div>
+      <p>In 2022–23, NRB tightened monetary policy to address inflation and the balance of payments crisis. This caused commercial banks to raise lending rates. Home loan rates jumped from around 8–9% to 14–16%.</p>
+      <p>Thousands of borrowers who had taken variable-rate loans suddenly had their monthly EMIs increase significantly — not because they borrowed more, but because NRB policy changed. This is why monetary policy is not just academic. It directly affects the cost of your loans and returns on your savings.</p>
+    </div>
+  </div>
+
+  <hr class="divider-line">
+
+  <div class="concept">
+    <h3>Types of accounts and what they are actually for</h3>
+    <table class="data-table">
+      <thead><tr><th>Account Type</th><th>Interest Rate (approx.)</th><th>Best Used For</th></tr></thead>
+      <tbody>
+        <tr><td>Current Account</td><td>0% or very low</td><td>Businesses with high-volume daily transactions</td></tr>
+        <tr><td>Savings Account</td><td>4–7% per year</td><td>Emergency fund, everyday savings, short-term goals</td></tr>
+        <tr><td>Fixed Deposit (FD)</td><td>8–12% per year</td><td>Medium-term goals — money you won't need for 3–24 months</td></tr>
+        <tr><td>Recurring Deposit (RD)</td><td>7–10% per year</td><td>Systematic saving — deposit a fixed amount every month</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">
+      <p><strong>Deposit Insurance:</strong> In Nepal, deposits up to Rs. 5,00,000 per depositor per bank are insured by the Deposit and Credit Guarantee Corporation (DCGC). If a licensed commercial bank fails, you will not lose your money up to that amount. This protection does not fully apply to cooperatives or unlicensed schemes — which is one reason keeping large sums in cooperatives carries higher risk.</p>
+    </div>
+    <div class="action-steps">
+      <div class="as-label">Your Action Plan — Module 4</div>
+      <ol>
+        <li>Visit nrb.org.np and find the current Policy Rate. Note whether it is higher or lower than last year — this tells you whether borrowing is getting more or less expensive.</li>
+        <li>Check whether your savings are in a licensed "A" or "B" class institution. If you have a significant amount in a cooperative, understand that your deposit insurance protection may be limited.</li>
+        <li>Ask your bank what interest rate they offer on fixed deposits for 1-year and 2-year terms. Compare across two or three banks.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- MODULE 5 -->
+<section class="module" id="module5">
+  <div class="module-eyebrow">
+    <span class="module-num">MODULE 05</span>
+    <span class="module-tag">Borrowing</span>
+  </div>
+  <h2>Credit, Loans &amp; Responsible Borrowing</h2>
+  <p class="module-intro">Debt is not inherently bad. It is a tool. But like most tools, using it wrong can cause serious damage. Nepal has a growing debt culture, and understanding how borrowing really works is more important than ever.</p>
+
+  <div class="concept">
+    <h3>Types of loans available in Nepal</h3>
+    <table class="data-table">
+      <thead><tr><th>Loan Type</th><th>Typical Use</th><th>Typical Rate (2024)</th><th>Secured?</th></tr></thead>
+      <tbody>
+        <tr><td>Home Loan</td><td>Purchase or construction of house or land</td><td>10–14%</td><td>Yes (property as collateral)</td></tr>
+        <tr><td>Auto / Vehicle Loan</td><td>Motorcycle, car, truck</td><td>11–15%</td><td>Yes (vehicle as collateral)</td></tr>
+        <tr><td>Education Loan</td><td>Domestic or foreign study</td><td>9–12%</td><td>Partial (guarantor or assets)</td></tr>
+        <tr><td>Personal Loan</td><td>Any personal expense</td><td>14–20%</td><td>No</td></tr>
+        <tr><td>Microfinance Loan</td><td>Small business, rural needs</td><td>15–24%</td><td>Group guarantee</td></tr>
+        <tr><td>Hire Purchase</td><td>Consumer goods (appliances, vehicles)</td><td>15–22%</td><td>Yes (goods as collateral)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider-line">
+
+  <div class="concept">
+    <h3>Understanding EMI (Equated Monthly Installment)</h3>
+    <p>When you take a loan, you repay it through EMIs — a fixed monthly amount that includes both principal (the original amount) and interest. Early EMIs are mostly interest. Later EMIs shift toward principal. This structure is called amortization.</p>
+    <div class="formula-box">
+      <div class="f-label">EMI Formula</div>
+      <div class="f-eq">EMI = P &times; r &times; (1+r)<sup style="font-size:14px">n</sup> &divide; [(1+r)<sup style="font-size:14px">n</sup> &minus; 1]</div>
+      <div class="f-note">P = Loan amount &nbsp;&middot;&nbsp; r = Monthly interest rate &nbsp;&middot;&nbsp; n = Number of monthly payments</div>
+    </div>
+    <div class="nepal-example">
+      <div class="ex-label">Worked Example — Rs. 5,00,000 personal loan at 18% for 3 years</div>
+      <p>Monthly interest rate: 18% &divide; 12 = 1.5% &nbsp;|&nbsp; Months: 36</p>
+      <p><strong>EMI &asymp; Rs. 18,075 per month</strong></p>
+      <p>Total paid over 3 years: Rs. 18,075 &times; 36 = <strong>Rs. 6,50,700</strong></p>
+      <p>You borrowed Rs. 5,00,000 and paid back Rs. 6,50,700. The extra Rs. 1,50,700 is the <strong>true cost of borrowing.</strong> Before taking any loan, always calculate this number first.</p>
+    </div>
+    <div class="myth-card">
+      <div class="myth-label">Dangerous Thinking</div>
+      <p>"I can afford it — the EMI is only Rs. 8,000/month." This framing is how people end up over-leveraged. The question is not whether you can afford the EMI today. The question is: can you afford it for the next 36 months through a job loss, family emergency, or income disruption? EMI commitment should never exceed 35–40% of your take-home income.</p>
+    </div>
+  </div>
+
+  <hr class="divider-line">
+
+  <div class="concept">
+    <h3>Credit history in Nepal: why it matters</h3>
+    <p>Nepal's Credit Information Bureau (CIB) maintains records of your borrowing history. When you apply for a loan, banks check your CIB report. A poor record — missed payments, defaults — makes it harder and more expensive to borrow in the future.</p>
+    <p>Nepal is still developing its formal credit scoring system, but the principle is clear: <strong>your borrowing behavior creates a track record.</strong> Start building a positive one early.</p>
+    <div class="nepal-example">
+      <div class="ex-label">How to Build Good Credit History in Nepal</div>
+      <p>1. Take a small loan (a Rs. 50,000 vehicle loan or an FD-backed loan) and repay it on time every single month.</p>
+      <p>2. Never miss a payment — even by a few days. Set up automatic payments if your bank supports it.</p>
+      <p>3. Don't borrow more than you can comfortably repay. A bank may offer you Rs. 10 lakh — that does not mean you should take Rs. 10 lakh.</p>
+    </div>
+    <div class="action-steps">
+      <div class="as-label">Your Action Plan — Module 5</div>
+      <ol>
+        <li>Before taking any loan, calculate the total cost of borrowing (EMI &times; number of months) — not just the EMI itself.</li>
+        <li>Ensure your total monthly debt obligations do not exceed 35% of your monthly take-home income.</li>
+        <li>If you already have multiple loans, list them by interest rate. Focus extra repayments on the highest-rate loan first (the "avalanche method") to minimize total interest paid.</li>
+        <li>If you have microfinance debt at 20%+ rates, pay these off before making any investments — no reliable investment in Nepal consistently returns 20%.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- MODULE 6 -->
+<section class="module" id="module6">
+  <div class="module-eyebrow">
+    <span class="module-num">MODULE 06</span>
+    <span class="module-tag">Economic Awareness</span>
+  </div>
+  <h2>Reading Financial News &amp; Economic Indicators</h2>
+  <p class="module-intro">Financial news is useful only if you know what to look for. Most of it is noise. A small set of indicators actually predicts things that matter to your savings, loans, and purchasing power. Learn those — ignore the rest.</p>
+
+  <div class="concept">
+    <h3>The five indicators that actually affect your financial life</h3>
+    <table class="data-table">
+      <thead><tr><th>Indicator</th><th>What it measures</th><th>Why you care</th><th>Where to find it</th></tr></thead>
+      <tbody>
+        <tr><td>Inflation Rate (CPI)</td><td>How fast prices are rising</td><td>Tells you whether your salary and savings are keeping pace</td><td>nrb.org.np, CBS Nepal</td></tr>
+        <tr><td>NRB Policy Rate</td><td>The benchmark interest rate</td><td>Predicts the direction of loan and deposit rates</td><td>NRB quarterly monetary policy</td></tr>
+        <tr><td>GDP Growth Rate</td><td>How fast the economy is growing</td><td>Signals job market conditions and future income prospects</td><td>Ministry of Finance, World Bank</td></tr>
+        <tr><td>Remittance Inflows</td><td>Money workers abroad send home</td><td>Affects exchange rates, import capacity, property prices</td><td>NRB, Nepal Economic Forum</td></tr>
+        <tr><td>NEPSE Index</td><td>Value of listed companies in Nepal</td><td>Indicates investor confidence; relevant if you hold shares</td><td>nepse.com.np</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider-line">
+
+  <div class="concept">
+    <h3>How to actually read a financial news story</h3>
+    <p>Most financial news follows a pattern: a number changed &rarr; here is what it means &rarr; here is what might happen next. The key skill is translating abstract numbers into personal implications.</p>
+    <div class="nepal-example">
+      <div class="ex-label">Practice Example — NRB Rate Decision</div>
+      <p><strong>Headline: "NRB raises policy rate by 50 basis points to 5.5%"</strong></p>
+      <p><strong>What does it mean?</strong> NRB is trying to cool inflation or slow borrowing. It will cost banks more to borrow from NRB, so banks will raise the rate they charge customers.</p>
+      <p><strong>What should you do?</strong> If you are planning a home loan in the next 3–6 months, rates may rise — you might lock in sooner. If you have a variable-rate loan, your EMI may increase. If you are a saver, fixed deposit rates may tick up — consider waiting before locking in a long-term FD.</p>
+    </div>
+    <div class="nepal-example">
+      <div class="ex-label">Practice Example — Remittance Data</div>
+      <p><strong>Headline: "Nepal's remittance inflows grow 12% year-on-year to USD 9.3 billion"</strong></p>
+      <p><strong>What does it mean?</strong> More foreign currency is entering Nepal. This supports the exchange rate and gives Nepal more capacity to pay for imports.</p>
+      <p><strong>Personal implication:</strong> If family members abroad send money home, the NPR/USD exchange rate affects how many rupees arrive. A weaker rupee means more rupees per dollar sent — short-term benefit for recipients, but it also makes imports (fuel, electronics, medicine) more expensive for everyone.</p>
+    </div>
+    <div class="callout">
+      <p><strong>The most important habit:</strong> Read one financial headline per day and ask yourself: "How does this affect my savings, my loans, or my purchasing power?" You do not need to understand everything. You need to connect what you read to your own financial situation. That connection — practiced daily — is financial literacy in action.</p>
+    </div>
+  </div>
+
+  <hr class="divider-line">
+
+  <div class="concept">
+    <h3>Reliable sources for Nepal's financial news</h3>
+    <table class="data-table">
+      <thead><tr><th>Source</th><th>Best For</th></tr></thead>
+      <tbody>
+        <tr><td>Nepal Rastra Bank — nrb.org.np</td><td>Policy rates, monetary policy, banking regulations, forex data</td></tr>
+        <tr><td>Ministry of Finance — mof.gov.np</td><td>Annual budget, GDP data, government economic policies</td></tr>
+        <tr><td>The Annapurna Express / Republica</td><td>Daily economic and business news in English</td></tr>
+        <tr><td>OnlineKhabar / Setopati (Economic section)</td><td>Financial news in Nepali language</td></tr>
+        <tr><td>NEPSE — nepse.com.np</td><td>Stock market data and listed company information</td></tr>
+        <tr><td>Nepal Economic Forum — nepaleconomicforum.org</td><td>In-depth economic analysis and research</td></tr>
+      </tbody>
+    </table>
+    <div class="action-steps">
+      <div class="as-label">Your Action Plan — Module 6</div>
+      <ol>
+        <li>Bookmark nrb.org.np. Once a month, look at the latest inflation figure and current policy rate. Write down whether each is higher or lower than the previous month.</li>
+        <li>Follow one Nepali financial news outlet. Spend 5 minutes per day on the economics section — focus on stories about banks, inflation, remittances, and the government budget.</li>
+        <li>Practice the "so what" exercise: for every financial news story you read, write one sentence about how it might affect your personal financial decisions.</li>
+        <li>Once comfortable with the basics, read Nepal's annual Monetary Policy Statement (released by NRB each July). It outlines economic strategy and predicts interest rate direction for the year ahead.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- SUMMARY -->
+<section class="module" id="summary" style="border-bottom:none;">
+  <div class="module-eyebrow">
+    <span class="module-num">SUMMARY</span>
+    <span class="module-tag">Your Financial Roadmap</span>
+  </div>
+  <h2>Putting it all together</h2>
+  <p class="module-intro">Financial literacy is not a course you complete. It is a set of habits and frameworks you apply continuously. Here is the sequence that works — regardless of your current income.</p>
+  <table class="data-table">
+    <thead><tr><th>Stage</th><th>Focus</th><th>When to move on</th></tr></thead>
+    <tbody>
+      <tr><td>Stage 1</td><td>Build an emergency fund (3 months of expenses)</td><td>Emergency fund is fully funded in a dedicated savings account</td></tr>
+      <tr><td>Stage 2</td><td>Pay off high-interest debt (personal loans, MFI loans at 18%+)</td><td>No debt above 14% interest rate remains</td></tr>
+      <tr><td>Stage 3</td><td>Begin systematic savings toward a specific goal</td><td>Saving at least 20% of income monthly with a clear target</td></tr>
+      <tr><td>Stage 4</td><td>Start learning about investment instruments (FD, NEPSE, CIT)</td><td>Have at least 6 months of expenses in liquid savings before investing</td></tr>
+      <tr><td>Stage 5</td><td>Optimize: reduce unnecessary debt, increase investment rate, review goals annually</td><td>Ongoing — never fully complete</td></tr>
+    </tbody>
+  </table>
+  <div class="callout" style="margin-top:32px;">
+    <p><strong>The most important thing to remember:</strong> You do not need a large income to build financial security in Nepal. You need clarity, consistency, and the ability to resist short-term pressure on your long-term plan. That is the real meaning of financial literacy — not knowing formulas, but making better decisions, every month, for the rest of your life.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>Financial Literacy Curriculum &middot; Nepal Edition</p>
+  <p style="margin-top:8px;">For current rates and monetary policy: <a href="https://nrb.org.np" target="_blank">nrb.org.np</a> &nbsp;&middot;&nbsp; For stock data: <a href="https://nepse.com.np" target="_blank">nepse.com.np</a></p>
+  <p style="margin-top:8px;font-size:12px;">All figures and interest rates are approximate and for educational purposes only. Verify current rates with your bank.</p>
+</footer>
+
+</body>
+</html>
