@@ -1,10 +1,10 @@
 {
-  "projectId": "arthneeti-5d623",
-  "appId": "1:117365404631:web:1e0292bb6efd4f91995192",
-  "apiKey": "AIzaSyCwMZN9tUay9l8lUHgoD_vqYsNX2rMEKeQ",
-  "authDomain": "arthneeti-5d623.firebaseapp.com",
+  "projectId": "arthneetinepal",
+  "appId": "1:363807586911:web:23b789018473bba32679ea",
+  "apiKey": "AIzaSyAAV7npqZsWKO9qv5SdQhToGF8W98LbCTg",
+  "authDomain": "arthneetinepal.firebaseapp.com",
   "firestoreDatabaseId": "(default)",
-  "storageBucket": "arthneeti-5d623.firebasestorage.app",
-  "messagingSenderId": "117365404631",
-  "measurementId": "G-FQN3TEGE8Z"
+  "storageBucket": "arthneetinepal.firebasestorage.app",
+  "messagingSenderId": "363807586911",
+  "measurementId": "G-0SJ95XN3MG"
 }

@@ -1,5 +1,9 @@
 import { motion, AnimatePresence } from 'motion/react';
 import React, { useState, useEffect, useRef } from 'react';
+import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { db, storage, handleFirestoreError, OperationType } from '../lib/firebase';
 import { 
   collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, 
@@ -56,9 +60,14 @@ const CommentItem: React.FC<CommentItemProps> = ({
   
   const handleLike = async () => {
     if (!user) return;
-    await updateDoc(doc(db, `posts/${postId}/comments`, comment.id), {
-      likes: increment(1)
-    });
+    try {
+      await updateDoc(doc(db, `posts/${postId}/comments`, comment.id), {
+        likes: increment(1)
+      });
+      toast.success("Comment liked!");
+    } catch (error) {
+      toast.error("Failed to like comment.");
+    }
   };
 
   return (
@@ -67,19 +76,19 @@ const CommentItem: React.FC<CommentItemProps> = ({
         {comment.authorName?.[0]}
       </div>
       <div className="flex-1">
-        <div className="bg-cream p-4 rounded-xl border border-green-deep/5">
+        <div className="bg-surface-base p-4 rounded-xl border border-surface-high">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-black text-green-deep uppercase tracking-widest">{comment.authorName}</span>
-            <span className="text-[10px] text-green-deep/40 font-medium">
+            <span className="text-xs font-black text-text-primary uppercase tracking-widest">{comment.authorName}</span>
+            <span className="text-[10px] text-text-muted font-medium">
               {comment.createdAt?.toDate ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(comment.createdAt.toDate()) : '...'}
             </span>
           </div>
-          <p className="text-sm text-green-deep/70 leading-relaxed">{comment.text}</p>
+          <p className="text-sm text-text-muted leading-relaxed">{comment.text}</p>
         </div>
         <div className="flex items-center gap-6 mt-2 ml-2">
           <button 
             onClick={handleLike}
-            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-green-deep/40 hover:text-crimson transition-colors"
+            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-text-muted hover:text-crimson transition-colors"
           >
             <Heart size={12} fill={comment.likes > 0 ? 'currentColor' : 'none'} className={comment.likes > 0 ? 'text-crimson' : ''} />
             {comment.likes}
@@ -87,7 +96,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
           {!comment.parentId && (
             <button 
               onClick={() => onReply(comment.id, comment.authorName)}
-              className="text-[10px] font-black uppercase tracking-widest text-green-deep/40 hover:text-green-deep transition-colors"
+              className="text-[10px] font-black uppercase tracking-widest text-text-muted hover:text-text-primary transition-colors"
             >
               Reply
             </button>
@@ -142,8 +151,10 @@ function CommentSection({ postId }: { postId: string }) {
       });
       setNewComment('');
       setReplyTo(null);
+      toast.success("Comment added!");
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, path);
+      toast.error("Failed to add comment.");
     }
   };
 
@@ -157,14 +168,14 @@ function CommentSection({ postId }: { postId: string }) {
           {replyTo && (
             <div className="flex justify-between items-center bg-crimson/10 p-2 px-4 rounded mb-2">
               <span className="text-[10px] font-black text-crimson uppercase tracking-widest">Replying to {replyTo.name}</span>
-              <button onClick={() => setReplyTo(null)} className="text-green-deep/40 hover:text-green-deep"><X size={14} /></button>
+              <button onClick={() => setReplyTo(null)} className="text-text-muted hover:text-text-primary"><X size={14} /></button>
             </div>
           )}
           <textarea 
             value={newComment}
             onChange={e => setNewComment(e.target.value)}
             placeholder="Share your thoughts..."
-            className="w-full bg-cream border border-green-deep/5 rounded-xl p-5 text-sm text-green-deep outline-none focus:border-crimson transition-all resize-none h-24"
+            className="w-full bg-surface-base border border-surface-high rounded-xl p-5 text-sm text-text-primary outline-none focus:border-crimson transition-all resize-none h-24"
           />
           <button 
             type="submit"
@@ -205,6 +216,7 @@ function CommentSection({ postId }: { postId: string }) {
 export default function CommunityPage() {
   const { user, profile } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'discussions' | 'research' | 'questions'>('discussions');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [expandedPost, setExpandedPost] = useState<string | null>(null);
@@ -367,10 +379,12 @@ useEffect(() => {
   const unsubscribe = onSnapshot(qPosts, 
     (snapshot) => {
       setPosts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Post)));
+      setLoading(false);
     },
     (error) => {
       // Non-auth users might hit this if rules change, but we allow public read
       handleFirestoreError(error, OperationType.LIST, path);
+      setLoading(false);
     }
   );
   return () => unsubscribe();
@@ -387,19 +401,22 @@ const handleLike = async (postId: string) => {
     if (likeSnap.exists()) {
        await deleteDoc(likeRef);
        await updateDoc(postRef, { likes: increment(-1) });
+       toast.success("Post unliked!");
     } else {
        await setDoc(likeRef, { likedAt: serverTimestamp() });
        await updateDoc(postRef, { likes: increment(1) });
+       toast.success("Post liked!");
     }
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, likePath);
+    toast.error("Failed to like post.");
   }
 };
 
   const handleShare = (postId: string) => {
     const url = `${window.location.origin}/community?post=${postId}`;
     navigator.clipboard.writeText(url);
-    alert('Link copied to clipboard!'); // Replace with toast later
+    toast('Link copied to clipboard!'); // Replace with toast later
   };
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
@@ -449,8 +466,10 @@ const handleLike = async (postId: string) => {
         pdf: null,
         authorName: profile?.name || '',
       });
+      toast.success("Post submitted successfully!");
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, 'posts');
+      toast.error("Failed to submit post.");
     } finally {
       setIsUploading(false);
     }
@@ -472,7 +491,7 @@ const handleLike = async (postId: string) => {
       <header className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
         <div>
           <span className="text-[10px] font-black text-crimson mb-4 block uppercase tracking-[0.4em]">COMMUNITY</span>
-          <h1 className="text-5xl md:text-7xl text-green-deep italic font-display">Intelligence Feed</h1>
+          <h1 className="text-5xl md:text-7xl text-text-primary italic font-display">Intelligence Feed</h1>
         </div>
         
         {user && (
@@ -487,27 +506,27 @@ const handleLike = async (postId: string) => {
       </header>
 
       {/* Tabs */}
-      <div className="flex gap-12 border-b border-green-deep/5 mb-16 overflow-x-auto">
-        {(['discussions', 'research', 'questions'] as const).map(tab => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`pb-6 text-xs font-black uppercase tracking-[0.2em] relative transition-all whitespace-nowrap ${
-              activeTab === tab ? 'text-crimson' : 'text-green-deep/40 hover:text-green-deep'
-            }`}
-          >
-            {tab}
-            {activeTab === tab && (
-              <motion.div layoutId="tabLine" className="absolute bottom-[-1px] left-0 w-full h-1 bg-crimson rounded-full" />
-            )}
-          </button>
-        ))}
-      </div>
+      <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as typeof activeTab)} className="mb-16">
+        <TabsList className="flex gap-12 border-b border-green-deep/5 bg-transparent p-0 rounded-none w-full justify-start h-auto">
+          {(['discussions', 'research', 'questions'] as const).map(tab => (
+            <TabsTrigger
+              key={tab}
+              value={tab}
+              className={`pb-6 text-xs font-black uppercase tracking-[0.2em] relative bg-transparent border-none rounded-none whitespace-nowrap data-active:text-crimson data-active:bg-transparent data-active:shadow-none text-text-muted hover:text-text-primary`}
+            >
+              {tab}
+              {activeTab === tab && (
+                <motion.div layoutId="tabLine" className="absolute bottom-[-1px] left-0 w-full h-1 bg-crimson rounded-full" />
+              )}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
 
       {/* Feed */}
       <div className="space-y-12">
         {activeTab === 'questions' && user && (
-           <div className="bg-white p-8 rounded-2xl border border-green-deep/5 shadow-sm mb-12">
+           <div className="bg-surface-raised p-8 rounded-2xl border border-surface-high shadow-sm mb-12">
               <div className="flex gap-4">
                  <div className="w-10 h-10 rounded-full bg-crimson flex items-center justify-center text-white font-black text-sm shrink-0 uppercase">
                     {profile?.name?.[0] || user.displayName?.[0]}
@@ -515,7 +534,7 @@ const handleLike = async (postId: string) => {
                  <div className="flex-1 space-y-4">
                     <textarea 
                       placeholder="What's your question today?"
-                      className="w-full bg-cream border-none outline-none text-green-deep placeholder:text-green-deep/30 resize-none font-medium h-24 p-2 rounded"
+                      className="w-full bg-surface-base border-none outline-none text-text-primary placeholder:text-text-muted/50 resize-none font-medium h-24 p-2 rounded"
                       value={createData.content}
                       onChange={e => setCreateData({...createData, content: e.target.value})}
                     />
@@ -526,7 +545,7 @@ const handleLike = async (postId: string) => {
                               key={cat}
                               onClick={() => setCreateData({...createData, category: cat as any})}
                               className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all ${
-                                createData.category === cat ? 'bg-royal border-royal text-white' : 'border-green-deep/10 text-green-deep/40 hover:border-royal/50'
+                                createData.category === cat ? 'bg-royal border-royal text-white' : 'border-surface-high text-text-muted hover:border-royal/50'
                               }`}
                             >
                               {cat}
@@ -546,124 +565,134 @@ const handleLike = async (postId: string) => {
            </div>
         )}
 
-        <AnimatePresence mode="popLayout">
-          {filteredPosts.map((post) => (
-            <motion.article
-              key={post.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="bg-white rounded-2xl border border-green-deep/5 shadow-sm p-8 md:p-12 hover:shadow-xl transition-all duration-500 overflow-hidden"
-            >
-              <div className="flex justify-between items-start mb-8">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-royal flex items-center justify-center text-white font-black text-sm uppercase">
-                    {post.author?.[0]}
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-black text-green-deep uppercase tracking-widest">{post.author}</h4>
-                    <div className="flex items-center gap-3">
-                      <span className="text-[9px] font-black text-crimson uppercase tracking-widest bg-crimson/10 px-2 py-0.5 rounded">{post.category}</span>
-                      <span className="text-[9px] font-medium text-green-deep/40 uppercase tracking-widest">
-                        {post.createdAt?.toDate ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(post.createdAt.toDate()) : '...'}
-                      </span>
+        {loading ? (
+          <div className="space-y-8">
+            <Skeleton className="h-64 w-full bg-white/5 border border-green-deep/5 rounded-2xl" />
+            <Skeleton className="h-64 w-full bg-white/5 border border-green-deep/5 rounded-2xl" />
+            <Skeleton className="h-64 w-full bg-white/5 border border-green-deep/5 rounded-2xl" />
+          </div>
+        ) : (
+          <AnimatePresence mode="popLayout">
+            {filteredPosts.map((post) => (
+              <motion.article
+                key={post.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="bg-white rounded-2xl border border-green-deep/5 shadow-sm p-8 md:p-12 hover:shadow-xl transition-all duration-500 overflow-hidden"
+              >
+                <div className="flex justify-between items-start mb-8">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-royal flex items-center justify-center text-white font-black text-sm uppercase">
+                      {post.author?.[0]}
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-black text-green-deep uppercase tracking-widest">{post.author}</h4>
+                      <div className="flex items-center gap-3">
+                        <Badge variant="outline" className="text-[9px] font-black text-crimson border-transparent uppercase tracking-widest bg-crimson/10 px-2 py-0.5 rounded">
+                          {post.category}
+                        </Badge>
+                        <span className="text-[9px] font-medium text-green-deep/40 uppercase tracking-widest">
+                          {post.createdAt?.toDate ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(post.createdAt.toDate()) : '...'}
+                        </span>
+                      </div>
                     </div>
                   </div>
+                  <button className="text-green-deep/20 hover:text-green-deep transition-colors"><MoreVertical size={16} /></button>
                 </div>
-                <button className="text-green-deep/20 hover:text-green-deep transition-colors"><MoreVertical size={16} /></button>
-              </div>
 
-              {post.type === 'discussion' && (
-                <>
-                  <h3 
-                    onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)}
-                    className="text-3xl md:text-4xl text-green-deep italic font-display mb-8 cursor-pointer hover:text-crimson transition-colors leading-tight"
-                  >
-                    {post.title}
-                  </h3>
-                  {post.imageUrl && (
-                    <div className="aspect-video rounded-xl overflow-hidden mb-8 border border-green-deep/5">
-                      <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                    </div>
-                  )}
-                  <div className={`text-green-deep/70 leading-relaxed font-sans mb-8 ${expandedPost === post.id ? '' : 'line-clamp-3'}`}>
-                    <div dangerouslySetInnerHTML={{ __html: post.content }} />
-                  </div>
-                  {!expandedPost && post.content.length > 200 && (
-                    <button 
-                      onClick={() => setExpandedPost(post.id)}
-                      className="text-crimson text-[10px] font-black uppercase tracking-widest hover:underline mb-8 block"
+                {post.type === 'discussion' && (
+                  <>
+                    <h3 
+                      onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)}
+                      className="text-3xl md:text-4xl text-green-deep italic font-display mb-8 cursor-pointer hover:text-crimson transition-colors leading-tight"
                     >
-                      Read more →
-                    </button>
-                  )}
-                </>
-              )}
-
-              {post.type === 'research' && (
-                <div className="bg-cream p-10 rounded-xl border border-green-deep/5 flex flex-col items-center text-center">
-                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-royal mb-8 shadow-sm">
-                    <FileText size={40} />
-                  </div>
-                  <h3 className="text-3xl text-green-deep italic font-display mb-4">{post.title}</h3>
-                  <p className="text-green-deep/60 text-sm italic font-sans max-w-lg mb-8">"{post.abstract}"</p>
-                  <a 
-                    href={post.pdfUrl} 
-                    target="_blank" 
-                    rel="noreferrer"
-                    className="flex items-center gap-3 bg-green-deep text-white px-8 py-4 rounded text-xs font-black uppercase tracking-widest hover:bg-crimson transition-all"
-                  >
-                    <Download size={14} /> Download PDF
-                  </a>
-                </div>
-              )}
-
-              {post.type === 'question' && (
-                <div className="space-y-6">
-                  <p className="text-2xl text-green-deep leading-relaxed font-display italic">"{post.content}"</p>
-                </div>
-              )}
-
-              <div className="flex items-center justify-between mt-12 pt-8 border-t border-green-deep/5">
-                <div className="flex gap-8">
-                  <button 
-                    onClick={() => handleLike(post.id)}
-                    className="flex items-center gap-2 group"
-                  >
-                    <Heart size={18} className="text-green-deep/20 group-hover:text-crimson transition-colors" />
-                    <span className="text-[10px] font-black text-green-deep/40 uppercase tracking-widest">{post.likes}</span>
-                  </button>
-                  <button 
-                    onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)}
-                    className={`flex items-center gap-2 group ${expandedPost === post.id ? 'text-crimson' : 'text-green-deep/20 hover:text-crimson transition-colors'}`}
-                  >
-                    <MessageSquare size={18} />
-                    <span className="text-[10px] font-black text-green-deep/40 uppercase tracking-widest group-hover:text-crimson">{post.commentCount}</span>
-                  </button>
-                  <button 
-                    onClick={() => handleShare(post.id)}
-                    className="text-green-deep/20 hover:text-royal transition-colors"
-                  >
-                    <Share2 size={18} />
-                  </button>
-                </div>
-              </div>
-
-              <AnimatePresence>
-                {expandedPost === post.id && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="overflow-hidden"
-                  >
-                     <CommentSection postId={post.id} />
-                  </motion.div>
+                      {post.title}
+                    </h3>
+                    {post.imageUrl && (
+                      <div className="aspect-video rounded-xl overflow-hidden mb-8 border border-green-deep/5">
+                        <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                      </div>
+                    )}
+                    <div className={`text-green-deep/70 leading-relaxed font-sans mb-8 ${expandedPost === post.id ? '' : 'line-clamp-3'}`}>
+                      <div dangerouslySetInnerHTML={{ __html: post.content }} />
+                    </div>
+                    {!expandedPost && post.content.length > 200 && (
+                      <button 
+                        onClick={() => setExpandedPost(post.id)}
+                        className="text-crimson text-[10px] font-black uppercase tracking-widest hover:underline mb-8 block"
+                      >
+                        Read more →
+                      </button>
+                    )}
+                  </>
                 )}
-              </AnimatePresence>
-            </motion.article>
-          ))}
-        </AnimatePresence>
+
+                {post.type === 'research' && (
+                  <div className="bg-surface-base p-10 rounded-xl border border-surface-high flex flex-col items-center text-center">
+                    <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-royal mb-8 shadow-sm">
+                      <FileText size={40} />
+                    </div>
+                    <h3 className="text-3xl text-text-primary italic font-display mb-4">{post.title}</h3>
+                    <p className="text-text-muted text-sm italic font-sans max-w-lg mb-8">"{post.abstract}"</p>
+                    <a 
+                      href={post.pdfUrl} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      className="flex items-center gap-3 bg-green-deep text-white px-8 py-4 rounded text-xs font-black uppercase tracking-widest hover:bg-crimson transition-all"
+                    >
+                      <Download size={14} /> Download PDF
+                    </a>
+                  </div>
+                )}
+
+                {post.type === 'question' && (
+                  <div className="space-y-6">
+                    <p className="text-2xl text-green-deep leading-relaxed font-display italic">"{post.content}"</p>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between mt-12 pt-8 border-t border-green-deep/5">
+                  <div className="flex gap-8">
+                    <button 
+                      onClick={() => handleLike(post.id)}
+                      className="flex items-center gap-2 group"
+                    >
+                      <Heart size={18} className="text-green-deep/20 group-hover:text-crimson transition-colors" />
+                      <span className="text-[10px] font-black text-green-deep/40 uppercase tracking-widest">{post.likes}</span>
+                    </button>
+                    <button 
+                      onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)}
+                      className={`flex items-center gap-2 group ${expandedPost === post.id ? 'text-crimson' : 'text-green-deep/20 hover:text-crimson transition-colors'}`}
+                    >
+                      <MessageSquare size={18} />
+                      <span className="text-[10px] font-black text-green-deep/40 uppercase tracking-widest group-hover:text-crimson">{post.commentCount}</span>
+                    </button>
+                    <button 
+                      onClick={() => handleShare(post.id)}
+                      className="text-green-deep/20 hover:text-royal transition-colors"
+                    >
+                      <Share2 size={18} />
+                    </button>
+                  </div>
+                </div>
+
+                <AnimatePresence>
+                  {expandedPost === post.id && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                       <CommentSection postId={post.id} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.article>
+            ))}
+          </AnimatePresence>
+        )}
       </div>
 
       {/* Create Modal */}
@@ -673,27 +702,27 @@ const handleLike = async (postId: string) => {
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-white p-8 md:p-12 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl"
+              className="bg-surface-raised p-8 md:p-12 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl"
             >
               <button 
                 onClick={() => setShowCreateModal(false)}
-                className="absolute top-8 right-8 text-green-deep/20 hover:text-green-deep transition-colors"
+                className="absolute top-8 right-8 text-text-muted hover:text-text-primary transition-colors"
               >
                 <X size={24} />
               </button>
 
-              <h2 className="font-display text-4xl text-green-deep italic mb-10">
+              <h2 className="font-display text-4xl text-text-primary italic mb-10">
                 {activeTab === 'research' ? 'Submit Research' : 'Create New Post'}
               </h2>
 
               <form onSubmit={handleCreateSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                    <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-green-deep/40 mb-2 block">Category</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-2 block">Category</label>
                     <select 
                       value={createData.category}
                       onChange={e => setCreateData({...createData, category: e.target.value as any})}
-                      className="w-full bg-cream border-2 border-green-deep/5 rounded p-4 outline-none focus:border-crimson transition-all font-bold text-green-deep"
+                      className="w-full bg-surface-base border-2 border-surface-high rounded p-4 outline-none focus:border-crimson transition-all font-bold text-text-primary"
                     >
                       <option>Finance</option>
                       <option>Economics</option>
@@ -703,71 +732,71 @@ const handleLike = async (postId: string) => {
                     </select>
                   </div>
                   <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-green-deep/40 mb-2 block">Your Name</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-2 block">Your Name</label>
                     <input 
                       type="text"
                       value={createData.authorName}
                       onChange={e => setCreateData({...createData, authorName: e.target.value})}
-                      className="w-full bg-cream border-2 border-green-deep/5 rounded p-4 outline-none focus:border-crimson transition-all font-bold text-green-deep"
+                      className="w-full bg-surface-base border-2 border-surface-high rounded p-4 outline-none focus:border-crimson transition-all font-bold text-text-primary"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-green-deep/40 mb-2 block">Title</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-2 block">Title</label>
                   <input 
                     required
                     type="text"
                     value={createData.title}
                     onChange={e => setCreateData({...createData, title: e.target.value})}
-                    className="w-full bg-cream border-2 border-green-deep/5 rounded p-4 outline-none focus:border-crimson transition-all font-bold text-green-deep"
+                    className="w-full bg-surface-base border-2 border-surface-high rounded p-4 outline-none focus:border-crimson transition-all font-bold text-text-primary"
                     placeholder="Expert analysis of..."
                   />
                 </div>
 
                 {activeTab === 'research' && (
                   <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-green-deep/40 mb-2 block">Abstract / Summary</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-2 block">Abstract / Summary</label>
                     <textarea 
                       required
                       value={createData.abstract}
                       onChange={e => setCreateData({...createData, abstract: e.target.value})}
-                      className="w-full bg-cream border-2 border-green-deep/5 rounded p-4 outline-none focus:border-crimson transition-all font-bold text-green-deep resize-none h-24"
+                      className="w-full bg-surface-base border-2 border-surface-high rounded p-4 outline-none focus:border-crimson transition-all font-bold text-text-primary resize-none h-24"
                     />
                   </div>
                 )}
 
                 <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-green-deep/40 mb-2 block">Content</label>
-                  <div className="bg-cream rounded-xl border-2 border-green-deep/5 focus-within:border-crimson transition-all overflow-hidden font-sans">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-2 block">Content</label>
+                  <div className="bg-surface-base rounded-xl border-2 border-surface-high focus-within:border-crimson transition-all overflow-hidden font-sans">
                     <ReactQuill 
                       theme="snow"
                       value={createData.content}
                       onChange={val => setCreateData({...createData, content: val})}
-                      className="bg-cream min-h-[200px]"
+                      className="bg-surface-base min-h-[200px]"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-green-deep/40 mb-2 block">Attached Image</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-2 block">Attached Image</label>
                     <input 
                       type="file"
                       accept="image/*"
                       onChange={e => setCreateData({...createData, image: e.target.files?.[0] || null})}
-                      className="w-full text-xs text-green-deep/40"
+                      className="w-full text-xs text-text-muted"
                     />
                   </div>
                   {activeTab === 'research' && (
                     <div>
-                      <label className="text-[10px] font-black uppercase tracking-widest text-green-deep/40 mb-2 block">Research PDF (Required)</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-2 block">Research PDF (Required)</label>
                       <input 
                         required
                         type="file"
                         accept=".pdf"
                         onChange={e => setCreateData({...createData, pdf: e.target.files?.[0] || null})}
-                        className="w-full text-xs text-green-deep/40"
+                        className="w-full text-xs text-text-muted"
                       />
                     </div>
                   )}

@@ -4,6 +4,9 @@ import { useAuth } from '../contexts/AuthContext';
 import { Mail, Briefcase, User as UserIcon } from 'lucide-react';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface UserPost {
   id: string;
@@ -105,9 +108,9 @@ export default function ProfilePage() {
                 <h4 className="text-[10px] font-black uppercase tracking-widest text-green-deep/40 mb-4">Interests</h4>
                 <div className="flex flex-wrap gap-2">
                   {(profile?.topics || ['Economics', 'Finance']).map(topic => (
-                    <span key={topic} className="px-4 py-1.5 bg-cream border border-green-deep/5 rounded text-[10px] font-black uppercase tracking-widest text-green-deep/60">
+                    <Badge key={topic} variant="outline" className="px-4 py-1.5 bg-surface-base border border-surface-high rounded text-[10px] font-black uppercase tracking-widest text-text-muted">
                       {topic}
-                    </span>
+                    </Badge>
                   ))}
                 </div>
              </div>
@@ -136,66 +139,93 @@ export default function ProfilePage() {
       </section>
 
       {/* Tabs */}
-      <div className="flex gap-12 border-b border-green-deep/5 mb-16 overflow-x-auto">
-        {[
-          { id: 'posts', label: 'My Contributions' },
-          { id: 'bookmarks', label: 'Saved Analysis' },
-          { id: 'activity', label: 'Activity Log' },
-        ].map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`pb-6 text-xs font-black uppercase tracking-[0.2em] relative transition-all whitespace-nowrap ${
-              activeTab === tab.id ? 'text-crimson' : 'text-green-deep/40 hover:text-green-deep'
-            }`}
-          >
-            {tab.label}
-            {activeTab === tab.id && (
-              <motion.div layoutId="profileTabLine" className="absolute bottom-[-1px] left-0 w-full h-1 bg-crimson rounded-full" />
-            )}
-          </button>
-        ))}
-      </div>
+      <Tabs defaultValue="posts" value={activeTab} onValueChange={setActiveTab} className="mb-16">
+        <TabsList className="flex gap-12 border-b border-green-deep/5 mb-16 overflow-x-auto bg-transparent p-0 rounded-none w-full justify-start h-auto">
+          {[
+            { id: 'posts', label: 'My Contributions' },
+            { id: 'bookmarks', label: 'Saved Analysis' },
+            { id: 'activity', label: 'Activity Log' },
+          ].map(tab => (
+            <TabsTrigger
+              key={tab.id}
+              value={tab.id}
+              className="pb-6 text-xs font-black uppercase tracking-[0.2em] relative transition-all whitespace-nowrap rounded-none border-b-2 border-transparent data-[state=active]:border-crimson data-[state=active]:text-crimson text-text-muted hover:text-text-primary bg-transparent data-[state=active]:bg-transparent p-0 h-auto dark:bg-transparent dark:data-[state=active]:bg-transparent"
+            >
+              {tab.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
-        {activeTab === 'posts' && myPosts.map((post, i) => (
-          <motion.div
-            key={post.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
-            className="group p-8 rounded-2xl bg-white border border-green-deep/5 hover:border-crimson/20 hover:shadow-xl transition-all"
-          >
-            <div className="flex justify-between items-start mb-6">
-              <span className="px-3 py-1 bg-crimson/5 text-crimson text-[8px] font-black uppercase tracking-widest rounded-full">
-                {post.type}
-              </span>
-              <div className="flex items-center gap-1.5 text-royal">
-                <span className="material-symbols-outlined text-sm">favorite</span>
-                <span className="text-[10px] font-bold">{post.likes}</span>
-              </div>
+        <TabsContent value="posts">
+          {loadingPosts ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+              <Skeleton className="h-48 w-full bg-white/5 border border-green-deep/5 rounded-2xl" />
+              <Skeleton className="h-48 w-full bg-white/5 border border-green-deep/5 rounded-2xl" />
+              <Skeleton className="h-48 w-full bg-white/5 border border-green-deep/5 rounded-2xl" />
             </div>
-            <h3 className="text-xl text-green-deep font-display italic mb-4 line-clamp-2 leading-relaxed">
-              {post.title || post.content.substring(0, 50) + '...'}
-            </h3>
-            <p className="text-[10px] font-bold text-green-deep/40 uppercase tracking-widest">
-              {post.category}
-            </p>
-          </motion.div>
-        ))}
-      </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+                {myPosts.map((post, i) => (
+                  <motion.div
+                    key={post.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="group p-8 rounded-2xl bg-white border border-green-deep/5 hover:border-crimson/20 hover:shadow-xl transition-all"
+                  >
+                    <div className="flex justify-between items-start mb-6">
+                      <Badge variant="outline" className="px-3 py-1 bg-crimson/5 text-crimson border-transparent text-[8px] font-black uppercase tracking-widest rounded-full">
+                        {post.type}
+                      </Badge>
+                      <div className="flex items-center gap-1.5 text-royal">
+                        <span className="material-symbols-outlined text-sm">favorite</span>
+                        <span className="text-[10px] font-bold">{post.likes}</span>
+                      </div>
+                    </div>
+                    <h3 className="text-xl text-green-deep font-display italic mb-4 line-clamp-2 leading-relaxed">
+                      {post.title || post.content.substring(0, 50) + '...'}
+                    </h3>
+                    <p className="text-[10px] font-bold text-green-deep/40 uppercase tracking-widest">
+                      {post.category}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
 
-      {activeTab === 'posts' && myPosts.length === 0 && !loadingPosts && (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-           <div className="w-20 h-20 bg-green-deep/5 rounded-full flex items-center justify-center text-green-deep/20 mb-8">
-              <Briefcase size={40} />
-           </div>
-           <h3 className="text-3xl text-green-deep italic font-display mb-4">No Activity Yet</h3>
-           <p className="text-green-deep/60 font-sans italic max-w-sm">
-             Start contributing to the community feed to build your intellectual portfolio.
-           </p>
-        </div>
-      )}
+              {myPosts.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-20 text-center">
+                   <div className="w-20 h-20 bg-green-deep/5 rounded-full flex items-center justify-center text-green-deep/20 mb-8">
+                      <Briefcase size={40} />
+                   </div>
+                   <h3 className="text-3xl text-text-primary italic font-display mb-4">No Activity Yet</h3>
+                   <p className="text-text-muted font-sans italic max-w-sm">
+                     Start contributing to the community feed to build your intellectual portfolio.
+                   </p>
+                </div>
+              )}
+            </>
+          )}
+        </TabsContent>
+
+        <TabsContent value="bookmarks">
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+             <h3 className="text-2xl text-text-primary italic font-display mb-4">No Bookmarked Analysis</h3>
+             <p className="text-text-muted font-sans italic max-w-sm">
+               Bookmark posts from the explore page to read them later.
+             </p>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="activity">
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+             <h3 className="text-2xl text-text-primary italic font-display mb-4">No Recent Activity</h3>
+             <p className="text-text-muted font-sans italic max-w-sm">
+               Your recent interactions and activities will be displayed here.
+             </p>
+          </div>
+        </TabsContent>
+      </Tabs>
     </motion.main>
   );
 }

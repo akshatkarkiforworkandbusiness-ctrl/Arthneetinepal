@@ -17,7 +17,7 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return isSignedIn() && request.auth.token.email == 'karkiakshat208011@gmail.com';
+      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
 
     function incoming() {
@@ -151,7 +151,7 @@ service cloud.firestore {
     // Manuscripts (Submissions)
     match /manuscripts/{manId} {
       allow read: if isAdmin();
-      allow create: if isValidManuscript(incoming());
+      allow create: if isSignedIn() && isValidManuscript(incoming());
       allow update, delete: if isAdmin();
     }
 

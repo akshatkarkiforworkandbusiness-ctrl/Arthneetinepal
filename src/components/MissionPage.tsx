@@ -71,7 +71,7 @@ export default function AboutUsPage() {
     <motion.main 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="flex flex-col bg-white"
+      className="flex flex-col bg-surface-base"
     >
       {/* Introduction */}
       <section className="py-32 px-6 bg-cream">

@@ -789,25 +789,21 @@ export default function LandingPage() {
               {
                 name: 'Akshat Karki',
                 role: 'President',
-                email: 'akshatkarkiforwork.and.business@gmail.com',
                 bio: "Leading Arthneeti's vision to build Nepal's most impactful youth financial education movement. Focused on school partnerships, club strategy, and driving the mission forward."
               },
               {
                 name: 'Manash Koirala',
                 role: 'Vice President',
-                email: 'manashkoirala19@gmail.com',
                 bio: "Supporting club operations and co-leading educational strategy. Passionate about making stock market knowledge accessible to every Nepali high schooler."
               },
               {
                 name: 'Ujjwal Dhungana',
                 role: 'Head of Research & Communication',
-                email: 'dhunganaujjwal94@gmail.com',
                 bio: "Driving Arthneeti's research agenda and external communications. Builds the intellectual content that makes our sessions substantive and credible."
               },
               {
                 name: 'Pranjal Khatiwada',
                 role: 'Secretary',
-                email: 'pranjalkhatiwada17@gmail.com',
                 bio: "Managing club coordination, records, and logistics. Ensures Arthneeti runs smoothly across all schools and sessions."
               }
             ].map((member, i) => (
@@ -828,7 +824,7 @@ export default function LandingPage() {
                   {member.bio}
                 </p>
                 <a 
-                  href={`mailto:${member.email}`}
+                  href="mailto:learnarthneeti@gmail.com"
                   className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-crimson transition-colors"
                 >
                   Get In Touch
@@ -877,15 +873,7 @@ export default function LandingPage() {
         )}
       </AnimatePresence>
 
-      <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-          animation: marquee 30s linear infinite;
-        }
-      `}} />
     </motion.main>
+
   );
 }

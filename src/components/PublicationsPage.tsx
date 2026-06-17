@@ -1,5 +1,7 @@
 import { motion, AnimatePresence } from 'motion/react';
 import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
 import { db, auth, storage, handleFirestoreError, OperationType } from '../lib/firebase';
 import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -103,9 +105,10 @@ export default function PublicationsPage() {
 
       setShowSubmitModal(false);
       setManuscript({ name: '', institution: '', email: '', content: '', pdf: null });
-      alert("Manuscript submitted successfully for review.");
+      toast.success("Manuscript submitted successfully for review.");
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, path);
+      toast.error("Failed to submit manuscript.");
     } finally {
       setIsUploading(false);
     }
@@ -137,8 +140,8 @@ export default function PublicationsPage() {
       <header className="mb-24 flex flex-col md:flex-row justify-between items-end gap-12">
         <div className="max-w-3xl">
           <span className="text-[10px] font-black text-crimson mb-4 block uppercase tracking-[0.4em]">INSTITUTIONAL ARCHIVE</span>
-          <h1 className="font-display text-6xl text-green-deep italic leading-tight mb-8 tracking-tight">Knowledge. Vision. Sovereignty.</h1>
-          <p className="text-xl text-green-deep/60 leading-relaxed italic">
+          <h1 className="font-display text-6xl text-text-primary italic leading-tight mb-8 tracking-tight">Knowledge. Vision. Sovereignty.</h1>
+          <p className="text-xl text-text-muted leading-relaxed italic">
             A curated repository of deep economic research and strategic documentation, preserving the intellectual heritage of Nepal's youth movement.
           </p>
         </div>
@@ -168,9 +171,9 @@ export default function PublicationsPage() {
             <div className="lg:w-3/5 p-12 md:p-20 flex flex-col justify-between">
               <div>
                 <div className="flex justify-between items-center mb-10">
-                  <span className="px-5 py-2 bg-crimson/10 text-crimson rounded-xl text-[10px] font-black uppercase tracking-widest">
+                  <Badge variant="outline" className="px-5 py-2 bg-crimson/10 text-crimson border-transparent rounded-xl text-[10px] font-black uppercase tracking-widest">
                     {paper.category}
-                  </span>
+                  </Badge>
                   <span className="text-[10px] font-bold text-green-deep/30 uppercase tracking-widest">{paper.date}</span>
                 </div>
                 <h3 className="font-display text-5xl text-green-deep italic mb-8 leading-tight group-hover:text-crimson transition-colors tracking-tight">
@@ -182,7 +185,7 @@ export default function PublicationsPage() {
               </div>
               <div className="flex items-center justify-between border-t border-green-deep/5 pt-10">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-cream border border-green-deep/10 flex items-center justify-center font-bold text-xs text-crimson">
+                  <div className="w-10 h-10 rounded-full bg-surface-base border border-surface-high flex items-center justify-center font-bold text-xs text-crimson">
                     {paper.author[0]}
                   </div>
                   <div>
@@ -251,7 +254,7 @@ export default function PublicationsPage() {
             </p>
             <button 
               onClick={() => setShowSubmitModal(true)}
-              className="w-full bg-white text-green-deep py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-royal hover:text-white transition-all"
+              className="w-full bg-text-primary text-surface-base py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-royal hover:text-white transition-all"
             >
               START SUBMISSION
             </button>
@@ -264,39 +267,39 @@ export default function PublicationsPage() {
         {showSubmitModal && (
           <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 md:p-8">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowSubmitModal(false)} className="absolute inset-0 bg-green-deep/40 backdrop-blur-md" />
-            <motion.div initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }} className="bg-white border border-green-deep/10 p-8 md:p-12 rounded-[40px] max-w-2xl w-full shadow-2xl relative overflow-y-auto max-h-[90vh]">
-              <button onClick={() => setShowSubmitModal(false)} className="absolute top-8 right-8 text-green-deep/40 hover:text-green-deep">
+            <motion.div initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }} className="bg-surface-raised border border-surface-high p-8 md:p-12 rounded-[40px] max-w-2xl w-full shadow-2xl relative overflow-y-auto max-h-[90vh]">
+              <button onClick={() => setShowSubmitModal(false)} className="absolute top-8 right-8 text-text-muted hover:text-text-primary">
                 <span className="material-symbols-outlined">close</span>
               </button>
-              <h2 className="font-display text-4xl italic text-green-deep mb-8">Submit Manuscript</h2>
+              <h2 className="font-display text-4xl italic text-text-primary mb-8">Submit Manuscript</h2>
               <form onSubmit={handleSubmitManuscript} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-green-deep/40">Full Name</label>
-                    <input required type="text" value={manuscript.name} onChange={e => setManuscript({...manuscript, name: e.target.value})} className="w-full bg-cream border border-green-deep/10 rounded-xl p-4 text-sm outline-none focus:border-crimson transition-all" />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Full Name</label>
+                    <input required type="text" value={manuscript.name} onChange={e => setManuscript({...manuscript, name: e.target.value})} className="w-full bg-surface-base border border-surface-high rounded-xl p-4 text-sm text-text-primary outline-none focus:border-crimson transition-all" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-green-deep/40">Institution</label>
-                    <input required type="text" value={manuscript.institution} onChange={e => setManuscript({...manuscript, institution: e.target.value})} className="w-full bg-cream border border-green-deep/10 rounded-xl p-4 text-sm outline-none focus:border-crimson transition-all" />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Institution</label>
+                    <input required type="text" value={manuscript.institution} onChange={e => setManuscript({...manuscript, institution: e.target.value})} className="w-full bg-surface-base border border-surface-high rounded-xl p-4 text-sm text-text-primary outline-none focus:border-crimson transition-all" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-green-deep/40">Email Address</label>
-                    <input required type="email" value={manuscript.email} onChange={e => setManuscript({...manuscript, email: e.target.value})} className="w-full bg-cream border border-green-deep/10 rounded-xl p-4 text-sm outline-none focus:border-crimson transition-all" />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Email Address</label>
+                    <input required type="email" value={manuscript.email} onChange={e => setManuscript({...manuscript, email: e.target.value})} className="w-full bg-surface-base border border-surface-high rounded-xl p-4 text-sm text-text-primary outline-none focus:border-crimson transition-all" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-green-deep/40">Upload PDF Document (Required)</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Upload PDF Document (Required)</label>
                     <input 
                       required 
                       type="file" 
                       accept=".pdf"
                       onChange={e => setManuscript({...manuscript, pdf: e.target.files?.[0] || null})} 
-                      className="w-full text-xs text-green-deep/40" 
+                      className="w-full text-xs text-text-muted" 
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-green-deep/40">Abstract / Content Summary</label>
-                  <textarea required value={manuscript.content} onChange={e => setManuscript({...manuscript, content: e.target.value})} className="w-full bg-cream border border-green-deep/10 rounded-xl p-4 text-sm outline-none h-40 resize-none focus:border-crimson transition-all" />
+                  <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Abstract / Content Summary</label>
+                  <textarea required value={manuscript.content} onChange={e => setManuscript({...manuscript, content: e.target.value})} className="w-full bg-surface-base border border-surface-high rounded-xl p-4 text-sm text-text-primary outline-none h-40 resize-none focus:border-crimson transition-all" />
                 </div>
                 <button 
                   type="submit" 
@@ -316,10 +319,10 @@ export default function PublicationsPage() {
         {showRigorModal && (
           <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowRigorModal(false)} className="absolute inset-0 bg-green-deep/40 backdrop-blur-md" />
-            <motion.div initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }} className="bg-white p-8 rounded-[40px] max-w-lg w-full shadow-2xl relative">
-              <h2 className="font-display text-3xl italic text-green-deep mb-6">Add Rigor Statement</h2>
+            <motion.div initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }} className="bg-surface-raised p-8 rounded-[40px] max-w-lg w-full shadow-2xl relative">
+              <h2 className="font-display text-3xl italic text-text-primary mb-6">Add Rigor Statement</h2>
               <form onSubmit={handleAddRigor} className="space-y-6">
-                <textarea required value={newRigorText} onChange={e => setNewRigorText(e.target.value)} className="w-full bg-cream border border-green-deep/10 rounded-xl p-4 text-sm outline-none h-32 resize-none focus:border-crimson transition-all" placeholder="Statement about academic standards..." />
+                <textarea required value={newRigorText} onChange={e => setNewRigorText(e.target.value)} className="w-full bg-surface-base border border-surface-high rounded-xl p-4 text-sm text-text-primary outline-none h-32 resize-none focus:border-crimson transition-all" placeholder="Statement about academic standards..." />
                 <button type="submit" className="w-full bg-crimson text-white py-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-royal transition-all">ADD STATEMENT</button>
               </form>
             </motion.div>

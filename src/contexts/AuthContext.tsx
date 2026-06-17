@@ -6,6 +6,7 @@ import {
   signOut,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
   updateProfile as firebaseUpdateProfile
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -34,6 +35,7 @@ interface AuthContextType {
   updateProfile: (data: { name: string; topics: string[]; email?: string }) => Promise<void>;
   signUpWithEmail: (email: string, password: string, name: string, topics: string[]) => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -135,6 +137,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setShowAuthModal(false);
   };
 
+  const resetPassword = async (email: string) => {
+    await sendPasswordResetEmail(auth, email);
+  };
+
   return (
     <AuthContext.Provider value={{ 
       user, 
@@ -149,7 +155,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       handleJoinAction, 
       updateProfile,
       signUpWithEmail,
-      signInWithEmail
+      signInWithEmail,
+      resetPassword
     }}>
       {children}
     </AuthContext.Provider>

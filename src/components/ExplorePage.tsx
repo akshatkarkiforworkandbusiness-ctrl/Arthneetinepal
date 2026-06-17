@@ -1,8 +1,12 @@
 import { motion } from 'motion/react';
+import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { db } from '../lib/firebase';
 import { collection, query, where, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface Post {
   id: string;
@@ -242,7 +246,6 @@ export default function ExplorePage() {
   
   // Interactive coordinate hover states
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
-  const chartRef = useRef<SVGSVGElement>(null);
 
   // Firestore subscription for research posts
   useEffect(() => {
@@ -295,73 +298,6 @@ export default function ExplorePage() {
   const activeStock = stocks[selectedStockKey];
   const activeHistory = activeStock.history[timeframe];
   
-  // Calculate SVG Path coordinates
-  const svgWidth = 600;
-  const svgHeight = 240;
-  const paddingX = 40;
-  const paddingY = 30;
-
-  const values = activeHistory.map(p => p.value);
-  const maxValue = Math.max(...values);
-  const minValue = Math.min(...values);
-  const valRange = maxValue - minValue || 1;
-
-  // Function to map a data index/value to SVG coordinates
-  const getCoordinates = (index: number, val: number) => {
-    const x = paddingX + (index / (activeHistory.length - 1)) * (svgWidth - paddingX * 2);
-    // invert Y since SVG 0 is top
-    const y = svgHeight - paddingY - ((val - minValue) / valRange) * (svgHeight - paddingY * 2);
-    return { x, y };
-  };
-
-  // Build the SVG path string
-  let pathD = '';
-  let areaD = '';
-  if (activeHistory.length > 0) {
-    const firstCoord = getCoordinates(0, activeHistory[0].value);
-    pathD = `M ${firstCoord.x} ${firstCoord.y}`;
-    areaD = `M ${firstCoord.x} ${svgHeight - paddingY} L ${firstCoord.x} ${firstCoord.y}`;
-    
-    for (let i = 1; i < activeHistory.length; i++) {
-      const coord = getCoordinates(i, activeHistory[i].value);
-      pathD += ` L ${coord.x} ${coord.y}`;
-      areaD += ` L ${coord.x} ${coord.y}`;
-    }
-    
-    const lastCoord = getCoordinates(activeHistory.length - 1, activeHistory[activeHistory.length - 1].value);
-    areaD += ` L ${lastCoord.x} ${svgHeight - paddingY} Z`;
-  }
-
-  // Handle Chart Hover Calculations
-  const handleMouseMove = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
-    if (!chartRef.current || activeHistory.length === 0) return;
-    const rect = chartRef.current.getBoundingClientRect();
-    const clientX = e.clientX - rect.left;
-    
-    // Scale user hover coordinate relative to SVG view box
-    const svgRatioX = svgWidth / rect.width;
-    const hoverSvgX = clientX * svgRatioX;
-    
-    // Find index of closest data point
-    let closestIndex = 0;
-    let minDistance = Infinity;
-    
-    for (let i = 0; i < activeHistory.length; i++) {
-      const coord = getCoordinates(i, activeHistory[i].value);
-      const dist = Math.abs(coord.x - hoverSvgX);
-      if (dist < minDistance) {
-        minDistance = dist;
-        closestIndex = i;
-      }
-    }
-    
-    setHoverIndex(closestIndex);
-  };
-
-  const handleMouseLeave = () => {
-    setHoverIndex(null);
-  };
-
   // Determine return color values
   const isGainer = activeStock.change >= 0;
   const themeColor = isGainer ? '#10B981' : '#F43F5E'; // green-light / crimson
@@ -414,7 +350,9 @@ export default function ExplorePage() {
             <div>
               <div className="flex items-center gap-3 mb-1">
                 <span className="text-2xl font-black text-white font-mono tracking-tight">{activeStock.symbol}</span>
-                <span className="text-[10px] font-bold text-text-muted uppercase bg-[#0B0F19] px-2 py-0.5 rounded border border-[#1F2A3F]">{activeStock.name}</span>
+                <Badge variant="outline" className="text-[10px] font-bold text-text-muted uppercase bg-[#0B0F19] px-2 py-0.5 rounded border border-[#1F2A3F]">
+                  {activeStock.name}
+                </Badge>
               </div>
               <p className="text-xs text-text-muted uppercase tracking-wider">{displayedDate}</p>
             </div>
@@ -436,97 +374,70 @@ export default function ExplorePage() {
           </div>
 
           {/* Timeframe selector */}
-          <div className="flex border-b border-[#1F2A3F] pb-4 mb-6 gap-2">
-            {['1D', '1W', '1M', '1Y', 'ALL'].map((tf) => (
-              <button
-                key={tf}
-                onClick={() => setTimeframe(tf)}
-                className={`px-4 py-2 text-xs font-black uppercase tracking-wider rounded-lg transition-all ${
-                  timeframe === tf 
-                    ? 'bg-royal text-white shadow-lg' 
-                    : 'text-text-muted hover:text-white hover:bg-[#0B0F19]/50'
-                }`}
-              >
-                {tf}
-              </button>
-            ))}
-          </div>
+          <Tabs defaultValue="1D" value={timeframe} onValueChange={setTimeframe} className="mb-6">
+            <TabsList className="flex border-b border-[#1F2A3F] pb-4 gap-2 bg-transparent p-0 rounded-none w-full justify-start h-auto">
+              {['1D', '1W', '1M', '1Y', 'ALL'].map((tf) => (
+                <TabsTrigger
+                  key={tf}
+                  value={tf}
+                  className="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-lg transition-all text-text-muted hover:text-white hover:bg-[#0B0F19]/50 data-[state=active]:bg-royal data-[state=active]:text-white data-[state=active]:shadow-lg dark:text-text-muted dark:hover:text-white dark:data-[state=active]:bg-royal dark:data-[state=active]:text-white h-auto"
+                >
+                  {tf}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
 
-          {/* SVG Graph Container */}
-          <div className="relative w-full h-[240px] bg-[#0B0F19]/60 rounded-xl border border-[#1F2A3F] overflow-hidden">
-            <svg 
-              ref={chartRef}
-              viewBox={`0 0 ${svgWidth} ${svgHeight}`} 
-              className="w-full h-full cursor-crosshair"
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
-            >
-              <defs>
-                <linearGradient id="chartAreaGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={themeColor} stopOpacity="0.18" />
-                  <stop offset="100%" stopColor={themeColor} stopOpacity="0.0" />
-                </linearGradient>
-              </defs>
-
-              {/* Grid Lines */}
-              <line x1={paddingX} y1={paddingY} x2={svgWidth - paddingX} y2={paddingY} stroke="#1F2A3F" strokeWidth="0.5" strokeDasharray="3,3" />
-              <line x1={paddingX} y1={svgHeight/2} x2={svgWidth - paddingX} y2={svgHeight/2} stroke="#1F2A3F" strokeWidth="0.5" strokeDasharray="3,3" />
-              <line x1={paddingX} y1={svgHeight - paddingY} x2={svgWidth - paddingX} y2={svgHeight - paddingY} stroke="#1F2A3F" strokeWidth="0.5" strokeDasharray="3,3" />
-
-              {/* Chart Line and Area Fill */}
-              <path d={areaD} fill="url(#chartAreaGrad)" />
-              <path d={pathD} fill="none" stroke={themeColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-
-              {/* Hover Coordinate Tracking */}
-              {hoverIndex !== null && activeHistory[hoverIndex] && (() => {
-                const coord = getCoordinates(hoverIndex, activeHistory[hoverIndex].value);
-                return (
-                  <g>
-                    {/* Vertical tracking line */}
-                    <line 
-                      x1={coord.x} 
-                      y1={paddingY} 
-                      x2={coord.x} 
-                      y2={svgHeight - paddingY} 
-                      stroke="#94A3B8" 
-                      strokeWidth="1" 
-                      strokeDasharray="2,2" 
-                    />
-                    {/* Horizontal tracking line */}
-                    <line 
-                      x1={paddingX} 
-                      y1={coord.y} 
-                      x2={svgWidth - paddingX} 
-                      y2={coord.y} 
-                      stroke="#94A3B8" 
-                      strokeWidth="0.5" 
-                      strokeDasharray="2,2" 
-                    />
-                    {/* Outer tracking dot */}
-                    <circle 
-                      cx={coord.x} 
-                      cy={coord.y} 
-                      r="7" 
-                      fill={themeColor} 
-                      opacity="0.3" 
-                    />
-                    {/* Inner tracking dot */}
-                    <circle 
-                      cx={coord.x} 
-                      cy={coord.y} 
-                      r="4" 
-                      fill="#FFFFFF" 
-                      stroke={themeColor} 
-                      strokeWidth="2" 
-                    />
-                  </g>
-                );
-              })()}
-            </svg>
-
-            {/* Empty history handler */}
-            {activeHistory.length === 0 && (
-              <div className="absolute inset-0 flex items-center justify-center text-text-muted italic text-xs">
+          {/* Graph Container */}
+          <div className="relative w-full h-[240px] bg-[#0B0F19]/60 rounded-xl border border-[#1F2A3F] p-4 flex items-center justify-center">
+            {activeHistory.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart 
+                  data={activeHistory}
+                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                  onMouseMove={(state) => {
+                    if (state && state.activeTooltipIndex !== undefined && state.activeTooltipIndex !== null) {
+                      setHoverIndex(state.activeTooltipIndex);
+                    }
+                  }}
+                  onMouseLeave={() => setHoverIndex(null)}
+                >
+                  <XAxis 
+                    dataKey="date" 
+                    tickLine={false} 
+                    axisLine={false} 
+                    tick={{ fill: '#94A3B8', fontSize: 10, fontFamily: 'monospace' }} 
+                  />
+                  <YAxis 
+                    domain={['auto', 'auto']} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    tick={{ fill: '#94A3B8', fontSize: 10, fontFamily: 'monospace' }} 
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#161F30', 
+                      borderColor: '#1F2A3F', 
+                      borderRadius: '8px',
+                      color: '#FFF',
+                      fontSize: '12px',
+                      fontFamily: 'sans-serif'
+                    }} 
+                    itemStyle={{ color: themeColor }}
+                    labelStyle={{ color: '#94A3B8', fontWeight: 'bold' }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="value" 
+                    stroke={themeColor} 
+                    strokeWidth={2.5}
+                    dot={false} 
+                    activeDot={{ r: 6, fill: '#FFFFFF', stroke: themeColor, strokeWidth: 2 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="text-text-muted italic text-xs">
                 Market data stream offline...
               </div>
             )}
@@ -633,12 +544,12 @@ export default function ExplorePage() {
             {filteredPosts.map(post => (
               <div key={post.id} className="bg-[#161F30] p-8 rounded-2xl border border-[#1F2A3F] shadow-xl hover:border-royal/50 transition-all duration-300 group">
                 <div className="flex gap-3 mb-4 items-center">
-                  <span className="bg-royal/10 text-royal px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border border-royal/20">
+                  <Badge variant="outline" className="bg-royal/10 text-royal px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border border-royal/20">
                     {post.category}
-                  </span>
-                  <span className="text-[9px] font-black text-text-muted uppercase tracking-widest">
+                  </Badge>
+                  <Badge variant="outline" className="text-[9px] font-black text-text-muted uppercase tracking-widest bg-transparent border-transparent">
                     Academic Analysis
-                  </span>
+                  </Badge>
                 </div>
                 
                 <h3 className="font-display text-2xl text-white italic mb-4 group-hover:text-royal transition-colors leading-tight">

@@ -1,6 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+
+@custom-variant dark (&:is(.dark *));
 
 @theme {
   --font-display: "Playfair Display", serif;
@@ -8,35 +13,73 @@
   --font-body: "DM Sans", sans-serif;
   --font-mono: "Roboto Mono", monospace;
 
-  /* Map green-deep to cool white so that text-green-deep utilities display readably */
-  --color-green-deep: #F8FAFC;
-  --color-green-light: #10B981;
-  --color-crimson: #F43F5E;
-  --color-royal: #3B82F6;
-  --color-gold: #F59E0B;
+  /* 
+   * Surface layers — dark base UI
+   * base:    deepest background (#0B0F19)
+   * raised:  cards, modals, nav (#161F30)
+   * high:    borders, elevated panels (#1F2A3F)
+   */
+  --color-surface-base:   #0B0F19;
+  --color-surface-raised: #161F30;
+  --color-surface-high:   #1F2A3F;
+
+  /* 
+   * Legacy aliases — kept so existing JSX doesn't break.
+   * green-deep  → surface-base  (was #F8FAFC but used as bg, now correctly dark)
+   * cream       → surface-raised (cards, inputs)
+   * navy        → surface-raised (same level, kept for border usage)
+   * white token stays #FFFFFF — bg-white in JSX now correctly means white
+   */
+  --color-green-deep: #0B0F19;
+  --color-cream:      #161F30;
+  --color-navy:       #161F30;
+  --color-white:      #FFFFFF;
+
+  /* Brand colors */
+  --color-crimson:    #F43F5E;
+  --color-royal:      #3B82F6;
+  --color-gold:       #F59E0B;
   --color-gold-light: #FCD34D;
-  --color-cream: #161F30;
-  --color-white: #FFFFFF;
-  
-  --color-navy: #161F30;
-  
-  --color-background: #0B0F19;
+  --color-green-light: #10B981;
+
+  /* Text */
   --color-text-primary: #F8FAFC;
-  --color-text-muted: #94A3B8;
-  
-  --color-gainer: #10B981;
-  --color-loser: #F43F5E;
+  --color-text-muted:   #94A3B8;
+
+  /* Background (used by Tailwind base layer) */
+  --color-background: #0B0F19;
+
+  /* Chart / market */
+  --color-gainer:     #10B981;
+  --color-loser:      #F43F5E;
   --color-chart-grid: #1F2A3F;
 }
 
 @layer base {
   body {
-    @apply bg-background text-text-primary font-body antialiased;
+    @apply font-body antialiased bg-background text-text-primary;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
     @apply font-display;
   }
+
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans;
+  }
+}
+
+/* Marquee animation — moved out of dangerouslySetInnerHTML */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
 }
 
 .material-symbols-outlined {
@@ -53,99 +96,139 @@
   @apply h-px w-full bg-gold/20;
 }
 
-/* Custom premium scrollbar for financial dark dashboard feel */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #0B0F19;
-}
-::-webkit-scrollbar-thumb {
-  background: #1F2A3F;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #3B82F6;
+/* Dark surface utility — use instead of bg-white for dark-theme modals/cards */
+.bg-surface-raised {
+  background-color: #161F30;
 }
 
-/* Selection Color */
+/* Scrollbar */
+::-webkit-scrollbar       { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #0B0F19; }
+::-webkit-scrollbar-thumb { background: #1F2A3F; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3B82F6; }
+
+/* Selection */
 ::selection {
   background-color: #3B82F6;
   color: #FFFFFF;
 }
 
-/* 
-  Override bg-green-deep classes in CSS.
-  This allows us to keep the background of major panels (Navigation, Footer, Modals)
-  dark (#0B0F19) while text-green-deep is light (#F8FAFC).
-*/
-.bg-green-deep {
-  background-color: #0B0F19 !important;
-}
-.bg-green-deep\/80 {
-  background-color: rgba(11, 15, 25, 0.8) !important;
-}
-.bg-green-deep\/40 {
-  background-color: rgba(11, 15, 25, 0.4) !important;
-}
-.bg-green-deep\/20 {
-  background-color: rgba(11, 15, 25, 0.2) !important;
-}
-.bg-green-deep\/5 {
-  background-color: rgba(11, 15, 25, 0.05) !important;
-}
-.hover\:bg-green-deep:hover {
-  background-color: #0B0F19 !important;
-}
-.hover\:text-green-deep:hover {
-  color: #F8FAFC !important;
+/* Quill editor dark theme */
+.ql-toolbar.ql-snow  { background-color: #161F30; border-color: #1F2A3F; }
+.ql-container.ql-snow { border-color: #1F2A3F; }
+.ql-snow .ql-stroke  { stroke: #94A3B8; }
+.ql-snow .ql-fill    { fill: #94A3B8; }
+.ql-snow .ql-picker   { color: #94A3B8; }
+.ql-editor            { color: #F8FAFC; }
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: 'Geist Variable', sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/*
-  Override bg-white and bg-cream to transition light theme cards/modals to dark slate.
-*/
-.bg-white {
-  background-color: #161F30 !important;
-  border-color: #1F2A3F !important;
-}
-.bg-cream {
-  background-color: #161F30 !important;
-  border-color: #1F2A3F !important;
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
 }
 
-/* Allow hover states targeting white to be fully white for buttons/actions */
-.hover\:bg-white:hover {
-  background-color: #FFFFFF !important;
-  color: #0B0F19 !important;
-}
-
-/* Nested elements (like avatars, icon containers, or input highlights) should have contrasting backgrounds */
-.bg-cream .bg-white,
-.bg-white .bg-white,
-.bg-cream .bg-cream,
-.bg-white .bg-cream {
-  background-color: #0B0F19 !important;
-  border: 1px solid #1F2A3F !important;
-}
-
-/* RichText editor toolbar adjustments for dark theme */
-.ql-toolbar.ql-snow {
-  background-color: #161F30 !important;
-  border-color: #1F2A3F !important;
-}
-.ql-container.ql-snow {
-  border-color: #1F2A3F !important;
-}
-.ql-snow .ql-stroke {
-  stroke: #94A3B8 !important;
-}
-.ql-snow .ql-fill {
-  fill: #94A3B8 !important;
-}
-.ql-snow .ql-picker {
-  color: #94A3B8 !important;
-}
-.ql-editor {
-  color: #F8FAFC !important;
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
 }

@@ -18,7 +18,8 @@ export function Navigation() {
     handleJoinAction,
     signUpWithEmail,
     signInWithEmail,
-    signIn
+    signIn,
+    resetPassword
   } = useAuth();
   
   // Local state for profile setup modal if needed
@@ -27,6 +28,9 @@ export function Navigation() {
 
   // Auth Form State
   const [isSignUpMode, setIsSignUpMode] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotStatus, setForgotStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [authForm, setAuthForm] = useState({ name: '', email: '', password: '', interests: [] as string[] });
   const [authError, setAuthError] = useState<string | null>(null);
   const [authSubmitting, setAuthSubmitting] = useState(false);
@@ -315,23 +319,99 @@ export function Navigation() {
         {showAuthModal && (
           <div className="fixed inset-0 z-[100] bg-green-deep/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
             {/* Click outside to close */}
-            <div className="absolute inset-0" onClick={() => setShowAuthModal(false)} />
+            <div className="absolute inset-0" onClick={() => { setShowAuthModal(false); setIsForgotPassword(false); setForgotStatus('idle'); }} />
             
             <motion.div 
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white p-8 md:p-10 rounded-3xl max-w-md w-full shadow-2xl relative text-white z-10 my-8 border border-green-deep/10"
+              className="bg-[#161F30] p-8 md:p-10 rounded-3xl max-w-md w-full shadow-2xl relative z-10 my-8 border border-[#1F2A3F]"
             >
               {/* Close Button */}
               <button 
-                onClick={() => setShowAuthModal(false)}
+                onClick={() => { setShowAuthModal(false); setIsForgotPassword(false); setForgotStatus('idle'); }}
                 className="absolute top-6 right-6 text-text-muted hover:text-white transition-colors cursor-pointer"
               >
                 <span className="material-symbols-outlined">close</span>
               </button>
 
-              <h2 className="font-display text-3xl italic mb-2 text-white">
+              <AnimatePresence mode="wait">
+              {isForgotPassword ? (
+                <motion.div
+                  key="forgot"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.18 }}
+                >
+                  <button
+                    onClick={() => { setIsForgotPassword(false); setForgotStatus('idle'); }}
+                    className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-text-muted hover:text-white transition-colors cursor-pointer mb-6"
+                  >
+                    <span className="material-symbols-outlined text-sm">arrow_back</span>
+                    Back to login
+                  </button>
+
+                  <h2 className="font-display text-3xl italic mb-2 text-white">Reset Password</h2>
+                  <p className="text-text-muted text-xs mb-6">
+                    Enter your email and we'll send a reset link.
+                  </p>
+
+                  {forgotStatus === 'sent' ? (
+                    <div className="p-4 bg-green-light/10 border border-green-light/30 rounded-xl text-green-light text-xs leading-relaxed font-semibold text-center">
+                      Reset link sent. Check your inbox — and your spam folder.
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div>
+                        <label className="text-[9px] font-black uppercase tracking-widest text-text-muted mb-1.5 block">Email Address</label>
+                        <input
+                          type="email"
+                          required
+                          placeholder="name@email.com"
+                          value={forgotEmail}
+                          onChange={e => setForgotEmail(e.target.value)}
+                          className="w-full bg-[#0B0F19] border border-green-deep/5 rounded p-3 text-xs outline-none focus:border-royal text-white transition-all font-medium"
+                        />
+                      </div>
+
+                      {forgotStatus === 'error' && (
+                        <div className="p-3 bg-crimson/10 border border-crimson/30 rounded-xl text-crimson text-[10px] leading-relaxed font-semibold">
+                          Couldn't send reset email. Check the address and try again.
+                        </div>
+                      )}
+
+                      <button
+                        type="button"
+                        disabled={forgotStatus === 'sending' || !forgotEmail}
+                        onClick={async () => {
+                          setForgotStatus('sending');
+                          try {
+                            await resetPassword(forgotEmail);
+                            setForgotStatus('sent');
+                          } catch {
+                            setForgotStatus('error');
+                          }
+                        }}
+                        className="w-full bg-royal hover:bg-white hover:text-royal text-white py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                      >
+                        {forgotStatus === 'sending' && (
+                          <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        )}
+                        Send Reset Link
+                      </button>
+                    </div>
+                  )}
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="auth"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.18 }}
+                >
+                <h2 className="font-display text-3xl italic mb-2 text-white">
                 {isSignUpMode ? 'Create Account' : 'Welcome Back'}
               </h2>
               <p className="text-text-muted text-xs mb-6">
@@ -339,7 +419,7 @@ export function Navigation() {
               </p>
 
               {/* Tabs */}
-              <div className="flex bg-cream p-1.5 rounded-xl border border-green-deep/10 mb-6">
+              <div className="flex bg-[#0B0F19] p-1.5 rounded-xl border border-[#1F2A3F] mb-6">
                 <button
                   type="button"
                   onClick={() => {
@@ -429,6 +509,19 @@ export function Navigation() {
                     onChange={e => setAuthForm({...authForm, password: e.target.value})}
                     className="w-full bg-[#0B0F19] border border-green-deep/5 rounded p-3 text-xs outline-none focus:border-royal text-white transition-all font-medium"
                   />
+                  {!isSignUpMode && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setForgotEmail(authForm.email);
+                        setForgotStatus('idle');
+                        setIsForgotPassword(true);
+                      }}
+                      className="mt-1.5 text-[9px] font-black uppercase tracking-widest text-text-muted hover:text-royal transition-colors cursor-pointer"
+                    >
+                      Forgot password?
+                    </button>
+                  )}
                 </div>
 
                 {isSignUpMode && (
@@ -483,7 +576,7 @@ export function Navigation() {
               {/* Divider */}
               <div className="relative my-6 flex items-center justify-center">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-green-deep/10" />
+                  <div className="w-full border-t border-[#1F2A3F]" />
                 </div>
                 <span className="relative px-3 bg-[#161F30] text-[9px] font-black uppercase tracking-widest text-text-muted">or continue with</span>
               </div>
@@ -499,7 +592,7 @@ export function Navigation() {
                     setAuthError(getReadableAuthError(err));
                   }
                 }}
-                className="w-full bg-cream border border-green-deep/10 hover:border-royal text-white py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full bg-[#0B0F19] border border-[#1F2A3F] hover:border-royal text-white py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -509,6 +602,9 @@ export function Navigation() {
                 </svg>
                 Sign In with Google
               </button>
+                </motion.div>
+              )}
+              </AnimatePresence>
             </motion.div>
           </div>
         )}

@@ -37,8 +37,8 @@ export default function BoardPage() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-24">
           <span className="text-[10px] font-black text-crimson mb-4 block uppercase tracking-[0.4em]">LEADERSHIP</span>
-          <h1 className="text-6xl md:text-8xl text-green-deep italic mb-8 font-display">Executive Board</h1>
-          <p className="text-green-deep/60 max-w-xl mx-auto italic font-sans">
+          <h1 className="text-6xl md:text-8xl text-text-primary italic mb-8 font-display">Executive Board</h1>
+          <p className="text-text-muted max-w-xl mx-auto italic font-sans">
             The founding team driving the movement for financial intelligence in Nepal.
           </p>
         </div>
@@ -71,9 +71,9 @@ export default function BoardPage() {
           ))}
         </div>
 
-        <section className="bg-cream p-12 md:p-24 rounded-3xl text-center border border-green-deep/5">
-          <h2 className="text-4xl text-green-deep mb-8 italic">Contact the Club</h2>
-          <p className="text-green-deep/60 mb-12 font-sans italic">Have specific questions about school partnerships or partnerships?</p>
+        <section className="bg-surface-raised p-12 md:p-24 rounded-3xl text-center border border-surface-high">
+          <h2 className="text-4xl text-text-primary mb-8 italic">Contact the Club</h2>
+          <p className="text-text-muted mb-12 font-sans italic">Have specific questions about school partnerships or partnerships?</p>
           <a 
             href="mailto:learnarthneeti@gmail.com"
             className="inline-flex items-center gap-4 bg-green-deep text-white px-12 py-5 rounded text-xs font-black uppercase tracking-widest hover:bg-crimson transition-all shadow-xl"
