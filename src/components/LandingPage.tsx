@@ -197,30 +197,86 @@ export default function LandingPage() {
     };
   }, []);
 
-  // Simulate market indices ticking
+  // Market data: try live API, fall back to simulation if unavailable
+  const [marketDataSource, setMarketDataSource] = useState<'live' | 'simulated' | 'loading'>('loading');
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+
   useEffect(() => {
+    const NEPSE_API = 'https://nepseapi.surajrimal.dev';
+    const INDEX_MAP: Record<string, { key: string; name: string }> = {
+      '58': { key: 'NEPSE', name: 'NEPSE Index' },
+      '3':  { key: 'BANKING', name: 'Banking Index' },
+      '11': { key: 'HYDRO', name: 'Hydropower Index' },
+    };
+
+    const fetchLiveData = async () => {
+      try {
+        const [indexRes, subIndexRes] = await Promise.all([
+          fetch(`${NEPSE_API}/NepseIndex`, { signal: AbortSignal.timeout(6000) }),
+          fetch(`${NEPSE_API}/SubIndices`, { signal: AbortSignal.timeout(6000) }),
+        ]);
+        if (!indexRes.ok) throw new Error('API error');
+        const indexData = await indexRes.json();
+        const subData = subIndexRes.ok ? await subIndexRes.json() : [];
+
+        // Build combined list
+        const all = [indexData, ...(Array.isArray(subData) ? subData : [])];
+        const next: Record<string, IndexState> = { ...initialIndices };
+
+        all.forEach((entry: any) => {
+          const id = String(entry?.id ?? entry?.indexId ?? '');
+          const mapped = INDEX_MAP[id];
+          if (!mapped) return;
+          const value = parseFloat(entry.currentValue ?? entry.value ?? 0);
+          const change = parseFloat(entry.change ?? 0);
+          const changePercent = parseFloat(entry.perChange ?? entry.percentageChange ?? 0);
+          const prev = next[mapped.key];
+          next[mapped.key] = {
+            name: mapped.name,
+            value,
+            change,
+            changePercent,
+            sparkline: [...prev.sparkline.slice(1), value],
+          };
+        });
+
+        setMarketIndices(next);
+        setMarketDataSource('live');
+        setLastUpdated(new Date());
+      } catch {
+        // API unreachable — fall back to animated simulation
+        if (marketDataSource === 'loading') setMarketDataSource('simulated');
+      }
+    };
+
+    fetchLiveData();
+    const liveInterval = setInterval(fetchLiveData, 60_000); // refresh every 60s
+
+    return () => clearInterval(liveInterval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Simulation tick — only runs when API is unavailable
+  useEffect(() => {
+    if (marketDataSource !== 'simulated') return;
     const interval = setInterval(() => {
       setMarketIndices(prev => {
         const next = { ...prev };
         Object.keys(next).forEach(key => {
           const item = { ...next[key] };
-          const drift = (Math.random() - 0.48) * (item.value * 0.0006); // slight positive drift
+          const drift = (Math.random() - 0.48) * (item.value * 0.0006);
           item.value = parseFloat((item.value + drift).toFixed(2));
           item.change = parseFloat((item.change + drift).toFixed(2));
           const basePrice = item.value - item.change;
           item.changePercent = parseFloat(((item.change / basePrice) * 100).toFixed(2));
-          
-          // Rotate sparkline history
-          const updatedSpark = [...item.sparkline.slice(1), item.value];
-          item.sparkline = updatedSpark;
+          item.sparkline = [...item.sparkline.slice(1), item.value];
           next[key] = item;
         });
         return next;
       });
     }, 4500);
-
     return () => clearInterval(interval);
-  }, []);
+  }, [marketDataSource]);
 
   const stats = [
     { label: 'Active Topics', value: `${topicCount}+` },
@@ -334,6 +390,38 @@ export default function LandingPage() {
       {/* Market Ticker Sparkline Section */}
       <section className="bg-[#161F30] border-y border-[#1F2A3F] py-8 px-6">
         <div className="max-w-7xl mx-auto">
+          {/* Header row with status + disclaimer */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted">NEPSE Market Indices</span>
+              {marketDataSource === 'live' && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-light/10 border border-green-light/30 text-green-light text-[9px] font-black uppercase tracking-widest">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-light animate-pulse inline-block" />
+                  Live
+                </span>
+              )}
+              {marketDataSource === 'simulated' && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-400 text-[9px] font-black uppercase tracking-widest">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" />
+                  Simulated
+                </span>
+              )}
+              {marketDataSource === 'loading' && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#1F2A3F] text-text-muted text-[9px] font-black uppercase tracking-widest">
+                  <span className="inline-block w-2 h-2 border border-text-muted border-t-transparent rounded-full animate-spin" />
+                  Loading
+                </span>
+              )}
+            </div>
+            <div className="flex flex-col sm:items-end gap-0.5">
+              <p className="text-[9px] text-text-muted leading-relaxed max-w-xs sm:text-right">
+                {marketDataSource === 'live'
+                  ? `Data via NepseAPI (unofficial). For educational use only — not financial advice.${lastUpdated ? ` Updated ${lastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}` : ''}`
+                  : 'Live data unavailable. Showing simulated values for educational illustration only — not real market data.'}
+              </p>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {Object.keys(marketIndices).map((key) => {
               const item = marketIndices[key];
