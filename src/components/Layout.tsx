@@ -28,12 +28,20 @@ export function Navigation() {
 
   // Auth Form State
   const [isSignUpMode, setIsSignUpMode] = useState(false);
-  const [isForgotPassword, setIsForgotPassword] = useState(false);
-  const [forgotEmail, setForgotEmail] = useState('');
-  const [forgotStatus, setForgotStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [isResetMode, setIsResetMode] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetSubmitting, setResetSubmitting] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
   const [authForm, setAuthForm] = useState({ name: '', email: '', password: '', interests: [] as string[] });
   const [authError, setAuthError] = useState<string | null>(null);
   const [authSubmitting, setAuthSubmitting] = useState(false);
+
+  const closeAuthModal = () => {
+    setShowAuthModal(false);
+    setIsResetMode(false);
+    setResetSent(false);
+    setAuthError(null);
+  };
 
   const getReadableAuthError = (error: any) => {
     const code = error?.code || '';
@@ -52,6 +60,8 @@ export function Navigation() {
         return 'Password should be at least 6 characters.';
       case 'auth/operation-not-allowed':
         return 'This sign-in method is not enabled.';
+      case 'auth/too-many-requests':
+        return 'Too many attempts. Please wait a bit before trying again.';
       case 'auth/popup-closed-by-user':
         return 'Google sign-in was closed before completing.';
       default:
@@ -319,107 +329,106 @@ export function Navigation() {
         {showAuthModal && (
           <div className="fixed inset-0 z-[100] bg-green-deep/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
             {/* Click outside to close */}
-            <div className="absolute inset-0" onClick={() => { setShowAuthModal(false); setIsForgotPassword(false); setForgotStatus('idle'); }} />
+            <div className="absolute inset-0" onClick={closeAuthModal} />
             
             <motion.div 
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-[#161F30] p-8 md:p-10 rounded-3xl max-w-md w-full shadow-2xl relative z-10 my-8 border border-[#1F2A3F]"
+              className="bg-white p-8 md:p-10 rounded-3xl max-w-md w-full shadow-2xl relative text-white z-10 my-8 border border-green-deep/10"
             >
               {/* Close Button */}
               <button 
-                onClick={() => { setShowAuthModal(false); setIsForgotPassword(false); setForgotStatus('idle'); }}
+                onClick={closeAuthModal}
                 className="absolute top-6 right-6 text-text-muted hover:text-white transition-colors cursor-pointer"
               >
                 <span className="material-symbols-outlined">close</span>
               </button>
 
-              <AnimatePresence mode="wait">
-              {isForgotPassword ? (
-                <motion.div
-                  key="forgot"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.18 }}
-                >
-                  <button
-                    onClick={() => { setIsForgotPassword(false); setForgotStatus('idle'); }}
-                    className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-text-muted hover:text-white transition-colors cursor-pointer mb-6"
-                  >
-                    <span className="material-symbols-outlined text-sm">arrow_back</span>
-                    Back to login
-                  </button>
-
-                  <h2 className="font-display text-3xl italic mb-2 text-white">Reset Password</h2>
-                  <p className="text-text-muted text-xs mb-6">
-                    Enter your email and we'll send a reset link.
-                  </p>
-
-                  {forgotStatus === 'sent' ? (
-                    <div className="p-4 bg-green-light/10 border border-green-light/30 rounded-xl text-green-light text-xs leading-relaxed font-semibold text-center">
-                      Reset link sent. Check your inbox — and your spam folder.
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <div>
-                        <label className="text-[9px] font-black uppercase tracking-widest text-text-muted mb-1.5 block">Email Address</label>
-                        <input
-                          type="email"
-                          required
-                          placeholder="name@email.com"
-                          value={forgotEmail}
-                          onChange={e => setForgotEmail(e.target.value)}
-                          className="w-full bg-[#0B0F19] border border-green-deep/5 rounded p-3 text-xs outline-none focus:border-royal text-white transition-all font-medium"
-                        />
-                      </div>
-
-                      {forgotStatus === 'error' && (
-                        <div className="p-3 bg-crimson/10 border border-crimson/30 rounded-xl text-crimson text-[10px] leading-relaxed font-semibold">
-                          Couldn't send reset email. Check the address and try again.
-                        </div>
-                      )}
-
-                      <button
-                        type="button"
-                        disabled={forgotStatus === 'sending' || !forgotEmail}
-                        onClick={async () => {
-                          setForgotStatus('sending');
-                          try {
-                            await resetPassword(forgotEmail);
-                            setForgotStatus('sent');
-                          } catch {
-                            setForgotStatus('error');
-                          }
-                        }}
-                        className="w-full bg-royal hover:bg-white hover:text-royal text-white py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-                      >
-                        {forgotStatus === 'sending' && (
-                          <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        )}
-                        Send Reset Link
-                      </button>
-                    </div>
-                  )}
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="auth"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.18 }}
-                >
-                <h2 className="font-display text-3xl italic mb-2 text-white">
-                {isSignUpMode ? 'Create Account' : 'Welcome Back'}
+              <h2 className="font-display text-3xl italic mb-2 text-white">
+                {isResetMode ? 'Reset Password' : isSignUpMode ? 'Create Account' : 'Welcome Back'}
               </h2>
               <p className="text-text-muted text-xs mb-6">
-                {isSignUpMode ? 'Join the Arthneeti student movement for finance.' : 'Log in to connect with the community.'}
+                {isResetMode 
+                  ? "Enter your email and we'll send a link to reset your password." 
+                  : isSignUpMode ? 'Join the Arthneeti student movement for finance.' : 'Log in to connect with the community.'}
               </p>
 
+              {isResetMode ? (
+                resetSent ? (
+                  <div className="space-y-4">
+                    <div className="p-3 bg-emerald-600/10 border border-emerald-600/30 rounded-xl text-emerald-600 text-[10px] leading-relaxed font-semibold">
+                      If an account exists for that email, a reset link is on its way. Check your inbox (and spam folder).
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => { setIsResetMode(false); setResetSent(false); setAuthError(null); }}
+                      className="w-full bg-cream border border-green-deep/10 hover:border-royal text-white py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer"
+                    >
+                      Back to Log In
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={async (e) => {
+                    e.preventDefault();
+                    setAuthError(null);
+                    setResetSubmitting(true);
+                    try {
+                      await resetPassword(resetEmail);
+                    } catch (err: any) {
+                      // auth/user-not-found is intentionally not surfaced to the user below —
+                      // doing so would let anyone enumerate which emails have accounts.
+                      if (err?.code !== 'auth/user-not-found') {
+                        setAuthError(getReadableAuthError(err));
+                        setResetSubmitting(false);
+                        return;
+                      }
+                    }
+                    setResetSubmitting(false);
+                    setResetSent(true);
+                  }} className="space-y-4">
+                    <div>
+                      <label className="text-[9px] font-black uppercase tracking-widest text-text-muted mb-1.5 block">Email Address</label>
+                      <input 
+                        type="email"
+                        required
+                        placeholder="name@email.com"
+                        value={resetEmail}
+                        onChange={e => setResetEmail(e.target.value)}
+                        className="w-full bg-[#0B0F19] border border-green-deep/5 rounded p-3 text-xs outline-none focus:border-royal text-white transition-all font-medium"
+                      />
+                    </div>
+
+                    {authError && (
+                      <div className="p-3 bg-crimson/10 border border-crimson/30 rounded-xl text-crimson text-[10px] leading-relaxed font-semibold">
+                        {authError}
+                      </div>
+                    )}
+
+                    <button 
+                      type="submit"
+                      disabled={resetSubmitting}
+                      className="w-full bg-crimson hover:bg-white hover:text-crimson text-white py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                    >
+                      {resetSubmitting && (
+                        <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      )}
+                      Send Reset Link
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => { setIsResetMode(false); setAuthError(null); }}
+                      className="w-full text-text-muted hover:text-white text-[10px] font-bold text-center cursor-pointer"
+                    >
+                      ← Back to Log In
+                    </button>
+                  </form>
+                )
+              ) : (
+              <>
               {/* Tabs */}
-              <div className="flex bg-[#0B0F19] p-1.5 rounded-xl border border-[#1F2A3F] mb-6">
+              <div className="flex bg-cream p-1.5 rounded-xl border border-green-deep/10 mb-6">
                 <button
                   type="button"
                   onClick={() => {
@@ -510,17 +519,20 @@ export function Navigation() {
                     className="w-full bg-[#0B0F19] border border-green-deep/5 rounded p-3 text-xs outline-none focus:border-royal text-white transition-all font-medium"
                   />
                   {!isSignUpMode && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setForgotEmail(authForm.email);
-                        setForgotStatus('idle');
-                        setIsForgotPassword(true);
-                      }}
-                      className="mt-1.5 text-[9px] font-black uppercase tracking-widest text-text-muted hover:text-royal transition-colors cursor-pointer"
-                    >
-                      Forgot password?
-                    </button>
+                    <div className="text-right mt-1.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAuthError(null);
+                          setResetEmail(authForm.email);
+                          setResetSent(false);
+                          setIsResetMode(true);
+                        }}
+                        className="text-[9px] font-black uppercase tracking-widest text-royal hover:underline cursor-pointer"
+                      >
+                        Forgot password?
+                      </button>
+                    </div>
                   )}
                 </div>
 
@@ -576,7 +588,7 @@ export function Navigation() {
               {/* Divider */}
               <div className="relative my-6 flex items-center justify-center">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-[#1F2A3F]" />
+                  <div className="w-full border-t border-green-deep/10" />
                 </div>
                 <span className="relative px-3 bg-[#161F30] text-[9px] font-black uppercase tracking-widest text-text-muted">or continue with</span>
               </div>
@@ -592,7 +604,7 @@ export function Navigation() {
                     setAuthError(getReadableAuthError(err));
                   }
                 }}
-                className="w-full bg-[#0B0F19] border border-[#1F2A3F] hover:border-royal text-white py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full bg-cream border border-green-deep/10 hover:border-royal text-white py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -602,9 +614,8 @@ export function Navigation() {
                 </svg>
                 Sign In with Google
               </button>
-                </motion.div>
+              </>
               )}
-              </AnimatePresence>
             </motion.div>
           </div>
         )}
