@@ -52,10 +52,10 @@ service cloud.firestore {
         && data.commentCount is int && data.commentCount >= 0
         && data.content is string && data.content.size() <= 1000000
         && data.createdAt == request.time
-        && (!data.keys().contains('title') || (data.title is string && data.title.size() <= 200))
-        && (!data.keys().contains('abstract') || (data.abstract is string && data.abstract.size() <= 5000))
-        && (!data.keys().contains('imageUrl') || (data.imageUrl is string && data.imageUrl.size() <= 1000))
-        && (!data.keys().contains('pdfUrl') || (data.pdfUrl is string && data.pdfUrl.size() <= 1000));
+        && (!('title' in data) || (data.title is string && data.title.size() <= 200))
+        && (!('abstract' in data) || (data.abstract is string && data.abstract.size() <= 5000))
+        && (!('imageUrl' in data) || (data.imageUrl is string && data.imageUrl.size() <= 1000))
+        && (!('pdfUrl' in data) || (data.pdfUrl is string && data.pdfUrl.size() <= 1000));
     }
 
     function isValidComment(data) {
@@ -139,7 +139,9 @@ service cloud.firestore {
     // Events
     match /events/{eventId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow create: if isAdmin() && isValidEvent(incoming());
+      allow update: if isAdmin() && isValidEvent(incoming());
+      allow delete: if isAdmin();
     }
 
     // Publications
