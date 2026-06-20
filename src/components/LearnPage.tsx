@@ -33,6 +33,22 @@ interface Guide {
 
 const LESSONS: Lesson[] = [
   {
+    id: 'demystifying-nepse',
+    title: 'Demystifying NEPSE',
+    desc: 'A fast, clear walkthrough of how Nepal\'s stock market actually works — from SEBON and CDSC to IPO lotteries, settlement cycles, and why diversification matters.',
+    duration: '8:00',
+    tag: 'Stock Market',
+    videoUrl: 'https://www.youtube.com/embed/QZuAJB-sPEQ',
+    thumbnail: 'https://img.youtube.com/vi/QZuAJB-sPEQ/hqdefault.jpg',
+    chapters: [
+      'Core infrastructure: SEBON, NEPSE, and CDSC explained',
+      'Primary markets, IPOs, and the ASBA application system',
+      'Secondary market trading mechanics and the T+3 settlement cycle',
+      'Bonus shares vs right shares — what actually changes your wealth',
+      'Sector concentration risk: banking, hydropower, and why diversification matters',
+    ],
+  },
+  {
     id: 'nepse-basics',
     title: 'NEPSE Share Market Guide for Beginners',
     desc: 'Step-by-step guidance on DEMAT accounts, Meroshare, IPO application criteria, and brokerage setup for Nepali investors.',
