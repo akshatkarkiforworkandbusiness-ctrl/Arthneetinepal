@@ -155,6 +155,74 @@ const LESSONS: Lesson[] = [
       'Building a basic NEPSE watchlist strategy',
     ],
   },
+  {
+    id: 'budgeting-emergency-fund',
+    title: 'Budgeting, Saving & Building Financial Resilience',
+    desc: 'The 50/30/20 rule, compound interest vs inflation, SMART financial goals, responsible borrowing, and how NRB policy reaches your personal wallet.',
+    duration: '9:30',
+    tag: 'Financial Literacy',
+    videoUrl: 'https://www.youtube.com/embed/REFRRa9CtS4',
+    thumbnail: 'https://img.youtube.com/vi/REFRRa9CtS4/hqdefault.jpg',
+    chapters: [
+      'The 50/30/20 budgeting rule and building an emergency fund',
+      'Compound interest vs inflation — the two forces shaping your wealth',
+      'Calculating net worth and setting SMART financial goals',
+      'Responsible borrowing, EMIs, and Nepal\'s Credit Information Bureau (CIB)',
+      'How NRB policy decisions and deposit insurance affect your money',
+    ],
+    faqs: [
+      {
+        topic: 'Financial Literacy',
+        question: 'What is the 50/30/20 budgeting rule, and how can it be applied in Nepal?',
+        answer: 'The 50/30/20 rule recommends allocating 50% of your income to needs (rent, food, transport), 30% to wants (eating out, entertainment), and 20% to savings and investments. For example, on a Rs. 40,000 monthly income in Kathmandu, that\'s Rs. 20,000 on essentials, Rs. 12,000 on lifestyle, and Rs. 8,000 saved. In high-cost areas you might adjust to 60/20/20 — the key is consistency, not the exact ratio.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What is the difference between simple and compound interest?',
+        answer: 'Simple interest is calculated only on your original principal amount. Compound interest is calculated on the principal plus all interest already earned, so it grows exponentially over time. Rs. 1,00,000 at 8% simple interest over 10 years grows to Rs. 1,80,000 — the same amount at compound interest grows to Rs. 2,15,892.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How do I set SMART financial goals?',
+        answer: 'Vague goals like "I want to save money" usually fail. SMART goals are Specific, Measurable, Achievable, Relevant, and Time-bound. For example: "I want to save Rs. 2,40,000 in 24 months for a motorcycle by depositing Rs. 10,000 per month in a fixed deposit at 9% interest."',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Why is an emergency fund so important, and how much should it be?',
+        answer: 'An emergency fund protects you from unexpected crises like job loss or medical emergencies without forcing you to sell long-term investments. Your target should be 3 to 6 months of essential living expenses, kept in a separate, easily accessible savings account.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How does inflation affect my savings hidden at home?',
+        answer: 'Inflation is a "silent tax" that reduces the purchasing power of your money over time. Keeping large amounts of cash hidden at home is financially harmful in the long run because it loses value. To protect your wealth, your money needs to earn a return higher than Nepal\'s inflation rate — known as the "real return."',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What is a Systematic Investment Plan (SIP) and why does it work?',
+        answer: 'A SIP involves investing a fixed amount every month — into mutual funds, for example — regardless of market conditions. This uses rupee-cost averaging: you automatically buy more units when prices are low and fewer when prices are high, lowering your average cost over time while leveraging compounding for long-term wealth.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What is Net Worth and why does it matter more than income?',
+        answer: 'Net Worth is your Total Assets (what you own) minus your Total Liabilities (what you owe). It\'s the true scorecard of financial health — a high-earning person with massive debt can have a lower net worth than a modest earner with no debt and steady savings. Tracking and growing net worth matters more than focusing on monthly salary alone.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How does my borrowing history affect my future in Nepal?',
+        answer: 'Nepal\'s Credit Information Bureau (CIB) tracks your borrowing history. Missing loan payments or defaulting builds a poor credit record, making it harder and more expensive to borrow from banks in the future. Build a positive history by borrowing only what you can afford and paying on time.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How do decisions made by Nepal Rastra Bank (NRB) affect my wallet?',
+        answer: 'NRB is Nepal\'s central bank and sets monetary policy. When NRB raises the Policy Rate (the benchmark interest rate), commercial banks typically raise the rates they charge on loans (increasing your EMIs) and the rates they pay on deposits. Watching NRB policy helps you anticipate whether borrowing will get cheaper or more expensive.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Are my bank deposits safe if a bank fails in Nepal?',
+        answer: 'Yes, up to a limit. Deposits up to Rs. 5,00,000 per depositor per licensed commercial bank are insured by the Deposit and Credit Guarantee Corporation (DCGC). This protection does not fully apply to unregulated schemes or cooperatives, which is why keeping large sums in cooperatives carries higher risk.',
+      },
+    ],
+  },
 ];
 
 const GUIDES: Guide[] = [
@@ -222,6 +290,7 @@ const TAG_COLORS: Record<string, string> = {
   'Stock Market':       'bg-royal/10 text-royal border-royal/20',
   'Policy & Economics': 'bg-crimson/10 text-crimson border-crimson/20',
   'Technical Analysis': 'bg-green-light/10 text-green-light border-green-light/20',
+  'Financial Literacy': 'bg-amber-400/10 text-amber-400 border-amber-400/20',
 };
 
 // ─── Component ───────────────────────────────────────────────────────────────
