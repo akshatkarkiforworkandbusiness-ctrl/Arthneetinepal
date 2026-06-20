@@ -291,6 +291,74 @@ const LESSONS: Lesson[] = [
       },
     ],
   },
+  {
+    id: 'ssa-reality',
+    title: 'SSA and Its Reality: Nepal\'s Social Security Allowance',
+    desc: 'How Nepal\'s constitutionally guaranteed cash transfer program actually reaches — and sometimes fails — its 3.8 million beneficiaries. Based on original Arthneeti research.',
+    duration: '9:45',
+    tag: 'Research',
+    videoUrl: 'https://www.youtube.com/embed/pJdnY0Hx1kI',
+    thumbnail: 'https://img.youtube.com/vi/pJdnY0Hx1kI/hqdefault.jpg',
+    chapters: [
+      'Evolution of SSA: from a 1994/95 flat pension to a NPR 109 billion program',
+      'Socio-economic impact — dignity, decision-making power, and consumption smoothing',
+      'Structural bottlenecks: ghost names, informal sector exclusion, rural delivery gaps',
+      'Demographic pressure and the question of long-term financial sustainability',
+      'Reform pathways: Integrated Social Registry, NID linkage, and agent banking',
+    ],
+    faqs: [
+      {
+        topic: 'Research',
+        question: 'What is Nepal\'s Social Security Allowance (SSA) and who are its main beneficiaries?',
+        answer: 'The SSA is a constitutionally guaranteed, non-contributory cash transfer program aimed at protecting vulnerable populations. Primary beneficiaries include senior citizens, single women/widows, persons with disabilities, endangered ethnicities, and children from marginalized communities.',
+      },
+      {
+        topic: 'Research',
+        question: 'When did the SSA program begin, and how did it start?',
+        answer: 'The program was first introduced in the mid-1990s (1994/95) as a universal flat pension of Rs. 100 per month for elderly citizens aged 75 and above. Over the years it has expanded to include other vulnerable groups, and the age thresholds have been lowered.',
+      },
+      {
+        topic: 'Research',
+        question: 'What is the current age eligibility for the old-age allowance?',
+        answer: 'The general age threshold has fluctuated, recently set at 68 years (lowered from 70). As a measure of social equity, the threshold is lower — 60 years — for Dalits and citizens living in the remote Karnali zone.',
+      },
+      {
+        topic: 'Research',
+        question: 'How much financial support do beneficiaries receive?',
+        answer: 'The allowance started at Rs. 100 and was later raised to Rs. 500 per month. Currently, eligible elderly citizens receive NPR 4,000 monthly, while Dalits and Karnali residents aged 60–68 receive NPR 2,600 monthly. Fully disabled individuals and endangered ethnicities also receive specific monthly transfers depending on classification.',
+      },
+      {
+        topic: 'Research',
+        question: 'How does the SSA impact the daily lives and dignity of beneficiaries?',
+        answer: 'The allowance plays a critical role in consumption smoothing and reducing financial dependency on family members. Beneficiaries report that receiving it increases their self-respect, boosts their involvement in household decision-making, and allows greater participation in social and religious activities.',
+      },
+      {
+        topic: 'Research',
+        question: 'What do beneficiaries primarily spend their allowance on?',
+        answer: 'A vast majority use their allowance to meet essential personal and household needs. The top expenditures are healthcare and medicines (79%), food (58%), tea/snacks (52%), and clothing (49%). Some beneficiaries also use the funds to support family members, such as grandchildren.',
+      },
+      {
+        topic: 'Research',
+        question: 'What are the biggest administrative challenges and "leakages" in the SSA program?',
+        answer: 'The program suffers from severe delivery inconsistencies and fragmented institutional coordination. A major issue is "ghost names" — allowances distributed to individuals who have already died or migrated, due to poor record-updating and delayed vital registration. Rural beneficiaries also often face lengthy, physically demanding travel times to collect their funds.',
+      },
+      {
+        topic: 'Research',
+        question: 'Are workers in the informal economy covered by this social security system?',
+        answer: 'A significant coverage gap exists for the informal sector. Although informal workers make up over 84% to 96% of Nepal\'s total labor force, they are largely excluded from the purview of formal social security benefits.',
+      },
+      {
+        topic: 'Research',
+        question: 'Why are economic experts worried about the financial sustainability of the SSA?',
+        answer: 'The financial burden is growing rapidly — estimated at NPR 109 billion (about 5.5% of the federal budget) for FY 2025/2026. Experts warn that lowering the eligibility age to 68, combined with a growing aging population and increased life expectancy, makes the current non-contributory distribution model financially unsustainable without careful reform.',
+      },
+      {
+        topic: 'Research',
+        question: 'What modern reforms are being proposed to fix the delivery and efficiency of the SSA?',
+        answer: 'The government is transitioning toward digital solutions like the Integrated Social Registry (ISR) linked to the National Identity (NID) system to overcome geographic barriers and eliminate fraud. Policymakers are also expanding agent banking and home delivery models to transfer funds electronically and directly to disabled and remote beneficiaries without requiring travel.',
+      },
+    ],
+  },
 ];
 
 const GUIDES: Guide[] = [
@@ -359,6 +427,7 @@ const TAG_COLORS: Record<string, string> = {
   'Policy & Economics': 'bg-crimson/10 text-crimson border-crimson/20',
   'Technical Analysis': 'bg-green-light/10 text-green-light border-green-light/20',
   'Financial Literacy': 'bg-amber-400/10 text-amber-400 border-amber-400/20',
+  'Research':           'bg-violet-400/10 text-violet-400 border-violet-400/20',
 };
 
 // ─── Component ───────────────────────────────────────────────────────────────
