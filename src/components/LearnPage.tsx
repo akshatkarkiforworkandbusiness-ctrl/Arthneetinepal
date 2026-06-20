@@ -6,6 +6,12 @@ import { useAuth } from '../contexts/AuthContext';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
+interface FAQ {
+  question: string;
+  answer: string;
+  topic: string;
+}
+
 interface Lesson {
   id: string;
   title: string;
@@ -15,6 +21,7 @@ interface Lesson {
   videoUrl: string;
   thumbnail: string;
   chapters: string[];
+  faqs?: FAQ[];
 }
 
 interface Guide {
@@ -46,6 +53,58 @@ const LESSONS: Lesson[] = [
       'Secondary market trading mechanics and the T+3 settlement cycle',
       'Bonus shares vs right shares — what actually changes your wealth',
       'Sector concentration risk: banking, hydropower, and why diversification matters',
+    ],
+    faqs: [
+      {
+        topic: 'Stock Market',
+        question: 'What exactly is NEPSE, and how does it work?',
+        answer: 'NEPSE (Nepal Stock Exchange) is the country\'s sole stock exchange, acting as the centralized electronic marketplace where buyers and sellers trade shares of public companies. It is regulated by the Securities Board of Nepal (SEBON), which acts as the capital market police by approving IPOs and licensing brokers.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What is the difference between the primary market and the secondary market?',
+        answer: 'The primary market is where a company issues shares to the general public for the very first time through an Initial Public Offering (IPO). The secondary market is where those shares are continuously traded between investors after the IPO has been completed and the company is listed on the exchange.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What do I need to start investing in Nepal?',
+        answer: 'You need three specific accounts: a Demat Account (a digital account opened via CDSC to securely hold your shares electronically), a MeroShare Account (an online portal linked to your Demat account used to apply for IPOs and track your portfolio), and a Broker Account (a trading account with a SEBON-licensed stockbroker, giving you access to NEPSE\'s secondary market).',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What is ASBA and why do I need a CRN number?',
+        answer: 'ASBA (Application Supported by Blocked Amount) is a system used during IPO applications where your bank simply "blocks" the application money in your account instead of deducting it. Your money continues to earn interest and is only deducted if you win the IPO lottery. To use this system, your bank verifies your Demat account and gives you a C-ASBA Registration Number (CRN), required to submit your IPO application.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'I keep hearing about "Bonus Shares" and "Right Shares". What are they?',
+        answer: 'Bonus shares are extra shares given to you for free instead of a cash dividend. When bonus shares are issued, the share price proportionally adjusts downward (e.g., halving in a 1:1 bonus), meaning your total wealth stays exactly the same. Right shares are an offer to existing shareholders to buy new shares at a steep discount, usually at the standard face value of NPR 100, even if the current market price is much higher.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What are the trading hours and how long does it take to get my shares?',
+        answer: 'NEPSE\'s secondary market is open Sunday to Thursday, between 11:00 AM and 3:00 PM. Nepal uses a T+3 settlement cycle — if you purchase shares today, they will officially arrive in your Demat account exactly 3 working days later.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What are the main costs and taxes involved in trading?',
+        answer: 'You pay a brokerage fee ranging from 0.40% to 1.50% depending on transaction size. You also pay Capital Gains Tax (CGT) on profits: 5% if you hold shares for more than a year, and 7.5% if you sell within a year. There is also a 5% tax deducted at the source on any dividends you receive.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What are the safest or most popular sectors to invest in on NEPSE?',
+        answer: 'Commercial Banking is the most dominant sector, making up about 50% of total market capitalization, and is heavily influenced by Nepal Rastra Bank\'s monetary policies. Hydropower is another major sector, driven by long-term energy demand and Power Purchase Agreements. It\'s risky to put all your money in one sector — true safety comes from diversifying your portfolio across multiple sectors.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'How do I know if a company is good to invest in?',
+        answer: 'Look at fundamental financial metrics like Earnings Per Share (EPS) — how much profit the company makes per share, the Price-to-Earnings (P/E) Ratio — how much you\'re paying for each rupee of profit, and Return on Equity (ROE) — how efficiently the company generates profit. For banks specifically, the Non-Performing Loan (NPL) Ratio is critical, as a high NPL means too many of the bank\'s loans are going bad.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What is a "Circuit Breaker" and how does it protect the market?',
+        answer: 'A circuit breaker is an automatic trading halt designed to stop extreme panic or euphoria. For individual stocks, NEPSE enforces a daily price band where a stock cannot rise or fall more than 10% in a single session. For the overall market, if the NEPSE index moves ±5% in the first two hours of trading, the market pauses for 15 minutes — and if it hits a ±8% swing at any point, the entire market closes for the rest of the day.',
+      },
     ],
   },
   {
@@ -155,6 +214,10 @@ const GUIDES: Guide[] = [
   },
 ];
 
+// Flattened FAQ list — pulled from all lessons that have FAQs attached.
+// New lessons with a `faqs` array automatically show up here too.
+const FAQS: FAQ[] = LESSONS.flatMap(lesson => lesson.faqs || []);
+
 const TAG_COLORS: Record<string, string> = {
   'Stock Market':       'bg-royal/10 text-royal border-royal/20',
   'Policy & Economics': 'bg-crimson/10 text-crimson border-crimson/20',
@@ -165,11 +228,13 @@ const TAG_COLORS: Record<string, string> = {
 
 export default function LearnPage() {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<'videos' | 'guides'>('videos');
+  const [activeTab, setActiveTab] = useState<'videos' | 'guides' | 'faqs'>('videos');
   const [activeLesson, setActiveLesson] = useState<Lesson>(LESSONS[0]);
   const [isPlaying, setIsPlaying]       = useState(false);
   const [completed, setCompleted]       = useState<Set<string>>(new Set());
   const [expandedGuide, setExpandedGuide] = useState<string | null>(null);
+  const [expandedFaq, setExpandedFaq]   = useState<number | null>(null);
+  const [expandedLessonFaq, setExpandedLessonFaq] = useState<number | null>(null);
   const [searchQuery, setSearchQuery]   = useState('');
   const playerRef = useRef<HTMLDivElement>(null);
 
@@ -207,6 +272,7 @@ export default function LearnPage() {
   const playLesson = (lesson: Lesson) => {
     setActiveLesson(lesson);
     setIsPlaying(true);
+    setExpandedLessonFaq(null);
     setTimeout(() => {
       playerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
@@ -222,6 +288,12 @@ export default function LearnPage() {
     g.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     g.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
     g.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredFaqs = FAQS.filter(f =>
+    f.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    f.answer.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    f.topic.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const progress = LESSONS.length > 0
@@ -276,7 +348,7 @@ export default function LearnPage() {
         {/* ── Tabs + Search ─────────────────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row gap-4 mt-10">
           <div className="flex bg-[#161F30] border border-[#1F2A3F] rounded-xl p-1 self-start">
-            {(['videos', 'guides'] as const).map(tab => (
+            {(['videos', 'guides', 'faqs'] as const).map(tab => (
               <button
                 key={tab}
                 onClick={() => { setActiveTab(tab); setSearchQuery(''); }}
@@ -286,7 +358,7 @@ export default function LearnPage() {
                     : 'text-text-muted hover:text-white'
                 }`}
               >
-                {tab === 'videos' ? 'Video Lessons' : 'Written Guides'}
+                {tab === 'videos' ? 'Video Lessons' : tab === 'guides' ? 'Written Guides' : 'FAQ'}
               </button>
             ))}
           </div>
@@ -297,7 +369,7 @@ export default function LearnPage() {
             </span>
             <input
               type="text"
-              placeholder={activeTab === 'videos' ? 'Search lessons...' : 'Search guides...'}
+              placeholder={activeTab === 'videos' ? 'Search lessons...' : activeTab === 'guides' ? 'Search guides...' : 'Search questions...'}
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="w-full bg-[#161F30] border border-[#1F2A3F] rounded-xl pl-10 pr-4 py-3 text-sm focus:border-royal outline-none text-white placeholder:text-text-muted/50 transition-all"
@@ -392,6 +464,54 @@ export default function LearnPage() {
                         </li>
                       ))}
                     </ul>
+                  </div>
+                )}
+
+                {/* FAQ for active lesson, if attached */}
+                {activeLesson.faqs && activeLesson.faqs.length > 0 && (
+                  <div className="mt-4 bg-[#161F30] border border-[#1F2A3F] rounded-2xl p-6">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-text-muted block mb-4">
+                      Frequently Asked Questions
+                    </span>
+                    <div className="space-y-2">
+                      {activeLesson.faqs.map((faq, i) => {
+                        const isOpen = expandedLessonFaq === i;
+                        return (
+                          <div
+                            key={i}
+                            className={`border rounded-xl overflow-hidden transition-colors ${
+                              isOpen ? 'border-royal/40 bg-[#0B0F19]' : 'border-[#1F2A3F]'
+                            }`}
+                          >
+                            <button
+                              onClick={() => setExpandedLessonFaq(isOpen ? null : i)}
+                              className="w-full flex items-center justify-between gap-3 p-4 text-left cursor-pointer"
+                            >
+                              <span className="text-xs font-bold text-white leading-snug">
+                                {faq.question}
+                              </span>
+                              <span className={`material-symbols-outlined text-text-muted text-base shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+                                expand_more
+                              </span>
+                            </button>
+                            <AnimatePresence>
+                              {isOpen && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: 'auto' }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  className="overflow-hidden"
+                                >
+                                  <p className="px-4 pb-4 text-xs text-text-muted leading-relaxed">
+                                    {faq.answer}
+                                  </p>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
               </div>
@@ -596,6 +716,81 @@ export default function LearnPage() {
                     </motion.div>
                   );
                 })
+              )}
+            </motion.div>
+          )}
+
+          {/* ════════════════════════════════════════════════════════════════════
+              FAQ TAB
+          ════════════════════════════════════════════════════════════════════ */}
+          {activeTab === 'faqs' && (
+            <motion.div
+              key="faqs"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="max-w-3xl"
+            >
+              <div className="mb-6">
+                <span className="text-[9px] font-black uppercase tracking-widest text-text-muted">
+                  {filteredFaqs.length} Question{filteredFaqs.length !== 1 ? 's' : ''} Answered
+                </span>
+              </div>
+
+              {filteredFaqs.length === 0 ? (
+                <div className="text-center py-16 bg-[#161F30] rounded-2xl border border-dashed border-[#1F2A3F]">
+                  <p className="text-text-muted text-sm italic">No questions match "{searchQuery}"</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {filteredFaqs.map((faq, i) => {
+                    const isOpen = expandedFaq === i;
+                    return (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.04 }}
+                        className={`bg-[#161F30] border rounded-2xl overflow-hidden transition-colors ${
+                          isOpen ? 'border-royal/50' : 'border-[#1F2A3F]'
+                        }`}
+                      >
+                        <button
+                          onClick={() => setExpandedFaq(isOpen ? null : i)}
+                          className="w-full flex items-center justify-between gap-4 p-5 text-left cursor-pointer"
+                        >
+                          <div className="flex items-start gap-3 flex-1">
+                            <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded border shrink-0 mt-0.5 ${TAG_COLORS[faq.topic] || 'bg-royal/10 text-royal border-royal/20'}`}>
+                              {faq.topic}
+                            </span>
+                            <span className="text-sm font-bold text-white leading-snug">
+                              {faq.question}
+                            </span>
+                          </div>
+                          <span className={`material-symbols-outlined text-text-muted shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+                            expand_more
+                          </span>
+                        </button>
+
+                        <AnimatePresence>
+                          {isOpen && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                              className="overflow-hidden"
+                            >
+                              <p className="px-5 pb-5 text-xs text-text-muted leading-relaxed border-t border-[#1F2A3F] pt-4 mx-5">
+                                {faq.answer}
+                              </p>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </motion.div>
+                    );
+                  })}
+                </div>
               )}
             </motion.div>
           )}
