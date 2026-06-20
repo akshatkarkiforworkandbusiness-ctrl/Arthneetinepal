@@ -223,6 +223,74 @@ const LESSONS: Lesson[] = [
       },
     ],
   },
+  {
+    id: 'monetary-policy-2026',
+    title: 'Monetary Policy 2026: NRB\'s Cautiously Accommodative Stance',
+    desc: 'Why NRB cut rates while credit demand stays subdued, the currency peg and the Impossible Trinity, NFRS 9 reporting changes, and the push toward digital banking.',
+    duration: '10:15',
+    tag: 'Policy & Economics',
+    videoUrl: 'https://www.youtube.com/embed/DL6voss9Cuc',
+    thumbnail: 'https://img.youtube.com/vi/DL6voss9Cuc/hqdefault.jpg',
+    chapters: [
+      'The "cautiously accommodative" stance — why NRB cut the policy rate to 4.5%',
+      'The currency peg, the Indian Rupee, and the Impossible Trinity',
+      'The liquidity-credit paradox: why low rates haven\'t spurred borrowing',
+      'Working capital loan reforms and restructuring for struggling businesses',
+      'NFRS 9, Expected Credit Loss, and Nepal\'s shift to a Central Bank Digital Currency',
+    ],
+    faqs: [
+      {
+        topic: 'Policy & Economics',
+        question: 'What is the current monetary policy stance of the Nepal Rastra Bank (NRB) and why?',
+        answer: 'NRB has adopted a "cautiously accommodative" stance — making it easier and cheaper to borrow money to support economic recovery and expand credit to the private sector. This is possible now because the macroeconomic environment is favorable, with low inflation and highly comfortable foreign exchange reserves.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'How has the NRB changed key interest rates to help the economy?',
+        answer: 'The bank rate (upper limit of the interest rate corridor) was reduced from 6.5% to 6.0%, and the policy rate was lowered from 5.0% to 4.5%. The deposit collection rate (lower bound) was reduced to 2.75%. These reductions lower the cost of borrowing for both businesses and the government.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'If banks have plenty of liquidity and interest rates are low, why aren\'t businesses borrowing more?',
+        answer: 'This is a major paradox in the current Nepali economy. Despite excess liquidity and policy easing, private sector credit demand remains heavily subdued — driven by a broader economic slowdown over the past two years that weakened business confidence and slowed capital formation. Lower borrowing costs alone haven\'t been enough to spark widespread investment.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'Why are Nepal\'s foreign exchange reserves currently so high?',
+        answer: 'Reserves have surged to cover approximately 14.7 months of merchandise and services imports, primarily driven by elevated remittance inflows, an increase in tourist arrivals, and a slight rebound in exports.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'Why is the Nepali Rupee pegged to the Indian Rupee, and could Nepal un-peg it?',
+        answer: 'The peg acts as a "nominal anchor," effectively importing price stability and monetary discipline from India. Due to the "Impossible Trinity," Nepal sacrifices independent monetary policy in exchange for exchange rate stability and financial openness with India. Un-pegging now is risky since Nepal\'s economy is consumption-driven, relies heavily on remittances over exports, and conducts nearly 70% of its trade with India.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'What is inflation like in Nepal right now, and what is NRB\'s target?',
+        answer: 'Inflation has dropped to 2.72% year-on-year, well below NRB\'s target of around 5.0%. This decline is due to improved domestic agricultural production, a smooth supply chain, stabilized international crude oil prices, and declining inflation in neighboring India.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'What is NFRS 9, and how will it change how Nepali banks report their income?',
+        answer: 'NFRS 9 (Nepal Financial Reporting Standards 9) introduces a new way for banks to recognize interest income based on the Expected Credit Loss (ECL) model. Over a three-year transition ending FY 2083/84 (2026/27), banks must shift to the Effective Interest Rate (EIR) method. For highly risky or non-performing loans (Stage 3), banks will only recognize interest on a strict cash basis, giving a more conservative and realistic view of a bank\'s health.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'How is the NRB helping struggling businesses manage their debts?',
+        answer: 'NRB revised its working capital loan guidelines, moving away from 3–10 year term loans toward periodic loans based on cash-flow analysis. For borrowers facing unforeseen hardships — such as earthquake-affected areas or highway-displaced businesses — NRB allows banks to restructure or reschedule existing loans, provided the borrower repays at least 10% of accrued interest.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'What is an Asset Management Company (AMC) and why does Nepal need one?',
+        answer: 'An AMC is a specialized institution created to manage and resolve bad debts. NRB is drafting laws to establish one to handle rising non-performing loans (NPLs) and non-banking assets — NPLs rose to 5.24% amid the recent slowdown. An AMC would clear these distressed assets from banks\' balance sheets, freeing up capital to lend to healthy businesses.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'Is Nepal moving towards modern digital banking and digital currencies?',
+        answer: 'Yes. NRB has established a digital finance innovation hub and is preparing infrastructure to fully operationalize the National Payment Switch. The government and NRB are also creating frameworks for branchless "Neobanks," and NRB has prepared a study report on a Central Bank Digital Currency (CBDC), currently under discussion.',
+      },
+    ],
+  },
 ];
 
 const GUIDES: Guide[] = [
