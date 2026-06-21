@@ -108,22 +108,6 @@ const LESSONS: Lesson[] = [
     ],
   },
   {
-    id: 'nepse-basics',
-    title: 'NEPSE Share Market Guide for Beginners',
-    desc: 'Step-by-step guidance on DEMAT accounts, Meroshare, IPO application criteria, and brokerage setup for Nepali investors.',
-    duration: '25:12',
-    tag: 'Stock Market',
-    videoUrl: 'https://www.youtube.com/embed/Wv-L63uD4m8',
-    thumbnail: 'https://img.youtube.com/vi/Wv-L63uD4m8/hqdefault.jpg',
-    chapters: [
-      'What is NEPSE and who regulates it (SEBON)',
-      'Opening a DEMAT account and Meroshare registration',
-      'How to apply for IPOs using ASBA',
-      'Secondary market trading via licensed brokers',
-      'Reading the NEPSE index and understanding market cap',
-    ],
-  },
-  {
     id: 'nrb-monetary-policy',
     title: 'Nepal Rastra Bank Monetary Policy & NEPSE Impact',
     desc: 'Deep-dive into bank interest rates, liquidity constraints, credit-to-deposit ratios, and how NRB policy decisions move the NEPSE index.',
