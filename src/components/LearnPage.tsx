@@ -108,22 +108,6 @@ const LESSONS: Lesson[] = [
     ],
   },
   {
-    id: 'nrb-monetary-policy',
-    title: 'Nepal Rastra Bank Monetary Policy & NEPSE Impact',
-    desc: 'Deep-dive into bank interest rates, liquidity constraints, credit-to-deposit ratios, and how NRB policy decisions move the NEPSE index.',
-    duration: '19:40',
-    tag: 'Policy & Economics',
-    videoUrl: 'https://www.youtube.com/embed/vOenP8oQ_oI',
-    thumbnail: 'https://img.youtube.com/vi/vOenP8oQ_oI/hqdefault.jpg',
-    chapters: [
-      'What is monetary policy and why it matters for investors',
-      'Cash Reserve Ratio (CRR) and Statutory Liquidity Ratio (SLR)',
-      'How bank rate adjustments affect loan availability',
-      'Credit-to-Deposit (CD) ratio and market liquidity',
-      'Reading the NRB monetary policy report',
-    ],
-  },
-  {
     id: 'technical-analysis',
     title: 'Stock Selection & Technical Analysis for Beginners',
     desc: 'Learn to read candlestick charts, identify support and resistance levels, and use moving averages to find stock entry points on NEPSE.',
