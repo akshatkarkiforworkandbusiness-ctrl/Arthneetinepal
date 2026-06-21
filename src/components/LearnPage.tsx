@@ -108,22 +108,6 @@ const LESSONS: Lesson[] = [
     ],
   },
   {
-    id: 'technical-analysis',
-    title: 'Stock Selection & Technical Analysis for Beginners',
-    desc: 'Learn to read candlestick charts, identify support and resistance levels, and use moving averages to find stock entry points on NEPSE.',
-    duration: '18:02',
-    tag: 'Technical Analysis',
-    videoUrl: 'https://www.youtube.com/embed/q6g4V52u1O8',
-    thumbnail: 'https://img.youtube.com/vi/q6g4V52u1O8/hqdefault.jpg',
-    chapters: [
-      'Candlestick basics: bullish vs bearish patterns',
-      'Support, resistance, and trend lines',
-      'Simple Moving Averages (SMA) and EMA crossovers',
-      'RSI: identifying overbought and oversold conditions',
-      'Building a basic NEPSE watchlist strategy',
-    ],
-  },
-  {
     id: 'budgeting-emergency-fund',
     title: 'Budgeting, Saving & Building Financial Resilience',
     desc: 'The 50/30/20 rule, compound interest vs inflation, SMART financial goals, responsible borrowing, and how NRB policy reaches your personal wallet.',
