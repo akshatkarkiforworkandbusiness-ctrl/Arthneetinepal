@@ -5,6 +5,7 @@ import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import ShinyText from './ShinyText';
+import { GradientCard } from './GradientCard';
 
 interface Topic {
   id: string;
@@ -537,21 +538,14 @@ export default function LandingPage() {
                         </span>
                       </div>
                       
-                      <div className="space-y-4 mb-8">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                         {pillarsSyllabus[activePillarIndex].modules.map((mod, idx) => (
-                          <div 
-                            key={idx} 
-                            className="flex justify-between items-center bg-[#0B0F19] border border-[#1F2A3F] p-4 rounded-xl"
-                          >
-                            <span className="text-xs font-bold text-white flex items-center gap-3">
-                              <span className="w-5 h-5 rounded bg-royal/10 border border-royal/25 text-royal flex items-center justify-center text-[9px] font-black">
-                                {idx + 1}
-                              </span>
-                              {mod.title}
-                            </span>
-                            <span className="text-[9px] font-bold font-mono text-text-muted uppercase tracking-widest bg-[#161F30] px-2.5 py-1 rounded border border-[#1F2A3F]">
-                              {mod.duration}
-                            </span>
+                          <div key={idx} className="h-[280px]">
+                            <GradientCard 
+                              title={mod.title}
+                              description={`Master ${mod.title.toLowerCase()} in this comprehensive module.`}
+                              tag={`0${idx + 1}`}
+                            />
                           </div>
                         ))}
                       </div>
