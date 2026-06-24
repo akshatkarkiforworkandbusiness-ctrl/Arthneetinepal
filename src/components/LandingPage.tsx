@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import ShinyText from './ShinyText';
 
 interface Topic {
   id: string;
@@ -340,7 +341,19 @@ export default function LandingPage() {
           transition={{ duration: 0.8 }}
           className="relative z-10 max-w-4xl"
         >
-          <span className="text-[10px] font-black text-crimson mb-4 block uppercase tracking-[0.4em]">NEPALESE YOUTH LED MOVEMENT</span>
+          <ShinyText
+            text="✨ NEPALESE YOUTH LED MOVEMENT"
+            speed={2}
+            delay={0}
+            color="#FF3366"
+            shineColor="#ffffff"
+            spread={120}
+            direction="left"
+            yoyo={false}
+            pauseOnHover={false}
+            disabled={false}
+            className="text-[10px] font-black mb-4 block uppercase tracking-[0.4em]"
+          />
           <h1 className="text-5xl md:text-8xl text-white mb-8 leading-tight tracking-tight font-display italic">
             Think Big. <br />
             Invest Smart. <br />
