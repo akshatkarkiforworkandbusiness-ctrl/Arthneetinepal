@@ -5,7 +5,6 @@ import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import ShinyText from './ShinyText';
-import Strands from './Strands';
 
 interface Topic {
   id: string;
@@ -330,30 +329,6 @@ export default function LandingPage() {
             </defs>
             <rect width="100%" height="100%" fill="url(#dotPattern)" />
           </svg>
-        </div>
-
-        {/* WebGL Strands Background */}
-        <div className="absolute inset-0 z-0 opacity-50 pointer-events-none">
-          <Strands
-            colors={["#F97316","#7C3AED","#06B6D4"]}
-            count={3}
-            speed={0.5}
-            amplitude={1}
-            waviness={1}
-            thickness={0.7}
-            glow={2.6}
-            taper={3}
-            spread={1}
-            intensity={0.6}
-            saturation={2}
-            opacity={1}
-            scale={1.5}
-            glass={false}
-            refraction={1}
-            dispersion={1}
-            glassSize={1}
-            hueShift={0}
-          />
         </div>
 
         {/* Nepal Flag Floating Accents */}
