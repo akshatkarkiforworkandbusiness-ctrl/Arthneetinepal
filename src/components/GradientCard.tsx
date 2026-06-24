@@ -3,12 +3,15 @@ import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 
 interface GradientCardProps {
-  title: string;
+  title?: string;
   description?: string;
-  tag?: string;
+  tag?: string | React.ReactNode;
+  children?: React.ReactNode;
+  onClick?: () => void;
+  className?: string;
 }
 
-export const GradientCard = ({ title, description, tag }: GradientCardProps) => {
+export const GradientCard = ({ title, description, tag, children, onClick, className = '' }: GradientCardProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -35,10 +38,11 @@ export const GradientCard = ({ title, description, tag }: GradientCardProps) => 
   };
 
   return (
-    <div className="w-full h-full flex items-center justify-center">
+    <div className={`w-full h-full flex items-center justify-center ${className}`}>
       <motion.div
         ref={cardRef}
-        className="relative rounded-[24px] overflow-hidden w-full h-full min-h-[280px]"
+        onClick={onClick}
+        className={`relative rounded-[24px] overflow-hidden w-full h-full min-h-[280px] ${onClick ? 'cursor-pointer' : ''}`}
         style={{
           transformStyle: "preserve-3d",
           backgroundColor: "#0e131f",
@@ -150,34 +154,36 @@ export const GradientCard = ({ title, description, tag }: GradientCardProps) => 
           className="relative flex flex-col h-full p-6 z-40"
           animate={{ z: 2 }}
         >
-          <motion.div
-            className="w-10 h-10 rounded-full flex items-center justify-center mb-4"
-            style={{
-              background: "linear-gradient(225deg, #171c2c 0%, #121624 100%)",
-              position: "relative",
-              overflow: "hidden"
-            }}
-            initial={{ filter: "blur(3px)", opacity: 0.7 }}
-            animate={{
-              filter: "blur(0px)",
-              opacity: 1,
-              boxShadow: isHovered
-                ? "0 8px 16px -2px rgba(0, 0, 0, 0.3), 0 4px 8px -1px rgba(0, 0, 0, 0.2), inset 2px 2px 5px rgba(255, 255, 255, 0.15), inset -2px -2px 5px rgba(0, 0, 0, 0.7)"
-                : "0 6px 12px -2px rgba(0, 0, 0, 0.25), 0 3px 6px -1px rgba(0, 0, 0, 0.15), inset 1px 1px 3px rgba(255, 255, 255, 0.12), inset -2px -2px 4px rgba(0, 0, 0, 0.5)",
-              z: isHovered ? 10 : 5,
-              y: isHovered ? -2 : 0,
-              rotateX: isHovered ? -rotation.x * 0.5 : 0,
-              rotateY: isHovered ? -rotation.y * 0.5 : 0
-            }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-          >
-            <div className="flex items-center justify-center w-full h-full relative z-10">
-              <span className="text-[10px] font-black text-white">{tag}</span>
-            </div>
-          </motion.div>
+          {tag && (
+            <motion.div
+              className="w-10 h-10 rounded-full flex items-center justify-center mb-4"
+              style={{
+                background: "linear-gradient(225deg, #171c2c 0%, #121624 100%)",
+                position: "relative",
+                overflow: "hidden"
+              }}
+              initial={{ filter: "blur(3px)", opacity: 0.7 }}
+              animate={{
+                filter: "blur(0px)",
+                opacity: 1,
+                boxShadow: isHovered
+                  ? "0 8px 16px -2px rgba(0, 0, 0, 0.3), 0 4px 8px -1px rgba(0, 0, 0, 0.2), inset 2px 2px 5px rgba(255, 255, 255, 0.15), inset -2px -2px 5px rgba(0, 0, 0, 0.7)"
+                  : "0 6px 12px -2px rgba(0, 0, 0, 0.25), 0 3px 6px -1px rgba(0, 0, 0, 0.15), inset 1px 1px 3px rgba(255, 255, 255, 0.12), inset -2px -2px 4px rgba(0, 0, 0, 0.5)",
+                z: isHovered ? 10 : 5,
+                y: isHovered ? -2 : 0,
+                rotateX: isHovered ? -rotation.x * 0.5 : 0,
+                rotateY: isHovered ? -rotation.y * 0.5 : 0
+              }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+            >
+              <div className="flex items-center justify-center w-full h-full relative z-10">
+                <span className="text-[10px] font-black text-white">{tag}</span>
+              </div>
+            </motion.div>
+          )}
 
           <motion.div
-            className="mb-auto"
+            className="mb-auto w-full"
             animate={{
               z: isHovered ? 5 : 2,
               rotateX: isHovered ? -rotation.x * 0.3 : 0,
@@ -185,33 +191,39 @@ export const GradientCard = ({ title, description, tag }: GradientCardProps) => 
             }}
             transition={{ duration: 0.4, ease: "easeOut" }}
           >
-            <motion.h3
-              className="text-lg font-bold text-white mb-2"
-              style={{ lineHeight: 1.2 }}
-              initial={{ filter: "blur(3px)", opacity: 0.7 }}
-              animate={{
-                textShadow: isHovered ? "0 2px 4px rgba(0,0,0,0.2)" : "none",
-                filter: "blur(0px)",
-                opacity: 1,
-                transition: { duration: 1.2, delay: 0.2 }
-              }}
-            >
-              {title}
-            </motion.h3>
+            {title && (
+              <motion.h3
+                className="text-lg font-bold text-white mb-2"
+                style={{ lineHeight: 1.2 }}
+                initial={{ filter: "blur(3px)", opacity: 0.7 }}
+                animate={{
+                  textShadow: isHovered ? "0 2px 4px rgba(0,0,0,0.2)" : "none",
+                  filter: "blur(0px)",
+                  opacity: 1,
+                  transition: { duration: 1.2, delay: 0.2 }
+                }}
+              >
+                {title}
+              </motion.h3>
+            )}
 
-            <motion.p
-              className="text-xs text-gray-300"
-              style={{ lineHeight: 1.5 }}
-              initial={{ filter: "blur(3px)", opacity: 0.7 }}
-              animate={{
-                textShadow: isHovered ? "0 1px 2px rgba(0,0,0,0.1)" : "none",
-                filter: "blur(0px)",
-                opacity: 0.85,
-                transition: { duration: 1.2, delay: 0.4 }
-              }}
-            >
-              {description}
-            </motion.p>
+            {description && (
+              <motion.div
+                className="text-xs text-gray-300"
+                style={{ lineHeight: 1.5 }}
+                initial={{ filter: "blur(3px)", opacity: 0.7 }}
+                animate={{
+                  textShadow: isHovered ? "0 1px 2px rgba(0,0,0,0.1)" : "none",
+                  filter: "blur(0px)",
+                  opacity: 0.85,
+                  transition: { duration: 1.2, delay: 0.4 }
+                }}
+              >
+                {description}
+              </motion.div>
+            )}
+            
+            {children}
           </motion.div>
         </motion.div>
       </motion.div>

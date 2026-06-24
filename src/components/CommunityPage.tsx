@@ -14,6 +14,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Heart, MessageSquare, Share2, Download, Plus, Send, X, FileText, HelpCircle, MoreVertical } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+import { GradientCard } from './GradientCard';
 
 // --- Types ---
 interface Post {
@@ -574,54 +575,51 @@ const handleLike = async (postId: string) => {
         ) : (
           <AnimatePresence mode="popLayout">
             {filteredPosts.map((post) => (
-              <motion.article
+              <motion.div
                 key={post.id}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="bg-white rounded-2xl border border-green-deep/5 shadow-sm p-8 md:p-12 hover:shadow-xl transition-all duration-500 overflow-hidden"
+                className="mb-8"
               >
-                <div className="flex justify-between items-start mb-8">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-royal flex items-center justify-center text-white font-black text-sm uppercase">
-                      {post.author?.[0]}
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-black text-green-deep uppercase tracking-widest">{post.author}</h4>
-                      <div className="flex items-center gap-3">
-                        <Badge variant="outline" className="text-[9px] font-black text-crimson border-transparent uppercase tracking-widest bg-crimson/10 px-2 py-0.5 rounded">
-                          {post.category}
-                        </Badge>
-                        <span className="text-[9px] font-medium text-green-deep/40 uppercase tracking-widest">
-                          {post.createdAt?.toDate ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(post.createdAt.toDate()) : '...'}
-                        </span>
+                <GradientCard 
+                  onClick={() => post.type === 'discussion' ? setExpandedPost(expandedPost === post.id ? null : post.id) : undefined}
+                >
+                  <div className="flex justify-between items-start mb-8 w-full">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full bg-royal flex items-center justify-center text-white font-black text-sm uppercase">
+                        {post.author?.[0]}
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-black text-white uppercase tracking-widest">{post.author}</h4>
+                        <div className="flex items-center gap-3 mt-1">
+                          <Badge variant="outline" className="text-[9px] font-black text-white border-white/20 uppercase tracking-widest bg-white/10 px-2 py-0.5 rounded">
+                            {post.category}
+                          </Badge>
+                          <span className="text-[9px] font-medium text-gray-400 uppercase tracking-widest">
+                            {post.createdAt?.toDate ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(post.createdAt.toDate()) : '...'}
+                          </span>
+                        </div>
                       </div>
                     </div>
+                    <button className="text-gray-400 hover:text-white transition-colors"><MoreVertical size={16} /></button>
                   </div>
-                  <button className="text-green-deep/20 hover:text-green-deep transition-colors"><MoreVertical size={16} /></button>
-                </div>
 
                 {post.type === 'discussion' && (
                   <>
-                    <h3 
-                      onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)}
-                      className="text-3xl md:text-4xl text-green-deep italic font-display mb-8 cursor-pointer hover:text-crimson transition-colors leading-tight"
-                    >
+                    <h3 className="text-2xl md:text-3xl text-white font-bold mb-6 leading-tight hover:text-royal transition-colors">
                       {post.title}
                     </h3>
                     {post.imageUrl && (
-                      <div className="aspect-video rounded-xl overflow-hidden mb-8 border border-green-deep/5">
+                      <div className="aspect-video rounded-xl overflow-hidden mb-6 border border-white/10 shadow-lg">
                         <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                       </div>
                     )}
-                    <div className={`text-green-deep/70 leading-relaxed font-sans mb-8 ${expandedPost === post.id ? '' : 'line-clamp-3'}`}>
+                    <div className={`text-gray-300 leading-relaxed font-sans mb-6 ${expandedPost === post.id ? '' : 'line-clamp-3'}`}>
                       <div dangerouslySetInnerHTML={{ __html: post.content }} />
                     </div>
                     {!expandedPost && post.content.length > 200 && (
-                      <button 
-                        onClick={() => setExpandedPost(post.id)}
-                        className="text-crimson text-[10px] font-black uppercase tracking-widest hover:underline mb-8 block"
-                      >
+                      <button className="text-royal text-[10px] font-black uppercase tracking-widest hover:text-white transition-colors mb-6 block">
                         Read more →
                       </button>
                     )}
@@ -629,17 +627,18 @@ const handleLike = async (postId: string) => {
                 )}
 
                 {post.type === 'research' && (
-                  <div className="bg-surface-base p-10 rounded-xl border border-surface-high flex flex-col items-center text-center">
-                    <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-royal mb-8 shadow-sm">
-                      <FileText size={40} />
+                  <div className="bg-[#121624]/80 p-8 rounded-xl border border-white/10 flex flex-col items-center text-center">
+                    <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center text-royal mb-6 shadow-sm border border-white/10">
+                      <FileText size={32} />
                     </div>
-                    <h3 className="text-3xl text-text-primary italic font-display mb-4">{post.title}</h3>
-                    <p className="text-text-muted text-sm italic font-sans max-w-lg mb-8">"{post.abstract}"</p>
+                    <h3 className="text-2xl text-white font-bold mb-4">{post.title}</h3>
+                    <p className="text-gray-400 text-sm italic font-sans max-w-lg mb-8">"{post.abstract}"</p>
                     <a 
                       href={post.pdfUrl} 
                       target="_blank" 
                       rel="noreferrer"
-                      className="flex items-center gap-3 bg-green-deep text-white px-8 py-4 rounded text-xs font-black uppercase tracking-widest hover:bg-crimson transition-all"
+                      className="flex items-center gap-3 bg-royal/20 text-royal px-8 py-3 rounded text-xs font-black uppercase tracking-widest hover:bg-royal hover:text-white border border-royal/30 transition-all"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       <Download size={14} /> Download PDF
                     </a>
@@ -648,29 +647,29 @@ const handleLike = async (postId: string) => {
 
                 {post.type === 'question' && (
                   <div className="space-y-6">
-                    <p className="text-2xl text-green-deep leading-relaxed font-display italic">"{post.content}"</p>
+                    <p className="text-xl text-white leading-relaxed font-bold italic">"{post.content}"</p>
                   </div>
                 )}
 
-                <div className="flex items-center justify-between mt-12 pt-8 border-t border-green-deep/5">
+                <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/10 w-full" onClick={(e) => e.stopPropagation()}>
                   <div className="flex gap-8">
                     <button 
                       onClick={() => handleLike(post.id)}
                       className="flex items-center gap-2 group"
                     >
-                      <Heart size={18} className="text-green-deep/20 group-hover:text-crimson transition-colors" />
-                      <span className="text-[10px] font-black text-green-deep/40 uppercase tracking-widest">{post.likes}</span>
+                      <Heart size={18} className="text-gray-400 group-hover:text-crimson transition-colors" />
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{post.likes}</span>
                     </button>
                     <button 
                       onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)}
-                      className={`flex items-center gap-2 group ${expandedPost === post.id ? 'text-crimson' : 'text-green-deep/20 hover:text-crimson transition-colors'}`}
+                      className={`flex items-center gap-2 group ${expandedPost === post.id ? 'text-royal' : 'text-gray-400 hover:text-royal transition-colors'}`}
                     >
                       <MessageSquare size={18} />
-                      <span className="text-[10px] font-black text-green-deep/40 uppercase tracking-widest group-hover:text-crimson">{post.commentCount}</span>
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest group-hover:text-royal">{post.commentCount}</span>
                     </button>
                     <button 
                       onClick={() => handleShare(post.id)}
-                      className="text-green-deep/20 hover:text-royal transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors"
                     >
                       <Share2 size={18} />
                     </button>
@@ -683,13 +682,15 @@ const handleLike = async (postId: string) => {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="overflow-hidden"
+                      className="overflow-hidden w-full"
+                      onClick={(e) => e.stopPropagation()}
                     >
                        <CommentSection postId={post.id} />
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </motion.article>
+                </GradientCard>
+              </motion.div>
             ))}
           </AnimatePresence>
         )}
