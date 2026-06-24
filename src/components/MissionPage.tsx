@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import LogoLoop from './LogoLoop';
 
 export default function AboutUsPage() {
   const values = [
@@ -106,19 +107,25 @@ export default function AboutUsPage() {
         </div>
       </section>
 
-      {/* Values Grid */}
-      <section className="py-32 px-6 bg-cream">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-5xl text-green-deep mb-20 text-center italic">Core Values</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {values.map((v) => (
-              <div key={v.english} className="bg-white p-12 rounded shadow-sm border border-green-deep/5 hover:border-royal/30 transition-all">
+      {/* Values Grid (Animated Loop) */}
+      <section className="py-32 bg-cream overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 mb-20">
+          <h2 className="text-5xl text-green-deep text-center italic">Core Values</h2>
+        </div>
+        <div className="w-full">
+          <LogoLoop
+            logos={values}
+            speed={60}
+            gap={32}
+            pauseOnHover={true}
+            renderItem={(v: any) => (
+              <div className="bg-white p-12 rounded shadow-sm border border-green-deep/5 hover:border-royal/30 transition-all w-[350px] h-full flex flex-col">
                 <p className="text-4xl font-display text-crimson mb-4">{v.nepali}</p>
                 <h4 className="text-xs font-black uppercase tracking-widest text-green-deep mb-6">{v.english}</h4>
                 <p className="text-green-deep/60 text-sm italic font-sans leading-relaxed">{v.desc}</p>
               </div>
-            ))}
-          </div>
+            )}
+          />
         </div>
       </section>
 
