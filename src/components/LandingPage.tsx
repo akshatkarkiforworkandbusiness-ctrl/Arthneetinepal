@@ -333,8 +333,8 @@ export default function LandingPage() {
         </div>
 
         {/* Nepal Flag Floating Accents */}
-        <div className="absolute top-20 right-[15%] w-72 h-72 bg-crimson/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 left-[15%] w-72 h-72 bg-royal/10 rounded-full blur-3xl" />
+        <div className="absolute top-20 right-[15%] w-72 h-72 bg-electric-mint/10 rounded-lg blur-3xl" />
+        <div className="absolute bottom-20 left-[15%] w-72 h-72 bg-club-green/10 rounded-lg blur-3xl" />
 
         <motion.div
           initial={{ y: 30, opacity: 0 }}
@@ -355,7 +355,7 @@ export default function LandingPage() {
             disabled={false}
             className="text-[10px] font-black mb-4 block uppercase tracking-[0.4em]"
           />
-          <h1 className="text-5xl md:text-8xl text-white mb-8 leading-tight tracking-tight font-display italic">
+          <h1 className="text-5xl md:text-8xl text-white mb-8 leading-tight tracking-tight font-sans tracking-tight font-semibold italic">
             Think Big. <br />
             Invest Smart. <br />
             Lead Nepal.
@@ -368,21 +368,21 @@ export default function LandingPage() {
             {!user ? (
               <button 
                 onClick={handleJoinAction}
-                className="bg-crimson text-white px-10 py-4 rounded text-xs font-black uppercase tracking-widest hover:bg-white hover:text-crimson transition-all shadow-2xl cursor-pointer"
+                className="bg-electric-mint text-slate-base px-10 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-white hover:text-electric-mint transition-all shadow-2xl cursor-pointer"
               >
                 Join Arthneeti
               </button>
             ) : (
               <Link 
                 to="/profile" 
-                className="bg-crimson text-white px-10 py-4 rounded text-xs font-black uppercase tracking-widest hover:bg-white hover:text-crimson transition-all shadow-2xl text-center"
+                className="bg-electric-mint text-slate-base px-10 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-white hover:text-electric-mint transition-all shadow-2xl text-center"
               >
                 Go to Dashboard
               </Link>
             )}
             <Link 
               to="/discover" 
-              className="border border-[#1F2A3F] bg-[#161F30] text-white px-10 py-4 rounded text-xs font-black uppercase tracking-widest hover:bg-royal hover:border-royal transition-all text-center"
+              className="border border-[#1F2A3F] bg-[#161F30] text-white px-10 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-club-green hover:border-club-green transition-all text-center"
             >
               Explore Ticker & Tools
             </Link>
@@ -409,20 +409,20 @@ export default function LandingPage() {
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted">NEPSE Market Indices</span>
               {marketDataSource === 'live' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-light/10 border border-green-light/30 text-green-light text-[9px] font-black uppercase tracking-widest">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-light animate-pulse inline-block" />
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-green-light/10 border border-green-light/30 text-green-light text-[9px] font-black uppercase tracking-widest">
+                  <span className="w-1.5 h-1.5 rounded-lg bg-green-light animate-pulse inline-block" />
                   Live
                 </span>
               )}
               {marketDataSource === 'simulated' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-400 text-[9px] font-black uppercase tracking-widest">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" />
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-amber-400/10 border border-amber-400/30 text-amber-400 text-[9px] font-black uppercase tracking-widest">
+                  <span className="w-1.5 h-1.5 rounded-lg bg-amber-400 inline-block" />
                   Simulated
                 </span>
               )}
               {marketDataSource === 'loading' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#1F2A3F] text-text-muted text-[9px] font-black uppercase tracking-widest">
-                  <span className="inline-block w-2 h-2 border border-text-muted border-t-transparent rounded-full animate-spin" />
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#1F2A3F] text-text-muted text-[9px] font-black uppercase tracking-widest">
+                  <span className="inline-block w-2 h-2 border border-text-muted border-t-transparent rounded-lg animate-spin" />
                   Loading
                 </span>
               )}
@@ -446,7 +446,7 @@ export default function LandingPage() {
               return (
                 <div 
                   key={key} 
-                  className="bg-[#0B0F19] border border-[#1F2A3F] p-5 rounded-2xl flex justify-between items-center shadow-lg hover:border-royal/50 transition-all duration-300"
+                  className="bg-[#0B0F19] border border-[#1F2A3F] p-5 rounded-lg-2xl flex justify-between items-center shadow-lg hover:border-club-green/50 transition-all duration-300"
                 >
                   <div>
                     <span className="text-[10px] font-black uppercase tracking-wider text-text-muted block mb-1">{item.name}</span>
@@ -487,8 +487,8 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
             <div>
-              <span className="text-[10px] font-black text-crimson mb-4 block uppercase tracking-[0.4em]">ARTHNEETI ACADEMY</span>
-              <h2 className="text-4xl md:text-6xl text-white leading-tight italic font-display">Curriculum Roadmap</h2>
+              <span className="text-[10px] font-black text-electric-mint mb-4 block uppercase tracking-[0.4em]">ARTHNEETI ACADEMY</span>
+              <h2 className="text-4xl md:text-6xl text-white leading-tight italic font-sans tracking-tight font-semibold">Curriculum Roadmap</h2>
             </div>
             <p className="text-text-muted max-w-sm text-sm leading-relaxed">
               Explore the educational path designed to empower students with structural economic knowledge and real market insights.
@@ -502,13 +502,13 @@ export default function LandingPage() {
                 <button
                   key={pillar.title}
                   onClick={() => setActivePillarIndex(activePillarIndex === i ? null : i)}
-                  className={`w-full text-left p-6 rounded-2xl border transition-all duration-300 flex items-start gap-4 ${
+                  className={`w-full text-left p-6 rounded-lg-2xl border transition-all duration-300 flex items-start gap-4 ${
                     activePillarIndex === i 
-                      ? 'bg-[#161F30] border-royal shadow-lg' 
+                      ? 'bg-[#161F30] border-club-green shadow-lg' 
                       : 'bg-transparent border-[#1F2A3F] hover:border-text-muted/40 hover:bg-[#161F30]/30'
                   }`}
                 >
-                  <span className="text-2xl font-display text-royal/40 font-bold">{pillar.num}</span>
+                  <span className="text-2xl font-sans tracking-tight font-semibold text-club-green/40 font-bold">{pillar.num}</span>
                   <div>
                     <h3 className="text-lg font-bold text-white mb-2">{pillar.title}</h3>
                     <p className="text-xs text-text-muted leading-relaxed">{pillar.desc}</p>
@@ -518,7 +518,7 @@ export default function LandingPage() {
             </div>
 
             {/* Right Side: Accordion Details */}
-            <div className="lg:col-span-7 bg-[#161F30] border border-[#1F2A3F] rounded-3xl p-8 flex flex-col justify-between shadow-2xl">
+            <div className="lg:col-span-7 bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl p-8 flex flex-col justify-between shadow-2xl">
               <AnimatePresence mode="wait">
                 {activePillarIndex !== null ? (
                   <motion.div
@@ -533,7 +533,7 @@ export default function LandingPage() {
                         <h4 className="text-xs font-black uppercase tracking-widest text-text-muted">
                           Syllabus Modules ({pillarsSyllabus[activePillarIndex].title})
                         </h4>
-                        <span className="text-[10px] font-black text-royal uppercase tracking-widest bg-royal/10 border border-royal/20 px-3 py-1 rounded-full">
+                        <span className="text-[10px] font-black text-club-green uppercase tracking-widest bg-club-green/10 border border-club-green/20 px-3 py-1 rounded-lg">
                           {pillarsSyllabus[activePillarIndex].modules.length} Lessons
                         </span>
                       </div>
@@ -555,7 +555,7 @@ export default function LandingPage() {
                       <span className="text-[10px] text-text-muted italic">Ready to review? Jump into our market explorer.</span>
                       <Link 
                         to="/discover"
-                        className="bg-royal text-white px-6 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-royal transition-all flex items-center gap-1.5"
+                        className="bg-club-green text-white px-6 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-club-green transition-all flex items-center gap-1.5"
                       >
                         Start Learning Modules
                         <span className="material-symbols-outlined text-sm">arrow_forward</span>
@@ -577,8 +577,8 @@ export default function LandingPage() {
       <section className="py-24 px-6 bg-[#161F30] border-y border-[#1F2A3F]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-[10px] font-black text-crimson mb-2 block uppercase tracking-[0.4em]">NRB-INSPIRED PORTAL</span>
-            <h2 className="text-4xl md:text-5xl text-white font-display italic mb-6">Financial Resource Library</h2>
+            <span className="text-[10px] font-black text-electric-mint mb-2 block uppercase tracking-[0.4em]">NRB-INSPIRED PORTAL</span>
+            <h2 className="text-4xl md:text-5xl text-white font-sans tracking-tight font-semibold italic mb-6">Financial Resource Library</h2>
             <p className="text-text-muted text-sm leading-relaxed">
               Explore media materials, Central Bank publications, downloadable infographics, and bilingual FAQs.
             </p>
@@ -597,9 +597,9 @@ export default function LandingPage() {
                   setActiveResourceTab(tab.key as any);
                   setActiveFaqIndex(null);
                 }}
-                className={`px-6 py-3 text-xs font-black uppercase tracking-wider rounded-xl transition-all flex items-center gap-2 ${
+                className={`px-6 py-3 text-xs font-black uppercase tracking-wider rounded-lg transition-all flex items-center gap-2 ${
                   activeResourceTab === tab.key 
-                    ? 'bg-royal text-white shadow-xl' 
+                    ? 'bg-club-green text-white shadow-xl' 
                     : 'text-text-muted hover:text-white hover:bg-[#0B0F19]/60 border border-[#1F2A3F]'
                 }`}
               >
@@ -623,7 +623,7 @@ export default function LandingPage() {
                   {mockVideos.map((video, idx) => (
                     <div 
                       key={idx}
-                      className="bg-[#0B0F19] border border-[#1F2A3F] rounded-2xl overflow-hidden group shadow-lg flex flex-col justify-between"
+                      className="bg-[#0B0F19] border border-[#1F2A3F] rounded-lg-2xl overflow-hidden group shadow-lg flex flex-col justify-between"
                     >
                       <div className="relative aspect-video overflow-hidden bg-black/40">
                         <img 
@@ -633,17 +633,17 @@ export default function LandingPage() {
                         />
                         <button 
                           onClick={() => setSelectedVideoEmbed(video.videoUrl)}
-                          className="absolute inset-0 m-auto w-12 h-12 bg-royal text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform cursor-pointer"
+                          className="absolute inset-0 m-auto w-12 h-12 bg-club-green text-white rounded-lg flex items-center justify-center shadow-2xl hover:scale-110 transition-transform cursor-pointer"
                         >
                           <span className="material-symbols-outlined text-2xl">play_arrow</span>
                         </button>
-                        <span className="absolute bottom-3 right-3 bg-[#0B0F19] text-white text-[9px] font-bold font-mono px-2 py-0.5 rounded border border-[#1F2A3F]">
+                        <span className="absolute bottom-3 right-3 bg-[#0B0F19] text-white text-[9px] font-bold font-mono px-2 py-0.5 rounded-lg border border-[#1F2A3F]">
                           {video.duration}
                         </span>
                       </div>
                       
                       <div className="p-6">
-                        <h4 className="text-sm font-bold text-white group-hover:text-royal transition-colors mb-3 leading-snug line-clamp-2">
+                        <h4 className="text-sm font-bold text-white group-hover:text-club-green transition-colors mb-3 leading-snug line-clamp-2">
                           {video.title}
                         </h4>
                         <p className="text-xs text-text-muted leading-relaxed line-clamp-3">
@@ -666,11 +666,11 @@ export default function LandingPage() {
                   {mockPamphlets.map((pamphlet, idx) => (
                     <div 
                       key={idx}
-                      className="bg-[#0B0F19] border border-[#1F2A3F] p-6 rounded-2xl flex flex-col justify-between shadow-lg hover:border-royal/50 transition-all duration-300"
+                      className="bg-[#0B0F19] border border-[#1F2A3F] p-6 rounded-lg-2xl flex flex-col justify-between shadow-lg hover:border-club-green/50 transition-all duration-300"
                     >
                       <div>
                         <div className="flex justify-between items-start mb-4">
-                          <span className="bg-[#161F30] text-text-muted text-[8px] font-black uppercase tracking-widest px-2.5 py-1 rounded border border-[#1F2A3F]">
+                          <span className="bg-[#161F30] text-text-muted text-[8px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border border-[#1F2A3F]">
                             {pamphlet.category}
                           </span>
                           <span className="text-[8px] font-bold font-mono text-text-muted">{pamphlet.size}</span>
@@ -688,7 +688,7 @@ export default function LandingPage() {
                         href={pamphlet.downloadUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="w-full py-3 bg-[#161F30] hover:bg-royal hover:text-white border border-[#1F2A3F] text-white text-[9px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-1.5"
+                        className="w-full py-3 bg-[#161F30] hover:bg-club-green hover:text-white border border-[#1F2A3F] text-white text-[9px] font-black uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1.5"
                       >
                         <span className="material-symbols-outlined text-sm">download</span>
                         Download PDF Guide
@@ -704,7 +704,7 @@ export default function LandingPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="max-w-3xl mx-auto bg-[#0B0F19] border border-[#1F2A3F] rounded-3xl p-6 md:p-8 shadow-xl"
+                  className="max-w-3xl mx-auto bg-[#0B0F19] border border-[#1F2A3F] rounded-lg-2xl p-6 md:p-8 shadow-xl"
                 >
                   {/* FAQ Header & Language Toggle */}
                   <div className="flex justify-between items-center border-b border-[#1F2A3F] pb-4 mb-6">
@@ -712,16 +712,16 @@ export default function LandingPage() {
                     <div className="flex gap-1.5 bg-[#161F30] border border-[#1F2A3F] p-1 rounded-lg">
                       <button
                         onClick={() => { setFaqLanguage('en'); setActiveFaqIndex(null); }}
-                        className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-md transition-all ${
-                          faqLanguage === 'en' ? 'bg-royal text-white' : 'text-text-muted hover:text-white'
+                        className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg-md transition-all ${
+                          faqLanguage === 'en' ? 'bg-club-green text-white' : 'text-text-muted hover:text-white'
                         }`}
                       >
                         English
                       </button>
                       <button
                         onClick={() => { setFaqLanguage('np'); setActiveFaqIndex(null); }}
-                        className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-md transition-all ${
-                          faqLanguage === 'np' ? 'bg-royal text-white' : 'text-text-muted hover:text-white'
+                        className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg-md transition-all ${
+                          faqLanguage === 'np' ? 'bg-club-green text-white' : 'text-text-muted hover:text-white'
                         }`}
                       >
                         नेपाली
@@ -736,7 +736,7 @@ export default function LandingPage() {
                       return (
                         <div 
                           key={idx}
-                          className="border border-[#1F2A3F] rounded-xl overflow-hidden"
+                          className="border border-[#1F2A3F] rounded-lg overflow-hidden"
                         >
                           <button
                             onClick={() => setActiveFaqIndex(isOpen ? null : idx)}
@@ -778,12 +778,12 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
             <div className="text-center md:text-left">
-              <span className="text-[10px] font-black text-crimson mb-2 block uppercase tracking-[0.4em]">LIVE DISCOURSE FEED</span>
-              <h2 className="text-4xl md:text-5xl text-white italic font-display">Latest Discussion Topics</h2>
+              <span className="text-[10px] font-black text-electric-mint mb-2 block uppercase tracking-[0.4em]">LIVE DISCOURSE FEED</span>
+              <h2 className="text-4xl md:text-5xl text-white italic font-sans tracking-tight font-semibold">Latest Discussion Topics</h2>
             </div>
             <Link 
               to="/community" 
-              className="text-[10px] font-black text-royal uppercase tracking-widest border border-royal/30 px-8 py-4 rounded-xl hover:bg-royal hover:text-white transition-all bg-[#161F30]/50"
+              className="text-[10px] font-black text-club-green uppercase tracking-widest border border-club-green/30 px-8 py-4 rounded-lg hover:bg-club-green hover:text-white transition-all bg-[#161F30]/50"
             >
               JOIN THE FORUM
             </Link>
@@ -797,24 +797,24 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group p-8 rounded-3xl bg-[#161F30] border border-[#1F2A3F] hover:border-royal/50 hover:bg-[#161F30]/80 transition-all duration-300"
+                className="group p-8 rounded-lg-2xl bg-[#161F30] border border-[#1F2A3F] hover:border-club-green/50 hover:bg-[#161F30]/80 transition-all duration-300"
               >
                 <div className="flex justify-between items-start mb-6">
-                  <span className="px-3.5 py-1 bg-royal/10 text-royal text-[8px] font-black uppercase tracking-widest rounded-full border border-royal/20">
+                  <span className="px-3.5 py-1 bg-club-green/10 text-club-green text-[8px] font-black uppercase tracking-widest rounded-lg border border-club-green/20">
                     {topic.category}
                   </span>
-                  <div className="flex items-center gap-1.5 text-crimson">
+                  <div className="flex items-center gap-1.5 text-electric-mint">
                     <span className="material-symbols-outlined text-sm">favorite</span>
                     <span className="text-[10px] font-bold">{topic.likes}</span>
                   </div>
                 </div>
                 <Link to="/community" className="block">
-                  <h3 className="text-lg text-white font-display italic mb-4 leading-snug group-hover:text-royal transition-colors line-clamp-2">
+                  <h3 className="text-lg text-white font-sans tracking-tight font-semibold italic mb-4 leading-snug group-hover:text-club-green transition-colors line-clamp-2">
                     {topic.title || (topic as any).content?.replace(/<[^>]*>?/gm, '').substring(0, 60) + '...'}
                   </h3>
                 </Link>
                 <div className="flex items-center gap-3 mt-6 pt-6 border-t border-[#1F2A3F]">
-                  <div className="w-8 h-8 rounded-full bg-royal/10 border border-royal/30 flex items-center justify-center text-[10px] font-bold text-royal uppercase">
+                  <div className="w-8 h-8 rounded-lg bg-club-green/10 border border-club-green/30 flex items-center justify-center text-[10px] font-bold text-club-green uppercase">
                     {topic.author[0]}
                   </div>
                   <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">{topic.author}</span>
@@ -823,7 +823,7 @@ export default function LandingPage() {
             ))}
 
             {latestTopics.length === 0 && (
-              <div className="col-span-full py-20 text-center border-2 border-dashed border-[#1F2A3F] rounded-3xl bg-[#161F30]/40">
+              <div className="col-span-full py-20 text-center border-2 border-dashed border-[#1F2A3F] rounded-lg-2xl bg-[#161F30]/40">
                 <p className="text-text-muted italic text-xs">Connecting to community database server...</p>
               </div>
             )}
@@ -838,9 +838,9 @@ export default function LandingPage() {
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="lg:w-1/2 border-l-8 border-royal pl-10"
+            className="lg:w-1/2 border-l-8 border-club-green pl-10"
           >
-            <h2 className="text-4xl md:text-5xl text-white leading-tight italic font-display mb-6">
+            <h2 className="text-4xl md:text-5xl text-white leading-tight italic font-sans tracking-tight font-semibold mb-6">
               "We don't just teach finance — we use it to build a more equitable Nepal."
             </h2>
             <p className="text-text-muted text-sm leading-relaxed max-w-lg">
@@ -856,9 +856,9 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="flex flex-col items-center text-center p-6 bg-[#0B0F19] border border-[#1F2A3F] rounded-2xl hover:border-royal/50 transition-all duration-300"
+                className="flex flex-col items-center text-center p-6 bg-[#0B0F19] border border-[#1F2A3F] rounded-lg-2xl hover:border-club-green/50 transition-all duration-300"
               >
-                <div className="w-16 h-16 rounded-full bg-royal/10 flex items-center justify-center text-royal mb-4 border border-royal/20">
+                <div className="w-16 h-16 rounded-lg bg-club-green/10 flex items-center justify-center text-club-green mb-4 border border-club-green/20">
                   <span className="material-symbols-outlined text-3xl">{item.icon}</span>
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-widest text-white">{item.name}</span>
@@ -872,8 +872,8 @@ export default function LandingPage() {
       <section className="py-24 px-6 bg-[#0B0F19] border-t border-[#1F2A3F]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
-            <span className="text-[10px] font-black text-crimson mb-4 block uppercase tracking-[0.4em]">LEADERSHIP</span>
-            <h2 className="text-4xl md:text-5xl text-white italic mb-6 font-display">Executive Board</h2>
+            <span className="text-[10px] font-black text-electric-mint mb-4 block uppercase tracking-[0.4em]">LEADERSHIP</span>
+            <h2 className="text-4xl md:text-5xl text-white italic mb-6 font-sans tracking-tight font-semibold">Executive Board</h2>
             <p className="text-text-muted max-w-xl mx-auto italic font-sans text-sm">
               The founding team driving the movement for financial intelligence in Nepal.
             </p>
@@ -908,19 +908,19 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-[#161F30] p-10 rounded-xl relative border-t-8 border-crimson border border-[#1F2A3F] shadow-2xl flex flex-col items-center text-center group hover:-translate-y-2 transition-all duration-500"
+                className="bg-[#161F30] p-10 rounded-lg relative border-t-8 border-electric-mint border border-[#1F2A3F] shadow-2xl flex flex-col items-center text-center group hover:-translate-y-2 transition-all duration-500"
               >
-                <div className="w-20 h-20 rounded-full border-4 border-white/10 flex items-center justify-center text-white font-display italic text-3xl mb-8 group-hover:border-crimson group-hover:text-crimson transition-all duration-500">
+                <div className="w-20 h-20 rounded-lg border-4 border-white/10 flex items-center justify-center text-white font-sans tracking-tight font-semibold italic text-3xl mb-8 group-hover:border-electric-mint group-hover:text-electric-mint transition-all duration-500">
                   {member.name.split(' ').map(n => n[0]).join('')}
                 </div>
-                <h3 className="text-xl text-white font-display italic mb-2">{member.name}</h3>
-                <p className="text-[10px] font-black uppercase tracking-widest text-crimson mb-6">{member.role}</p>
+                <h3 className="text-xl text-white font-sans tracking-tight font-semibold italic mb-2">{member.name}</h3>
+                <p className="text-[10px] font-black uppercase tracking-widest text-electric-mint mb-6">{member.role}</p>
                 <p className="text-text-muted text-xs italic font-sans leading-relaxed mb-6">
                   {member.bio}
                 </p>
                 <a 
                   href="mailto:learnarthneeti@gmail.com"
-                  className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-crimson transition-colors"
+                  className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-electric-mint transition-colors"
                 >
                   Get In Touch
                 </a>
@@ -941,7 +941,7 @@ export default function LandingPage() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-[#161F30] border border-[#1F2A3F] rounded-2xl overflow-hidden max-w-3xl w-full shadow-2xl relative"
+              className="bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl overflow-hidden max-w-3xl w-full shadow-2xl relative"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="relative aspect-video">
@@ -958,7 +958,7 @@ export default function LandingPage() {
                 <span className="text-[10px] text-text-muted italic">Arthneeti Academy Resource System</span>
                 <button
                   onClick={() => setSelectedVideoEmbed(null)}
-                  className="bg-royal text-white px-5 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-white hover:text-royal transition-all cursor-pointer"
+                  className="bg-club-green text-white px-5 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-white hover:text-club-green transition-all cursor-pointer"
                 >
                   Close Player
                 </button>

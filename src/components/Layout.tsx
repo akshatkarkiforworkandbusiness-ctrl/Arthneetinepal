@@ -91,11 +91,11 @@ export function Navigation() {
   }, [profile, user]);
 
   return (
-    <nav className="bg-green-deep sticky top-0 z-50 border-b border-white/10">
+    <nav className="bg-slate-base sticky top-0 z-50 border-b border-white/10">
       <div className="max-w-7xl mx-auto flex justify-between items-center px-4 md:px-8 w-full h-20">
         <Link to="/" className="flex flex-col items-start leading-none group">
-          <span className="text-xl md:text-2xl font-black text-white tracking-widest group-hover:text-crimson transition-colors">ARTHNEETI</span>
-          <span className="text-[10px] md:text-sm font-medium text-crimson ml-0.5">अर्थनीति</span>
+          <span className="text-xl md:text-2xl font-black text-white tracking-widest group-hover:text-electric-mint transition-colors">ARTHNEETI</span>
+          <span className="text-[10px] md:text-sm font-medium text-electric-mint ml-0.5">अर्थनीति</span>
         </Link>
         
         <div className="hidden lg:flex items-center gap-10">
@@ -105,7 +105,7 @@ export function Navigation() {
               to={link.path}
               className={`transition-all text-xs font-bold uppercase tracking-widest ${
                 location.pathname === link.path 
-                  ? 'text-crimson' 
+                  ? 'text-electric-mint' 
                   : 'text-white/60 hover:text-white'
               }`}
             >
@@ -117,7 +117,7 @@ export function Navigation() {
             <div className="relative">
               <button 
                 onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-                className="w-10 h-10 rounded-full bg-crimson flex items-center justify-center text-white font-black text-sm uppercase cursor-pointer hover:bg-crimson/80 transition-colors shadow-lg shadow-crimson/20"
+                className="w-10 h-10 rounded-lg bg-electric-mint flex items-center justify-center text-slate-base font-black text-sm uppercase cursor-pointer hover:bg-electric-mint/80 transition-colors shadow-lg shadow-electric-mint/20"
               >
                 {profile?.name?.[0] || user.displayName?.[0] || 'U'}
               </button>
@@ -133,9 +133,9 @@ export function Navigation() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      className="absolute right-0 mt-4 w-64 bg-white rounded-xl shadow-2xl border border-navy/10 z-50 overflow-hidden"
+                      className="absolute right-0 mt-4 w-64 bg-white rounded-lg shadow-2xl border border-slate-raised/10 z-50 overflow-hidden"
                     >
-                      <div className="p-6 bg-royal text-white">
+                      <div className="p-6 bg-club-green text-white">
                         <p className="text-xs font-black uppercase tracking-widest text-white mb-1">{profile?.name || user.displayName}</p>
                         <p className="text-[10px] text-white/60 uppercase tracking-widest font-medium">
                           {profile?.topics?.join(' | ') || 'Member'}
@@ -145,7 +145,7 @@ export function Navigation() {
                         <Link 
                           to="/profile" 
                           onClick={() => setShowProfileDropdown(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-xs font-bold text-green-deep hover:bg-cream rounded-lg transition-colors"
+                          className="flex items-center gap-3 px-4 py-3 text-xs font-bold text-slate-base hover:bg-slate-raised rounded-lg transition-colors"
                         >
                           <span className="material-symbols-outlined text-lg">person</span>
                           My Profile
@@ -169,7 +169,7 @@ export function Navigation() {
           ) : (
             <button 
               onClick={handleJoinAction}
-              className="px-8 py-3 bg-crimson text-white text-xs font-black uppercase tracking-widest rounded transition-all hover:bg-white hover:text-crimson shadow-lg"
+              className="px-8 py-3 bg-electric-mint text-slate-base text-xs font-black uppercase tracking-widest rounded-lg transition-all hover:bg-white hover:text-electric-mint shadow-lg"
             >
               Join
             </button>
@@ -193,7 +193,7 @@ export function Navigation() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="lg:hidden border-t border-white/10 bg-green-deep overflow-hidden"
+            className="lg:hidden border-t border-white/10 bg-slate-base overflow-hidden"
           >
             <div className="flex flex-col p-8 gap-8">
               {navLinks.map((link) => (
@@ -203,7 +203,7 @@ export function Navigation() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`text-sm font-bold uppercase tracking-widest ${
                     location.pathname === link.path 
-                      ? 'text-crimson' 
+                      ? 'text-electric-mint' 
                       : 'text-white/60 hover:text-white'
                   }`}
                 >
@@ -217,7 +217,7 @@ export function Navigation() {
                     handleJoinAction();
                     setIsMobileMenuOpen(false);
                   }}
-                  className="w-full py-4 bg-crimson text-white text-xs font-black uppercase tracking-widest rounded shadow-xl"
+                  className="w-full py-4 bg-electric-mint text-slate-base text-xs font-black uppercase tracking-widest rounded-lg shadow-xl"
                 >
                   Join
                 </button>
@@ -249,41 +249,41 @@ export function Navigation() {
       {/* Profile Setup Modal (Step 2) */}
       <AnimatePresence>
         {showOnboarding && (
-          <div className="fixed inset-0 z-[100] bg-green-deep/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[100] bg-slate-base/80 backdrop-blur-md flex items-center justify-center p-4">
             <motion.div 
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-white p-8 md:p-12 rounded-2xl max-w-xl w-full shadow-2xl relative"
+              className="bg-white p-8 md:p-12 rounded-lg-2xl max-w-xl w-full shadow-2xl relative"
             >
-              <h2 className="font-display text-4xl text-green-deep italic mb-4">Complete Your Profile</h2>
+              <h2 className="font-sans tracking-tight font-semibold text-4xl text-slate-base italic mb-4">Complete Your Profile</h2>
               <p className="text-text-muted mb-8 text-sm">Tell us a bit more about yourself to join the community.</p>
               
               <div className="space-y-6">
                 <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-green-deep/40 mb-2 block">Full Name</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-base/40 mb-2 block">Full Name</label>
                   <input 
                     type="text"
                     placeholder="Enter your full name"
                     value={setupForm.name}
                     onChange={e => setSetupForm({...setupForm, name: e.target.value})}
-                    className="w-full bg-cream border-2 border-green-deep/5 rounded p-4 outline-none focus:border-crimson transition-all font-bold text-green-deep"
+                    className="w-full bg-slate-raised border-2 border-slate-base/5 rounded-lg p-4 outline-none focus:border-electric-mint transition-all font-bold text-slate-base"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-green-deep/40 mb-2 block">Email Address</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-base/40 mb-2 block">Email Address</label>
                   <input 
                     type="email"
                     placeholder="Enter your email"
                     value={setupForm.email}
                     readOnly
-                    className="w-full bg-cream border-2 border-green-deep/5 rounded p-4 outline-none focus:border-crimson transition-all font-bold text-green-deep opacity-60 cursor-not-allowed"
+                    className="w-full bg-slate-raised border-2 border-slate-base/5 rounded-lg p-4 outline-none focus:border-electric-mint transition-all font-bold text-slate-base opacity-60 cursor-not-allowed"
                   />
-                  <p className="text-[8px] text-green-deep/40 mt-1 uppercase tracking-widest">Verified via Google</p>
+                  <p className="text-[8px] text-slate-base/40 mt-1 uppercase tracking-widest">Verified via Google</p>
                 </div>
                 
                 <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-green-deep/40 mb-4 block">Fields of Interest</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-base/40 mb-4 block">Fields of Interest</label>
                   <div className="flex flex-wrap gap-3">
                     {interestOptions.map(option => (
                       <button
@@ -294,10 +294,10 @@ export function Navigation() {
                             : [...setupForm.interests, option];
                           setSetupForm({...setupForm, interests: newInterests});
                         }}
-                        className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border-2 transition-all ${
+                        className={`px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest border-2 transition-all ${
                           setupForm.interests.includes(option)
-                            ? 'bg-crimson border-crimson text-white'
-                            : 'border-green-deep/10 text-green-deep/40 hover:border-crimson/50'
+                            ? 'bg-electric-mint border-electric-mint text-slate-base'
+                            : 'border-slate-base/10 text-slate-base/40 hover:border-electric-mint/50'
                         }`}
                       >
                         {option}
@@ -315,7 +315,7 @@ export function Navigation() {
                     });
                   }}
                   disabled={!setupForm.name || setupForm.interests.length === 0}
-                  className="w-full bg-crimson text-white py-5 rounded text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-crimson transition-all disabled:opacity-30 mt-4 shadow-xl"
+                  className="w-full bg-electric-mint text-slate-base py-5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-electric-mint transition-all disabled:opacity-30 mt-4 shadow-xl"
                 >
                   JOIN ARTHNEETI
                 </button>
@@ -329,7 +329,7 @@ export function Navigation() {
       {createPortal(
         <AnimatePresence>
         {showAuthModal && (
-          <div className="fixed inset-0 z-[100] bg-green-deep/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+          <div className="fixed inset-0 z-[100] bg-slate-base/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
             {/* Click outside to close */}
             <div className="absolute inset-0" onClick={closeAuthModal} />
             
@@ -337,7 +337,7 @@ export function Navigation() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white p-8 md:p-10 rounded-3xl max-w-md w-full shadow-2xl relative text-white z-10 my-8 border border-green-deep/10"
+              className="bg-white p-8 md:p-10 rounded-lg-2xl max-w-md w-full shadow-2xl relative text-white z-10 my-8 border border-slate-base/10"
             >
               {/* Close Button */}
               <button 
@@ -347,7 +347,7 @@ export function Navigation() {
                 <span className="material-symbols-outlined">close</span>
               </button>
 
-              <h2 className="font-display text-3xl italic mb-2 text-white">
+              <h2 className="font-sans tracking-tight font-semibold text-3xl italic mb-2 text-white">
                 {isResetMode ? 'Reset Password' : isSignUpMode ? 'Create Account' : 'Welcome Back'}
               </h2>
               <p className="text-text-muted text-xs mb-6">
@@ -359,13 +359,13 @@ export function Navigation() {
               {isResetMode ? (
                 resetSent ? (
                   <div className="space-y-4">
-                    <div className="p-3 bg-emerald-600/10 border border-emerald-600/30 rounded-xl text-emerald-600 text-[10px] leading-relaxed font-semibold">
+                    <div className="p-3 bg-emerald-600/10 border border-emerald-600/30 rounded-lg text-emerald-600 text-[10px] leading-relaxed font-semibold">
                       If an account exists for that email, a reset link is on its way. Check your inbox (and spam folder).
                     </div>
                     <button
                       type="button"
                       onClick={() => { setIsResetMode(false); setResetSent(false); setAuthError(null); }}
-                      className="w-full bg-cream border border-green-deep/10 hover:border-royal text-white py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer"
+                      className="w-full bg-slate-raised border border-slate-base/10 hover:border-club-green text-white py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer"
                     >
                       Back to Log In
                     </button>
@@ -397,12 +397,12 @@ export function Navigation() {
                         placeholder="name@email.com"
                         value={resetEmail}
                         onChange={e => setResetEmail(e.target.value)}
-                        className="w-full bg-[#0B0F19] border border-green-deep/5 rounded p-3 text-xs outline-none focus:border-royal text-white transition-all font-medium"
+                        className="w-full bg-[#0B0F19] border border-slate-base/5 rounded-lg p-3 text-xs outline-none focus:border-club-green text-white transition-all font-medium"
                       />
                     </div>
 
                     {authError && (
-                      <div className="p-3 bg-crimson/10 border border-crimson/30 rounded-xl text-crimson text-[10px] leading-relaxed font-semibold">
+                      <div className="p-3 bg-electric-mint/10 border border-electric-mint/30 rounded-lg text-electric-mint text-[10px] leading-relaxed font-semibold">
                         {authError}
                       </div>
                     )}
@@ -410,10 +410,10 @@ export function Navigation() {
                     <button 
                       type="submit"
                       disabled={resetSubmitting}
-                      className="w-full bg-crimson hover:bg-white hover:text-crimson text-white py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                      className="w-full bg-electric-mint hover:bg-white hover:text-electric-mint text-slate-base py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                     >
                       {resetSubmitting && (
-                        <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-lg animate-spin" />
                       )}
                       Send Reset Link
                     </button>
@@ -430,7 +430,7 @@ export function Navigation() {
               ) : (
               <>
               {/* Tabs */}
-              <div className="flex bg-cream p-1.5 rounded-xl border border-green-deep/10 mb-6">
+              <div className="flex bg-slate-raised p-1.5 rounded-lg border border-slate-base/10 mb-6">
                 <button
                   type="button"
                   onClick={() => {
@@ -439,7 +439,7 @@ export function Navigation() {
                   }}
                   className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all cursor-pointer ${
                     !isSignUpMode 
-                      ? 'bg-royal text-white shadow-md' 
+                      ? 'bg-club-green text-white shadow-md' 
                       : 'text-text-muted hover:text-white'
                   }`}
                 >
@@ -453,7 +453,7 @@ export function Navigation() {
                   }}
                   className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all cursor-pointer ${
                     isSignUpMode 
-                      ? 'bg-royal text-white shadow-md' 
+                      ? 'bg-club-green text-white shadow-md' 
                       : 'text-text-muted hover:text-white'
                   }`}
                 >
@@ -493,7 +493,7 @@ export function Navigation() {
                       placeholder="e.g. Aayush Shrestha"
                       value={authForm.name}
                       onChange={e => setAuthForm({...authForm, name: e.target.value})}
-                      className="w-full bg-[#0B0F19] border border-green-deep/5 rounded p-3 text-xs outline-none focus:border-royal text-white transition-all font-medium"
+                      className="w-full bg-[#0B0F19] border border-slate-base/5 rounded-lg p-3 text-xs outline-none focus:border-club-green text-white transition-all font-medium"
                     />
                   </div>
                 )}
@@ -506,7 +506,7 @@ export function Navigation() {
                     placeholder="name@email.com"
                     value={authForm.email}
                     onChange={e => setAuthForm({...authForm, email: e.target.value})}
-                    className="w-full bg-[#0B0F19] border border-green-deep/5 rounded p-3 text-xs outline-none focus:border-royal text-white transition-all font-medium"
+                    className="w-full bg-[#0B0F19] border border-slate-base/5 rounded-lg p-3 text-xs outline-none focus:border-club-green text-white transition-all font-medium"
                   />
                 </div>
 
@@ -518,7 +518,7 @@ export function Navigation() {
                     placeholder="••••••••"
                     value={authForm.password}
                     onChange={e => setAuthForm({...authForm, password: e.target.value})}
-                    className="w-full bg-[#0B0F19] border border-green-deep/5 rounded p-3 text-xs outline-none focus:border-royal text-white transition-all font-medium"
+                    className="w-full bg-[#0B0F19] border border-slate-base/5 rounded-lg p-3 text-xs outline-none focus:border-club-green text-white transition-all font-medium"
                   />
                   {!isSignUpMode && (
                     <div className="text-right mt-1.5">
@@ -530,7 +530,7 @@ export function Navigation() {
                           setResetSent(false);
                           setIsResetMode(true);
                         }}
-                        className="text-[9px] font-black uppercase tracking-widest text-royal hover:underline cursor-pointer"
+                        className="text-[9px] font-black uppercase tracking-widest text-club-green hover:underline cursor-pointer"
                       >
                         Forgot password?
                       </button>
@@ -554,10 +554,10 @@ export function Navigation() {
                                 : [...authForm.interests, option];
                               setAuthForm({...authForm, interests: next});
                             }}
-                            className={`px-3 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest border transition-all cursor-pointer ${
+                            className={`px-3 py-1.5 rounded-lg text-[8px] font-black uppercase tracking-widest border transition-all cursor-pointer ${
                               isSelected 
-                                ? 'bg-crimson border-crimson text-white' 
-                                : 'border-green-deep/10 text-text-muted hover:border-royal/50'
+                                ? 'bg-electric-mint border-electric-mint text-slate-base' 
+                                : 'border-slate-base/10 text-text-muted hover:border-club-green/50'
                             }`}
                           >
                             {option}
@@ -570,7 +570,7 @@ export function Navigation() {
 
                 {/* Error Banner */}
                 {authError && (
-                  <div className="p-3 bg-crimson/10 border border-crimson/30 rounded-xl text-crimson text-[10px] leading-relaxed font-semibold">
+                  <div className="p-3 bg-electric-mint/10 border border-electric-mint/30 rounded-lg text-electric-mint text-[10px] leading-relaxed font-semibold">
                     {authError}
                   </div>
                 )}
@@ -578,10 +578,10 @@ export function Navigation() {
                 <button 
                   type="submit"
                   disabled={authSubmitting}
-                  className="w-full bg-crimson hover:bg-white hover:text-crimson text-white py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="w-full bg-electric-mint hover:bg-white hover:text-electric-mint text-slate-base py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   {authSubmitting && (
-                    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-lg animate-spin" />
                   )}
                   {isSignUpMode ? 'Create Account' : 'Log In'}
                 </button>
@@ -590,7 +590,7 @@ export function Navigation() {
               {/* Divider */}
               <div className="relative my-6 flex items-center justify-center">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-green-deep/10" />
+                  <div className="w-full border-t border-slate-base/10" />
                 </div>
                 <span className="relative px-3 bg-[#161F30] text-[9px] font-black uppercase tracking-widest text-text-muted">or continue with</span>
               </div>
@@ -606,7 +606,7 @@ export function Navigation() {
                     setAuthError(getReadableAuthError(err));
                   }
                 }}
-                className="w-full bg-cream border border-green-deep/10 hover:border-royal text-white py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full bg-slate-raised border border-slate-base/10 hover:border-club-green text-white py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -630,12 +630,12 @@ export function Navigation() {
 
 export function Footer() {
   return (
-    <footer className="bg-green-deep text-white py-20 px-6 md:px-24">
+    <footer className="bg-slate-base text-white py-20 px-6 md:px-24">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
         <div className="max-w-xs">
-          <Link to="/" className="flex flex-col items-start font-display leading-none mb-8">
+          <Link to="/" className="flex flex-col items-start font-sans tracking-tight font-semibold leading-none mb-8">
             <span className="text-2xl font-black text-white tracking-widest">ARTHNEETI</span>
-            <span className="text-sm font-medium text-crimson ml-0.5">अर्थनीति</span>
+            <span className="text-sm font-medium text-electric-mint ml-0.5">अर्थनीति</span>
           </Link>
           <p className="text-white/40 text-[10px] font-black uppercase tracking-widest leading-loose">
             Nepal's student-led movement for financial intelligence. <br />
@@ -645,7 +645,7 @@ export function Footer() {
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
           <div>
-            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-crimson mb-6">Explore</h4>
+            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-electric-mint mb-6">Explore</h4>
             <div className="flex flex-col gap-4">
               <Link to="/discover" className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-all">Discover</Link>
               <Link to="/about-us" className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-all">About Us</Link>
@@ -655,7 +655,7 @@ export function Footer() {
             </div>
           </div>
           <div>
-            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-royal mb-6">Inquiries</h4>
+            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-club-green mb-6">Inquiries</h4>
             <div className="flex flex-col gap-4 text-[10px] font-black uppercase tracking-widest text-white/40">
               <p>learnarthneeti@gmail.com</p>
               <p>9866898759</p>
@@ -666,8 +666,8 @@ export function Footer() {
       <div className="max-w-7xl mx-auto mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
         <p className="text-[10px] font-black uppercase tracking-widest text-white/20">© 2025 Arthneeti. All rights reserved.</p>
         <div className="flex gap-8">
-          <a href="#" className="text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-crimson">Privacy Policy</a>
-          <a href="#" className="text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-royal">Terms of Service</a>
+          <a href="#" className="text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-electric-mint">Privacy Policy</a>
+          <a href="#" className="text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-club-green">Terms of Service</a>
         </div>
       </div>
     </footer>

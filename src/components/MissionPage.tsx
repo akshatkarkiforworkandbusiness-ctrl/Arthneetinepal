@@ -75,12 +75,12 @@ export default function AboutUsPage() {
       className="flex flex-col bg-surface-base"
     >
       {/* Introduction */}
-      <section className="py-32 px-6 bg-cream">
+      <section className="py-32 px-6 bg-slate-raised">
         <div className="max-w-4xl mx-auto">
-          <span className="text-[10px] font-black text-crimson mb-8 block uppercase tracking-[0.4em]">INTRODUCING ARTHNEETI</span>
-          <h1 className="text-5xl md:text-7xl text-green-deep italic leading-tight mb-12">Who We Are</h1>
-          <div className="border-l-4 border-crimson pl-12 py-4">
-            <p className="text-2xl text-green-deep/80 italic leading-relaxed font-display">
+          <span className="text-[10px] font-black text-electric-mint mb-8 block uppercase tracking-[0.4em]">INTRODUCING ARTHNEETI</span>
+          <h1 className="text-5xl md:text-7xl text-slate-base italic leading-tight mb-12">Who We Are</h1>
+          <div className="border-l-4 border-electric-mint pl-12 py-4">
+            <p className="text-2xl text-slate-base/80 italic leading-relaxed font-sans tracking-tight font-semibold">
               "Arthneeti is a student-led collective dedicated to bringing real economic intelligence into the lives of Nepali youth. We believe that financial freedom isn't a gift — it's a skill that must be taught, practiced, and mastered. From school orientations to deep-dive research sessions, we are building Nepal's next generation of informed investors and economic leaders."
             </p>
           </div>
@@ -91,16 +91,16 @@ export default function AboutUsPage() {
       <section className="py-32 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-24">
           <div className="space-y-8">
-            <h2 className="text-4xl text-green-deep">Our Mission</h2>
-            <p className="text-crimson font-display text-2xl italic">"Empowering Nepal's next generation with real financial intelligence."</p>
-            <p className="text-green-deep/60 leading-relaxed font-sans">
+            <h2 className="text-4xl text-slate-base">Our Mission</h2>
+            <p className="text-electric-mint font-sans tracking-tight font-semibold text-2xl italic">"Empowering Nepal's next generation with real financial intelligence."</p>
+            <p className="text-slate-base/60 leading-relaxed font-sans">
               To travel across Nepal, school by school, bringing interactive workshops and professional-grade financial education to every high school student regardless of their background.
             </p>
           </div>
           <div className="space-y-8">
-            <h2 className="text-4xl text-green-deep">Our Vision</h2>
-            <p className="text-royal font-display text-2xl italic">"A Nepal where youth lead economic change, not follow it."</p>
-            <p className="text-green-deep/60 leading-relaxed font-sans">
+            <h2 className="text-4xl text-slate-base">Our Vision</h2>
+            <p className="text-club-green font-sans tracking-tight font-semibold text-2xl italic">"A Nepal where youth lead economic change, not follow it."</p>
+            <p className="text-slate-base/60 leading-relaxed font-sans">
               Creating a community of thinkers who understand the mechanics of wealth, markets, and policy — ensuring Nepal's economic future is built on intelligence and foresight.
             </p>
           </div>
@@ -108,9 +108,9 @@ export default function AboutUsPage() {
       </section>
 
       {/* Values Grid (Animated Loop) */}
-      <section className="py-32 bg-cream overflow-hidden">
+      <section className="py-32 bg-slate-raised overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 mb-20">
-          <h2 className="text-5xl text-green-deep text-center italic">Core Values</h2>
+          <h2 className="text-5xl text-slate-base text-center italic">Core Values</h2>
         </div>
         <div className="w-full">
           <LogoLoop
@@ -119,10 +119,10 @@ export default function AboutUsPage() {
             gap={32}
             pauseOnHover={true}
             renderItem={(v: any) => (
-              <div className="bg-white p-12 rounded shadow-sm border border-green-deep/5 hover:border-royal/30 transition-all w-[350px] h-full flex flex-col">
-                <p className="text-4xl font-display text-crimson mb-4">{v.nepali}</p>
-                <h4 className="text-xs font-black uppercase tracking-widest text-green-deep mb-6">{v.english}</h4>
-                <p className="text-green-deep/60 text-sm italic font-sans leading-relaxed">{v.desc}</p>
+              <div className="bg-white p-12 rounded-lg shadow-sm border border-slate-base/5 hover:border-club-green/30 transition-all w-[350px] h-full flex flex-col">
+                <p className="text-4xl font-sans tracking-tight font-semibold text-electric-mint mb-4">{v.nepali}</p>
+                <h4 className="text-xs font-black uppercase tracking-widest text-slate-base mb-6">{v.english}</h4>
+                <p className="text-slate-base/60 text-sm italic font-sans leading-relaxed">{v.desc}</p>
               </div>
             )}
           />
@@ -132,18 +132,18 @@ export default function AboutUsPage() {
       {/* What We Teach (Accordions) */}
       <section className="py-32 px-6">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-5xl text-green-deep mb-20 italic">What We Teach</h2>
+          <h2 className="text-5xl text-slate-base mb-20 italic">What We Teach</h2>
           <div className="space-y-6">
             {topics.map((t) => (
               <div key={t.id} className="border-b border-[#1F2A3F] pb-8">
                 <div className="flex items-center gap-6 mb-6">
-                  <span className="text-gold text-sm font-black tracking-widest">{t.id}</span>
-                  <h3 className="text-3xl text-green-deep">{t.title}</h3>
+                  <span className="text-electric-mint text-sm font-black tracking-widest">{t.id}</span>
+                  <h3 className="text-3xl text-slate-base">{t.title}</h3>
                 </div>
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-12">
                   {t.items.map((item, i) => (
                     <li key={i} className="flex items-start gap-3 text-text-muted text-sm font-sans">
-                      <span className="text-gold mt-1">→</span>
+                      <span className="text-electric-mint mt-1">→</span>
                       {item}
                     </li>
                   ))}
@@ -155,16 +155,16 @@ export default function AboutUsPage() {
       </section>
 
       {/* How We Teach */}
-      <section className="py-20 px-6 bg-green-deep text-white">
+      <section className="py-20 px-6 bg-slate-base text-white">
         <div className="max-w-7xl mx-auto flex flex-wrap justify-between gap-12">
           {[
-            { icon: 'forum', text: 'Interactive & Discussion-Based', color: 'text-crimson' },
-            { icon: 'location_on', text: 'Grounded in Nepal\'s Context', color: 'text-royal' },
-            { icon: 'trending_up', text: 'Progressive Modules', color: 'text-gold' },
-            { icon: 'school', text: 'Designed for High Schoolers', color: 'text-crimson' }
+            { icon: 'forum', text: 'Interactive & Discussion-Based', color: 'text-electric-mint' },
+            { icon: 'location_on', text: 'Grounded in Nepal\'s Context', color: 'text-club-green' },
+            { icon: 'trending_up', text: 'Progressive Modules', color: 'text-electric-mint' },
+            { icon: 'school', text: 'Designed for High Schoolers', color: 'text-electric-mint' }
           ].map((item) => (
             <div key={item.text} className="flex items-center gap-4">
-              <div className={`w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center ${item.color}`}>
+              <div className={`w-12 h-12 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center ${item.color}`}>
                 <span className="material-symbols-outlined">{item.icon}</span>
               </div>
               <span className="text-[10px] font-black uppercase tracking-widest text-white/80">{item.text}</span>
@@ -176,9 +176,9 @@ export default function AboutUsPage() {
       {/* Partner With Us */}
       <section className="py-32 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-cream rounded-2xl overflow-hidden shadow-sm border border-[#1F2A3F] grid grid-cols-1 md:grid-cols-2">
+          <div className="bg-slate-raised rounded-lg-2xl overflow-hidden shadow-sm border border-[#1F2A3F] grid grid-cols-1 md:grid-cols-2">
             <div className="p-12 md:p-20 border-b md:border-b-0 md:border-r border-[#1F2A3F]">
-              <h2 className="text-4xl text-green-deep mb-8">What We Provide</h2>
+              <h2 className="text-4xl text-slate-base mb-8">What We Provide</h2>
               <ul className="space-y-4">
                 {[
                   'Full session curriculum & materials',
@@ -187,14 +187,14 @@ export default function AboutUsPage() {
                   'Continuous mentorship for students'
                 ].map(item => (
                   <li key={item} className="flex items-center gap-3 text-text-muted font-sans italic">
-                    <div className="w-1.5 h-1.5 bg-gold rounded-full" />
+                    <div className="w-1.5 h-1.5 bg-electric-mint rounded-lg" />
                     {item}
                   </li>
                 ))}
               </ul>
             </div>
             <div className="p-12 md:p-20 relative overflow-hidden">
-               <h2 className="text-4xl text-green-deep mb-8">What We Need From You</h2>
+               <h2 className="text-4xl text-slate-base mb-8">What We Need From You</h2>
                <ul className="space-y-4 mb-12">
                 {[
                   'A hall or classroom for the session',
@@ -203,14 +203,14 @@ export default function AboutUsPage() {
                   'Enthusiastic students ready to learn!'
                 ].map(item => (
                   <li key={item} className="flex items-center gap-3 text-text-muted font-sans italic">
-                    <div className="w-1.5 h-1.5 bg-gold rounded-full" />
+                    <div className="w-1.5 h-1.5 bg-electric-mint rounded-lg" />
                     {item}
                   </li>
                 ))}
               </ul>
               <a 
                 href="mailto:learnarthneeti@gmail.com"
-                className="inline-flex items-center gap-3 bg-crimson text-white px-10 py-4 rounded text-xs font-black uppercase tracking-widest hover:bg-white hover:text-crimson transition-all"
+                className="inline-flex items-center gap-3 bg-electric-mint text-slate-base px-10 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-white hover:text-electric-mint transition-all"
               >
                 Get In Touch <span className="material-symbols-outlined text-sm">arrow_forward</span>
               </a>

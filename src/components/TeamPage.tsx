@@ -36,8 +36,8 @@ export default function BoardPage() {
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-24">
-          <span className="text-[10px] font-black text-crimson mb-4 block uppercase tracking-[0.4em]">LEADERSHIP</span>
-          <h1 className="text-6xl md:text-8xl text-text-primary italic mb-8 font-display">Executive Board</h1>
+          <span className="text-[10px] font-black text-electric-mint mb-4 block uppercase tracking-[0.4em]">LEADERSHIP</span>
+          <h1 className="text-6xl md:text-8xl text-text-primary italic mb-8 font-sans tracking-tight font-semibold">Executive Board</h1>
           <p className="text-text-muted max-w-xl mx-auto italic font-sans">
             The founding team driving the movement for financial intelligence in Nepal.
           </p>
@@ -51,19 +51,19 @@ export default function BoardPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="bg-green-deep p-10 rounded-xl relative border-t-8 border-crimson shadow-2xl flex flex-col items-center text-center group hover:-translate-y-2 transition-all duration-500"
+              className="bg-slate-base p-10 rounded-lg relative border-t-8 border-electric-mint shadow-2xl flex flex-col items-center text-center group hover:-translate-y-2 transition-all duration-500"
             >
-              <div className="w-24 h-24 rounded-full border-4 border-white/10 flex items-center justify-center text-white font-display italic text-4xl mb-8 group-hover:border-crimson group-hover:text-crimson transition-all duration-500">
+              <div className="w-24 h-24 rounded-lg border-4 border-white/10 flex items-center justify-center text-white font-sans tracking-tight font-semibold italic text-4xl mb-8 group-hover:border-electric-mint group-hover:text-electric-mint transition-all duration-500">
                 {member.name.split(' ').map(n => n[0]).join('')}
               </div>
-              <h3 className="text-2xl text-white font-display italic mb-2">{member.name}</h3>
-              <p className="text-[10px] font-black uppercase tracking-widest text-crimson mb-6">{member.role}</p>
+              <h3 className="text-2xl text-white font-sans tracking-tight font-semibold italic mb-2">{member.name}</h3>
+              <p className="text-[10px] font-black uppercase tracking-widest text-electric-mint mb-6">{member.role}</p>
               <p className="text-white/60 text-xs italic font-sans leading-relaxed mb-6">
                 {member.bio}
               </p>
               <a 
                 href={`mailto:${member.email}`}
-                className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-crimson transition-colors"
+                className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-electric-mint transition-colors"
               >
                 Get In Touch
               </a>
@@ -71,14 +71,14 @@ export default function BoardPage() {
           ))}
         </div>
 
-        <section className="bg-surface-raised p-12 md:p-24 rounded-3xl text-center border border-surface-high">
+        <section className="bg-surface-raised p-12 md:p-24 rounded-lg-2xl text-center border border-surface-high">
           <h2 className="text-4xl text-text-primary mb-8 italic">Contact the Club</h2>
           <p className="text-text-muted mb-12 font-sans italic">Have specific questions about school partnerships or partnerships?</p>
           <a 
             href="mailto:learnarthneeti@gmail.com"
-            className="inline-flex items-center gap-4 bg-green-deep text-white px-12 py-5 rounded text-xs font-black uppercase tracking-widest hover:bg-crimson transition-all shadow-xl"
+            className="inline-flex items-center gap-4 bg-slate-base text-slate-base px-12 py-5 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-electric-mint transition-all shadow-xl"
           >
-            <span className="material-symbols-outlined text-crimson">mail</span>
+            <span className="material-symbols-outlined text-electric-mint">mail</span>
             learnarthneeti@gmail.com
           </a>
         </section>

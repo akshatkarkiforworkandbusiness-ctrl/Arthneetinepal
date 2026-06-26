@@ -42,7 +42,7 @@ export const GradientCard = ({ title, description, tag, children, onClick, class
       <motion.div
         ref={cardRef}
         onClick={onClick}
-        className={`relative rounded-[24px] overflow-hidden w-full h-full min-h-[280px] ${onClick ? 'cursor-pointer' : ''}`}
+        className={`relative rounded-lg-[24px] overflow-hidden w-full h-full min-h-[280px] ${onClick ? 'cursor-pointer' : ''}`}
         style={{
           transformStyle: "preserve-3d",
           backgroundColor: "#0e131f",
@@ -156,7 +156,7 @@ export const GradientCard = ({ title, description, tag, children, onClick, class
         >
           {tag && (
             <motion.div
-              className="w-10 h-10 rounded-full flex items-center justify-center mb-4"
+              className="w-10 h-10 rounded-lg flex items-center justify-center mb-4"
               style={{
                 background: "linear-gradient(225deg, #171c2c 0%, #121624 100%)",
                 position: "relative",

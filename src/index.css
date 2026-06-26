@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -8,51 +8,54 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-display: "Playfair Display", serif;
-  --font-sans: "DM Sans", sans-serif;
-  --font-body: "DM Sans", sans-serif;
-  --font-mono: "Roboto Mono", monospace;
+  --font-display: "Inter", sans-serif;
+  --font-sans: "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 
   /* 
-   * Surface layers — dark base UI
-   * base:    deepest background (#0B0F19)
-   * raised:  cards, modals, nav (#161F30)
-   * high:    borders, elevated panels (#1F2A3F)
+   * The Foundation
    */
-  --color-surface-base:   #0B0F19;
-  --color-surface-raised: #161F30;
-  --color-surface-high:   #1F2A3F;
+  --color-slate-base:   #0f172a;
+  --color-slate-raised: #1e293b;
+  --color-off-white:    #f8fafc;
+  
+  /* 
+   * The Signature & Action Accent
+   */
+  --color-club-green:    #00875a;
+  --color-electric-mint: #00f59b;
 
   /* 
-   * Legacy aliases — kept so existing JSX doesn't break.
-   * green-deep  → surface-base  (was #F8FAFC but used as bg, now correctly dark)
-   * cream       → surface-raised (cards, inputs)
-   * navy        → surface-raised (same level, kept for border usage)
-   * white token stays #FFFFFF — bg-white in JSX now correctly means white
+   * Text & Base
    */
-  --color-green-deep: #0B0F19;
-  --color-cream:      #161F30;
-  --color-navy:       #161F30;
-  --color-white:      #FFFFFF;
+  --color-text-primary: #f8fafc;
+  --color-text-muted:   #94a3b8;
+  --color-background:   #0f172a;
+  --color-white:        #ffffff;
 
-  /* Brand colors */
-  --color-crimson:    #F43F5E;
-  --color-royal:      #3B82F6;
-  --color-gold:       #F59E0B;
-  --color-gold-light: #FCD34D;
-  --color-green-light: #10B981;
-
-  /* Text */
-  --color-text-primary: #F8FAFC;
-  --color-text-muted:   #94A3B8;
-
-  /* Background (used by Tailwind base layer) */
-  --color-background: #0B0F19;
+  /* 
+   * Legacy aliases mapping to preserve existing components 
+   * before they are refactored
+   */
+  --color-surface-base:   #0f172a;
+  --color-surface-raised: #1e293b;
+  --color-surface-high:   #334155;
+  
+  --color-green-deep: #0f172a; /* Maps to slate-base */
+  --color-cream:      #1e293b; /* Maps to slate-raised */
+  --color-navy:       #1e293b;
+  
+  --color-crimson:    #00f59b; /* Temporarily mapped to electric mint */
+  --color-royal:      #00875a; /* Temporarily mapped to club green */
+  --color-gold:       #00f59b;
+  --color-gold-light: #00875a;
+  --color-green-light: #00f59b;
 
   /* Chart / market */
-  --color-gainer:     #10B981;
-  --color-loser:      #F43F5E;
-  --color-chart-grid: #1F2A3F;
+  --color-gainer:     #00f59b;
+  --color-loser:      #ef4444;
+  --color-chart-grid: #1e293b;
 }
 
 @layer base {
@@ -109,8 +112,8 @@
 
 /* Selection */
 ::selection {
-  background-color: #3B82F6;
-  color: #FFFFFF;
+  background-color: #00f59b;
+  color: #0f172a;
 }
 
 /* Quill editor dark theme */

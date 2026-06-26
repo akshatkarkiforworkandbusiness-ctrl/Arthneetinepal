@@ -375,8 +375,8 @@ const GUIDES: Guide[] = [
 const FAQS: FAQ[] = LESSONS.flatMap(lesson => lesson.faqs || []);
 
 const TAG_COLORS: Record<string, string> = {
-  'Stock Market':       'bg-royal/10 text-royal border-royal/20',
-  'Policy & Economics': 'bg-crimson/10 text-crimson border-crimson/20',
+  'Stock Market':       'bg-club-green/10 text-club-green border-club-green/20',
+  'Policy & Economics': 'bg-electric-mint/10 text-electric-mint border-electric-mint/20',
   'Technical Analysis': 'bg-green-light/10 text-green-light border-green-light/20',
   'Financial Literacy': 'bg-amber-400/10 text-amber-400 border-amber-400/20',
   'Research':           'bg-violet-400/10 text-violet-400 border-violet-400/20',
@@ -468,10 +468,10 @@ export default function LearnPage() {
       <div className="max-w-7xl mx-auto px-6 pt-28 pb-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div>
-            <span className="text-[10px] font-black text-crimson mb-3 block uppercase tracking-[0.4em]">
+            <span className="text-[10px] font-black text-electric-mint mb-3 block uppercase tracking-[0.4em]">
               ARTHNEETI ACADEMY
             </span>
-            <h1 className="font-display text-5xl md:text-7xl text-white italic mb-4 tracking-tight">
+            <h1 className="font-sans tracking-tight font-semibold text-5xl md:text-7xl text-white italic mb-4 tracking-tight">
               Learn
             </h1>
             <p className="text-text-muted text-sm max-w-lg leading-relaxed">
@@ -481,7 +481,7 @@ export default function LearnPage() {
 
           {/* Progress pill — only for logged-in users */}
           {user && (
-            <div className="bg-[#161F30] border border-[#1F2A3F] rounded-2xl px-6 py-5 min-w-[200px]">
+            <div className="bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl px-6 py-5 min-w-[200px]">
               <span className="text-[9px] font-black uppercase tracking-widest text-text-muted block mb-3">
                 Your Progress
               </span>
@@ -491,9 +491,9 @@ export default function LearnPage() {
                   {completed.size}/{LESSONS.length} lessons
                 </span>
               </div>
-              <div className="w-full h-1.5 bg-[#0B0F19] rounded-full overflow-hidden">
+              <div className="w-full h-1.5 bg-[#0B0F19] rounded-lg overflow-hidden">
                 <motion.div
-                  className="h-full bg-royal rounded-full"
+                  className="h-full bg-club-green rounded-lg"
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -505,14 +505,14 @@ export default function LearnPage() {
 
         {/* ── Tabs + Search ─────────────────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row gap-4 mt-10">
-          <div className="flex bg-[#161F30] border border-[#1F2A3F] rounded-xl p-1 self-start">
+          <div className="flex bg-[#161F30] border border-[#1F2A3F] rounded-lg p-1 self-start">
             {(['videos', 'guides', 'faqs'] as const).map(tab => (
               <button
                 key={tab}
                 onClick={() => { setActiveTab(tab); setSearchQuery(''); }}
                 className={`px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
                   activeTab === tab
-                    ? 'bg-royal text-white shadow-md'
+                    ? 'bg-club-green text-white shadow-md'
                     : 'text-text-muted hover:text-white'
                 }`}
               >
@@ -530,7 +530,7 @@ export default function LearnPage() {
               placeholder={activeTab === 'videos' ? 'Search lessons...' : activeTab === 'guides' ? 'Search guides...' : 'Search questions...'}
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full bg-[#161F30] border border-[#1F2A3F] rounded-xl pl-10 pr-4 py-3 text-sm focus:border-royal outline-none text-white placeholder:text-text-muted/50 transition-all"
+              className="w-full bg-[#161F30] border border-[#1F2A3F] rounded-lg pl-10 pr-4 py-3 text-sm focus:border-club-green outline-none text-white placeholder:text-text-muted/50 transition-all"
             />
           </div>
         </div>
@@ -553,7 +553,7 @@ export default function LearnPage() {
             >
               {/* ── Video Player ────────────────────────────────────────────── */}
               <div ref={playerRef} className="mb-10">
-                <div className="bg-[#161F30] border border-[#1F2A3F] rounded-3xl overflow-hidden">
+                <div className="bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl overflow-hidden">
                   {/* Player area */}
                   <div className="relative aspect-video bg-[#0B0F19]">
                     {isPlaying ? (
@@ -572,7 +572,7 @@ export default function LearnPage() {
                           alt={activeLesson.title}
                           className="absolute inset-0 w-full h-full object-cover opacity-60"
                         />
-                        <div className="relative z-10 w-20 h-20 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-royal/80 transition-all duration-300">
+                        <div className="relative z-10 w-20 h-20 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-club-green/80 transition-all duration-300">
                           <span className="material-symbols-outlined text-white text-4xl ml-1">play_arrow</span>
                         </div>
                       </div>
@@ -582,17 +582,17 @@ export default function LearnPage() {
                   {/* Player footer */}
                   <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                      <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${TAG_COLORS[activeLesson.tag] || 'bg-royal/10 text-royal border-royal/20'} inline-block mb-2`}>
+                      <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border ${TAG_COLORS[activeLesson.tag] || 'bg-club-green/10 text-club-green border-club-green/20'} inline-block mb-2`}>
                         {activeLesson.tag}
                       </span>
-                      <h2 className="font-display text-xl md:text-2xl text-white italic leading-tight">
+                      <h2 className="font-sans tracking-tight font-semibold text-xl md:text-2xl text-white italic leading-tight">
                         {activeLesson.title}
                       </h2>
                       <p className="text-text-muted text-xs mt-1">{activeLesson.duration}</p>
                     </div>
                     <button
                       onClick={() => markComplete(activeLesson.id)}
-                      className={`flex items-center gap-2 px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shrink-0 cursor-pointer ${
+                      className={`flex items-center gap-2 px-5 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shrink-0 cursor-pointer ${
                         completed.has(activeLesson.id)
                           ? 'bg-green-light/10 border border-green-light/30 text-green-light'
                           : 'bg-[#0B0F19] border border-[#1F2A3F] text-text-muted hover:border-green-light hover:text-green-light'
@@ -608,14 +608,14 @@ export default function LearnPage() {
 
                 {/* Chapters for active lesson */}
                 {activeLesson.chapters.length > 0 && (
-                  <div className="mt-4 bg-[#161F30] border border-[#1F2A3F] rounded-2xl p-6">
+                  <div className="mt-4 bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl p-6">
                     <span className="text-[9px] font-black uppercase tracking-widest text-text-muted block mb-4">
                       What's covered
                     </span>
                     <ul className="space-y-2.5">
                       {activeLesson.chapters.map((ch, i) => (
                         <li key={i} className="flex items-start gap-3 text-sm text-text-muted">
-                          <span className="text-[10px] font-black font-mono text-royal mt-0.5 shrink-0">
+                          <span className="text-[10px] font-black font-mono text-club-green mt-0.5 shrink-0">
                             {String(i + 1).padStart(2, '0')}
                           </span>
                           {ch}
@@ -627,7 +627,7 @@ export default function LearnPage() {
 
                 {/* FAQ for active lesson, if attached */}
                 {activeLesson.faqs && activeLesson.faqs.length > 0 && (
-                  <div className="mt-4 bg-[#161F30] border border-[#1F2A3F] rounded-2xl p-6">
+                  <div className="mt-4 bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl p-6">
                     <span className="text-[9px] font-black uppercase tracking-widest text-text-muted block mb-4">
                       Frequently Asked Questions
                     </span>
@@ -637,8 +637,8 @@ export default function LearnPage() {
                         return (
                           <div
                             key={i}
-                            className={`border rounded-xl overflow-hidden transition-colors ${
-                              isOpen ? 'border-royal/40 bg-[#0B0F19]' : 'border-[#1F2A3F]'
+                            className={`border rounded-lg overflow-hidden transition-colors ${
+                              isOpen ? 'border-club-green/40 bg-[#0B0F19]' : 'border-[#1F2A3F]'
                             }`}
                           >
                             <button
@@ -682,7 +682,7 @@ export default function LearnPage() {
               </div>
 
               {filteredLessons.length === 0 ? (
-                <div className="text-center py-16 bg-[#161F30] rounded-2xl border border-dashed border-[#1F2A3F]">
+                <div className="text-center py-16 bg-[#161F30] rounded-lg-2xl border border-dashed border-[#1F2A3F]">
                   <p className="text-text-muted text-sm italic">No lessons match "{searchQuery}"</p>
                 </div>
               ) : (
@@ -697,10 +697,10 @@ export default function LearnPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.07 }}
                         onClick={() => playLesson(lesson)}
-                        className={`group cursor-pointer bg-[#161F30] border rounded-2xl overflow-hidden transition-all duration-300 ${
+                        className={`group cursor-pointer bg-[#161F30] border rounded-lg-2xl overflow-hidden transition-all duration-300 ${
                           isActive
-                            ? 'border-royal shadow-lg shadow-royal/10'
-                            : 'border-[#1F2A3F] hover:border-royal/40'
+                            ? 'border-club-green shadow-lg shadow-club-green/10'
+                            : 'border-[#1F2A3F] hover:border-club-green/40'
                         }`}
                       >
                         {/* Thumbnail */}
@@ -712,24 +712,24 @@ export default function LearnPage() {
                           />
                           {/* Play overlay */}
                           <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-royal/80 transition-all">
+                            <div className="w-10 h-10 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-club-green/80 transition-all">
                               <span className="material-symbols-outlined text-white text-xl ml-0.5">play_arrow</span>
                             </div>
                           </div>
                           {/* Duration badge */}
-                          <span className="absolute bottom-2 right-2 bg-black/70 text-white text-[9px] font-mono font-bold px-2 py-0.5 rounded">
+                          <span className="absolute bottom-2 right-2 bg-black/70 text-white text-[9px] font-mono font-bold px-2 py-0.5 rounded-lg">
                             {lesson.duration}
                           </span>
                           {/* Completed badge */}
                           {isDone && (
-                            <span className="absolute top-2 left-2 bg-green-light text-white text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded flex items-center gap-1">
+                            <span className="absolute top-2 left-2 bg-green-light text-white text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg flex items-center gap-1">
                               <span className="material-symbols-outlined text-[10px]">check</span>
                               Done
                             </span>
                           )}
                           {/* Active indicator */}
                           {isActive && (
-                            <span className="absolute top-2 right-2 bg-royal text-white text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded">
+                            <span className="absolute top-2 right-2 bg-club-green text-white text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg">
                               Playing
                             </span>
                           )}
@@ -737,10 +737,10 @@ export default function LearnPage() {
 
                         {/* Card body */}
                         <div className="p-4">
-                          <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded border inline-block mb-2 ${TAG_COLORS[lesson.tag] || 'bg-royal/10 text-royal border-royal/20'}`}>
+                          <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border inline-block mb-2 ${TAG_COLORS[lesson.tag] || 'bg-club-green/10 text-club-green border-club-green/20'}`}>
                             {lesson.tag}
                           </span>
-                          <h3 className="text-sm font-bold text-white leading-snug group-hover:text-royal transition-colors">
+                          <h3 className="text-sm font-bold text-white leading-snug group-hover:text-club-green transition-colors">
                             {lesson.title}
                           </h3>
                           <p className="text-[11px] text-text-muted mt-1.5 leading-relaxed line-clamp-2">
@@ -755,8 +755,8 @@ export default function LearnPage() {
 
               {/* Login nudge for non-logged-in users */}
               {!user && (
-                <div className="mt-8 bg-[#161F30] border border-[#1F2A3F] rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-                  <span className="material-symbols-outlined text-royal text-3xl shrink-0">account_circle</span>
+                <div className="mt-8 bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl p-6 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+                  <span className="material-symbols-outlined text-club-green text-3xl shrink-0">account_circle</span>
                   <div>
                     <p className="text-white text-sm font-bold mb-0.5">Track your learning progress</p>
                     <p className="text-text-muted text-xs">Create a free account to mark lessons complete and track what you've covered.</p>
@@ -779,7 +779,7 @@ export default function LearnPage() {
               className="grid grid-cols-1 lg:grid-cols-3 gap-6"
             >
               {filteredGuides.length === 0 ? (
-                <div className="col-span-full text-center py-16 bg-[#161F30] rounded-2xl border border-dashed border-[#1F2A3F]">
+                <div className="col-span-full text-center py-16 bg-[#161F30] rounded-lg-2xl border border-dashed border-[#1F2A3F]">
                   <p className="text-text-muted text-sm italic">No guides match "{searchQuery}"</p>
                 </div>
               ) : (
@@ -791,20 +791,20 @@ export default function LearnPage() {
                       initial={{ opacity: 0, y: 16 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.08 }}
-                      className="bg-[#161F30] border border-[#1F2A3F] rounded-3xl p-8 flex flex-col justify-between hover:border-royal/40 transition-all duration-300 group"
+                      className="bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl p-8 flex flex-col justify-between hover:border-club-green/40 transition-all duration-300 group"
                     >
                       <div>
                         {/* Header */}
                         <div className="flex justify-between items-start mb-6">
-                          <span className="bg-royal/10 text-royal text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-full border border-royal/20">
+                          <span className="bg-club-green/10 text-club-green text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-lg border border-club-green/20">
                             {guide.category}
                           </span>
-                          <span className="text-[9px] font-mono text-text-muted bg-[#0B0F19] px-2.5 py-1 rounded border border-[#1F2A3F]">
+                          <span className="text-[9px] font-mono text-text-muted bg-[#0B0F19] px-2.5 py-1 rounded-lg border border-[#1F2A3F]">
                             {guide.readingTime}
                           </span>
                         </div>
 
-                        <h3 className="font-display text-xl text-white italic leading-tight mb-3 group-hover:text-royal transition-colors">
+                        <h3 className="font-sans tracking-tight font-semibold text-xl text-white italic leading-tight mb-3 group-hover:text-club-green transition-colors">
                           {guide.title}
                         </h3>
 
@@ -834,11 +834,11 @@ export default function LearnPage() {
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
                                 exit={{ opacity: 0, height: 0 }}
-                                className="mt-4 space-y-2.5 pl-3 border-l border-royal/30 overflow-hidden"
+                                className="mt-4 space-y-2.5 pl-3 border-l border-club-green/30 overflow-hidden"
                               >
                                 {guide.chapters.map((ch, ci) => (
                                   <li key={ci} className="flex items-start gap-2 text-xs text-text-muted">
-                                    <span className="text-[9px] font-black font-mono text-royal shrink-0 mt-0.5">
+                                    <span className="text-[9px] font-black font-mono text-club-green shrink-0 mt-0.5">
                                       {String(ci + 1).padStart(2, '0')}
                                     </span>
                                     {ch}
@@ -856,7 +856,7 @@ export default function LearnPage() {
                           href={guide.htmlUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="w-full py-3.5 bg-royal hover:bg-white hover:text-royal text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg"
+                          className="w-full py-3.5 bg-club-green hover:bg-white hover:text-club-green text-white text-[10px] font-black uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-2 shadow-lg"
                         >
                           <span className="material-symbols-outlined text-sm">menu_book</span>
                           Read Online
@@ -865,7 +865,7 @@ export default function LearnPage() {
                           href={guide.pdfUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="w-full py-3.5 bg-[#0B0F19] hover:bg-[#0B0F19]/50 border border-[#1F2A3F] hover:border-royal text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2"
+                          className="w-full py-3.5 bg-[#0B0F19] hover:bg-[#0B0F19]/50 border border-[#1F2A3F] hover:border-club-green text-white text-[10px] font-black uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-2"
                         >
                           <span className="material-symbols-outlined text-sm">download</span>
                           Download PDF
@@ -897,7 +897,7 @@ export default function LearnPage() {
               </div>
 
               {filteredFaqs.length === 0 ? (
-                <div className="text-center py-16 bg-[#161F30] rounded-2xl border border-dashed border-[#1F2A3F]">
+                <div className="text-center py-16 bg-[#161F30] rounded-lg-2xl border border-dashed border-[#1F2A3F]">
                   <p className="text-text-muted text-sm italic">No questions match "{searchQuery}"</p>
                 </div>
               ) : (
@@ -910,8 +910,8 @@ export default function LearnPage() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.04 }}
-                        className={`bg-[#161F30] border rounded-2xl overflow-hidden transition-colors ${
-                          isOpen ? 'border-royal/50' : 'border-[#1F2A3F]'
+                        className={`bg-[#161F30] border rounded-lg-2xl overflow-hidden transition-colors ${
+                          isOpen ? 'border-club-green/50' : 'border-[#1F2A3F]'
                         }`}
                       >
                         <button
@@ -919,7 +919,7 @@ export default function LearnPage() {
                           className="w-full flex items-center justify-between gap-4 p-5 text-left cursor-pointer"
                         >
                           <div className="flex items-start gap-3 flex-1">
-                            <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded border shrink-0 mt-0.5 ${TAG_COLORS[faq.topic] || 'bg-royal/10 text-royal border-royal/20'}`}>
+                            <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border shrink-0 mt-0.5 ${TAG_COLORS[faq.topic] || 'bg-club-green/10 text-club-green border-club-green/20'}`}>
                               {faq.topic}
                             </span>
                             <span className="text-sm font-bold text-white leading-snug">

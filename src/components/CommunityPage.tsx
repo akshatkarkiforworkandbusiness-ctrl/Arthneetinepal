@@ -73,11 +73,11 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
   return (
     <div className="flex gap-4">
-      <div className="w-8 h-8 rounded-full bg-crimson flex items-center justify-center text-white font-black text-[10px] shrink-0">
+      <div className="w-8 h-8 rounded-lg bg-electric-mint flex items-center justify-center text-slate-base font-black text-[10px] shrink-0">
         {comment.authorName?.[0]}
       </div>
       <div className="flex-1">
-        <div className="bg-surface-base p-4 rounded-xl border border-surface-high">
+        <div className="bg-surface-base p-4 rounded-lg border border-surface-high">
           <div className="flex justify-between items-center mb-2">
             <span className="text-xs font-black text-text-primary uppercase tracking-widest">{comment.authorName}</span>
             <span className="text-[10px] text-text-muted font-medium">
@@ -89,9 +89,9 @@ const CommentItem: React.FC<CommentItemProps> = ({
         <div className="flex items-center gap-6 mt-2 ml-2">
           <button 
             onClick={handleLike}
-            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-text-muted hover:text-crimson transition-colors"
+            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-text-muted hover:text-electric-mint transition-colors"
           >
-            <Heart size={12} fill={comment.likes > 0 ? 'currentColor' : 'none'} className={comment.likes > 0 ? 'text-crimson' : ''} />
+            <Heart size={12} fill={comment.likes > 0 ? 'currentColor' : 'none'} className={comment.likes > 0 ? 'text-electric-mint' : ''} />
             {comment.likes}
           </button>
           {!comment.parentId && (
@@ -163,12 +163,12 @@ function CommentSection({ postId }: { postId: string }) {
   const getReplies = (parentId: string) => comments.filter(c => c.parentId === parentId);
 
   return (
-    <div className="mt-8 pt-8 border-t border-green-deep/5 space-y-8">
+    <div className="mt-8 pt-8 border-t border-slate-base/5 space-y-8">
       {user && (
         <form onSubmit={handleAddComment} className="relative mb-12">
           {replyTo && (
-            <div className="flex justify-between items-center bg-crimson/10 p-2 px-4 rounded mb-2">
-              <span className="text-[10px] font-black text-crimson uppercase tracking-widest">Replying to {replyTo.name}</span>
+            <div className="flex justify-between items-center bg-electric-mint/10 p-2 px-4 rounded-lg mb-2">
+              <span className="text-[10px] font-black text-electric-mint uppercase tracking-widest">Replying to {replyTo.name}</span>
               <button onClick={() => setReplyTo(null)} className="text-text-muted hover:text-text-primary"><X size={14} /></button>
             </div>
           )}
@@ -176,12 +176,12 @@ function CommentSection({ postId }: { postId: string }) {
             value={newComment}
             onChange={e => setNewComment(e.target.value)}
             placeholder="Share your thoughts..."
-            className="w-full bg-surface-base border border-surface-high rounded-xl p-5 text-sm text-text-primary outline-none focus:border-crimson transition-all resize-none h-24"
+            className="w-full bg-surface-base border border-surface-high rounded-lg p-5 text-sm text-text-primary outline-none focus:border-electric-mint transition-all resize-none h-24"
           />
           <button 
             type="submit"
             disabled={!newComment.trim()}
-            className="absolute bottom-4 right-4 bg-green-deep text-white p-3 rounded-full hover:bg-crimson transition-all disabled:opacity-20"
+            className="absolute bottom-4 right-4 bg-slate-base text-slate-base p-3 rounded-lg hover:bg-electric-mint transition-all disabled:opacity-20"
           >
             <Send size={18} />
           </button>
@@ -197,7 +197,7 @@ function CommentSection({ postId }: { postId: string }) {
               onReply={(id, name) => setReplyTo({ id, name })} 
             />
             {/* Replies */}
-            <div className="ml-12 space-y-6 border-l-2 border-navy/5 pl-8">
+            <div className="ml-12 space-y-6 border-l-2 border-slate-raised/5 pl-8">
               {getReplies(comment.id).map(reply => (
                 <CommentItem 
                   key={reply.id}
@@ -332,7 +332,7 @@ export default function CommunityPage() {
               likes: 41,
               commentCount: 0,
               seeded: true,
-              content: `Gold's extraordinary rally — surging over 60% in 2025 and briefly surpassing $5,500 per ounce — is no accident. It reflects a confluence of powerful macroeconomic forces reshaping the global financial landscape. Persistent inflation has eroded confidence in paper currencies, driving investors toward hard assets that preserve real purchasing power. Meanwhile, central banks — particularly in emerging markets like China, India, and Turkey — have been buying gold at record levels, seeking to reduce dependence on the US dollar following the weaponization of dollar-based sanctions against Russia. This broader de-dollarization trend, combined with a weakening dollar index, has made gold increasingly attractive as a neutral, sovereign-free store of value. Compounding this, an exceptionally volatile geopolitical environment — marked by ongoing conflicts and US-China tensions — has embedded a significant "fear premium" into prices. On the monetary policy side, the US Federal Reserve's rate-cutting cycle has lowered the opportunity cost of holding non-yielding gold, while record ETF inflows have brought the rally within reach of everyday investors. Taken together, gold's rise is less a speculative bubble and more a rational, broad-based response to a world questioning the reliability of traditional financial systems — making it one of the most important macroeconomic stories of our time.`,
+              content: `Gold's extraordinary rally — surging over 60% in 2025 and briefly surpassing $5,500 per ounce — is no accident. It reflects a confluence of powerful macroeconomic forces reshaping the global financial landscape. Persistent inflation has eroded confidence in paper currencies, driving investors toward hard assets that preserve real purchasing power. Meanwhile, central banks — particularly in emerging markets like China, India, and Turkey — have been buying electric-mint at record levels, seeking to reduce dependence on the US dollar following the weaponization of dollar-based sanctions against Russia. This broader de-dollarization trend, combined with a weakening dollar index, has made electric-mint increasingly attractive as a neutral, sovereign-free store of value. Compounding this, an exceptionally volatile geopolitical environment — marked by ongoing conflicts and US-China tensions — has embedded a significant "fear premium" into prices. On the monetary policy side, the US Federal Reserve's rate-cutting cycle has lowered the opportunity cost of holding non-yielding electric-mint, while record ETF inflows have brought the rally within reach of everyday investors. Taken together, electric-mint's rise is less a speculative bubble and more a rational, broad-based response to a world questioning the reliability of traditional financial systems — making it one of the most important macroeconomic stories of our time.`,
               imageUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1000"
             },
             {
@@ -491,14 +491,14 @@ const handleLike = async (postId: string) => {
     >
       <header className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
         <div>
-          <span className="text-[10px] font-black text-crimson mb-4 block uppercase tracking-[0.4em]">COMMUNITY</span>
-          <h1 className="text-5xl md:text-7xl text-text-primary italic font-display">Intelligence Feed</h1>
+          <span className="text-[10px] font-black text-electric-mint mb-4 block uppercase tracking-[0.4em]">COMMUNITY</span>
+          <h1 className="text-5xl md:text-7xl text-text-primary italic font-sans tracking-tight font-semibold">Intelligence Feed</h1>
         </div>
         
         {user && (
           <button 
             onClick={() => setShowCreateModal(true)}
-            className="bg-crimson text-white px-8 py-4 rounded text-xs font-black uppercase tracking-widest hover:bg-royal transition-all shadow-xl flex items-center gap-3"
+            className="bg-electric-mint text-slate-base px-8 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-club-green transition-all shadow-xl flex items-center gap-3"
           >
             <Plus size={16} strokeWidth={3} />
             {activeTab === 'questions' ? 'Ask Question' : activeTab === 'research' ? 'Submit Research' : 'Create Post'}
@@ -508,16 +508,16 @@ const handleLike = async (postId: string) => {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as typeof activeTab)} className="mb-16">
-        <TabsList className="flex gap-12 border-b border-green-deep/5 bg-transparent p-0 rounded-none w-full justify-start h-auto">
+        <TabsList className="flex gap-12 border-b border-slate-base/5 bg-transparent p-0 rounded-lg-none w-full justify-start h-auto">
           {(['discussions', 'research', 'questions'] as const).map(tab => (
             <TabsTrigger
               key={tab}
               value={tab}
-              className={`pb-6 text-xs font-black uppercase tracking-[0.2em] relative bg-transparent border-none rounded-none whitespace-nowrap data-active:text-crimson data-active:bg-transparent data-active:shadow-none text-text-muted hover:text-text-primary`}
+              className={`pb-6 text-xs font-black uppercase tracking-[0.2em] relative bg-transparent border-none rounded-lg-none whitespace-nowrap data-active:text-electric-mint data-active:bg-transparent data-active:shadow-none text-text-muted hover:text-text-primary`}
             >
               {tab}
               {activeTab === tab && (
-                <motion.div layoutId="tabLine" className="absolute bottom-[-1px] left-0 w-full h-1 bg-crimson rounded-full" />
+                <motion.div layoutId="tabLine" className="absolute bottom-[-1px] left-0 w-full h-1 bg-electric-mint rounded-lg" />
               )}
             </TabsTrigger>
           ))}
@@ -527,15 +527,15 @@ const handleLike = async (postId: string) => {
       {/* Feed */}
       <div className="space-y-12">
         {activeTab === 'questions' && user && (
-           <div className="bg-surface-raised p-8 rounded-2xl border border-surface-high shadow-sm mb-12">
+           <div className="bg-surface-raised p-8 rounded-lg-2xl border border-surface-high shadow-sm mb-12">
               <div className="flex gap-4">
-                 <div className="w-10 h-10 rounded-full bg-crimson flex items-center justify-center text-white font-black text-sm shrink-0 uppercase">
+                 <div className="w-10 h-10 rounded-lg bg-electric-mint flex items-center justify-center text-slate-base font-black text-sm shrink-0 uppercase">
                     {profile?.name?.[0] || user.displayName?.[0]}
                  </div>
                  <div className="flex-1 space-y-4">
                     <textarea 
                       placeholder="What's your question today?"
-                      className="w-full bg-surface-base border-none outline-none text-text-primary placeholder:text-text-muted/50 resize-none font-medium h-24 p-2 rounded"
+                      className="w-full bg-surface-base border-none outline-none text-text-primary placeholder:text-text-muted/50 resize-none font-medium h-24 p-2 rounded-lg"
                       value={createData.content}
                       onChange={e => setCreateData({...createData, content: e.target.value})}
                     />
@@ -545,8 +545,8 @@ const handleLike = async (postId: string) => {
                             <button
                               key={cat}
                               onClick={() => setCreateData({...createData, category: cat as any})}
-                              className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all ${
-                                createData.category === cat ? 'bg-royal border-royal text-white' : 'border-surface-high text-text-muted hover:border-royal/50'
+                              className={`px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all ${
+                                createData.category === cat ? 'bg-club-green border-club-green text-white' : 'border-surface-high text-text-muted hover:border-club-green/50'
                               }`}
                             >
                               {cat}
@@ -556,7 +556,7 @@ const handleLike = async (postId: string) => {
                        <button 
                         onClick={handleCreateSubmit}
                         disabled={!createData.content.trim() || isUploading}
-                        className="bg-crimson text-white px-8 py-3 rounded text-[10px] font-black uppercase tracking-widest hover:bg-royal transition-all disabled:opacity-20"
+                        className="bg-electric-mint text-slate-base px-8 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-club-green transition-all disabled:opacity-20"
                        >
                          Post Question
                        </button>
@@ -568,9 +568,9 @@ const handleLike = async (postId: string) => {
 
         {loading ? (
           <div className="space-y-8">
-            <Skeleton className="h-64 w-full bg-white/5 border border-green-deep/5 rounded-2xl" />
-            <Skeleton className="h-64 w-full bg-white/5 border border-green-deep/5 rounded-2xl" />
-            <Skeleton className="h-64 w-full bg-white/5 border border-green-deep/5 rounded-2xl" />
+            <Skeleton className="h-64 w-full bg-white/5 border border-slate-base/5 rounded-lg-2xl" />
+            <Skeleton className="h-64 w-full bg-white/5 border border-slate-base/5 rounded-lg-2xl" />
+            <Skeleton className="h-64 w-full bg-white/5 border border-slate-base/5 rounded-lg-2xl" />
           </div>
         ) : (
           <AnimatePresence mode="popLayout">
@@ -587,13 +587,13 @@ const handleLike = async (postId: string) => {
                 >
                   <div className="flex justify-between items-start mb-8 w-full">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-royal flex items-center justify-center text-white font-black text-sm uppercase">
+                      <div className="w-10 h-10 rounded-lg bg-club-green flex items-center justify-center text-white font-black text-sm uppercase">
                         {post.author?.[0]}
                       </div>
                       <div>
                         <h4 className="text-xs font-black text-white uppercase tracking-widest">{post.author}</h4>
                         <div className="flex items-center gap-3 mt-1">
-                          <Badge variant="outline" className="text-[9px] font-black text-white border-white/20 uppercase tracking-widest bg-white/10 px-2 py-0.5 rounded">
+                          <Badge variant="outline" className="text-[9px] font-black text-white border-white/20 uppercase tracking-widest bg-white/10 px-2 py-0.5 rounded-lg">
                             {post.category}
                           </Badge>
                           <span className="text-[9px] font-medium text-gray-400 uppercase tracking-widest">
@@ -607,11 +607,11 @@ const handleLike = async (postId: string) => {
 
                 {post.type === 'discussion' && (
                   <>
-                    <h3 className="text-2xl md:text-3xl text-white font-bold mb-6 leading-tight hover:text-royal transition-colors">
+                    <h3 className="text-2xl md:text-3xl text-white font-bold mb-6 leading-tight hover:text-club-green transition-colors">
                       {post.title}
                     </h3>
                     {post.imageUrl && (
-                      <div className="aspect-video rounded-xl overflow-hidden mb-6 border border-white/10 shadow-lg">
+                      <div className="aspect-video rounded-lg overflow-hidden mb-6 border border-white/10 shadow-lg">
                         <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                       </div>
                     )}
@@ -619,7 +619,7 @@ const handleLike = async (postId: string) => {
                       <div dangerouslySetInnerHTML={{ __html: post.content }} />
                     </div>
                     {!expandedPost && post.content.length > 200 && (
-                      <button className="text-royal text-[10px] font-black uppercase tracking-widest hover:text-white transition-colors mb-6 block">
+                      <button className="text-club-green text-[10px] font-black uppercase tracking-widest hover:text-white transition-colors mb-6 block">
                         Read more →
                       </button>
                     )}
@@ -627,8 +627,8 @@ const handleLike = async (postId: string) => {
                 )}
 
                 {post.type === 'research' && (
-                  <div className="bg-[#121624]/80 p-8 rounded-xl border border-white/10 flex flex-col items-center text-center">
-                    <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center text-royal mb-6 shadow-sm border border-white/10">
+                  <div className="bg-[#121624]/80 p-8 rounded-lg border border-white/10 flex flex-col items-center text-center">
+                    <div className="w-16 h-16 bg-white/5 rounded-lg flex items-center justify-center text-club-green mb-6 shadow-sm border border-white/10">
                       <FileText size={32} />
                     </div>
                     <h3 className="text-2xl text-white font-bold mb-4">{post.title}</h3>
@@ -637,7 +637,7 @@ const handleLike = async (postId: string) => {
                       href={post.pdfUrl} 
                       target="_blank" 
                       rel="noreferrer"
-                      className="flex items-center gap-3 bg-royal/20 text-royal px-8 py-3 rounded text-xs font-black uppercase tracking-widest hover:bg-royal hover:text-white border border-royal/30 transition-all"
+                      className="flex items-center gap-3 bg-club-green/20 text-club-green px-8 py-3 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-club-green hover:text-white border border-club-green/30 transition-all"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <Download size={14} /> Download PDF
@@ -657,15 +657,15 @@ const handleLike = async (postId: string) => {
                       onClick={() => handleLike(post.id)}
                       className="flex items-center gap-2 group"
                     >
-                      <Heart size={18} className="text-gray-400 group-hover:text-crimson transition-colors" />
+                      <Heart size={18} className="text-gray-400 group-hover:text-electric-mint transition-colors" />
                       <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{post.likes}</span>
                     </button>
                     <button 
                       onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)}
-                      className={`flex items-center gap-2 group ${expandedPost === post.id ? 'text-royal' : 'text-gray-400 hover:text-royal transition-colors'}`}
+                      className={`flex items-center gap-2 group ${expandedPost === post.id ? 'text-club-green' : 'text-gray-400 hover:text-club-green transition-colors'}`}
                     >
                       <MessageSquare size={18} />
-                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest group-hover:text-royal">{post.commentCount}</span>
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest group-hover:text-club-green">{post.commentCount}</span>
                     </button>
                     <button 
                       onClick={() => handleShare(post.id)}
@@ -699,11 +699,11 @@ const handleLike = async (postId: string) => {
       {/* Create Modal */}
       <AnimatePresence>
         {showCreateModal && (
-          <div className="fixed inset-0 z-[100] bg-green-deep/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[100] bg-slate-base/80 backdrop-blur-md flex items-center justify-center p-4">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-surface-raised p-8 md:p-12 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl"
+              className="bg-surface-raised p-8 md:p-12 rounded-lg-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl"
             >
               <button 
                 onClick={() => setShowCreateModal(false)}
@@ -712,7 +712,7 @@ const handleLike = async (postId: string) => {
                 <X size={24} />
               </button>
 
-              <h2 className="font-display text-4xl text-text-primary italic mb-10">
+              <h2 className="font-sans tracking-tight font-semibold text-4xl text-text-primary italic mb-10">
                 {activeTab === 'research' ? 'Submit Research' : 'Create New Post'}
               </h2>
 
@@ -723,7 +723,7 @@ const handleLike = async (postId: string) => {
                     <select 
                       value={createData.category}
                       onChange={e => setCreateData({...createData, category: e.target.value as any})}
-                      className="w-full bg-surface-base border-2 border-surface-high rounded p-4 outline-none focus:border-crimson transition-all font-bold text-text-primary"
+                      className="w-full bg-surface-base border-2 border-surface-high rounded-lg p-4 outline-none focus:border-electric-mint transition-all font-bold text-text-primary"
                     >
                       <option>Finance</option>
                       <option>Economics</option>
@@ -738,7 +738,7 @@ const handleLike = async (postId: string) => {
                       type="text"
                       value={createData.authorName}
                       onChange={e => setCreateData({...createData, authorName: e.target.value})}
-                      className="w-full bg-surface-base border-2 border-surface-high rounded p-4 outline-none focus:border-crimson transition-all font-bold text-text-primary"
+                      className="w-full bg-surface-base border-2 border-surface-high rounded-lg p-4 outline-none focus:border-electric-mint transition-all font-bold text-text-primary"
                     />
                   </div>
                 </div>
@@ -750,7 +750,7 @@ const handleLike = async (postId: string) => {
                     type="text"
                     value={createData.title}
                     onChange={e => setCreateData({...createData, title: e.target.value})}
-                    className="w-full bg-surface-base border-2 border-surface-high rounded p-4 outline-none focus:border-crimson transition-all font-bold text-text-primary"
+                    className="w-full bg-surface-base border-2 border-surface-high rounded-lg p-4 outline-none focus:border-electric-mint transition-all font-bold text-text-primary"
                     placeholder="Expert analysis of..."
                   />
                 </div>
@@ -762,14 +762,14 @@ const handleLike = async (postId: string) => {
                       required
                       value={createData.abstract}
                       onChange={e => setCreateData({...createData, abstract: e.target.value})}
-                      className="w-full bg-surface-base border-2 border-surface-high rounded p-4 outline-none focus:border-crimson transition-all font-bold text-text-primary resize-none h-24"
+                      className="w-full bg-surface-base border-2 border-surface-high rounded-lg p-4 outline-none focus:border-electric-mint transition-all font-bold text-text-primary resize-none h-24"
                     />
                   </div>
                 )}
 
                 <div>
                   <label className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-2 block">Content</label>
-                  <div className="bg-surface-base rounded-xl border-2 border-surface-high focus-within:border-crimson transition-all overflow-hidden font-sans">
+                  <div className="bg-surface-base rounded-lg border-2 border-surface-high focus-within:border-electric-mint transition-all overflow-hidden font-sans">
                     <ReactQuill 
                       theme="snow"
                       value={createData.content}
@@ -806,7 +806,7 @@ const handleLike = async (postId: string) => {
                 <button 
                   type="submit"
                   disabled={isUploading}
-                  className="w-full bg-crimson text-white py-5 rounded text-[10px] font-black uppercase tracking-widest hover:bg-royal transition-all shadow-xl disabled:opacity-30"
+                  className="w-full bg-electric-mint text-slate-base py-5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-club-green transition-all shadow-xl disabled:opacity-30"
                 >
                   {isUploading ? 'UPLOADING...' : 'SUBMIT CONTRIBUTION'}
                 </button>

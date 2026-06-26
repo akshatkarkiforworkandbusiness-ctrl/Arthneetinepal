@@ -300,7 +300,7 @@ export default function ExplorePage() {
   
   // Determine return color values
   const isGainer = activeStock.change >= 0;
-  const themeColor = isGainer ? '#10B981' : '#F43F5E'; // green-light / crimson
+  const themeColor = isGainer ? '#10B981' : '#F43F5E'; // green-light / electric-mint
   const returnPrefix = isGainer ? '+' : '';
 
   // Get currently displayed price (either hovered coordinate or latest index price)
@@ -324,8 +324,8 @@ export default function ExplorePage() {
       className="max-w-7xl mx-auto px-4 md:px-12 py-24 min-h-screen"
     >
       <header className="mb-12">
-        <span className="text-[10px] font-black text-crimson mb-2 block uppercase tracking-[0.4em]">FINANCIAL INTELLIGENCE HUB</span>
-        <h1 className="font-display text-5xl md:text-7xl text-white italic mb-8 tracking-tight">Discover</h1>
+        <span className="text-[10px] font-black text-electric-mint mb-2 block uppercase tracking-[0.4em]">FINANCIAL INTELLIGENCE HUB</span>
+        <h1 className="font-sans tracking-tight font-semibold text-5xl md:text-7xl text-white italic mb-8 tracking-tight">Discover</h1>
         
         <div className="relative max-w-2xl">
           <span className="absolute left-6 top-1/2 -translate-y-1/2 material-symbols-outlined text-text-muted">search</span>
@@ -334,7 +334,7 @@ export default function ExplorePage() {
             placeholder="Search NEPSE counters, research papers, and policy guidelines..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#161F30] border border-[#1F2A3F] rounded-[32px] px-16 py-5 text-sm focus:border-royal outline-none shadow-xl text-white placeholder:text-text-muted/50 transition-all"
+            className="w-full bg-[#161F30] border border-[#1F2A3F] rounded-lg-[32px] px-16 py-5 text-sm focus:border-club-green outline-none shadow-xl text-white placeholder:text-text-muted/50 transition-all"
           />
         </div>
       </header>
@@ -343,14 +343,14 @@ export default function ExplorePage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
         
         {/* Graph Widget (Col-span 8) */}
-        <section className="lg:col-span-8 bg-[#161F30] border border-[#1F2A3F] rounded-3xl p-6 md:p-8 flex flex-col justify-between shadow-2xl relative">
+        <section className="lg:col-span-8 bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl p-6 md:p-8 flex flex-col justify-between shadow-2xl relative">
           
           {/* Header Info */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
             <div>
               <div className="flex items-center gap-3 mb-1">
                 <span className="text-2xl font-black text-white font-mono tracking-tight">{activeStock.symbol}</span>
-                <Badge variant="outline" className="text-[10px] font-bold text-text-muted uppercase bg-[#0B0F19] px-2 py-0.5 rounded border border-[#1F2A3F]">
+                <Badge variant="outline" className="text-[10px] font-bold text-text-muted uppercase bg-[#0B0F19] px-2 py-0.5 rounded-lg border border-[#1F2A3F]">
                   {activeStock.name}
                 </Badge>
               </div>
@@ -375,12 +375,12 @@ export default function ExplorePage() {
 
           {/* Timeframe selector */}
           <Tabs defaultValue="1D" value={timeframe} onValueChange={setTimeframe} className="mb-6">
-            <TabsList className="flex border-b border-[#1F2A3F] pb-4 gap-2 bg-transparent p-0 rounded-none w-full justify-start h-auto">
+            <TabsList className="flex border-b border-[#1F2A3F] pb-4 gap-2 bg-transparent p-0 rounded-lg-none w-full justify-start h-auto">
               {['1D', '1W', '1M', '1Y', 'ALL'].map((tf) => (
                 <TabsTrigger
                   key={tf}
                   value={tf}
-                  className="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-lg transition-all text-text-muted hover:text-white hover:bg-[#0B0F19]/50 data-[state=active]:bg-royal data-[state=active]:text-white data-[state=active]:shadow-lg dark:text-text-muted dark:hover:text-white dark:data-[state=active]:bg-royal dark:data-[state=active]:text-white h-auto"
+                  className="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-lg transition-all text-text-muted hover:text-white hover:bg-[#0B0F19]/50 data-[state=active]:bg-club-green data-[state=active]:text-white data-[state=active]:shadow-lg dark:text-text-muted dark:hover:text-white dark:data-[state=active]:bg-club-green dark:data-[state=active]:text-white h-auto"
                 >
                   {tf}
                 </TabsTrigger>
@@ -389,7 +389,7 @@ export default function ExplorePage() {
           </Tabs>
 
           {/* Graph Container */}
-          <div className="relative w-full h-[240px] bg-[#0B0F19]/60 rounded-xl border border-[#1F2A3F] p-4 flex items-center justify-center">
+          <div className="relative w-full h-[240px] bg-[#0B0F19]/60 rounded-lg border border-[#1F2A3F] p-4 flex items-center justify-center">
             {activeHistory.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart 
@@ -452,10 +452,10 @@ export default function ExplorePage() {
 
         {/* Live Counters / Stocks Watchlist (Col-span 4) */}
         <aside className="lg:col-span-4 flex flex-col gap-6">
-          <div className="bg-[#161F30] border border-[#1F2A3F] rounded-3xl p-6 shadow-2xl">
+          <div className="bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl p-6 shadow-2xl">
             <h3 className="text-sm font-black uppercase tracking-widest text-text-muted mb-6 flex items-center justify-between">
               NEPSE Watchlist
-              <span className="material-symbols-outlined text-royal text-lg">monitoring</span>
+              <span className="material-symbols-outlined text-club-green text-lg">monitoring</span>
             </h3>
             
             <div className="flex flex-col gap-3">
@@ -470,9 +470,9 @@ export default function ExplorePage() {
                       setSelectedStockKey(key);
                       setHoverIndex(null);
                     }}
-                    className={`w-full text-left p-4 rounded-xl border transition-all duration-300 flex justify-between items-center ${
+                    className={`w-full text-left p-4 rounded-lg border transition-all duration-300 flex justify-between items-center ${
                       activeState 
-                        ? 'bg-[#0B0F19] border-royal shadow-lg' 
+                        ? 'bg-[#0B0F19] border-club-green shadow-lg' 
                         : 'bg-[#161F30] border-[#1F2A3F] hover:border-text-muted/30 hover:bg-[#0B0F19]/25'
                     }`}
                   >
@@ -499,10 +499,10 @@ export default function ExplorePage() {
           </div>
 
           {/* Quick News Portal */}
-          <div className="bg-[#161F30] border border-[#1F2A3F] rounded-3xl p-6 shadow-2xl">
+          <div className="bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl p-6 shadow-2xl">
             <h3 className="text-sm font-black uppercase tracking-widest text-text-muted mb-6 flex items-center justify-between">
               Macro Intelligence
-              <span className="material-symbols-outlined text-crimson text-lg">campaign</span>
+              <span className="material-symbols-outlined text-electric-mint text-lg">campaign</span>
             </h3>
             
             <div className="flex flex-col gap-6">
@@ -514,7 +514,7 @@ export default function ExplorePage() {
                   rel="noreferrer"
                   className="group block border-b border-[#1F2A3F] last:border-0 pb-4 last:pb-0"
                 >
-                  <h4 className="text-sm font-semibold leading-relaxed text-white group-hover:text-royal transition-colors mb-2">
+                  <h4 className="text-sm font-semibold leading-relaxed text-white group-hover:text-club-green transition-colors mb-2">
                     {news.title}
                   </h4>
                   <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-text-muted">
@@ -534,17 +534,17 @@ export default function ExplorePage() {
         {/* Research Papers (Col-span 8) */}
         <section className="lg:col-span-8 space-y-8">
           <div className="flex justify-between items-end border-b border-[#1F2A3F] pb-4">
-            <h2 className="font-display text-3xl text-white italic tracking-tight">Featured Research Papers</h2>
-            <Link to="/community" className="text-[10px] font-black text-royal uppercase tracking-widest hover:text-white transition-colors">
+            <h2 className="font-sans tracking-tight font-semibold text-3xl text-white italic tracking-tight">Featured Research Papers</h2>
+            <Link to="/community" className="text-[10px] font-black text-club-green uppercase tracking-widest hover:text-white transition-colors">
               VIEW DISCOURSE FEED
             </Link>
           </div>
           
           <div className="grid grid-cols-1 gap-6">
             {filteredPosts.map(post => (
-              <div key={post.id} className="bg-[#161F30] p-8 rounded-2xl border border-[#1F2A3F] shadow-xl hover:border-royal/50 transition-all duration-300 group">
+              <div key={post.id} className="bg-[#161F30] p-8 rounded-lg-2xl border border-[#1F2A3F] shadow-xl hover:border-club-green/50 transition-all duration-300 group">
                 <div className="flex gap-3 mb-4 items-center">
-                  <Badge variant="outline" className="bg-royal/10 text-royal px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border border-royal/20">
+                  <Badge variant="outline" className="bg-club-green/10 text-club-green px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border border-club-green/20">
                     {post.category}
                   </Badge>
                   <Badge variant="outline" className="text-[9px] font-black text-text-muted uppercase tracking-widest bg-transparent border-transparent">
@@ -552,7 +552,7 @@ export default function ExplorePage() {
                   </Badge>
                 </div>
                 
-                <h3 className="font-display text-2xl text-white italic mb-4 group-hover:text-royal transition-colors leading-tight">
+                <h3 className="font-sans tracking-tight font-semibold text-2xl text-white italic mb-4 group-hover:text-club-green transition-colors leading-tight">
                   {post.title}
                 </h3>
                 
@@ -562,7 +562,7 @@ export default function ExplorePage() {
                 
                 <div className="flex items-center justify-between border-t border-[#1F2A3F] pt-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-royal/20 border border-royal/40 rounded-full flex items-center justify-center text-white font-black text-[10px] uppercase">
+                    <div className="w-8 h-8 bg-club-green/20 border border-club-green/40 rounded-lg flex items-center justify-center text-white font-black text-[10px] uppercase">
                       {post.author[0]}
                     </div>
                     <span className="text-xs font-black text-white tracking-tight uppercase">{post.author}</span>
@@ -573,7 +573,7 @@ export default function ExplorePage() {
                       href={post.pdfUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-1.5 text-[8px] font-black uppercase tracking-widest text-text-muted hover:text-royal transition-colors"
+                      className="flex items-center gap-1.5 text-[8px] font-black uppercase tracking-widest text-text-muted hover:text-club-green transition-colors"
                     >
                       <span className="material-symbols-outlined text-sm">download</span>
                       Download PDF
@@ -584,7 +584,7 @@ export default function ExplorePage() {
             ))}
 
             {filteredPosts.length === 0 && (
-              <div className="text-center py-12 bg-[#161F30] rounded-2xl border border-[#1F2A3F] border-dashed">
+              <div className="text-center py-12 bg-[#161F30] rounded-lg-2xl border border-[#1F2A3F] border-dashed">
                 <p className="text-text-muted italic text-xs">No matching research articles or papers found.</p>
               </div>
             )}
@@ -595,9 +595,9 @@ export default function ExplorePage() {
         <aside className="lg:col-span-4 space-y-8">
           
           {/* Policy Center links */}
-          <div className="bg-[#161F30] border border-[#1F2A3F] rounded-3xl p-6 shadow-2xl">
+          <div className="bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl p-6 shadow-2xl">
             <h3 className="text-xs font-black uppercase tracking-widest text-text-muted mb-6 flex items-center gap-2">
-              <span className="material-symbols-outlined text-gold text-lg">gavel</span>
+              <span className="material-symbols-outlined text-electric-mint text-lg">gavel</span>
               NRB Policy Center
             </h3>
             
@@ -610,7 +610,7 @@ export default function ExplorePage() {
                 href="https://www.nrb.org.np/financial-literacy/" 
                 target="_blank" 
                 rel="noreferrer" 
-                className="w-full text-center py-4 bg-[#0B0F19] hover:bg-[#0B0F19]/50 border border-[#1F2A3F] hover:border-royal text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all"
+                className="w-full text-center py-4 bg-[#0B0F19] hover:bg-[#0B0F19]/50 border border-[#1F2A3F] hover:border-club-green text-white text-[10px] font-black uppercase tracking-widest rounded-lg transition-all"
               >
                 NRB Literacy Hub
               </a>
@@ -619,7 +619,7 @@ export default function ExplorePage() {
                 href="https://www.nrb.org.np/category/monetary-policy/" 
                 target="_blank" 
                 rel="noreferrer"
-                className="w-full text-center py-4 bg-transparent border border-[#1F2A3F] hover:border-royal text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all"
+                className="w-full text-center py-4 bg-transparent border border-[#1F2A3F] hover:border-club-green text-white text-[10px] font-black uppercase tracking-widest rounded-lg transition-all"
               >
                 Monetary Policy Reports
               </a>
@@ -627,7 +627,7 @@ export default function ExplorePage() {
           </div>
 
           {/* Leading Contributor Tags */}
-          <div className="bg-[#161F30] border border-[#1F2A3F] rounded-3xl p-6 shadow-2xl">
+          <div className="bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl p-6 shadow-2xl">
             <h3 className="text-xs font-black uppercase tracking-widest text-text-muted mb-6">
               Trending Sectors
             </h3>
@@ -636,7 +636,7 @@ export default function ExplorePage() {
               {['Banking', 'Hydropower', 'Microfinance', 'IPO Market', 'Mutual Funds', 'Inflation', 'Remittance'].map((sec) => (
                 <span 
                   key={sec} 
-                  className="px-3.5 py-2 bg-[#0B0F19] border border-[#1F2A3F] text-white rounded-lg text-[9px] font-bold uppercase tracking-wider cursor-pointer hover:border-royal/50 transition-all"
+                  className="px-3.5 py-2 bg-[#0B0F19] border border-[#1F2A3F] text-white rounded-lg text-[9px] font-bold uppercase tracking-wider cursor-pointer hover:border-club-green/50 transition-all"
                 >
                   {sec}
                 </span>
