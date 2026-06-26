@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../contexts/AuthContext';
@@ -325,7 +326,8 @@ export function Navigation() {
       </AnimatePresence>
 
       {/* Unified Auth Modal (Email/Password & Google) */}
-      <AnimatePresence>
+      {createPortal(
+        <AnimatePresence>
         {showAuthModal && (
           <div className="fixed inset-0 z-[100] bg-green-deep/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
             {/* Click outside to close */}
@@ -619,7 +621,9 @@ export function Navigation() {
             </motion.div>
           </div>
         )}
-      </AnimatePresence>
+      </AnimatePresence>,
+        document.body
+      )}
     </nav>
   );
 }
