@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { 
   collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, 
-  doc, updateDoc, deleteDoc, getDocs, Timestamp 
+  doc, updateDoc, deleteDoc, getDocs, Timestamp, limit, startAfter, DocumentSnapshot 
 } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import { Calendar, MapPin, Clock, Plus, Edit2, Trash2, X, ChevronRight } from 'lucide-react';
@@ -35,12 +35,18 @@ export default function EventsPage() {
     category: 'Workshop'
   });
 
+  const PAGE_SIZE = 10;
+  const [lastDoc, setLastDoc] = useState<DocumentSnapshot | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+
   useEffect(() => {
     const path = 'events';
-    const q = query(collection(db, path), orderBy('dateTime', 'asc'));
-    const unsubscribe = onSnapshot(q, 
+    const q = query(collection(db, path), orderBy('dateTime', 'asc'), limit(PAGE_SIZE));
+    const unsubscribe = onSnapshot(q,
       (snapshot) => {
         setEvents(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Event)));
+        setLastDoc(snapshot.docs[snapshot.docs.length - 1] ?? null);
+        setHasMore(snapshot.docs.length === PAGE_SIZE);
         setEventsLoading(false);
       },
       (error) => {
@@ -50,6 +56,16 @@ export default function EventsPage() {
     );
     return () => unsubscribe();
   }, []);
+
+  const loadMore = async () => {
+    if (!lastDoc || !hasMore) return;
+    const path = 'events';
+    const q = query(collection(db, path), orderBy('dateTime', 'asc'), startAfter(lastDoc), limit(PAGE_SIZE));
+    const snapshot = await getDocs(q);
+    setEvents(prev => [...prev, ...snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Event))]);
+    setLastDoc(snapshot.docs[snapshot.docs.length - 1] ?? null);
+    setHasMore(snapshot.docs.length === PAGE_SIZE);
+  };
 
   // Seeding initial placeholder if empty
   useEffect(() => {
