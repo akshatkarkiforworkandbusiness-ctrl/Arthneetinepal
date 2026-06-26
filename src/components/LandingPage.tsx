@@ -190,7 +190,7 @@ export default function LandingPage() {
 
     const qAll = query(collection(db, 'posts'));
     const unsubscribeCount = onSnapshot(qAll, (snapshot) => {
-      setTopicCount(94 + snapshot.size);
+      setTopicCount(snapshot.size);
     });
 
     return () => {
