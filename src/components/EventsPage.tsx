@@ -20,18 +20,7 @@ interface Event {
 }
 
 export default function EventsPage() {
-  const { user } = useAuth();
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    if (!user) { setIsAdmin(false); return; }
-    const checkAdmin = async () => {
-      const { doc, getDoc } = await import('firebase/firestore');
-      const snap = await getDoc(doc(db, 'admins', user.uid));
-      setIsAdmin(snap.exists());
-    };
-    checkAdmin();
-  }, [user]);
+  const { user, isAdmin } = useAuth();
 
   const [events, setEvents] = useState<Event[]>([]);
   const [eventsLoading, setEventsLoading] = useState(true);

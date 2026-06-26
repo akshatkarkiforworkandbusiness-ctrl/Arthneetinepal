@@ -24,6 +24,7 @@ interface UserProfile {
 interface AuthContextType {
   user: User | null;
   profile: UserProfile | null;
+  isAdmin: boolean;
   loading: boolean;
   showOnboarding: boolean;
   setShowOnboarding: (show: boolean) => void;
@@ -43,6 +44,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -52,18 +54,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(user);
       if (user) {
         const docRef = doc(db, 'users', user.uid);
+        const adminRef = doc(db, 'admins', user.uid);
         try {
-          const docSnap = await getDoc(docRef);
+          const [docSnap, adminSnap] = await Promise.all([
+            getDoc(docRef),
+            getDoc(adminRef)
+          ]);
           if (docSnap.exists()) {
             setProfile(docSnap.data() as UserProfile);
           } else {
             setProfile(null);
           }
+          setIsAdmin(adminSnap.exists());
         } catch (error) {
           handleFirestoreError(error, OperationType.GET, `users/${user.uid}`);
+          setIsAdmin(false);
         }
       } else {
         setProfile(null);
+        setIsAdmin(false);
       }
       setLoading(false);
     });
@@ -144,7 +153,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider value={{ 
       user, 
-      profile, 
+      profile,
+      isAdmin,
       loading, 
       showOnboarding, 
       setShowOnboarding, 
