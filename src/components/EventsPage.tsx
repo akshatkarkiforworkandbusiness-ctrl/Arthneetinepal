@@ -17,6 +17,8 @@ interface Event {
   location: string;
   description: string;
   category: string;
+  completed?: boolean;
+  studentsReached?: number;
 }
 
 export default function EventsPage() {
