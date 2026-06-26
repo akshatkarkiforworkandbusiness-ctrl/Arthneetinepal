@@ -40,7 +40,8 @@ export default function EventsPage() {
   const PAGE_SIZE = 10;
   const [lastDoc, setLastDoc] = useState<DocumentSnapshot | null>(null);
   const [hasMore, setHasMore] = useState(true);
-
+  const [markingDone, setMarkingDone] = useState<string | null>(null);
+  const [studentCount, setStudentCount] = useState('');
   useEffect(() => {
     const path = 'events';
     const q = query(collection(db, path), orderBy('dateTime', 'asc'), limit(PAGE_SIZE));
