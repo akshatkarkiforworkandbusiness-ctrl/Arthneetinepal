@@ -321,6 +321,17 @@ export default function EventsPage() {
             })}
           </div>
         )}
+
+        {hasMore && !eventsLoading && (
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={loadMore}
+              className="px-8 py-3 bg-royal/20 text-royal border border-royal/30 rounded text-xs font-black uppercase tracking-widest hover:bg-royal hover:text-white transition-all"
+            >
+              Load More
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Admin Modal */}
