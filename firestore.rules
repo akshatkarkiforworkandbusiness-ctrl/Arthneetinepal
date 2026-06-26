@@ -95,6 +95,11 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Admins
+    match /admins/{userId} {
+      allow read: if isOwner(userId);
+    }
+
     // User Profiles
     match /users/{userId} {
       allow read: if isSignedIn();
