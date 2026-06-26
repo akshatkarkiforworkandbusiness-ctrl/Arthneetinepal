@@ -148,6 +148,23 @@ export default function EventsPage() {
     }
   };
 
+  const handleMarkDone = async (eventId: string) => {
+    const count = parseInt(studentCount);
+    if (isNaN(count) || count < 0) return;
+    const path = `events/${eventId}`;
+    try {
+      const { doc, updateDoc } = await import('firebase/firestore');
+      await updateDoc(doc(db, 'events', eventId), {
+        completed: true,
+        studentsReached: count,
+      });
+      setMarkingDone(null);
+      setStudentCount('');
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, path);
+    }
+  };
+
   const downloadICS = (event: Event) => {
     const date = event.dateTime.toDate();
     const dateStr = date.toISOString().replace(/-|:|\.\d+/g, "");
