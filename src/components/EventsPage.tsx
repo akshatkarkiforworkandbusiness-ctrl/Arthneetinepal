@@ -350,6 +350,32 @@ export default function EventsPage() {
 
                     <p className="text-green-deep/60 text-sm italic font-sans">{event.description}</p>
 
+                    {isAdmin && markingDone === event.id && (
+                      <div className="flex items-center gap-3 bg-cream rounded-xl p-4 border border-green-deep/10">
+                        <input
+                          type="number"
+                          min="0"
+                          placeholder="Students reached"
+                          value={studentCount}
+                          onChange={e => setStudentCount(e.target.value)}
+                          className="flex-1 bg-white p-3 rounded outline-none border-2 border-transparent focus:border-crimson font-bold text-green-deep text-sm transition-all"
+                          autoFocus
+                        />
+                        <button
+                          onClick={() => handleMarkDone(event.id)}
+                          className="px-4 py-3 bg-green-500 text-white rounded text-[10px] font-black uppercase tracking-widest hover:bg-green-600 transition-all cursor-pointer"
+                        >
+                          Confirm
+                        </button>
+                        <button
+                          onClick={() => { setMarkingDone(null); setStudentCount(''); }}
+                          className="px-4 py-3 bg-cream text-green-deep/40 rounded text-[10px] font-black uppercase tracking-widest hover:text-crimson transition-all cursor-pointer"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    )}
+
                     <button 
                       onClick={() => downloadICS(event)}
                       className="flex items-center gap-3 text-green-deep/20 hover:text-green-deep transition-all group/btn"
