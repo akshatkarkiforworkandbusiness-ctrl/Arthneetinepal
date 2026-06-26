@@ -8,7 +8,7 @@ import {
   doc, updateDoc, deleteDoc, getDocs, Timestamp, limit, startAfter, DocumentSnapshot 
 } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
-import { Calendar, MapPin, Clock, Plus, Edit2, Trash2, X, ChevronRight } from 'lucide-react';
+import { Calendar, MapPin, Clock, Plus, Edit2, Trash2, X, ChevronRight, CheckCircle } from 'lucide-react';
 
 interface Event {
   id: string;
@@ -289,23 +289,46 @@ export default function EventsPage() {
                       <Badge variant="outline" className="text-[10px] font-black uppercase tracking-widest text-crimson bg-crimson/10 border-transparent px-3 py-1 rounded">
                         {event.category}
                       </Badge>
-                      {isAdmin && (
-                        <div className="flex gap-4">
-                          <button onClick={() => {
-                            setEditingEvent(event);
-                            setFormData({
-                              title: event.title,
-                              date: date?.toISOString().split('T')[0] || '',
-                              time: date?.toTimeString().split(' ')[0].slice(0,5) || '',
-                              location: event.location,
-                              description: event.description,
-                              category: event.category
-                            });
-                            setShowModal(true);
-                          }} className="text-green-deep/20 hover:text-green-deep transition-colors"><Edit2 size={16} /></button>
-                          <button onClick={() => handleDelete(event.id)} className="text-green-deep/20 hover:text-crimson transition-colors"><Trash2 size={16} /></button>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-4">
+                        {event.completed && (
+                          <div className="flex items-center gap-2">
+                            <Badge className="text-[10px] font-black uppercase tracking-widest bg-green-500/10 text-green-600 border-transparent px-3 py-1 rounded">
+                              ✓ Done
+                            </Badge>
+                            {event.studentsReached !== undefined && (
+                              <span className="text-[10px] font-black uppercase tracking-widest text-green-deep/40">
+                                {event.studentsReached} students reached
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        {isAdmin && (
+                          <div className="flex gap-4">
+                            {!event.completed && (
+                              <button
+                                onClick={() => { setMarkingDone(event.id); setStudentCount(''); }}
+                                className="text-green-deep/20 hover:text-green-600 transition-colors"
+                                title="Mark as Done"
+                              >
+                                <CheckCircle size={16} />
+                              </button>
+                            )}
+                            <button onClick={() => {
+                              setEditingEvent(event);
+                              setFormData({
+                                title: event.title,
+                                date: date?.toISOString().split('T')[0] || '',
+                                time: date?.toTimeString().split(' ')[0].slice(0,5) || '',
+                                location: event.location,
+                                description: event.description,
+                                category: event.category
+                              });
+                              setShowModal(true);
+                            }} className="text-green-deep/20 hover:text-green-deep transition-colors"><Edit2 size={16} /></button>
+                            <button onClick={() => handleDelete(event.id)} className="text-green-deep/20 hover:text-crimson transition-colors"><Trash2 size={16} /></button>
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     <h3 className="text-3xl text-green-deep italic font-display group-hover:text-crimson transition-colors leading-tight">
