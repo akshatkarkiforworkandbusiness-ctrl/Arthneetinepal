@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Play, Check, BookOpen, Download } from 'lucide-react';
 import { db } from '../lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
@@ -507,507 +508,230 @@ export default function LearnPage() {
     : 0;
 
   return (
-    <motion.main
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="min-h-screen bg-[#0B0F19]"
-    >
-      {/* ── Page Header ─────────────────────────────────────────────────────── */}
-      <div className="max-w-7xl mx-auto px-6 pt-28 pb-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-          <div>
-            <span className="text-[10px] font-black text-electric-mint mb-3 block uppercase tracking-[0.4em]">
-              ARTHNEETI ACADEMY
-            </span>
-            <h1 className="font-sans tracking-tight font-semibold text-5xl md:text-7xl text-white italic mb-4 tracking-tight">
-              Learn
-            </h1>
-            <p className="text-text-muted text-sm max-w-lg leading-relaxed">
-              Video lessons, written guides, and research resources — all built around Nepal's economy, NEPSE, and NRB policy.
-            </p>
-          </div>
+  <main className="py-32 px-6 min-h-screen">
+    <div className="max-w-7xl mx-auto space-y-8">
 
-          {/* Progress pill — only for logged-in users */}
-          {user && (
-            <div className="bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl px-6 py-5 min-w-[200px]">
-              <span className="text-[9px] font-black uppercase tracking-widest text-text-muted block mb-3">
-                Your Progress
-              </span>
-              <div className="flex items-end gap-2 mb-3">
-                <span className="text-3xl font-black font-mono text-white">{progress}%</span>
-                <span className="text-[10px] text-text-muted mb-1">
-                  {completed.size}/{LESSONS.length} lessons
-                </span>
-              </div>
-              <div className="w-full h-1.5 bg-[#0B0F19] rounded-lg overflow-hidden">
-                <motion.div
-                  className="h-full bg-club-green rounded-lg"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress}%` }}
-                  transition={{ duration: 0.6, ease: 'easeOut' }}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* ── Tabs + Search ─────────────────────────────────────────────────── */}
-        <div className="flex flex-col sm:flex-row gap-4 mt-10">
-          <div className="flex bg-[#161F30] border border-[#1F2A3F] rounded-lg p-1 self-start">
-            {(['videos', 'guides', 'faqs'] as const).map(tab => (
-              <button
-                key={tab}
-                onClick={() => { setActiveTab(tab); setSearchQuery(''); }}
-                className={`px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
-                  activeTab === tab
-                    ? 'bg-club-green text-white shadow-md'
-                    : 'text-text-muted hover:text-white'
-                }`}
-              >
-                {tab === 'videos' ? 'Video Lessons' : tab === 'guides' ? 'Written Guides' : 'FAQ'}
-              </button>
-            ))}
-          </div>
-
-          <div className="relative flex-1 max-w-md">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-text-muted text-[18px]">
-              search
-            </span>
-            <input
-              type="text"
-              placeholder={activeTab === 'videos' ? 'Search lessons...' : activeTab === 'guides' ? 'Search guides...' : 'Search questions...'}
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="w-full bg-[#161F30] border border-[#1F2A3F] rounded-lg pl-10 pr-4 py-3 text-sm focus:border-club-green outline-none text-white placeholder:text-text-muted/50 transition-all"
-            />
-          </div>
-        </div>
+      {/* Page Header */}
+      <div className="mb-16">
+        <p className="text-[10px] font-black uppercase tracking-widest text-royal mb-4">Arthneeti Academy</p>
+        <h1 className="text-5xl md:text-7xl font-display italic text-white leading-tight mb-6">
+          Learn Economics.<br />Understand Nepal.
+        </h1>
+        <p className="text-gray-400 font-sans max-w-xl">
+          Structured lessons, written guides, and research — built for Nepali students who want to understand markets, policy, and money.
+        </p>
       </div>
 
-      {/* ── Content ─────────────────────────────────────────────────────────── */}
-      <div className="max-w-7xl mx-auto px-6 pb-24">
-        <AnimatePresence mode="wait">
+      {/* Active Lesson Player — shown when a lesson is playing */}
+      {isPlaying && (
+        <div ref={playerRef} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden mb-16">
+          
+          {/* Video */}
+          <div className="aspect-video w-full">
+            <iframe
+              src={activeLesson.videoUrl}
+              title={activeLesson.title}
+              className="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
 
-          {/* ════════════════════════════════════════════════════════════════════
-              VIDEO LESSONS TAB
-          ════════════════════════════════════════════════════════════════════ */}
-          {activeTab === 'videos' && (
-            <motion.div
-              key="videos"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2 }}
-            >
-              {/* ── Video Player ────────────────────────────────────────────── */}
-              <div ref={playerRef} className="mb-10">
-                <div className="bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl overflow-hidden">
-                  {/* Player area */}
-                  <div className="relative aspect-video bg-[#0B0F19]">
-                    {isPlaying ? (
-                      <iframe
-                        key={activeLesson.videoUrl}
-                        src={`${activeLesson.videoUrl}?autoplay=1&rel=0&modestbranding=1`}
-                        title={activeLesson.title}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        className="absolute inset-0 w-full h-full"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center group cursor-pointer" onClick={() => setIsPlaying(true)}>
-                        <img
-                          src={activeLesson.thumbnail}
-                          alt={activeLesson.title}
-                          className="absolute inset-0 w-full h-full object-cover opacity-60"
-                        />
-                        <div className="relative z-10 w-20 h-20 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-club-green/80 transition-all duration-300">
-                          <span className="material-symbols-outlined text-white text-4xl ml-1">play_arrow</span>
-                        </div>
+          <div className="p-10 space-y-8">
+            {/* Lesson Meta */}
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  <span className={`text-[9px] font-black uppercase tracking-widest border-transparent px-3 py-1 rounded ${
+                    activeLesson.level === 'Beginner' ? 'bg-green-500/20 text-green-400' :
+                    activeLesson.level === 'Intermediate' ? 'bg-yellow-500/20 text-yellow-400' :
+                    'bg-crimson/20 text-crimson'
+                  }`}>
+                    {activeLesson.level}
+                  </span>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">{activeLesson.duration}</span>
+                </div>
+                <h2 className="text-3xl font-display italic text-white">{activeLesson.title}</h2>
+                <p className="text-gray-400 font-sans mt-2 max-w-2xl">{activeLesson.desc}</p>
+              </div>
+
+              {/* Mark Complete */}
+              {user && (
+                <button
+                  onClick={() => markComplete(activeLesson.id)}
+                  className={`flex items-center gap-3 px-6 py-3 rounded text-[10px] font-black uppercase tracking-widest transition-all shrink-0 ${
+                    completed.has(activeLesson.id)
+                      ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                      : 'bg-white/5 text-gray-400 border border-white/10 hover:border-green-500/30 hover:text-green-400'
+                  }`}
+                >
+                  {completed.has(activeLesson.id) ? '✓ Completed' : 'Mark Complete'}
+                </button>
+              )}
+            </div>
+
+            {/* Chapters */}
+            {activeLesson.chapters.length > 0 && (
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-4">What's covered</p>
+                <div className="space-y-2">
+                  {activeLesson.chapters.map((chapter, i) => (
+                    <div key={i} className="flex items-start gap-4">
+                      <span className="text-[9px] font-black text-royal mt-0.5 shrink-0">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <span className="text-sm text-gray-300 font-sans">{chapter}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Inline FAQs */}
+            {activeLesson.faqs && activeLesson.faqs.length > 0 && (
+              <div className="border-t border-white/10 pt-8">
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-6">
+                  Frequently Asked Questions
+                </p>
+                <div className="space-y-4">
+                  {activeLesson.faqs.map((faq, i) => (
+                    <div key={i} className="bg-white/3 border border-white/10 rounded-xl p-6">
+                      <h4 className="text-sm font-bold text-white mb-3">{faq.question}</h4>
+                      <p className="text-gray-400 font-sans text-sm leading-relaxed">{faq.answer}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Module Sections */}
+      {MODULES.map((module) => {
+        const moduleLessons = LESSONS.filter(l => module.lessonIds.includes(l.id));
+        const moduleGuides = GUIDES.filter(g => module.guideIds.includes(g.id));
+
+        return (
+          <section key={module.id} className="space-y-6">
+            
+            {/* Module Header */}
+            <div className="border-b border-white/10 pb-6">
+              <h2 className="text-2xl font-display italic text-white mb-2">{module.title}</h2>
+              <p className="text-gray-500 font-sans text-sm">{module.description}</p>
+            </div>
+
+            {/* Lesson Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {moduleLessons.map((lesson) => (
+                <button
+                  key={lesson.id}
+                  onClick={() => playLesson(lesson)}
+                  className={`text-left bg-white/3 border rounded-xl overflow-hidden hover:border-royal/50 transition-all group ${
+                    activeLesson.id === lesson.id && isPlaying
+                      ? 'border-royal/50 bg-royal/5'
+                      : 'border-white/10'
+                  }`}
+                >
+                  {/* Thumbnail */}
+                  <div className="relative aspect-video overflow-hidden">
+                    <img
+                      src={lesson.thumbnail}
+                      alt={lesson.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
+                        <Play size={20} className="text-white ml-1" />
+                      </div>
+                    </div>
+                    {completed.has(lesson.id) && (
+                      <div className="absolute top-3 right-3 bg-green-500 rounded-full p-1">
+                        <Check size={12} className="text-white" />
                       </div>
                     )}
                   </div>
 
-                  {/* Player footer */}
-                  <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                      <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border ${TAG_COLORS[activeLesson.tag] || 'bg-club-green/10 text-club-green border-club-green/20'} inline-block mb-2`}>
-                        {activeLesson.tag}
+                  {/* Lesson Info */}
+                  <div className="p-6 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <span className={`inline-block text-[9px] font-black uppercase tracking-widest border-transparent px-2 py-0.5 rounded ${
+                        lesson.level === 'Beginner' ? 'bg-green-500/20 text-green-400' :
+                        lesson.level === 'Intermediate' ? 'bg-yellow-500/20 text-yellow-400' :
+                        'bg-crimson/20 text-crimson'
+                      }`}>
+                        {lesson.level}
                       </span>
-                      <h2 className="font-sans tracking-tight font-semibold text-xl md:text-2xl text-white italic leading-tight">
-                        {activeLesson.title}
-                      </h2>
-                      <p className="text-text-muted text-xs mt-1">{activeLesson.duration}</p>
+                      <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">{lesson.duration}</span>
                     </div>
-                    <button
-                      onClick={() => markComplete(activeLesson.id)}
-                      className={`flex items-center gap-2 px-5 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shrink-0 cursor-pointer ${
-                        completed.has(activeLesson.id)
-                          ? 'bg-green-light/10 border border-green-light/30 text-green-light'
-                          : 'bg-[#0B0F19] border border-[#1F2A3F] text-text-muted hover:border-green-light hover:text-green-light'
-                      }`}
-                    >
-                      <span className="material-symbols-outlined text-sm">
-                        {completed.has(activeLesson.id) ? 'check_circle' : 'radio_button_unchecked'}
-                      </span>
-                      {completed.has(activeLesson.id) ? 'Completed' : 'Mark Complete'}
-                    </button>
+                    <h3 className="text-base font-bold text-white group-hover:text-royal transition-colors leading-snug">
+                      {lesson.title}
+                    </h3>
+                    <p className="text-gray-500 font-sans text-xs line-clamp-2">{lesson.desc}</p>
                   </div>
-                </div>
+                </button>
+              ))}
+            </div>
 
-                {/* Chapters for active lesson */}
-                {activeLesson.chapters.length > 0 && (
-                  <div className="mt-4 bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl p-6">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-text-muted block mb-4">
-                      What's covered
-                    </span>
-                    <ul className="space-y-2.5">
-                      {activeLesson.chapters.map((ch, i) => (
-                        <li key={i} className="flex items-start gap-3 text-sm text-text-muted">
-                          <span className="text-[10px] font-black font-mono text-club-green mt-0.5 shrink-0">
-                            {String(i + 1).padStart(2, '0')}
-                          </span>
-                          {ch}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* FAQ for active lesson, if attached */}
-                {activeLesson.faqs && activeLesson.faqs.length > 0 && (
-                  <div className="mt-4 bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl p-6">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-text-muted block mb-4">
-                      Frequently Asked Questions
-                    </span>
-                    <div className="space-y-2">
-                      {activeLesson.faqs.map((faq, i) => {
-                        const isOpen = expandedLessonFaq === i;
-                        return (
-                          <div
-                            key={i}
-                            className={`border rounded-lg overflow-hidden transition-colors ${
-                              isOpen ? 'border-club-green/40 bg-[#0B0F19]' : 'border-[#1F2A3F]'
-                            }`}
-                          >
-                            <button
-                              onClick={() => setExpandedLessonFaq(isOpen ? null : i)}
-                              className="w-full flex items-center justify-between gap-3 p-4 text-left cursor-pointer"
-                            >
-                              <span className="text-xs font-bold text-white leading-snug">
-                                {faq.question}
-                              </span>
-                              <span className={`material-symbols-outlined text-text-muted text-base shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
-                                expand_more
-                              </span>
-                            </button>
-                            <AnimatePresence>
-                              {isOpen && (
-                                <motion.div
-                                  initial={{ opacity: 0, height: 0 }}
-                                  animate={{ opacity: 1, height: 'auto' }}
-                                  exit={{ opacity: 0, height: 0 }}
-                                  className="overflow-hidden"
-                                >
-                                  <p className="px-4 pb-4 text-xs text-text-muted leading-relaxed">
-                                    {faq.answer}
-                                  </p>
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* ── Lesson cards ────────────────────────────────────────────── */}
-              <div className="mb-4">
-                <span className="text-[9px] font-black uppercase tracking-widest text-text-muted">
-                  All Lessons — {filteredLessons.length} available
-                </span>
-              </div>
-
-              {filteredLessons.length === 0 ? (
-                <div className="text-center py-16 bg-[#161F30] rounded-lg-2xl border border-dashed border-[#1F2A3F]">
-                  <p className="text-text-muted text-sm italic">No lessons match "{searchQuery}"</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  {filteredLessons.map((lesson, i) => {
-                    const isActive = activeLesson.id === lesson.id;
-                    const isDone   = completed.has(lesson.id);
-                    return (
-                      <motion.div
-                        key={lesson.id}
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.07 }}
-                        onClick={() => playLesson(lesson)}
-                        className={`group cursor-pointer bg-[#161F30] border rounded-lg-2xl overflow-hidden transition-all duration-300 ${
-                          isActive
-                            ? 'border-club-green shadow-lg shadow-club-green/10'
-                            : 'border-[#1F2A3F] hover:border-club-green/40'
-                        }`}
-                      >
-                        {/* Thumbnail */}
-                        <div className="relative aspect-video overflow-hidden bg-[#0B0F19]">
-                          <img
-                            src={lesson.thumbnail}
-                            alt={lesson.title}
-                            className="w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500"
-                          />
-                          {/* Play overlay */}
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-10 h-10 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-club-green/80 transition-all">
-                              <span className="material-symbols-outlined text-white text-xl ml-0.5">play_arrow</span>
-                            </div>
-                          </div>
-                          {/* Duration badge */}
-                          <span className="absolute bottom-2 right-2 bg-black/70 text-white text-[9px] font-mono font-bold px-2 py-0.5 rounded-lg">
-                            {lesson.duration}
-                          </span>
-                          {/* Completed badge */}
-                          {isDone && (
-                            <span className="absolute top-2 left-2 bg-green-light text-white text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg flex items-center gap-1">
-                              <span className="material-symbols-outlined text-[10px]">check</span>
-                              Done
-                            </span>
-                          )}
-                          {/* Active indicator */}
-                          {isActive && (
-                            <span className="absolute top-2 right-2 bg-club-green text-white text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg">
-                              Playing
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Card body */}
-                        <div className="p-4">
-                          <div className="flex flex-wrap items-center gap-2 mb-2">
-                            <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border inline-block ${TAG_COLORS[lesson.tag] || 'bg-club-green/10 text-club-green border-club-green/20'}`}>
-                              {lesson.tag}
-                            </span>
-                            <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border inline-block ${LEVEL_COLORS[lesson.level]}`}>
-                              {lesson.level}
-                            </span>
-                          </div>
-                          <h3 className="text-sm font-bold text-white leading-snug group-hover:text-club-green transition-colors">
-                            {lesson.title}
-                          </h3>
-                          <p className="text-[11px] text-text-muted mt-1.5 leading-relaxed line-clamp-2">
-                            {lesson.desc}
-                          </p>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* Login nudge for non-logged-in users */}
-              {!user && (
-                <div className="mt-8 bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl p-6 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-                  <span className="material-symbols-outlined text-club-green text-3xl shrink-0">account_circle</span>
-                  <div>
-                    <p className="text-white text-sm font-bold mb-0.5">Track your learning progress</p>
-                    <p className="text-text-muted text-xs">Create a free account to mark lessons complete and track what you've covered.</p>
-                  </div>
-                </div>
-              )}
-            </motion.div>
-          )}
-
-          {/* ════════════════════════════════════════════════════════════════════
-              WRITTEN GUIDES TAB
-          ════════════════════════════════════════════════════════════════════ */}
-          {activeTab === 'guides' && (
-            <motion.div
-              key="guides"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2 }}
-              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-            >
-              {filteredGuides.length === 0 ? (
-                <div className="col-span-full text-center py-16 bg-[#161F30] rounded-lg-2xl border border-dashed border-[#1F2A3F]">
-                  <p className="text-text-muted text-sm italic">No guides match "{searchQuery}"</p>
-                </div>
-              ) : (
-                filteredGuides.map((guide, i) => {
-                  const isOpen = expandedGuide === guide.id;
-                  return (
-                    <motion.div
-                      key={guide.id}
-                      initial={{ opacity: 0, y: 16 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.08 }}
-                      className="bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl p-8 flex flex-col justify-between hover:border-club-green/40 transition-all duration-300 group"
-                    >
-                      <div>
-                        {/* Header */}
-                        <div className="flex justify-between items-start mb-6">
-                          <span className="bg-club-green/10 text-club-green text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-lg border border-club-green/20">
+            {/* Written Guides — bottom of module */}
+            {moduleGuides.length > 0 && (
+              <div className="space-y-3">
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Written Guide</p>
+                {moduleGuides.map((guide) => (
+                  <div key={guide.id} className="bg-white/3 border border-white/10 rounded-xl p-6">
+                    <div className="flex items-start justify-between gap-6 flex-wrap">
+                      <div className="space-y-2 flex-1">
+                        <div className="flex items-center gap-3">
+                          <span className="inline-block text-[9px] font-black uppercase tracking-widest bg-white/5 text-gray-400 border-transparent px-2 py-0.5 rounded">
                             {guide.category}
                           </span>
-                          <span className="text-[9px] font-mono text-text-muted bg-[#0B0F19] px-2.5 py-1 rounded-lg border border-[#1F2A3F]">
-                            {guide.readingTime}
-                          </span>
+                          <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">{guide.readingTime}</span>
+                          <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">{guide.language}</span>
                         </div>
+                        <h3 className="text-base font-bold text-white">{guide.title}</h3>
+                        <p className="text-gray-500 font-sans text-sm">{guide.description}</p>
 
-                        <h3 className="font-sans tracking-tight font-semibold text-xl text-white italic leading-tight mb-3 group-hover:text-club-green transition-colors">
-                          {guide.title}
-                        </h3>
-
-                        <p className="text-xs text-text-muted leading-relaxed mb-5">
-                          {guide.description}
-                        </p>
-
-                        <div className="text-[10px] font-bold text-text-muted uppercase tracking-wider border-t border-[#1F2A3F] pt-4 mb-5">
-                          Lang: <span className="text-white">{guide.language}</span>
-                        </div>
-
-                        {/* Collapsible chapters */}
-                        <div className="mb-6">
-                          <button
-                            onClick={() => setExpandedGuide(isOpen ? null : guide.id)}
-                            className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-text-muted hover:text-white transition-colors cursor-pointer"
-                          >
-                            <span className="material-symbols-outlined text-sm">
-                              {isOpen ? 'expand_less' : 'expand_more'}
-                            </span>
-                            {isOpen ? 'Hide chapters' : 'View chapters'}
-                          </button>
-
-                          <AnimatePresence>
-                            {isOpen && (
-                              <motion.ul
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                exit={{ opacity: 0, height: 0 }}
-                                className="mt-4 space-y-2.5 pl-3 border-l border-club-green/30 overflow-hidden"
-                              >
-                                {guide.chapters.map((ch, ci) => (
-                                  <li key={ci} className="flex items-start gap-2 text-xs text-text-muted">
-                                    <span className="text-[9px] font-black font-mono text-club-green shrink-0 mt-0.5">
-                                      {String(ci + 1).padStart(2, '0')}
-                                    </span>
-                                    {ch}
-                                  </li>
-                                ))}
-                              </motion.ul>
-                            )}
-                          </AnimatePresence>
+                        {/* Chapters */}
+                        <div className="pt-2 space-y-1">
+                          {guide.chapters.map((chapter, i) => (
+                            <div key={i} className="flex items-start gap-3">
+                              <span className="text-[9px] font-black text-royal mt-0.5 shrink-0">
+                                {String(i + 1).padStart(2, '0')}
+                              </span>
+                              <span className="text-xs text-gray-400 font-sans">{chapter}</span>
+                            </div>
+                          ))}
                         </div>
                       </div>
 
-                      {/* Action buttons */}
-                      <div className="flex flex-col gap-3 mt-auto">
-                        <a
-                          href={guide.htmlUrl}
+                      {/* Actions */}
+                      <div className="flex flex-col gap-3 shrink-0">
+                        
+                          <a href={guide.htmlUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="w-full py-3.5 bg-club-green hover:bg-white hover:text-club-green text-white text-[10px] font-black uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-2 shadow-lg"
+                          className="flex items-center gap-2 px-5 py-3 bg-royal/20 text-royal border border-royal/30 rounded text-[10px] font-black uppercase tracking-widest hover:bg-royal hover:text-white transition-all"
                         >
-                          <span className="material-symbols-outlined text-sm">menu_book</span>
-                          Read Online
+                          <BookOpen size={14} /> Read Online
                         </a>
-                        <a
-                          href={guide.pdfUrl}
+                        
+                          <a href={guide.pdfUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="w-full py-3.5 bg-[#0B0F19] hover:bg-[#0B0F19]/50 border border-[#1F2A3F] hover:border-club-green text-white text-[10px] font-black uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-2"
+                          className="flex items-center gap-2 px-5 py-3 bg-white/5 text-gray-400 border border-white/10 rounded text-[10px] font-black uppercase tracking-widest hover:text-white hover:border-white/30 transition-all"
                         >
-                          <span className="material-symbols-outlined text-sm">download</span>
-                          Download PDF
+                          <Download size={14} /> Download PDF
                         </a>
                       </div>
-                    </motion.div>
-                  );
-                })
-              )}
-            </motion.div>
-          )}
-
-          {/* ════════════════════════════════════════════════════════════════════
-              FAQ TAB
-          ════════════════════════════════════════════════════════════════════ */}
-          {activeTab === 'faqs' && (
-            <motion.div
-              key="faqs"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2 }}
-              className="max-w-3xl"
-            >
-              <div className="mb-6">
-                <span className="text-[9px] font-black uppercase tracking-widest text-text-muted">
-                  {filteredFaqs.length} Question{filteredFaqs.length !== 1 ? 's' : ''} Answered
-                </span>
+                    </div>
+                  </div>
+                ))}
               </div>
-
-              {filteredFaqs.length === 0 ? (
-                <div className="text-center py-16 bg-[#161F30] rounded-lg-2xl border border-dashed border-[#1F2A3F]">
-                  <p className="text-text-muted text-sm italic">No questions match "{searchQuery}"</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {filteredFaqs.map((faq, i) => {
-                    const isOpen = expandedFaq === i;
-                    return (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.04 }}
-                        className={`bg-[#161F30] border rounded-lg-2xl overflow-hidden transition-colors ${
-                          isOpen ? 'border-club-green/50' : 'border-[#1F2A3F]'
-                        }`}
-                      >
-                        <button
-                          onClick={() => setExpandedFaq(isOpen ? null : i)}
-                          className="w-full flex items-center justify-between gap-4 p-5 text-left cursor-pointer"
-                        >
-                          <div className="flex items-start gap-3 flex-1">
-                            <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border shrink-0 mt-0.5 ${TAG_COLORS[faq.topic] || 'bg-club-green/10 text-club-green border-club-green/20'}`}>
-                              {faq.topic}
-                            </span>
-                            <span className="text-sm font-bold text-white leading-snug">
-                              {faq.question}
-                            </span>
-                          </div>
-                          <span className={`material-symbols-outlined text-text-muted shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
-                            expand_more
-                          </span>
-                        </button>
-
-                        <AnimatePresence>
-                          {isOpen && (
-                            <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: 'auto' }}
-                              exit={{ opacity: 0, height: 0 }}
-                              className="overflow-hidden"
-                            >
-                              <p className="px-5 pb-5 text-xs text-text-muted leading-relaxed border-t border-[#1F2A3F] pt-4 mx-5">
-                                {faq.answer}
-                              </p>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              )}
-            </motion.div>
-          )}
-
-        </AnimatePresence>
-      </div>
-    </motion.main>
-  );
+            )}
+          </section>
+        );
+      })}
+    </div>
+  </main>
+);
 }
