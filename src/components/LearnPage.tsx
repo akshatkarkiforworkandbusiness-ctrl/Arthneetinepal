@@ -19,6 +19,7 @@ interface Lesson {
   desc: string;
   duration: string;
   tag: string;
+  level: 'Beginner' | 'Intermediate' | 'Advanced';
   videoUrl: string;
   thumbnail: string;
   chapters: string[];
@@ -42,6 +43,7 @@ interface Guide {
 export const LESSONS: Lesson[] = [
   {
     id: 'demystifying-nepse',
+    level: 'Beginner',
     title: 'Demystifying NEPSE',
     desc: 'A fast, clear walkthrough of how Nepal\'s stock market actually works — from SEBON and CDSC to IPO lotteries, settlement cycles, and why diversification matters.',
     duration: '8:00',
@@ -110,6 +112,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: 'budgeting-emergency-fund',
+    level: 'Beginner',
     title: 'Budgeting, Saving & Building Financial Resilience',
     desc: 'The 50/30/20 rule, compound interest vs inflation, SMART financial goals, responsible borrowing, and how NRB policy reaches your personal wallet.',
     duration: '9:30',
@@ -178,6 +181,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: 'monetary-policy-2026',
+    level: 'Advanced',
     title: 'Monetary Policy 2026: NRB\'s Cautiously Accommodative Stance',
     desc: 'Why NRB cut rates while credit demand stays subdued, the currency peg and the Impossible Trinity, NFRS 9 reporting changes, and the push toward digital banking.',
     duration: '10:15',
@@ -246,6 +250,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: 'ssa-reality',
+    level: 'Advanced',
     title: 'SSA and Its Reality: Nepal\'s Social Security Allowance',
     desc: 'How Nepal\'s constitutionally guaranteed cash transfer program actually reaches — and sometimes fails — its 3.8 million beneficiaries. Based on original Arthneeti research.',
     duration: '9:45',
@@ -374,6 +379,12 @@ const GUIDES: Guide[] = [
 // Flattened FAQ list — pulled from all lessons that have FAQs attached.
 // New lessons with a `faqs` array automatically show up here too.
 const FAQS: FAQ[] = LESSONS.flatMap(lesson => lesson.faqs || []);
+
+export const LEVEL_COLORS: Record<string, string> = {
+  'Beginner': 'bg-electric-mint/10 text-electric-mint border-electric-mint/20',
+  'Intermediate': 'bg-amber-400/10 text-amber-400 border-amber-400/20',
+  'Advanced': 'bg-rose-400/10 text-rose-400 border-rose-400/20',
+};
 
 const TAG_COLORS: Record<string, string> = {
   'Stock Market':       'bg-club-green/10 text-club-green border-club-green/20',
@@ -743,9 +754,14 @@ export default function LearnPage() {
 
                         {/* Card body */}
                         <div className="p-4">
-                          <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border inline-block mb-2 ${TAG_COLORS[lesson.tag] || 'bg-club-green/10 text-club-green border-club-green/20'}`}>
-                            {lesson.tag}
-                          </span>
+                          <div className="flex flex-wrap items-center gap-2 mb-2">
+                            <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border inline-block ${TAG_COLORS[lesson.tag] || 'bg-club-green/10 text-club-green border-club-green/20'}`}>
+                              {lesson.tag}
+                            </span>
+                            <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border inline-block ${LEVEL_COLORS[lesson.level]}`}>
+                              {lesson.level}
+                            </span>
+                          </div>
                           <h3 className="text-sm font-bold text-white leading-snug group-hover:text-club-green transition-colors">
                             {lesson.title}
                           </h3>

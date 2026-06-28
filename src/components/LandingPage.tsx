@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import ShinyText from './ShinyText';
 import { GradientCard } from './GradientCard';
-import { LESSONS } from './LearnPage';
+import { LESSONS, LEVEL_COLORS } from './LearnPage';
 
 interface Topic {
   id: string;
@@ -621,6 +621,11 @@ export default function LandingPage() {
                       </div>
                       
                       <div className="p-6">
+                        <div className="flex flex-wrap items-center gap-2 mb-3">
+                          <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border inline-block ${LEVEL_COLORS[video.level]}`}>
+                            {video.level}
+                          </span>
+                        </div>
                         <h4 className="text-sm font-bold text-white group-hover:text-club-green transition-colors mb-3 leading-snug line-clamp-2">
                           {video.title}
                         </h4>
