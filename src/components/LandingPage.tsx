@@ -532,7 +532,7 @@ export default function LandingPage() {
                     <div className="flex items-center justify-between border-t border-[#1F2A3F] pt-6 mt-auto">
                       <span className="text-[10px] text-text-muted italic">Ready to review? Jump into our market explorer.</span>
                       <Link 
-                        to="/discover"
+                        to="/learn"
                         className="bg-club-green text-white px-6 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-club-green transition-all flex items-center gap-1.5"
                       >
                         Start Learning Modules
