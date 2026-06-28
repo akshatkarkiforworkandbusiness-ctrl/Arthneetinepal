@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
@@ -387,7 +388,11 @@ const TAG_COLORS: Record<string, string> = {
 export default function LearnPage() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'videos' | 'guides' | 'faqs'>('videos');
-  const [activeLesson, setActiveLesson] = useState<Lesson>(LESSONS[0]);
+  const { lessonId } = useParams<{ lessonId: string }>();
+  const navigate = useNavigate();
+  const [activeLesson, setActiveLesson] = useState<Lesson>(
+    LESSONS.find(l => l.id === lessonId) ?? LESSONS[0]
+  );
   const [isPlaying, setIsPlaying]       = useState(false);
   const [completed, setCompleted]       = useState<Set<string>>(new Set());
   const [expandedGuide, setExpandedGuide] = useState<string | null>(null);
@@ -431,6 +436,7 @@ export default function LearnPage() {
     setActiveLesson(lesson);
     setIsPlaying(true);
     setExpandedLessonFaq(null);
+    navigate(`/learn/${lesson.id}`, { replace: true });
     setTimeout(() => {
       playerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);

@@ -34,6 +34,7 @@ export default function App() {
               <Route path="/discover" element={<ExplorePage />} />
               <Route path="/about-us" element={<AboutUsPage />} />
               <Route path="/learn" element={<LearnPage />} />
+              <Route path="/learn/:lessonId" element={<LearnPage />} />
               <Route path="/events" element={<EventsPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
