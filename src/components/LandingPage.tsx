@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import ShinyText from './ShinyText';
 import { GradientCard } from './GradientCard';
+import { LESSONS } from './LearnPage';
 
 interface Topic {
   id: string;
@@ -83,29 +84,6 @@ const pillarsSyllabus = [
   }
 ];
 
-const mockVideos = [
-  {
-    title: 'NEPSE Share Market Guide for Beginners in Nepal',
-    desc: 'Step-by-step guidance on DEMAT, Meroshare, IPO application criteria, and brokerage accounts.',
-    duration: '25:12',
-    videoUrl: 'https://www.youtube.com/embed/Wv-L63uD4m8',
-    thumbnail: 'https://img.youtube.com/vi/Wv-L63uD4m8/hqdefault.jpg'
-  },
-  {
-    title: 'Nepal Rastra Bank Monetary Policy Analysis & NEPSE Impact',
-    desc: 'Deep-dive explanation of bank interest rates, liquidity constraints, and fiscal policies of Nepal Rastra Bank.',
-    duration: '19:40',
-    videoUrl: 'https://www.youtube.com/embed/vOenP8oQ_oI',
-    thumbnail: 'https://img.youtube.com/vi/vOenP8oQ_oI/hqdefault.jpg'
-  },
-  {
-    title: 'Stock Selection & Technical Analysis for Beginners',
-    desc: 'Learn how to read candlestick charts, support/resistance, and find the best stock entry points.',
-    duration: '18:02',
-    videoUrl: 'https://www.youtube.com/embed/q6g4V52u1O8',
-    thumbnail: 'https://img.youtube.com/vi/q6g4V52u1O8/hqdefault.jpg'
-  }
-];
 
 const mockPamphlets = [
   {
@@ -620,7 +598,7 @@ export default function LandingPage() {
                   exit={{ opacity: 0, y: -10 }}
                   className="grid grid-cols-1 md:grid-cols-3 gap-8"
                 >
-                  {mockVideos.map((video, idx) => (
+                  {LESSONS.slice(0, 3).map((video, idx) => (
                     <div 
                       key={idx}
                       className="bg-[#0B0F19] border border-[#1F2A3F] rounded-lg-2xl overflow-hidden group shadow-lg flex flex-col justify-between"
