@@ -312,48 +312,6 @@ export const LESSONS: Lesson[] = [
       },
     ],
   },
-  {
-    id: 'nepse-beginners-guide',
-    title: 'NEPSE Share Market Guide for Beginners in Nepal',
-    desc: 'Step-by-step guidance on DEMAT, Meroshare, IPO application criteria, and brokerage accounts.',
-    duration: '25:12',
-    tag: 'Stock Market',
-    videoUrl: 'https://www.youtube.com/embed/Wv-L63uD4m8',
-    thumbnail: 'https://img.youtube.com/vi/Wv-L63uD4m8/hqdefault.jpg',
-    chapters: [
-      'What is a DEMAT account?',
-      'Applying for IPOs through Meroshare',
-      'Opening a broker account',
-    ]
-  },
-  {
-    id: 'nrb-monetary-policy-analysis',
-    title: 'Nepal Rastra Bank Monetary Policy Analysis & NEPSE Impact',
-    desc: 'Deep-dive explanation of bank interest rates, liquidity constraints, and fiscal policies of Nepal Rastra Bank.',
-    duration: '19:40',
-    tag: 'Policy & Economics',
-    videoUrl: 'https://www.youtube.com/embed/vOenP8oQ_oI',
-    thumbnail: 'https://img.youtube.com/vi/vOenP8oQ_oI/hqdefault.jpg',
-    chapters: [
-      'Understanding NRB monetary policy',
-      'Bank interest rates and liquidity',
-      'Impact on the NEPSE stock market',
-    ]
-  },
-  {
-    id: 'stock-selection-technical-analysis',
-    title: 'Stock Selection & Technical Analysis for Beginners',
-    desc: 'Learn how to read candlestick charts, support/resistance, and find the best stock entry points.',
-    duration: '18:02',
-    tag: 'Technical Analysis',
-    videoUrl: 'https://www.youtube.com/embed/q6g4V52u1O8',
-    thumbnail: 'https://img.youtube.com/vi/q6g4V52u1O8/hqdefault.jpg',
-    chapters: [
-      'Introduction to candlestick charts',
-      'Identifying support and resistance',
-      'Finding optimal entry points',
-    ]
-  },
 ];
 
 const GUIDES: Guide[] = [
