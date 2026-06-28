@@ -376,6 +376,38 @@ const GUIDES: Guide[] = [
   },
 ];
 
+interface Module {
+  id: string;
+  title: string;
+  description: string;
+  lessonIds: string[];
+  guideIds: string[];
+}
+
+const MODULES: Module[] = [
+  {
+    id: 'financial-literacy',
+    title: 'Financial Literacy',
+    description: 'Personal finance fundamentals — budgeting, saving, and understanding how NRB policy affects your wallet.',
+    lessonIds: ['budgeting-emergency-fund'],
+    guideIds: ['financial-literacy'],
+  },
+  {
+    id: 'investing-markets',
+    title: 'Investing & Markets',
+    description: 'How NEPSE works, how to read it, and how to start investing in Nepal\'s stock market.',
+    lessonIds: ['demystifying-nepse'],
+    guideIds: ['nepse-guide'],
+  },
+  {
+    id: 'economics-research',
+    title: 'Economics & Research',
+    description: 'Macroeconomics, monetary policy, and original Arthneeti research on Nepal\'s economy.',
+    lessonIds: ['monetary-policy-2026', 'ssa-reality'],
+    guideIds: ['economics-guidebook'],
+  },
+];
+
 // Flattened FAQ list — pulled from all lessons that have FAQs attached.
 // New lessons with a `faqs` array automatically show up here too.
 const FAQS: FAQ[] = LESSONS.flatMap(lesson => lesson.faqs || []);
@@ -404,7 +436,7 @@ export default function LearnPage() {
   const [activeLesson, setActiveLesson] = useState<Lesson>(
     LESSONS.find(l => l.id === lessonId) ?? LESSONS[0]
   );
-  const [isPlaying, setIsPlaying]       = useState(false);
+  const [isPlaying, setIsPlaying]       = useState(!!lessonId);
   const [completed, setCompleted]       = useState<Set<string>>(new Set());
   const [expandedGuide, setExpandedGuide] = useState<string | null>(null);
   const [expandedFaq, setExpandedFaq]   = useState<number | null>(null);
