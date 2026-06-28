@@ -430,7 +430,6 @@ const TAG_COLORS: Record<string, string> = {
 
 export default function LearnPage() {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<'videos' | 'guides' | 'faqs'>('videos');
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
   const [activeLesson, setActiveLesson] = useState<Lesson>(
