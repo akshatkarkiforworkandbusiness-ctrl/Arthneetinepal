@@ -5,7 +5,6 @@ import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { LESSONS } from './LearnPage';
-import LiquidOcean from './LiquidOcean';
 
 interface Topic {
   id: string;
@@ -96,6 +95,36 @@ const mockPamphlets = [
   }
 ];
 
+const socialIcons = [
+  { name: 'Women & Girls', icon: 'woman' },
+  { name: "Children's Welfare", icon: 'child_care' },
+  { name: 'Disability Inclusion', icon: 'accessible' },
+  { name: 'Underprivileged Communities', icon: 'groups' }
+];
+
+const executiveBoard = [
+  {
+    name: 'Akshat Karki',
+    role: 'President',
+    bio: "Leading Arthneeti's vision to build Nepal's most impactful youth financial education movement. Focused on school partnerships, club strategy, and driving the mission forward."
+  },
+  {
+    name: 'Manash Koirala',
+    role: 'Vice President',
+    bio: "Supporting club operations and co-leading educational strategy. Passionate about making stock market knowledge accessible to every Nepali high schooler."
+  },
+  {
+    name: 'Ujjwal Dhungana',
+    role: 'Head of Research & Comm',
+    bio: "Driving Arthneeti's research agenda and external communications. Builds the intellectual content that makes our sessions substantive and credible."
+  },
+  {
+    name: 'Pranjal Khatiwada',
+    role: 'Secretary',
+    bio: "Managing club coordination, records, and logistics. Ensures Arthneeti runs smoothly across all schools and sessions."
+  }
+];
+
 export default function LandingPage() {
   const { user, handleJoinAction } = useAuth();
   const [latestTopics, setLatestTopics] = useState<Topic[]>([]);
@@ -130,7 +159,6 @@ export default function LandingPage() {
   }, []);
 
   const [marketDataSource, setMarketDataSource] = useState<'live' | 'simulated' | 'loading'>('loading');
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   useEffect(() => {
     const NEPSE_API = 'https://nepseapi.surajrimal.dev';
@@ -172,7 +200,6 @@ export default function LandingPage() {
 
         setMarketIndices(next);
         setMarketDataSource('live');
-        setLastUpdated(new Date());
       } catch {
         if (marketDataSource === 'loading') setMarketDataSource('simulated');
       }
@@ -226,64 +253,76 @@ export default function LandingPage() {
     <motion.main 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="flex flex-col bg-black min-h-screen text-white font-sans"
+      className="flex flex-col bg-[#ffffff] min-h-screen text-[#000000] font-neufile"
     >
-      {/* Sequel Nav Overlay (Sticky top handled by App.tsx, but we ensure styling aligns) */}
       
-      {/* Hero Section */}
-      <section className="relative overflow-hidden min-h-screen flex flex-col justify-center items-center text-center">
-        <div className="absolute inset-0 z-0">
-           <LiquidOcean />
-        </div>
-        <div className="absolute inset-0 z-0 bg-black/40 pointer-events-none" />
-
+      {/* Dark Hero Stage */}
+      <section className="bg-[#191b1f] pt-[128px] pb-[96px] px-6 min-h-[80vh] flex flex-col items-center">
         <motion.div
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="relative z-10 w-full max-w-[1280px] px-6 flex flex-col items-center mt-16"
+          className="w-full max-w-[1200px] flex flex-col items-center text-center"
         >
-          <h1 className="font-display text-[58px] md:text-[128px] text-white leading-[1] tracking-[-0.05em] mb-8 max-w-5xl">
-            Build the future.
+          <h1 className="font-albra text-[46px] md:text-[80px] text-[#ffffff] font-semibold leading-[1.1] tracking-[1.6px] max-w-5xl mb-6">
+            Structural intelligence for Nepal's next generation.
           </h1>
-          <p className="font-sans font-light text-[18px] md:text-[22px] text-[#c0c0c0] mb-12 max-w-2xl leading-[1.4] tracking-[-0.02em]">
-            Arthneeti is the new cinematic learning standard for Nepal. 
-            Financial literacy, market analysis, and youth empowerment.
+          <p className="font-albra text-[22px] font-semibold text-[#ffffff] opacity-70 leading-[1.2] tracking-[0.44px] mb-12 max-w-2xl">
+            A private gallery of financial knowledge, market analysis, and economic discourse.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center mt-4">
             {!user ? (
-              <button 
-                onClick={handleJoinAction}
-                className="bg-white text-black px-6 py-4 rounded-[9999px] font-sans font-medium text-[15px] hover:bg-[#f5f5f0] transition-colors shadow-[0_4px_20px_rgba(0,0,0,0.15)] flex items-center justify-center gap-2 cursor-pointer"
-              >
-                Join Arthneeti <span className="material-symbols-outlined text-lg">arrow_forward</span>
-              </button>
+              <>
+                <button 
+                  onClick={handleJoinAction}
+                  className="bg-[#186f64] text-[#ffffff] px-[27px] py-[12px] rounded-[2px] font-neufile font-medium text-[16px] cursor-pointer"
+                >
+                  Join Arthneeti
+                </button>
+                <Link 
+                  to="/discover" 
+                  className="text-[#186f64] px-[27px] py-[12px] font-neufile font-medium text-[16px] inline-flex items-center"
+                >
+                  Explore Markets
+                </Link>
+              </>
             ) : (
-              <Link 
-                to="/profile" 
-                className="bg-white text-black px-6 py-4 rounded-[9999px] font-sans font-medium text-[15px] hover:bg-[#f5f5f0] transition-colors shadow-[0_4px_20px_rgba(0,0,0,0.15)] flex items-center justify-center gap-2"
-              >
-                Go to Dashboard <span className="material-symbols-outlined text-lg">arrow_forward</span>
-              </Link>
+              <>
+                <Link 
+                  to="/profile" 
+                  className="bg-[#186f64] text-[#ffffff] px-[27px] py-[12px] rounded-[2px] font-neufile font-medium text-[16px] text-center"
+                >
+                  Go to Dashboard
+                </Link>
+                <Link 
+                  to="/discover" 
+                  className="text-[#186f64] px-[27px] py-[12px] font-neufile font-medium text-[16px] inline-flex items-center"
+                >
+                  Explore Markets
+                </Link>
+              </>
             )}
-            <Link 
-              to="/discover" 
-              className="bg-transparent text-white border border-white/50 px-6 py-4 rounded-[9999px] font-sans font-medium text-[15px] hover:border-white transition-colors text-center"
-            >
-              Explore Markets
-            </Link>
           </div>
         </motion.div>
+        
+        {/* Abstract 3D Render Placeholder */}
+        <div className="flex-grow flex items-end justify-center w-full max-w-[1200px] mt-16 relative">
+          <div className="w-full max-w-[800px] h-[300px] bg-gradient-to-t from-[#ffffff]/5 to-transparent rounded-[2px] border-t border-[#e6ebec]/10 flex items-center justify-center opacity-50">
+             <span className="font-neufile text-[13px] text-[#ffffff]/30 uppercase tracking-widest">Chrome Sculptural Accent Space</span>
+          </div>
+        </div>
       </section>
 
-      {/* Market Ticker Section */}
-      <section className="bg-black py-24 px-6">
-        <div className="max-w-[1280px] mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-12 border-b border-[#333333] pb-6">
-            <h2 className="font-display text-[32px] text-white tracking-[-0.05em]">Market Overview</h2>
-            <span className="font-sans font-medium text-[12px] uppercase tracking-[0.08em] text-[#999999]">
-              {marketDataSource === 'live' ? 'Live Data' : 'Simulated Data'}
+      {/* Market Ticker Section (Paper White) */}
+      <section className="bg-[#ffffff] py-[96px] px-6 border-b border-[#e6ebec]">
+        <div className="max-w-[1200px] mx-auto">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-12">
+            <h2 className="font-albra text-[46px] font-semibold text-[#000000] tracking-[0.92px] leading-[1.2]">
+              Market Action
+            </h2>
+            <span className="font-neufile font-medium text-[13px] text-[#9fabad]">
+              {marketDataSource === 'live' ? 'Live Data Feed' : 'Simulated Data'}
             </span>
           </div>
 
@@ -296,32 +335,32 @@ export default function LandingPage() {
               return (
                 <div 
                   key={key} 
-                  className="bg-[#202020] rounded-[10px] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.08)] flex justify-between items-center"
+                  className="border border-[#e6ebec] rounded-[0px] p-[32px] bg-[#ffffff] flex flex-col gap-6"
                 >
                   <div>
-                    <span className="font-sans font-medium text-[11px] uppercase tracking-[0.08em] text-[#999999] block mb-2">{item.name}</span>
-                    <h4 className="text-[32px] font-display text-white tracking-[-0.05em] leading-[1]">{item.value.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h4>
+                    <span className="font-neufile text-[13px] text-[#9fabad] block mb-2">{item.name}</span>
+                    <h4 className="text-[28px] font-neufile font-medium text-[#000000] leading-[1.3]">{item.value.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h4>
                     <span 
-                      className="font-sans font-light text-[14px] inline-flex items-center gap-1 mt-2 text-[#c0c0c0]"
+                      className="font-neufile text-[16px] inline-flex items-center gap-2 mt-2 text-[#9fabad]"
                     >
-                      <span className="material-symbols-outlined text-[14px]">
+                      <span className="material-symbols-outlined text-[16px]">
                         {isGain ? 'north_east' : 'south_east'}
                       </span>
                       <span>{sign}{item.changePercent}%</span>
                     </span>
                   </div>
                   
-                  {/* Sparkline Graphic - Achromatic */}
+                  {/* Sparkline Graphic */}
                   <div className="w-[120px] h-[40px] flex items-center">
                     <svg className="w-full h-full">
                       <path 
                         d={getSparklinePath(item.sparkline)}
                         fill="none"
-                        stroke="#ffffff"
+                        stroke="#000000"
                         strokeWidth="1.5"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        opacity="0.5"
+                        opacity="0.2"
                       />
                     </svg>
                   </div>
@@ -332,219 +371,266 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Two-column Feature Pair (Syllabus) */}
-      <section className="bg-black py-24 px-6 border-t border-[#333333]">
-        <div className="max-w-[1280px] mx-auto">
-          <div className="mb-16">
-            <h2 className="font-display text-[58px] text-white tracking-[-0.05em] leading-[1.2]">
-              Curriculum Roadmap
-            </h2>
-            <p className="font-sans font-light text-[18px] text-[#999999] mt-4 max-w-xl leading-[1.5]">
-              Explore the educational path designed to empower students with structural economic knowledge and real market insights.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {pillarsSyllabus.map((pillar) => (
-              <div key={pillar.num} className="bg-[#202020] rounded-[10px] shadow-[0_10px_30px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.08)] overflow-hidden flex flex-col h-full relative p-8">
-                {/* Badge top right */}
-                <div className="absolute top-6 right-6 bg-white/5 border border-white/10 rounded-[9999px] px-3 py-1 font-sans font-medium text-[10px] uppercase text-white tracking-[0.08em]">
-                  Pillar {pillar.num}
-                </div>
-                
-                <h3 className="font-display text-[32px] text-white tracking-[-0.05em] mt-8 mb-4">{pillar.title}</h3>
-                <p className="font-sans font-light text-[15px] text-[#c0c0c0] leading-[1.5] mb-8">
-                  {pillar.desc}
-                </p>
-                
-                <div className="mt-auto border-t border-[#333333] pt-6 flex flex-col gap-3">
-                  {pillar.modules.slice(0, 2).map((mod, i) => (
-                    <div key={i} className="flex justify-between items-center text-sm font-sans font-light text-[#999999]">
-                      <span className="truncate pr-4">{mod.title}</span>
-                      <span className="shrink-0 font-medium">{mod.duration}</span>
-                    </div>
-                  ))}
-                </div>
+      {/* Curriculum Section (Peach Wall Tinted Feature Card Style) */}
+      <section className="bg-[#ffffff] py-[96px] px-6">
+        <div className="max-w-[1200px] mx-auto bg-[#fcede1] p-[64px] rounded-[0px]">
+          <div className="flex flex-col lg:flex-row gap-[64px]">
+            <div className="lg:w-1/2">
+              <h2 className="font-albra text-[46px] font-semibold text-[#000000] tracking-[0.92px] leading-[1.2] mb-6">
+                Curriculum Structure
+              </h2>
+              <p className="font-neufile text-[16px] text-[#000000] leading-[1.4] mb-12">
+                A rigorous educational path designed to empower students with structural economic knowledge and actual market insights. Built for high-schoolers, taught by peers.
+              </p>
+              
+              <div className="flex items-center gap-4">
+                 <Link 
+                    to="/learn"
+                    className="bg-[#536eff] text-[#ffffff] px-[27px] py-[12px] rounded-[2px] font-neufile font-medium text-[16px] inline-flex"
+                  >
+                    Start Learning
+                  </Link>
+                  <Link 
+                    to="/learn"
+                    className="text-[#536eff] font-neufile font-medium text-[16px] inline-flex px-[27px]"
+                  >
+                    View Modules
+                  </Link>
               </div>
-            ))}
+            </div>
+            
+            <div className="lg:w-1/2 flex flex-col gap-6">
+               {pillarsSyllabus.map((pillar) => (
+                  <div key={pillar.num} className="bg-[#ffffff]/60 border border-[#e6ebec]/50 p-[32px] rounded-[0px]">
+                    <div className="flex items-center gap-4 mb-4">
+                      <span className="font-neufile font-medium text-[13px] bg-[#ffffff] px-2 py-1 rounded-[2px] text-[#000000] border border-[#e6ebec]">
+                        Pillar {pillar.num}
+                      </span>
+                      <h3 className="font-albra text-[22px] font-semibold text-[#000000] tracking-[0.44px]">{pillar.title}</h3>
+                    </div>
+                    <p className="font-neufile text-[16px] text-[#000000] leading-[1.4]">
+                      {pillar.desc}
+                    </p>
+                  </div>
+               ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Resources & Library (Editorial Cards) */}
-      <section className="bg-black py-24 px-6 border-t border-[#333333]">
-        <div className="max-w-[1280px] mx-auto">
+      {/* Resource Library Section (Mint Wall Tinted Feature Card Style) */}
+      <section className="bg-[#f6f9f9] py-[96px] px-6">
+        <div className="max-w-[1200px] mx-auto bg-[#eefcef] p-[64px] rounded-[0px]">
+          <div className="flex flex-col lg:flex-row gap-[64px]">
+            <div className="lg:w-1/3">
+              <h2 className="font-albra text-[46px] font-semibold text-[#000000] tracking-[0.92px] leading-[1.2] mb-6">
+                Resource Vault
+              </h2>
+              <p className="font-neufile text-[16px] text-[#000000] leading-[1.4] mb-12">
+                Explore media materials, central bank publications, downloadable infographics, and guided video series.
+              </p>
+              
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={() => setActiveResourceTab('videos')}
+                  className={`px-[27px] py-[12px] rounded-[2px] font-neufile font-medium text-[16px] text-left transition-colors ${
+                    activeResourceTab === 'videos' 
+                      ? 'bg-[#186f64] text-[#ffffff]' 
+                      : 'bg-transparent text-[#191b1f] hover:bg-[#ffffff]/50'
+                  }`}
+                >
+                  Video Masterclasses
+                </button>
+                <button
+                  onClick={() => setActiveResourceTab('pamphlets')}
+                  className={`px-[27px] py-[12px] rounded-[2px] font-neufile font-medium text-[16px] text-left transition-colors ${
+                    activeResourceTab === 'pamphlets' 
+                      ? 'bg-[#186f64] text-[#ffffff]' 
+                      : 'bg-transparent text-[#191b1f] hover:bg-[#ffffff]/50'
+                  }`}
+                >
+                  Printable Guides
+                </button>
+              </div>
+            </div>
+
+            <div className="lg:w-2/3 min-h-[300px]">
+              <AnimatePresence mode="wait">
+                {activeResourceTab === 'videos' && (
+                  <motion.div 
+                    key="videos" 
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -10 }}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                  >
+                    {LESSONS.slice(0, 4).map((video, idx) => (
+                      <div 
+                        key={idx}
+                        className="bg-[#ffffff] border border-[#e6ebec] rounded-[0px] p-[32px] flex flex-col"
+                      >
+                        <h4 className="font-albra text-[22px] font-semibold text-[#000000] mb-4 tracking-[0.44px] leading-[1.2] line-clamp-2">
+                          {video.title}
+                        </h4>
+                        <p className="font-neufile text-[13px] text-[#9fabad] leading-[1.4] mb-6 line-clamp-2">
+                          {video.desc}
+                        </p>
+                        <button 
+                           onClick={() => setSelectedVideoEmbed(video.videoUrl)}
+                           className="mt-auto text-[#186f64] font-neufile font-medium text-[16px] text-left flex items-center gap-2"
+                        >
+                           Watch Segment <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                        </button>
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+
+                {activeResourceTab === 'pamphlets' && (
+                  <motion.div 
+                    key="pamphlets" 
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -10 }}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                  >
+                    {mockPamphlets.map((pamphlet, idx) => (
+                      <div 
+                        key={idx}
+                        className="bg-[#ffffff] border border-[#e6ebec] rounded-[0px] p-[32px] flex flex-col"
+                      >
+                        <div className="flex justify-between items-start mb-4">
+                          <span className="font-neufile text-[13px] text-[#9fabad]">{pamphlet.category}</span>
+                          <span className="font-neufile text-[13px] text-[#9fabad]">{pamphlet.size}</span>
+                        </div>
+                        <h4 className="font-albra text-[22px] font-semibold text-[#000000] mb-8 tracking-[0.44px] leading-[1.2]">
+                          {pamphlet.title}
+                        </h4>
+                        <a 
+                          href={pamphlet.downloadUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="mt-auto text-[#186f64] font-neufile font-medium text-[16px] text-left flex items-center gap-2"
+                        >
+                          Download Artifact <span className="material-symbols-outlined text-[16px]">download</span>
+                        </a>
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Community Forum (Lavender Wall Tinted Feature Card Style) */}
+      <section className="bg-[#ffffff] py-[96px] px-6">
+        <div className="max-w-[1200px] mx-auto bg-[#e6def0] p-[64px] rounded-[0px]">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12">
-            <h2 className="font-display text-[58px] text-white tracking-[-0.05em] leading-[1.2]">
-              Resource Library
-            </h2>
-            <div className="flex gap-2 mt-6 md:mt-0">
-              <button
-                onClick={() => setActiveResourceTab('videos')}
-                className={`px-6 py-2 rounded-[9999px] font-sans font-medium text-[14px] transition-colors ${
-                  activeResourceTab === 'videos' 
-                    ? 'bg-white text-black' 
-                    : 'bg-transparent text-white border border-white/50 hover:border-white'
-                }`}
-              >
-                Videos
-              </button>
-              <button
-                onClick={() => setActiveResourceTab('pamphlets')}
-                className={`px-6 py-2 rounded-[9999px] font-sans font-medium text-[14px] transition-colors ${
-                  activeResourceTab === 'pamphlets' 
-                    ? 'bg-white text-black' 
-                    : 'bg-transparent text-white border border-white/50 hover:border-white'
-                }`}
-              >
-                Guides
-              </button>
+            <div>
+              <h2 className="font-albra text-[46px] font-semibold text-[#000000] tracking-[0.92px] leading-[1.2]">
+                Forum & Discourse
+              </h2>
+            </div>
+            <div className="flex items-center gap-4 mt-6 md:mt-0">
+               <Link 
+                  to="/community" 
+                  className="bg-[#154ea5] text-[#ffffff] px-[27px] py-[12px] rounded-[2px] font-neufile font-medium text-[16px] inline-flex"
+                >
+                  Enter Discourse
+                </Link>
+                <Link 
+                  to="/community" 
+                  className="text-[#154ea5] font-neufile font-medium text-[16px] inline-flex px-[27px]"
+                >
+                  View All Topics
+                </Link>
             </div>
           </div>
 
-          <div className="min-h-[300px]">
-            <AnimatePresence mode="wait">
-              {activeResourceTab === 'videos' && (
-                <motion.div 
-                  key="videos" 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="grid grid-cols-1 md:grid-cols-3 gap-6"
-                >
-                  {LESSONS.slice(0, 3).map((video, idx) => (
-                    <div 
-                      key={idx}
-                      className="bg-[#202020] rounded-[10px] shadow-[0_10px_30px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.08)] overflow-hidden flex flex-col group relative"
-                    >
-                      <div className="relative aspect-video w-full bg-black cursor-pointer" onClick={() => setSelectedVideoEmbed(video.videoUrl)}>
-                        <img 
-                          src={video.thumbnail} 
-                          alt={video.title}
-                          className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-500 grayscale"
-                        />
-                        <div className="absolute inset-0 m-auto w-12 h-12 rounded-full border border-white flex items-center justify-center group-hover:scale-110 transition-transform bg-black/20 backdrop-blur-sm">
-                          <span className="material-symbols-outlined text-white">play_arrow</span>
-                        </div>
-                      </div>
-                      
-                      <div className="p-6">
-                        <h4 className="font-sans font-medium text-[18px] text-white mb-2 leading-[1.4] line-clamp-2">
-                          {video.title}
-                        </h4>
-                        <p className="font-sans font-light text-[14px] text-[#999999] leading-[1.5] line-clamp-3">
-                          {video.desc}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </motion.div>
-              )}
-
-              {activeResourceTab === 'pamphlets' && (
-                <motion.div 
-                  key="pamphlets" 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="grid grid-cols-1 md:grid-cols-3 gap-6"
-                >
-                  {mockPamphlets.map((pamphlet, idx) => (
-                    <div 
-                      key={idx}
-                      className="bg-[#202020] rounded-[10px] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.08)] flex flex-col justify-between min-h-[200px]"
-                    >
-                      <div>
-                        <div className="flex justify-between items-start mb-4">
-                          <span className="bg-white/5 border border-white/10 rounded-[9999px] px-3 py-1 font-sans font-medium text-[10px] uppercase text-white tracking-[0.08em]">
-                            {pamphlet.category}
-                          </span>
-                          <span className="font-sans font-medium text-[10px] text-[#999999] tracking-[0.08em]">{pamphlet.size}</span>
-                        </div>
-                        <h4 className="font-sans font-medium text-[18px] text-white mb-2 leading-[1.4]">
-                          {pamphlet.title}
-                        </h4>
-                      </div>
-
-                      <a 
-                        href={pamphlet.downloadUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="bg-transparent text-white border border-[#333333] hover:border-white px-4 py-3 rounded-[9999px] font-sans font-medium text-[13px] transition-colors flex items-center justify-center gap-2 mt-6"
-                      >
-                        <span className="material-symbols-outlined text-sm">download</span> Download PDF
-                      </a>
-                    </div>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-      </section>
-
-      {/* Community / Latest Topics */}
-      <section className="bg-black py-24 px-6 border-t border-[#333333]">
-        <div className="max-w-[1280px] mx-auto">
-          <div className="mb-16">
-             <h2 className="font-display text-[58px] text-white tracking-[-0.05em] leading-[1.2]">
-              Forum
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {latestTopics.map((topic, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {latestTopics.map((topic) => (
               <div
                 key={topic.id}
-                className="p-8 rounded-[10px] bg-[#202020] shadow-[0_10px_30px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.08)] flex flex-col"
+                className="bg-[#ffffff] border border-[#e6ebec] rounded-[0px] p-[32px] flex flex-col"
               >
                 <div className="flex justify-between items-start mb-6">
-                  <span className="bg-white/5 border border-white/10 rounded-[9999px] px-3 py-1 font-sans font-medium text-[10px] uppercase text-white tracking-[0.08em]">
+                  <span className="font-neufile text-[13px] text-[#9fabad]">
                     {topic.category}
                   </span>
-                  <div className="flex items-center gap-1.5 text-[#999999]">
-                    <span className="material-symbols-outlined text-[14px]">favorite</span>
-                    <span className="font-sans font-medium text-[12px]">{topic.likes}</span>
-                  </div>
                 </div>
-                <Link to="/community" className="block mb-6">
-                  <h3 className="font-sans font-medium text-[22px] text-white leading-[1.4] tracking-[-0.02em] line-clamp-2">
-                    {topic.title || (topic as any).content?.replace(/<[^>]*>?/gm, '').substring(0, 60) + '...'}
-                  </h3>
-                </Link>
-                <div className="mt-auto pt-6 border-t border-[#333333] flex items-center gap-3">
-                  <span className="font-sans font-medium text-[12px] text-[#c0c0c0] uppercase tracking-[0.08em]">{topic.author}</span>
+                <h3 className="font-albra text-[22px] font-semibold text-[#000000] mb-8 tracking-[0.44px] leading-[1.2] line-clamp-3">
+                  {topic.title || (topic as any).content?.replace(/<[^>]*>?/gm, '').substring(0, 60) + '...'}
+                </h3>
+                <div className="mt-auto flex items-center justify-between">
+                  <span className="font-neufile text-[13px] text-[#000000]">{topic.author}</span>
+                  <div className="flex items-center gap-1 text-[#9fabad]">
+                    <span className="material-symbols-outlined text-[13px]">favorite</span>
+                    <span className="font-neufile text-[13px]">{topic.likes}</span>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Social Mission (Mist White) */}
+      <section className="bg-[#f6f9f9] py-[96px] px-6 border-y border-[#e6ebec]">
+        <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row items-center gap-[64px]">
+          <div className="lg:w-1/2">
+            <h2 className="font-albra text-[46px] font-semibold text-[#000000] tracking-[0.92px] leading-[1.2] mb-6">
+              Equitable Architecture
+            </h2>
+            <p className="font-neufile text-[16px] text-[#000000] leading-[1.4] mb-8">
+              We allocate workshop support and targeted curricula specifically for disadvantaged youths, disabled students, and underprivileged municipal schools to narrow the financial intelligence gap.
+            </p>
+          </div>
           
-          <div className="mt-12 text-center">
-            <Link 
-              to="/community" 
-              className="bg-transparent text-white border border-[#333333] hover:border-white px-8 py-4 rounded-[9999px] font-sans font-medium text-[15px] transition-colors inline-block"
-            >
-              Enter the Community
-            </Link>
+          <div className="lg:w-1/2 grid grid-cols-2 gap-6">
+            {socialIcons.map((item) => (
+              <div 
+                key={item.name} 
+                className="flex items-center gap-4 p-[24px] bg-[#ffffff] border border-[#e6ebec] rounded-[0px]"
+              >
+                <span className="material-symbols-outlined text-[24px] text-[#191b1f]">{item.icon}</span>
+                <span className="font-neufile font-medium text-[13px] text-[#000000]">{item.name}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Inverted Light Panel - Social Mission */}
-      <section className="bg-[#f5f5f0] py-24 px-6">
-        <div className="max-w-[720px] mx-auto text-center">
-          <h2 className="font-display text-[58px] text-[#000000] tracking-[-0.05em] leading-[1.2] mb-6">
-            Equitable Access
-          </h2>
-          <p className="font-sans font-light text-[18px] text-[#333333] leading-[1.5] mb-10">
-            Arthneeti allocates workshop support and targeted curricula specifically for disadvantaged youths, disabled students, and underprivileged municipal schools to narrow the financial intelligence gap.
-          </p>
-          <a 
-            href="mailto:learnarthneeti@gmail.com"
-            className="bg-[#202020] text-white px-8 py-4 rounded-[9999px] font-sans font-medium text-[15px] hover:bg-black transition-colors inline-block shadow-lg"
-          >
-            Partner With Us
-          </a>
+      {/* Executive Board */}
+      <section className="bg-[#ffffff] py-[96px] px-6">
+        <div className="max-w-[1200px] mx-auto">
+          <div className="mb-16">
+            <h2 className="font-albra text-[46px] font-semibold text-[#000000] tracking-[0.92px] leading-[1.2] mb-4">
+              Executive Board
+            </h2>
+            <p className="font-neufile text-[16px] text-[#9fabad]">
+              The core team guiding the structural intelligence of the movement.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {executiveBoard.map((member) => (
+              <div
+                key={member.name}
+                className="bg-[#ffffff] border border-[#e6ebec] p-[32px] rounded-[0px] flex flex-col"
+              >
+                <div className="w-[48px] h-[48px] bg-[#f6f9f9] border border-[#e6ebec] flex items-center justify-center text-[#000000] font-albra font-semibold text-[22px] mb-6">
+                  {member.name.split(' ').map(n => n[0]).join('')}
+                </div>
+                <h3 className="font-albra text-[22px] font-semibold text-[#000000] mb-2 tracking-[0.44px] leading-[1.2]">{member.name}</h3>
+                <p className="font-neufile font-medium text-[13px] text-[#9fabad] mb-6">{member.role}</p>
+                <p className="font-neufile text-[13px] text-[#000000] leading-[1.4]">
+                  {member.bio}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -552,17 +638,17 @@ export default function LandingPage() {
       <AnimatePresence>
         {selectedVideoEmbed && (
           <div 
-            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-[#191b1f]/90 backdrop-blur-sm flex items-center justify-center p-4"
             onClick={() => setSelectedVideoEmbed(null)}
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-[#202020] rounded-[10px] overflow-hidden max-w-[1024px] w-full shadow-2xl relative border border-[#333333]"
+              className="bg-[#ffffff] rounded-[0px] overflow-hidden max-w-[1024px] w-full shadow-none relative border border-[#e6ebec]"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="relative aspect-video">
+              <div className="relative aspect-video bg-[#191b1f]">
                 <iframe 
                   className="w-full h-full"
                   src={selectedVideoEmbed}
@@ -572,13 +658,13 @@ export default function LandingPage() {
                   allowFullScreen
                 />
               </div>
-              <div className="p-4 flex justify-between items-center border-t border-[#333333]">
-                <span className="font-sans font-light text-[12px] text-[#999999]">Arthneeti Academy Resource System</span>
+              <div className="p-[24px] flex justify-between items-center bg-[#ffffff]">
+                <span className="font-neufile text-[13px] text-[#9fabad]">Arthneeti Media Viewer</span>
                 <button
                   onClick={() => setSelectedVideoEmbed(null)}
-                  className="bg-transparent text-white border border-[#333333] hover:border-white px-4 py-2 rounded-[9999px] font-sans font-medium text-[13px] transition-colors cursor-pointer"
+                  className="bg-[#191b1f] text-[#ffffff] px-[27px] py-[12px] rounded-[2px] font-neufile font-medium text-[16px] cursor-pointer"
                 >
-                  Close Player
+                  Close Artifact
                 </button>
               </div>
             </motion.div>

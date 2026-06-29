@@ -15,68 +15,61 @@
   --font-mono: "JetBrains Mono", monospace;
 
   /* 
-   * SEQUEL DESIGN SYSTEM TOKENS
+   * LETTER DESIGN SYSTEM TOKENS
    */
-  --color-void-black: #000000;
-  --color-carbon: #202020;
-  --color-graphite: #333333;
-  --color-bone: #c0c0c0;
-  --color-smoke: #999999;
-  --color-ash: #b3b3b3;
-  --color-fog: #cccccc;
-  --color-chalk: #ffffff;
-  --color-linen: #f5f5f0;
+  --color-vault-ink: #191b1f;
+  --color-paper-white: #ffffff;
+  --color-mist-white: #f6f9f9;
+  --color-fog-gray: #9fabad;
+  --color-hairline: #e6ebec;
+  --color-obsidian: #000000;
+  
+  --color-peach-wall: #fcede1;
+  --color-mint-wall: #eefcef;
+  --color-lavender-wall: #e6def0;
+  
+  --color-deep-teal: #186f64;
+  --color-electric-violet: #536eff;
+  --color-royal-violet: #644bc4;
+  --color-sapphire-blue: #154ea5;
 
-  /* Sequel Typography */
-  --font-visueltpro: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-bradford: 'Playfair Display', ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  /* Typography */
+  --font-neufile: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-albra: 'Playfair Display', ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 
   /* Typography — Scale */
-  --text-caption: 12px;
-  --leading-caption: 1.5;
-  --tracking-caption: 0.36px;
-  --text-body-sm: 14px;
-  --leading-body-sm: 1.5;
-  --tracking-body-sm: -0.28px;
-  --text-body: 18px;
+  --text-caption: 13px;
+  --leading-caption: 1.4;
+  --text-body: 16px;
   --leading-body: 1.4;
-  --tracking-body: -0.36px;
   --text-subheading: 22px;
-  --leading-subheading: 1.4;
-  --tracking-subheading: -0.44px;
-  --text-heading: 32px;
+  --leading-subheading: 1.2;
+  --tracking-subheading: 0.44px;
+  --text-heading-sm: 28px;
+  --leading-heading-sm: 1.3;
+  --text-heading: 46px;
   --leading-heading: 1.2;
-  --tracking-heading: -1.6px;
-  --text-heading-lg: 58px;
-  --leading-heading-lg: 1.2;
-  --tracking-heading-lg: -2.9px;
-  --text-display: 128px;
-  --leading-display: 1;
-  --tracking-display: -6.4px;
+  --tracking-heading: 0.92px;
+  --text-display: 80px;
+  --leading-display: 1.1;
+  --tracking-display: 1.6px;
 
   /* Spacing */
   --spacing-4: 4px;
   --spacing-8: 8px;
   --spacing-12: 12px;
   --spacing-16: 16px;
-  --spacing-20: 20px;
   --spacing-24: 24px;
-  --spacing-28: 28px;
   --spacing-32: 32px;
-  --spacing-40: 40px;
+  --spacing-48: 48px;
   --spacing-64: 64px;
-  --spacing-80: 80px;
-  --spacing-96: 96px;
+  --spacing-72: 72px;
 
   /* Border Radius */
-  --radius-cards: 10px;
-  --radius-badges: 9999px;
-  --radius-images: 10px;
-  --radius-buttons: 9999px;
-
-  /* Shadows */
-  --shadow-xl: rgba(0, 0, 0, 0.35) 0px 10px 30px 0px, rgba(255, 255, 255, 0.08) 0px 1px 0px 0px inset;
-  --shadow-lg: rgba(0, 0, 0, 0.15) 0px 4px 20px 0px;
+  --radius-tags: 2px;
+  --radius-cards: 0px;
+  --radius-inputs: 2px;
+  --radius-buttons: 2px;
 
   /* 
    * LEGACY TOKENS (Do not remove yet - preserves old pages)
