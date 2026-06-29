@@ -7,6 +7,7 @@ import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestor
 import ShinyText from './ShinyText';
 import { GradientCard } from './GradientCard';
 import { LESSONS, LEVEL_COLORS } from './LearnPage';
+import ArthneetiTextAnimation from './ArthneetiTextAnimation';
 
 interface Topic {
   id: string;
@@ -320,6 +321,7 @@ export default function LandingPage() {
           transition={{ duration: 0.8 }}
           className="relative z-10 max-w-4xl"
         >
+          <ArthneetiTextAnimation />
           <ShinyText
             text="✨ NEPALESE YOUTH LED MOVEMENT"
             speed={2}
