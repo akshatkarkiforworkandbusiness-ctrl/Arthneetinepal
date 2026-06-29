@@ -21,38 +21,37 @@ export default function ArthneetiTextAnimation() {
       >
         {/* Shadow */}
         <span 
-          className="absolute text-5xl md:text-[6rem] font-black tracking-[0.2em] opacity-30 blur-md pointer-events-none"
-          style={{ transform: 'translateZ(-50px) translateY(20px)', color: '#00ffaa' }}
+          className="absolute text-5xl md:text-[6rem] font-medium tracking-normal opacity-40 blur-lg pointer-events-none"
+          style={{ transform: 'translateZ(-50px) translateY(20px)', color: '#dc5000' }}
         >
           {text}
         </span>
         {/* Layer 4 */}
         <span 
-          className="absolute text-5xl md:text-[6rem] font-black tracking-[0.2em] pointer-events-none"
-          style={{ transform: 'translateZ(-30px)', color: '#031414', WebkitTextStroke: '1px #062b2b' }}
+          className="absolute text-5xl md:text-[6rem] font-medium tracking-normal pointer-events-none"
+          style={{ transform: 'translateZ(-30px)', color: '#100904', WebkitTextStroke: '1px #382416' }}
         >
           {text}
         </span>
         {/* Layer 3 */}
         <span 
-          className="absolute text-5xl md:text-[6rem] font-black tracking-[0.2em] pointer-events-none"
-          style={{ transform: 'translateZ(-20px)', color: '#062b2b', WebkitTextStroke: '1px #0a4d4d' }}
+          className="absolute text-5xl md:text-[6rem] font-medium tracking-normal pointer-events-none"
+          style={{ transform: 'translateZ(-20px)', color: '#382416', WebkitTextStroke: '1px #40372e' }}
         >
           {text}
         </span>
         {/* Layer 2 */}
         <span 
-          className="absolute text-5xl md:text-[6rem] font-black tracking-[0.2em] pointer-events-none"
-          style={{ transform: 'translateZ(-10px)', color: '#0a4d4d', WebkitTextStroke: '1px #00ffaa' }}
+          className="absolute text-5xl md:text-[6rem] font-medium tracking-normal pointer-events-none"
+          style={{ transform: 'translateZ(-10px)', color: '#40372e', WebkitTextStroke: '1px #6c5f51' }}
         >
           {text}
         </span>
         {/* Layer 1 (Top) */}
         <span 
-          className="relative text-5xl md:text-[6rem] font-black tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-tr from-electric-mint via-white to-electric-mint pointer-events-none"
+          className="relative text-5xl md:text-[6rem] font-medium tracking-normal text-[#ffedd7] pointer-events-none"
           style={{ 
-            transform: 'translateZ(0px)',
-            filter: 'drop-shadow(0 0 15px rgba(0,255,170,0.4))'
+            transform: 'translateZ(0px)'
           }}
         >
           {text}
