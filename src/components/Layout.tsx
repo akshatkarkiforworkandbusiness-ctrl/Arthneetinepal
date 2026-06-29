@@ -3,7 +3,6 @@ import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../contexts/AuthContext';
-import ArthneetiLogo3D from './ArthneetiLogo3D';
 
 export function Navigation() {
   const location = useLocation();
@@ -94,12 +93,9 @@ export function Navigation() {
   return (
     <nav className="bg-slate-base sticky top-0 z-50 border-b border-white/10">
       <div className="max-w-7xl mx-auto flex justify-between items-center px-4 md:px-8 w-full h-20">
-        <Link to="/" className="flex items-center gap-4 group">
-          <ArthneetiLogo3D className="w-10 h-10 md:w-12 md:h-12 shrink-0" />
-          <div className="flex flex-col items-start leading-none">
-            <span className="text-xl md:text-2xl font-black text-white tracking-widest group-hover:text-electric-mint transition-colors">ARTHNEETI</span>
-            <span className="text-[10px] md:text-sm font-medium text-electric-mint ml-0.5">अर्थनीति</span>
-          </div>
+        <Link to="/" className="flex flex-col items-start leading-none group">
+          <span className="text-xl md:text-2xl font-black text-white tracking-widest group-hover:text-electric-mint transition-colors">ARTHNEETI</span>
+          <span className="text-[10px] md:text-sm font-medium text-electric-mint ml-0.5">अर्थनीति</span>
         </Link>
         
         <div className="hidden lg:flex items-center gap-10">
@@ -637,12 +633,9 @@ export function Footer() {
     <footer className="bg-slate-base text-white py-20 px-6 md:px-24">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
         <div className="max-w-xs">
-          <Link to="/" className="flex items-center gap-4 font-sans tracking-tight font-semibold leading-none mb-8 group">
-            <ArthneetiLogo3D className="w-16 h-16 shrink-0" />
-            <div className="flex flex-col items-start">
-              <span className="text-2xl font-black text-white tracking-widest group-hover:text-electric-mint transition-colors">ARTHNEETI</span>
-              <span className="text-sm font-medium text-electric-mint ml-0.5">अर्थनीति</span>
-            </div>
+          <Link to="/" className="flex flex-col items-start font-sans tracking-tight font-semibold leading-none mb-8">
+            <span className="text-2xl font-black text-white tracking-widest">ARTHNEETI</span>
+            <span className="text-sm font-medium text-electric-mint ml-0.5">अर्थनीति</span>
           </Link>
           <p className="text-white/40 text-[10px] font-black uppercase tracking-widest leading-loose">
             Nepal's student-led movement for financial intelligence. <br />
