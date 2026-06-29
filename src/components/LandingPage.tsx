@@ -4,7 +4,9 @@ import { useState, useEffect } from 'react';
 import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
-import { LESSONS } from './LearnPage';
+import ShinyText from './ShinyText';
+import { GradientCard } from './GradientCard';
+import { LESSONS, LEVEL_COLORS } from './LearnPage';
 
 interface Topic {
   id: string;
@@ -68,62 +70,75 @@ const pillarsSyllabus = [
       { title: 'How to Read Balance Sheets and EPS/PE Ratios', duration: '90 mins' },
       { title: 'Technical Indicators & Basic Chart Patterns', duration: '75 mins' }
     ]
+  },
+  {
+    num: '03',
+    title: 'Economic & Policy Research',
+    desc: 'National accounts, monetary policies, trade balances, and inflation metrics.',
+    modules: [
+      { title: 'Macroeconomic Principles: GDP, Inflation & Monetary Systems', duration: '80 mins' },
+      { title: 'Understanding NRB Monetary Policy & Bank Rate Adjustments', duration: '90 mins' },
+      { title: 'The Remittance Economy & Nepal\'s Balance of Payments', duration: '70 mins' },
+      { title: 'Designing Survey Methods & Writing Financial Reports', duration: '110 mins' }
+    ]
   }
 ];
 
+
 const mockPamphlets = [
   {
-    title: 'Stock Market Investing in Practice',
+    title: 'Stock Market Investing in Practice — A NEPSE Guide',
     size: '833 KB',
     language: 'English',
-    category: 'Investing',
+    category: 'Investing Guide',
     downloadUrl: '/nepse-investing-guide.pdf'
   },
   {
-    title: 'Financial Literacy Guide — Nepal',
+    title: 'Financial Literacy Guide — Nepal (Rastra Bank Syllabus)',
     size: '484 KB',
     language: 'Nepali / English',
-    category: 'Curriculum',
+    category: 'National Curriculum',
     downloadUrl: '/nepal_financial_literacy_curriculum.pdf'
   },
   {
-    title: 'Economic Research Guidebook',
+    title: 'Arthneeti — Economic Research Guidebook',
     size: '948 KB',
     language: 'English',
-    category: 'Research',
+    category: 'Research Guidebook',
     downloadUrl: '/arthneeti-economics-guidebook.pdf'
   }
 ];
 
-const socialIcons = [
-  { name: 'Women & Girls', icon: 'woman' },
-  { name: "Children's Welfare", icon: 'child_care' },
-  { name: 'Disability Inclusion', icon: 'accessible' },
-  { name: 'Underprivileged Communities', icon: 'groups' }
-];
-
-const executiveBoard = [
-  {
-    name: 'Akshat Karki',
-    role: 'President',
-    bio: "Leading Arthneeti's vision to build Nepal's most impactful youth financial education movement. Focused on school partnerships, club strategy, and driving the mission forward."
-  },
-  {
-    name: 'Manash Koirala',
-    role: 'Vice President',
-    bio: "Supporting club operations and co-leading educational strategy. Passionate about making stock market knowledge accessible to every Nepali high schooler."
-  },
-  {
-    name: 'Ujjwal Dhungana',
-    role: 'Head of Research & Comm',
-    bio: "Driving Arthneeti's research agenda and external communications. Builds the intellectual content that makes our sessions substantive and credible."
-  },
-  {
-    name: 'Pranjal Khatiwada',
-    role: 'Secretary',
-    bio: "Managing club coordination, records, and logistics. Ensures Arthneeti runs smoothly across all schools and sessions."
-  }
-];
+const mockFAQs = {
+  en: [
+    {
+      q: 'What is NEPSE and how can I start investing in Nepal?',
+      a: 'NEPSE is the Nepal Stock Exchange. To start investing, you must open a Demat Account at a Bank or stock brokerage, register for Meroshare online to apply for IPOs, and open a Trading Account with a licensed broker for secondary market trading.'
+    },
+    {
+      q: 'How does the Nepal Rastra Bank control inflation and money supply?',
+      a: 'Nepal Rastra Bank (NRB) is the central bank. It uses monetary tools like Bank Rate adjustments, Cash Reserve Ratio (CRR), Statutory Liquidity Ratio (SLR), and credit allocation limits to control inflation and liquidity.'
+    },
+    {
+      q: 'What is Arthneeti and how does it help students?',
+      a: 'Arthneeti is a student-led initiative aiming to build financial literacy and economic reasoning in school children across Nepal through workshops, curriculum roadmaps, and digital resource archives.'
+    }
+  ],
+  np: [
+    {
+      q: 'नेप्से (NEPSE) भनेको के हो र नेपालमा सेयर लगानी कसरी सुरु गर्ने?',
+      a: 'नेप्से नेपाल स्टक एक्सचेन्ज हो। सेयर लगानी सुरु गर्न तपाईँले कुनै पनि बैंक वा धितोपत्र ब्रोकरमा डिम्याट खाता (Demat Account) खोल्नुपर्छ, मेरोसेयर (Meroshare) मार्फत आईपीओ (IPO) आवेदन दिनुपर्छ र दोस्रो बजारका लागि ब्रोकर कहाँ खाता खोल्नुपर्छ।'
+    },
+    {
+      q: 'नेपाल राष्ट्र बैंकले मुद्रा आपूर्ति र मुद्रास्फीति कसरी नियन्त्रण गर्छ?',
+      a: 'नेपाल राष्ट्र बैंक केन्द्रीय बैंक हो। यसले मौद्रिक नीति उपकरणहरू जस्तै बैंक दर, अनिवार्य नगद मौज्दात (CRR), वैधानिक तरलता अनुपात (SLR), र कर्जा सीमा तोकेर बजारमा मुद्रा आपूर्ति र मुद्रास्फीति नियन्त्रण गर्छ।'
+    },
+    {
+      q: 'अर्थनीति के हो र यसले विद्यार्थीहरूलाई कसरी मद्दत गर्छ?',
+      a: 'अर्थनीति विद्यार्थीहरूद्वारा सञ्चालित अभियान हो जसले नेपालका विद्यालय स्तरका विद्यार्थीहरूमा वित्तीय साक्षरता र आर्थिक समझदारी बढाउन पाठ्यक्रम, कार्यशाला र अध्ययन सामग्रीहरू उपलब्ध गराउँछ।'
+    }
+  ]
+};
 
 export default function LandingPage() {
   const { user, handleJoinAction } = useAuth();
@@ -134,11 +149,15 @@ export default function LandingPage() {
   const [marketIndices, setMarketIndices] = useState<Record<string, IndexState>>(initialIndices);
   
   // Interactive UI states
-  const [activeResourceTab, setActiveResourceTab] = useState<'videos' | 'pamphlets'>('videos');
+  const [activePillarIndex, setActivePillarIndex] = useState<number | null>(0);
+  const [activeResourceTab, setActiveResourceTab] = useState<'videos' | 'pamphlets' | 'faq'>('videos');
   const [selectedVideoEmbed, setSelectedVideoEmbed] = useState<string | null>(null);
+  const [faqLanguage, setFaqLanguage] = useState<'en' | 'np'>('en');
+  const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(null);
 
+  // Firestore subscription for community updates
   useEffect(() => {
-    const qLatest = query(collection(db, 'posts'), orderBy('createdAt', 'desc'), limit(4));
+    const qLatest = query(collection(db, 'posts'), orderBy('createdAt', 'desc'), limit(6));
     const unsubscribeLatest = onSnapshot(qLatest, (snapshot) => {
       const topics = snapshot.docs.map(doc => ({
         id: doc.id,
@@ -158,7 +177,9 @@ export default function LandingPage() {
     };
   }, []);
 
+  // Market data: try live API, fall back to simulation if unavailable
   const [marketDataSource, setMarketDataSource] = useState<'live' | 'simulated' | 'loading'>('loading');
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   useEffect(() => {
     const NEPSE_API = 'https://nepseapi.surajrimal.dev';
@@ -178,6 +199,7 @@ export default function LandingPage() {
         const indexData = await indexRes.json();
         const subData = subIndexRes.ok ? await subIndexRes.json() : [];
 
+        // Build combined list
         const all = [indexData, ...(Array.isArray(subData) ? subData : [])];
         const next: Record<string, IndexState> = { ...initialIndices };
 
@@ -200,16 +222,21 @@ export default function LandingPage() {
 
         setMarketIndices(next);
         setMarketDataSource('live');
+        setLastUpdated(new Date());
       } catch {
+        // API unreachable — fall back to animated simulation
         if (marketDataSource === 'loading') setMarketDataSource('simulated');
       }
     };
 
     fetchLiveData();
-    const liveInterval = setInterval(fetchLiveData, 60_000);
+    const liveInterval = setInterval(fetchLiveData, 60_000); // refresh every 60s
+
     return () => clearInterval(liveInterval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Simulation tick — only runs when API is unavailable
   useEffect(() => {
     if (marketDataSource !== 'simulated') return;
     const interval = setInterval(() => {
@@ -231,6 +258,20 @@ export default function LandingPage() {
     return () => clearInterval(interval);
   }, [marketDataSource]);
 
+  const stats = [
+    { label: 'Active Topics', value: `${topicCount}+` },
+    { label: 'Board Members', value: '4' },
+    { label: 'Core Pillars', value: '3' }
+  ];
+
+  const socialIcons = [
+    { name: 'Women & Girls', icon: 'woman' },
+    { name: 'Children\'s Welfare', icon: 'child_care' },
+    { name: 'Disability Inclusion', icon: 'accessible' },
+    { name: 'Underprivileged Communities', icon: 'groups' }
+  ];
+
+  // Map numbers to SVG sparkline values
   const getSparklinePath = (points: number[]) => {
     if (points.length === 0) return '';
     const width = 120;
@@ -253,98 +294,147 @@ export default function LandingPage() {
     <motion.main 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="flex flex-col bg-[#ffffff] min-h-screen text-[#000000] font-neufile"
+      className="flex flex-col bg-[#0B0F19]"
     >
-      
-      {/* Dark Hero Stage */}
-      <section className="bg-[#191b1f] pt-[128px] pb-[96px] px-6 min-h-[80vh] flex flex-col items-center">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden pt-32 pb-44 px-6 min-h-[85vh] flex flex-col justify-center items-center text-center">
+        {/* Geometric Dot/Grid Background */}
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="dotPattern" width="30" height="30" patternUnits="userSpaceOnUse">
+                <circle cx="15" cy="15" r="1.5" fill="#94A3B8" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#dotPattern)" />
+          </svg>
+        </div>
+
+        {/* Nepal Flag Floating Accents */}
+        <div className="absolute top-20 right-[15%] w-72 h-72 bg-electric-mint/10 rounded-lg blur-3xl" />
+        <div className="absolute bottom-20 left-[15%] w-72 h-72 bg-club-green/10 rounded-lg blur-3xl" />
+
         <motion.div
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="w-full max-w-[1200px] flex flex-col items-center text-center"
+          className="relative z-10 max-w-4xl"
         >
-          <h1 className="font-albra text-[46px] md:text-[80px] text-[#ffffff] font-semibold leading-[1.1] tracking-[1.6px] max-w-5xl mb-6">
-            Structural intelligence for Nepal's next generation.
+          <ShinyText
+            text="✨ NEPALESE YOUTH LED MOVEMENT"
+            speed={2}
+            delay={0}
+            color="#FF3366"
+            shineColor="#ffffff"
+            spread={120}
+            direction="left"
+            yoyo={false}
+            pauseOnHover={false}
+            disabled={false}
+            className="text-[10px] font-black mb-4 block uppercase tracking-[0.4em]"
+          />
+          <h1 className="text-5xl md:text-8xl text-white mb-8 leading-tight tracking-tight font-sans tracking-tight font-semibold italic">
+            Think Big. <br />
+            Invest Smart. <br />
+            Lead Nepal.
           </h1>
-          <p className="font-albra text-[22px] font-semibold text-[#ffffff] opacity-70 leading-[1.2] tracking-[0.44px] mb-12 max-w-2xl">
-            A private gallery of financial knowledge, market analysis, and economic discourse.
+          <p className="text-lg md:text-xl text-text-muted mb-12 max-w-2xl mx-auto font-sans font-medium">
+            Building the next generation of economically literate leaders and investors across Nepal.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-6 justify-center mt-4">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
             {!user ? (
-              <>
-                <button 
-                  onClick={handleJoinAction}
-                  className="bg-[#186f64] text-[#ffffff] px-[27px] py-[12px] rounded-[2px] font-neufile font-medium text-[16px] cursor-pointer"
-                >
-                  Join Arthneeti
-                </button>
-                <Link 
-                  to="/discover" 
-                  className="text-[#186f64] px-[27px] py-[12px] font-neufile font-medium text-[16px] inline-flex items-center"
-                >
-                  Explore Markets
-                </Link>
-              </>
+              <button 
+                onClick={handleJoinAction}
+                className="bg-electric-mint text-slate-base px-10 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-white hover:text-electric-mint transition-all shadow-2xl cursor-pointer"
+              >
+                Join Arthneeti
+              </button>
             ) : (
-              <>
-                <Link 
-                  to="/profile" 
-                  className="bg-[#186f64] text-[#ffffff] px-[27px] py-[12px] rounded-[2px] font-neufile font-medium text-[16px] text-center"
-                >
-                  Go to Dashboard
-                </Link>
-                <Link 
-                  to="/discover" 
-                  className="text-[#186f64] px-[27px] py-[12px] font-neufile font-medium text-[16px] inline-flex items-center"
-                >
-                  Explore Markets
-                </Link>
-              </>
+              <Link 
+                to="/profile" 
+                className="bg-electric-mint text-slate-base px-10 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-white hover:text-electric-mint transition-all shadow-2xl text-center"
+              >
+                Go to Dashboard
+              </Link>
             )}
+            <Link 
+              to="/discover" 
+              className="border border-[#1F2A3F] bg-[#161F30] text-white px-10 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-club-green hover:border-club-green transition-all text-center"
+            >
+              Explore Ticker & Tools
+            </Link>
           </div>
         </motion.div>
-        
-        {/* Abstract 3D Render Placeholder */}
-        <div className="flex-grow flex items-end justify-center w-full max-w-[1200px] mt-16 relative">
-          <div className="w-full max-w-[800px] h-[300px] bg-gradient-to-t from-[#ffffff]/5 to-transparent rounded-[2px] border-t border-[#e6ebec]/10 flex items-center justify-center opacity-50">
-             <span className="font-neufile text-[13px] text-[#ffffff]/30 uppercase tracking-widest">Chrome Sculptural Accent Space</span>
+
+        {/* Animated Marquee Bottom */}
+        <div className="absolute bottom-0 left-0 w-full bg-[#161F30]/80 py-4 overflow-hidden border-t border-[#1F2A3F]">
+          <div className="flex whitespace-nowrap animate-marquee">
+            {[...Array(8)].map((_, i) => (
+              <span key={i} className="text-text-muted text-[9px] font-black uppercase tracking-[0.4em] mx-10">
+                NEPSE MARKET HUB • CAPITAL EDUCATION • NRB COMPLIANCE • POLICY DISCOURSE • FINANCIAL DEMOCRACY •
+              </span>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Market Ticker Section (Paper White) */}
-      <section className="bg-[#ffffff] py-[96px] px-6 border-b border-[#e6ebec]">
-        <div className="max-w-[1200px] mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-12">
-            <h2 className="font-albra text-[46px] font-semibold text-[#000000] tracking-[0.92px] leading-[1.2]">
-              Market Action
-            </h2>
-            <span className="font-neufile font-medium text-[13px] text-[#9fabad]">
-              {marketDataSource === 'live' ? 'Live Data Feed' : 'Simulated Data'}
-            </span>
+      {/* Market Ticker Sparkline Section */}
+      <section className="bg-[#161F30] border-y border-[#1F2A3F] py-8 px-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Header row with status + disclaimer */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted">NEPSE Market Indices</span>
+              {marketDataSource === 'live' && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-green-light/10 border border-green-light/30 text-green-light text-[9px] font-black uppercase tracking-widest">
+                  <span className="w-1.5 h-1.5 rounded-lg bg-green-light animate-pulse inline-block" />
+                  Live
+                </span>
+              )}
+              {marketDataSource === 'simulated' && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-amber-400/10 border border-amber-400/30 text-amber-400 text-[9px] font-black uppercase tracking-widest">
+                  <span className="w-1.5 h-1.5 rounded-lg bg-amber-400 inline-block" />
+                  Simulated
+                </span>
+              )}
+              {marketDataSource === 'loading' && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#1F2A3F] text-text-muted text-[9px] font-black uppercase tracking-widest">
+                  <span className="inline-block w-2 h-2 border border-text-muted border-t-transparent rounded-lg animate-spin" />
+                  Loading
+                </span>
+              )}
+            </div>
+            <div className="flex flex-col sm:items-end gap-0.5">
+              <p className="text-[9px] text-text-muted leading-relaxed max-w-xs sm:text-right">
+                {marketDataSource === 'live'
+                  ? `Data via NepseAPI (unofficial). For educational use only — not financial advice.${lastUpdated ? ` Updated ${lastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}` : ''}`
+                  : 'Live data unavailable. Showing simulated values for educational illustration only — not real market data.'}
+              </p>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {Object.keys(marketIndices).map((key) => {
               const item = marketIndices[key];
               const isGain = item.change >= 0;
+              const accentColor = isGain ? '#10B981' : '#F43F5E';
               const sign = isGain ? '+' : '';
               
               return (
                 <div 
                   key={key} 
-                  className="border border-[#e6ebec] rounded-[0px] p-[32px] bg-[#ffffff] flex flex-col gap-6"
+                  className="bg-[#0B0F19] border border-[#1F2A3F] p-5 rounded-lg-2xl flex justify-between items-center shadow-lg hover:border-club-green/50 transition-all duration-300"
                 >
                   <div>
-                    <span className="font-neufile text-[13px] text-[#9fabad] block mb-2">{item.name}</span>
-                    <h4 className="text-[28px] font-neufile font-medium text-[#000000] leading-[1.3]">{item.value.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h4>
+                    <span className="text-[10px] font-black uppercase tracking-wider text-text-muted block mb-1">{item.name}</span>
+                    <h4 className="text-2xl font-black font-mono text-white tracking-tight">{item.value.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h4>
                     <span 
-                      className="font-neufile text-[16px] inline-flex items-center gap-2 mt-2 text-[#9fabad]"
+                      className="text-xs font-bold font-mono inline-flex items-center gap-0.5 mt-1"
+                      style={{ color: accentColor }}
                     >
-                      <span className="material-symbols-outlined text-[16px]">
-                        {isGain ? 'north_east' : 'south_east'}
+                      <span className="material-symbols-outlined text-[10px]">
+                        {isGain ? 'arrow_upward' : 'arrow_downward'}
                       </span>
                       <span>{sign}{item.changePercent}%</span>
                     </span>
@@ -356,11 +446,10 @@ export default function LandingPage() {
                       <path 
                         d={getSparklinePath(item.sparkline)}
                         fill="none"
-                        stroke="#000000"
-                        strokeWidth="1.5"
+                        stroke={accentColor}
+                        strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        opacity="0.2"
                       />
                     </svg>
                   </div>
@@ -371,152 +460,90 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Curriculum Section (Peach Wall Tinted Feature Card Style) */}
-      <section className="bg-[#ffffff] py-[96px] px-6">
-        <div className="max-w-[1200px] mx-auto bg-[#fcede1] p-[64px] rounded-[0px]">
-          <div className="flex flex-col lg:flex-row gap-[64px]">
-            <div className="lg:w-1/2">
-              <h2 className="font-albra text-[46px] font-semibold text-[#000000] tracking-[0.92px] leading-[1.2] mb-6">
-                Curriculum Structure
-              </h2>
-              <p className="font-neufile text-[16px] text-[#000000] leading-[1.4] mb-12">
-                A rigorous educational path designed to empower students with structural economic knowledge and actual market insights. Built for high-schoolers, taught by peers.
-              </p>
-              
-              <div className="flex items-center gap-4">
-                 <Link 
-                    to="/learn"
-                    className="bg-[#536eff] text-[#ffffff] px-[27px] py-[12px] rounded-[2px] font-neufile font-medium text-[16px] inline-flex"
-                  >
-                    Start Learning
-                  </Link>
-                  <Link 
-                    to="/learn"
-                    className="text-[#536eff] font-neufile font-medium text-[16px] inline-flex px-[27px]"
-                  >
-                    View Modules
-                  </Link>
-              </div>
+      {/* Learning Academy Curriculum Roadmap Section */}
+      <section className="py-28 px-6 bg-[#0B0F19]">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+            <div>
+              <span className="text-[10px] font-black text-electric-mint mb-4 block uppercase tracking-[0.4em]">ARTHNEETI ACADEMY</span>
+              <h2 className="text-4xl md:text-6xl text-white leading-tight italic font-sans tracking-tight font-semibold">Curriculum Roadmap</h2>
             </div>
-            
-            <div className="lg:w-1/2 flex flex-col gap-6">
-               {pillarsSyllabus.map((pillar) => (
-                  <div key={pillar.num} className="bg-[#ffffff]/60 border border-[#e6ebec]/50 p-[32px] rounded-[0px]">
-                    <div className="flex items-center gap-4 mb-4">
-                      <span className="font-neufile font-medium text-[13px] bg-[#ffffff] px-2 py-1 rounded-[2px] text-[#000000] border border-[#e6ebec]">
-                        Pillar {pillar.num}
-                      </span>
-                      <h3 className="font-albra text-[22px] font-semibold text-[#000000] tracking-[0.44px]">{pillar.title}</h3>
-                    </div>
-                    <p className="font-neufile text-[16px] text-[#000000] leading-[1.4]">
-                      {pillar.desc}
-                    </p>
-                  </div>
-               ))}
-            </div>
+            <p className="text-text-muted max-w-sm text-sm leading-relaxed">
+              Explore the educational path designed to empower students with structural economic knowledge and real market insights.
+            </p>
           </div>
-        </div>
-      </section>
 
-      {/* Resource Library Section (Mint Wall Tinted Feature Card Style) */}
-      <section className="bg-[#f6f9f9] py-[96px] px-6">
-        <div className="max-w-[1200px] mx-auto bg-[#eefcef] p-[64px] rounded-[0px]">
-          <div className="flex flex-col lg:flex-row gap-[64px]">
-            <div className="lg:w-1/3">
-              <h2 className="font-albra text-[46px] font-semibold text-[#000000] tracking-[0.92px] leading-[1.2] mb-6">
-                Resource Vault
-              </h2>
-              <p className="font-neufile text-[16px] text-[#000000] leading-[1.4] mb-12">
-                Explore media materials, central bank publications, downloadable infographics, and guided video series.
-              </p>
-              
-              <div className="flex flex-col gap-2">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            {/* Left Side: Accordion Headers */}
+            <div className="lg:col-span-5 flex flex-col gap-4">
+              {pillarsSyllabus.map((pillar, i) => (
                 <button
-                  onClick={() => setActiveResourceTab('videos')}
-                  className={`px-[27px] py-[12px] rounded-[2px] font-neufile font-medium text-[16px] text-left transition-colors ${
-                    activeResourceTab === 'videos' 
-                      ? 'bg-[#186f64] text-[#ffffff]' 
-                      : 'bg-transparent text-[#191b1f] hover:bg-[#ffffff]/50'
+                  key={pillar.title}
+                  onClick={() => setActivePillarIndex(activePillarIndex === i ? null : i)}
+                  className={`w-full text-left p-6 rounded-lg-2xl border transition-all duration-300 flex items-start gap-4 ${
+                    activePillarIndex === i 
+                      ? 'bg-[#161F30] border-club-green shadow-lg' 
+                      : 'bg-transparent border-[#1F2A3F] hover:border-text-muted/40 hover:bg-[#161F30]/30'
                   }`}
                 >
-                  Video Masterclasses
+                  <span className="text-2xl font-sans tracking-tight font-semibold text-club-green/40 font-bold">{pillar.num}</span>
+                  <div>
+                    <h3 className="text-lg font-bold text-white mb-2">{pillar.title}</h3>
+                    <p className="text-xs text-text-muted leading-relaxed">{pillar.desc}</p>
+                  </div>
                 </button>
-                <button
-                  onClick={() => setActiveResourceTab('pamphlets')}
-                  className={`px-[27px] py-[12px] rounded-[2px] font-neufile font-medium text-[16px] text-left transition-colors ${
-                    activeResourceTab === 'pamphlets' 
-                      ? 'bg-[#186f64] text-[#ffffff]' 
-                      : 'bg-transparent text-[#191b1f] hover:bg-[#ffffff]/50'
-                  }`}
-                >
-                  Printable Guides
-                </button>
-              </div>
+              ))}
             </div>
 
-            <div className="lg:w-2/3 min-h-[300px]">
+            {/* Right Side: Accordion Details */}
+            <div className="lg:col-span-7 bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl p-8 flex flex-col justify-between shadow-2xl">
               <AnimatePresence mode="wait">
-                {activeResourceTab === 'videos' && (
-                  <motion.div 
-                    key="videos" 
-                    initial={{ opacity: 0, x: 10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -10 }}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                {activePillarIndex !== null ? (
+                  <motion.div
+                    key={activePillarIndex}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -15 }}
+                    className="flex-grow flex flex-col justify-between"
                   >
-                    {LESSONS.slice(0, 4).map((video, idx) => (
-                      <div 
-                        key={idx}
-                        className="bg-[#ffffff] border border-[#e6ebec] rounded-[0px] p-[32px] flex flex-col"
-                      >
-                        <h4 className="font-albra text-[22px] font-semibold text-[#000000] mb-4 tracking-[0.44px] leading-[1.2] line-clamp-2">
-                          {video.title}
+                    <div>
+                      <div className="flex justify-between items-center border-b border-[#1F2A3F] pb-4 mb-6">
+                        <h4 className="text-xs font-black uppercase tracking-widest text-text-muted">
+                          Syllabus Modules ({pillarsSyllabus[activePillarIndex].title})
                         </h4>
-                        <p className="font-neufile text-[13px] text-[#9fabad] leading-[1.4] mb-6 line-clamp-2">
-                          {video.desc}
-                        </p>
-                        <button 
-                           onClick={() => setSelectedVideoEmbed(video.videoUrl)}
-                           className="mt-auto text-[#186f64] font-neufile font-medium text-[16px] text-left flex items-center gap-2"
-                        >
-                           Watch Segment <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-                        </button>
+                        <span className="text-[10px] font-black text-club-green uppercase tracking-widest bg-club-green/10 border border-club-green/20 px-3 py-1 rounded-lg">
+                          {pillarsSyllabus[activePillarIndex].modules.length} Lessons
+                        </span>
                       </div>
-                    ))}
-                  </motion.div>
-                )}
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        {pillarsSyllabus[activePillarIndex].modules.map((mod, idx) => (
+                          <div key={idx} className="h-[280px]">
+                            <GradientCard 
+                              title={mod.title}
+                              description={`Master ${mod.title.toLowerCase()} in this comprehensive module.`}
+                              tag={`0${idx + 1}`}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
 
-                {activeResourceTab === 'pamphlets' && (
-                  <motion.div 
-                    key="pamphlets" 
-                    initial={{ opacity: 0, x: 10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -10 }}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
-                  >
-                    {mockPamphlets.map((pamphlet, idx) => (
-                      <div 
-                        key={idx}
-                        className="bg-[#ffffff] border border-[#e6ebec] rounded-[0px] p-[32px] flex flex-col"
+                    <div className="flex items-center justify-between border-t border-[#1F2A3F] pt-6 mt-auto">
+                      <span className="text-[10px] text-text-muted italic">Ready to review? Jump into our market explorer.</span>
+                      <Link 
+                        to="/learn"
+                        className="bg-club-green text-white px-6 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-club-green transition-all flex items-center gap-1.5"
                       >
-                        <div className="flex justify-between items-start mb-4">
-                          <span className="font-neufile text-[13px] text-[#9fabad]">{pamphlet.category}</span>
-                          <span className="font-neufile text-[13px] text-[#9fabad]">{pamphlet.size}</span>
-                        </div>
-                        <h4 className="font-albra text-[22px] font-semibold text-[#000000] mb-8 tracking-[0.44px] leading-[1.2]">
-                          {pamphlet.title}
-                        </h4>
-                        <a 
-                          href={pamphlet.downloadUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="mt-auto text-[#186f64] font-neufile font-medium text-[16px] text-left flex items-center gap-2"
-                        >
-                          Download Artifact <span className="material-symbols-outlined text-[16px]">download</span>
-                        </a>
-                      </div>
-                    ))}
+                        Start Learning Modules
+                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                      </Link>
+                    </div>
                   </motion.div>
+                ) : (
+                  <div className="h-full flex items-center justify-center text-text-muted italic text-xs py-20 text-center">
+                    Select a core pillar roadmap on the left to view lessons and module materials.
+                  </div>
                 )}
               </AnimatePresence>
             </div>
@@ -524,131 +551,383 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Community Forum (Lavender Wall Tinted Feature Card Style) */}
-      <section className="bg-[#ffffff] py-[96px] px-6">
-        <div className="max-w-[1200px] mx-auto bg-[#e6def0] p-[64px] rounded-[0px]">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-12">
-            <div>
-              <h2 className="font-albra text-[46px] font-semibold text-[#000000] tracking-[0.92px] leading-[1.2]">
-                Forum & Discourse
-              </h2>
-            </div>
-            <div className="flex items-center gap-4 mt-6 md:mt-0">
-               <Link 
-                  to="/community" 
-                  className="bg-[#154ea5] text-[#ffffff] px-[27px] py-[12px] rounded-[2px] font-neufile font-medium text-[16px] inline-flex"
-                >
-                  Enter Discourse
-                </Link>
-                <Link 
-                  to="/community" 
-                  className="text-[#154ea5] font-neufile font-medium text-[16px] inline-flex px-[27px]"
-                >
-                  View All Topics
-                </Link>
-            </div>
+      {/* Nepal Rastra Bank (NRB) Financial Resource Portal */}
+      <section className="py-24 px-6 bg-[#161F30] border-y border-[#1F2A3F]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <span className="text-[10px] font-black text-electric-mint mb-2 block uppercase tracking-[0.4em]">NRB-INSPIRED PORTAL</span>
+            <h2 className="text-4xl md:text-5xl text-white font-sans tracking-tight font-semibold italic mb-6">Financial Resource Library</h2>
+            <p className="text-text-muted text-sm leading-relaxed">
+              Explore media materials, Central Bank publications, downloadable infographics, and bilingual FAQs.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {latestTopics.map((topic) => (
-              <div
+          {/* Interactive Navigation Tabs */}
+          <div className="flex justify-center border-b border-[#1F2A3F] pb-4 mb-10 gap-3">
+            {[
+              { key: 'videos', label: 'Video Lessons', icon: 'play_circle' },
+              { key: 'pamphlets', label: 'Guidelines & PDFs', icon: 'article' },
+              { key: 'faq', label: 'Bilingual FAQs', icon: 'help' }
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => {
+                  setActiveResourceTab(tab.key as any);
+                  setActiveFaqIndex(null);
+                }}
+                className={`px-6 py-3 text-xs font-black uppercase tracking-wider rounded-lg transition-all flex items-center gap-2 ${
+                  activeResourceTab === tab.key 
+                    ? 'bg-club-green text-white shadow-xl' 
+                    : 'text-text-muted hover:text-white hover:bg-[#0B0F19]/60 border border-[#1F2A3F]'
+                }`}
+              >
+                <span className="material-symbols-outlined text-sm">{tab.icon}</span>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Tab contents */}
+          <div className="min-h-[300px]">
+            <AnimatePresence mode="wait">
+              {activeResourceTab === 'videos' && (
+                <motion.div 
+                  key="videos" 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="grid grid-cols-1 md:grid-cols-3 gap-8"
+                >
+                  {LESSONS.slice(0, 3).map((video, idx) => (
+                    <div 
+                      key={idx}
+                      className="bg-[#0B0F19] border border-[#1F2A3F] rounded-lg-2xl overflow-hidden group shadow-lg flex flex-col justify-between"
+                    >
+                      <div className="relative aspect-video overflow-hidden bg-black/40">
+                        <img 
+                          src={video.thumbnail} 
+                          alt={video.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80"
+                        />
+                        <button 
+                          onClick={() => setSelectedVideoEmbed(video.videoUrl)}
+                          className="absolute inset-0 m-auto w-12 h-12 bg-club-green text-white rounded-lg flex items-center justify-center shadow-2xl hover:scale-110 transition-transform cursor-pointer"
+                        >
+                          <span className="material-symbols-outlined text-2xl">play_arrow</span>
+                        </button>
+                        <span className="absolute bottom-3 right-3 bg-[#0B0F19] text-white text-[9px] font-bold font-mono px-2 py-0.5 rounded-lg border border-[#1F2A3F]">
+                          {video.duration}
+                        </span>
+                      </div>
+                      
+                      <div className="p-6">
+                        <div className="flex flex-wrap items-center gap-2 mb-3">
+                          <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border inline-block ${LEVEL_COLORS[video.level]}`}>
+                            {video.level}
+                          </span>
+                        </div>
+                        <h4 className="text-sm font-bold text-white group-hover:text-club-green transition-colors mb-3 leading-snug line-clamp-2">
+                          {video.title}
+                        </h4>
+                        <p className="text-xs text-text-muted leading-relaxed line-clamp-3">
+                          {video.desc}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+              )}
+
+              {activeResourceTab === 'pamphlets' && (
+                <motion.div 
+                  key="pamphlets" 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="grid grid-cols-1 md:grid-cols-3 gap-6"
+                >
+                  {mockPamphlets.map((pamphlet, idx) => (
+                    <div 
+                      key={idx}
+                      className="bg-[#0B0F19] border border-[#1F2A3F] p-6 rounded-lg-2xl flex flex-col justify-between shadow-lg hover:border-club-green/50 transition-all duration-300"
+                    >
+                      <div>
+                        <div className="flex justify-between items-start mb-4">
+                          <span className="bg-[#161F30] text-text-muted text-[8px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border border-[#1F2A3F]">
+                            {pamphlet.category}
+                          </span>
+                          <span className="text-[8px] font-bold font-mono text-text-muted">{pamphlet.size}</span>
+                        </div>
+                        
+                        <h4 className="text-sm font-bold text-white mb-3 leading-snug">
+                          {pamphlet.title}
+                        </h4>
+                        <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-6 block">
+                          Language: {pamphlet.language}
+                        </p>
+                      </div>
+
+                      <a 
+                        href={pamphlet.downloadUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="w-full py-3 bg-[#161F30] hover:bg-club-green hover:text-white border border-[#1F2A3F] text-white text-[9px] font-black uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1.5"
+                      >
+                        <span className="material-symbols-outlined text-sm">download</span>
+                        Download PDF Guide
+                      </a>
+                    </div>
+                  ))}
+                </motion.div>
+              )}
+
+              {activeResourceTab === 'faq' && (
+                <motion.div 
+                  key="faq" 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="max-w-3xl mx-auto bg-[#0B0F19] border border-[#1F2A3F] rounded-lg-2xl p-6 md:p-8 shadow-xl"
+                >
+                  {/* FAQ Header & Language Toggle */}
+                  <div className="flex justify-between items-center border-b border-[#1F2A3F] pb-4 mb-6">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-text-muted">Bilingual FAQ Accordion</span>
+                    <div className="flex gap-1.5 bg-[#161F30] border border-[#1F2A3F] p-1 rounded-lg">
+                      <button
+                        onClick={() => { setFaqLanguage('en'); setActiveFaqIndex(null); }}
+                        className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg-md transition-all ${
+                          faqLanguage === 'en' ? 'bg-club-green text-white' : 'text-text-muted hover:text-white'
+                        }`}
+                      >
+                        English
+                      </button>
+                      <button
+                        onClick={() => { setFaqLanguage('np'); setActiveFaqIndex(null); }}
+                        className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg-md transition-all ${
+                          faqLanguage === 'np' ? 'bg-club-green text-white' : 'text-text-muted hover:text-white'
+                        }`}
+                      >
+                        नेपाली
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Accordion Questions */}
+                  <div className="space-y-4">
+                    {mockFAQs[faqLanguage].map((faq, idx) => {
+                      const isOpen = activeFaqIndex === idx;
+                      return (
+                        <div 
+                          key={idx}
+                          className="border border-[#1F2A3F] rounded-lg overflow-hidden"
+                        >
+                          <button
+                            onClick={() => setActiveFaqIndex(isOpen ? null : idx)}
+                            className="w-full flex justify-between items-center p-4 bg-[#161F30] hover:bg-[#161F30]/80 transition-colors text-left text-xs font-bold text-white"
+                          >
+                            <span>{faq.q}</span>
+                            <span className="material-symbols-outlined text-text-muted transition-transform duration-300" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0)' }}>
+                              expand_more
+                            </span>
+                          </button>
+                          
+                          <AnimatePresence initial={false}>
+                            {isOpen && (
+                              <motion.div
+                                initial={{ height: 0 }}
+                                animate={{ height: 'auto' }}
+                                exit={{ height: 0 }}
+                                className="overflow-hidden bg-[#0B0F19]/40 border-t border-[#1F2A3F]"
+                              >
+                                <p className="p-4 text-xs text-text-muted leading-relaxed">
+                                  {faq.a}
+                                </p>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </section>
+
+      {/* Dynamic Community Discussion Section */}
+      <section className="py-24 px-6 bg-[#0B0F19]">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
+            <div className="text-center md:text-left">
+              <span className="text-[10px] font-black text-electric-mint mb-2 block uppercase tracking-[0.4em]">LIVE DISCOURSE FEED</span>
+              <h2 className="text-4xl md:text-5xl text-white italic font-sans tracking-tight font-semibold">Latest Discussion Topics</h2>
+            </div>
+            <Link 
+              to="/community" 
+              className="text-[10px] font-black text-club-green uppercase tracking-widest border border-club-green/30 px-8 py-4 rounded-lg hover:bg-club-green hover:text-white transition-all bg-[#161F30]/50"
+            >
+              JOIN THE FORUM
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {latestTopics.map((topic, i) => (
+              <motion.div
                 key={topic.id}
-                className="bg-[#ffffff] border border-[#e6ebec] rounded-[0px] p-[32px] flex flex-col"
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="group p-8 rounded-lg-2xl bg-[#161F30] border border-[#1F2A3F] hover:border-club-green/50 hover:bg-[#161F30]/80 transition-all duration-300"
               >
                 <div className="flex justify-between items-start mb-6">
-                  <span className="font-neufile text-[13px] text-[#9fabad]">
+                  <span className="px-3.5 py-1 bg-club-green/10 text-club-green text-[8px] font-black uppercase tracking-widest rounded-lg border border-club-green/20">
                     {topic.category}
                   </span>
-                </div>
-                <h3 className="font-albra text-[22px] font-semibold text-[#000000] mb-8 tracking-[0.44px] leading-[1.2] line-clamp-3">
-                  {topic.title || (topic as any).content?.replace(/<[^>]*>?/gm, '').substring(0, 60) + '...'}
-                </h3>
-                <div className="mt-auto flex items-center justify-between">
-                  <span className="font-neufile text-[13px] text-[#000000]">{topic.author}</span>
-                  <div className="flex items-center gap-1 text-[#9fabad]">
-                    <span className="material-symbols-outlined text-[13px]">favorite</span>
-                    <span className="font-neufile text-[13px]">{topic.likes}</span>
+                  <div className="flex items-center gap-1.5 text-electric-mint">
+                    <span className="material-symbols-outlined text-sm">favorite</span>
+                    <span className="text-[10px] font-bold">{topic.likes}</span>
                   </div>
                 </div>
-              </div>
+                <Link to="/community" className="block">
+                  <h3 className="text-lg text-white font-sans tracking-tight font-semibold italic mb-4 leading-snug group-hover:text-club-green transition-colors line-clamp-2">
+                    {topic.title || (topic as any).content?.replace(/<[^>]*>?/gm, '').substring(0, 60) + '...'}
+                  </h3>
+                </Link>
+                <div className="flex items-center gap-3 mt-6 pt-6 border-t border-[#1F2A3F]">
+                  <div className="w-8 h-8 rounded-lg bg-club-green/10 border border-club-green/30 flex items-center justify-center text-[10px] font-bold text-club-green uppercase">
+                    {topic.author[0]}
+                  </div>
+                  <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">{topic.author}</span>
+                </div>
+              </motion.div>
             ))}
+
+            {latestTopics.length === 0 && (
+              <div className="col-span-full py-20 text-center border-2 border-dashed border-[#1F2A3F] rounded-lg-2xl bg-[#161F30]/40">
+                <p className="text-text-muted italic text-xs">Connecting to community database server...</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Social Mission (Mist White) */}
-      <section className="bg-[#f6f9f9] py-[96px] px-6 border-y border-[#e6ebec]">
-        <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row items-center gap-[64px]">
-          <div className="lg:w-1/2">
-            <h2 className="font-albra text-[46px] font-semibold text-[#000000] tracking-[0.92px] leading-[1.2] mb-6">
-              Equitable Architecture
+      {/* Social Mission & Equity Support Section */}
+      <section className="bg-[#161F30] border-t border-[#1F2A3F] py-28 px-6 overflow-hidden">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-20">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="lg:w-1/2 border-l-8 border-club-green pl-10"
+          >
+            <h2 className="text-4xl md:text-5xl text-white leading-tight italic font-sans tracking-tight font-semibold mb-6">
+              "We don't just teach finance — we use it to build a more equitable Nepal."
             </h2>
-            <p className="font-neufile text-[16px] text-[#000000] leading-[1.4] mb-8">
-              We allocate workshop support and targeted curricula specifically for disadvantaged youths, disabled students, and underprivileged municipal schools to narrow the financial intelligence gap.
+            <p className="text-text-muted text-sm leading-relaxed max-w-lg">
+              Arthneeti allocates workshop support and targeted curricula specifically for disadvantaged youths, disabled students, and underprivileged municipal schools to narrow the financial intelligence gap.
             </p>
-          </div>
+          </motion.div>
           
-          <div className="lg:w-1/2 grid grid-cols-2 gap-6">
-            {socialIcons.map((item) => (
-              <div 
+          <div className="lg:w-1/2 grid grid-cols-2 gap-8">
+            {socialIcons.map((item, i) => (
+              <motion.div 
                 key={item.name} 
-                className="flex items-center gap-4 p-[24px] bg-[#ffffff] border border-[#e6ebec] rounded-[0px]"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="flex flex-col items-center text-center p-6 bg-[#0B0F19] border border-[#1F2A3F] rounded-lg-2xl hover:border-club-green/50 transition-all duration-300"
               >
-                <span className="material-symbols-outlined text-[24px] text-[#191b1f]">{item.icon}</span>
-                <span className="font-neufile font-medium text-[13px] text-[#000000]">{item.name}</span>
-              </div>
+                <div className="w-16 h-16 rounded-lg bg-club-green/10 flex items-center justify-center text-club-green mb-4 border border-club-green/20">
+                  <span className="material-symbols-outlined text-3xl">{item.icon}</span>
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-widest text-white">{item.name}</span>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Executive Board */}
-      <section className="bg-[#ffffff] py-[96px] px-6">
-        <div className="max-w-[1200px] mx-auto">
-          <div className="mb-16">
-            <h2 className="font-albra text-[46px] font-semibold text-[#000000] tracking-[0.92px] leading-[1.2] mb-4">
-              Executive Board
-            </h2>
-            <p className="font-neufile text-[16px] text-[#9fabad]">
-              The core team guiding the structural intelligence of the movement.
+      {/* Executive Board Section */}
+      <section className="py-24 px-6 bg-[#0B0F19] border-t border-[#1F2A3F]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-20">
+            <span className="text-[10px] font-black text-electric-mint mb-4 block uppercase tracking-[0.4em]">LEADERSHIP</span>
+            <h2 className="text-4xl md:text-5xl text-white italic mb-6 font-sans tracking-tight font-semibold">Executive Board</h2>
+            <p className="text-text-muted max-w-xl mx-auto italic font-sans text-sm">
+              The founding team driving the movement for financial intelligence in Nepal.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {executiveBoard.map((member) => (
-              <div
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              {
+                name: 'Akshat Karki',
+                role: 'President',
+                bio: "Leading Arthneeti's vision to build Nepal's most impactful youth financial education movement. Focused on school partnerships, club strategy, and driving the mission forward."
+              },
+              {
+                name: 'Manash Koirala',
+                role: 'Vice President',
+                bio: "Supporting club operations and co-leading educational strategy. Passionate about making stock market knowledge accessible to every Nepali high schooler."
+              },
+              {
+                name: 'Ujjwal Dhungana',
+                role: 'Head of Research & Communication',
+                bio: "Driving Arthneeti's research agenda and external communications. Builds the intellectual content that makes our sessions substantive and credible."
+              },
+              {
+                name: 'Pranjal Khatiwada',
+                role: 'Secretary',
+                bio: "Managing club coordination, records, and logistics. Ensures Arthneeti runs smoothly across all schools and sessions."
+              }
+            ].map((member, i) => (
+              <motion.div
                 key={member.name}
-                className="bg-[#ffffff] border border-[#e6ebec] p-[32px] rounded-[0px] flex flex-col"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-[#161F30] p-10 rounded-lg relative border-t-8 border-electric-mint border border-[#1F2A3F] shadow-2xl flex flex-col items-center text-center group hover:-translate-y-2 transition-all duration-500"
               >
-                <div className="w-[48px] h-[48px] bg-[#f6f9f9] border border-[#e6ebec] flex items-center justify-center text-[#000000] font-albra font-semibold text-[22px] mb-6">
+                <div className="w-20 h-20 rounded-lg border-4 border-white/10 flex items-center justify-center text-white font-sans tracking-tight font-semibold italic text-3xl mb-8 group-hover:border-electric-mint group-hover:text-electric-mint transition-all duration-500">
                   {member.name.split(' ').map(n => n[0]).join('')}
                 </div>
-                <h3 className="font-albra text-[22px] font-semibold text-[#000000] mb-2 tracking-[0.44px] leading-[1.2]">{member.name}</h3>
-                <p className="font-neufile font-medium text-[13px] text-[#9fabad] mb-6">{member.role}</p>
-                <p className="font-neufile text-[13px] text-[#000000] leading-[1.4]">
+                <h3 className="text-xl text-white font-sans tracking-tight font-semibold italic mb-2">{member.name}</h3>
+                <p className="text-[10px] font-black uppercase tracking-widest text-electric-mint mb-6">{member.role}</p>
+                <p className="text-text-muted text-xs italic font-sans leading-relaxed mb-6">
                   {member.bio}
                 </p>
-              </div>
+                <a 
+                  href="mailto:learnarthneeti@gmail.com"
+                  className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-electric-mint transition-colors"
+                >
+                  Get In Touch
+                </a>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Video Modal */}
+      {/* Video Playback Modal Overlay */}
       <AnimatePresence>
         {selectedVideoEmbed && (
           <div 
-            className="fixed inset-0 z-[100] bg-[#191b1f]/90 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-sm flex items-center justify-center p-4"
             onClick={() => setSelectedVideoEmbed(null)}
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-[#ffffff] rounded-[0px] overflow-hidden max-w-[1024px] w-full shadow-none relative border border-[#e6ebec]"
+              className="bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl overflow-hidden max-w-3xl w-full shadow-2xl relative"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="relative aspect-video bg-[#191b1f]">
+              <div className="relative aspect-video">
                 <iframe 
                   className="w-full h-full"
                   src={selectedVideoEmbed}
@@ -658,19 +937,21 @@ export default function LandingPage() {
                   allowFullScreen
                 />
               </div>
-              <div className="p-[24px] flex justify-between items-center bg-[#ffffff]">
-                <span className="font-neufile text-[13px] text-[#9fabad]">Arthneeti Media Viewer</span>
+              <div className="p-4 flex justify-between items-center">
+                <span className="text-[10px] text-text-muted italic">Arthneeti Academy Resource System</span>
                 <button
                   onClick={() => setSelectedVideoEmbed(null)}
-                  className="bg-[#191b1f] text-[#ffffff] px-[27px] py-[12px] rounded-[2px] font-neufile font-medium text-[16px] cursor-pointer"
+                  className="bg-club-green text-white px-5 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-white hover:text-club-green transition-all cursor-pointer"
                 >
-                  Close Artifact
+                  Close Player
                 </button>
               </div>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
+
     </motion.main>
+
   );
 }
