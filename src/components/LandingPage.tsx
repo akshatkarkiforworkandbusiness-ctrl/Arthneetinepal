@@ -7,6 +7,7 @@ import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestor
 import ShinyText from './ShinyText';
 import { GradientCard } from './GradientCard';
 import { LESSONS, LEVEL_COLORS } from './LearnPage';
+import ArthneetiLogo3D from './ArthneetiLogo3D';
 
 interface Topic {
   id: string;
@@ -318,8 +319,11 @@ export default function LandingPage() {
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="relative z-10 max-w-4xl"
+          className="relative z-10 max-w-4xl flex flex-col items-center"
         >
+          <div className="flex justify-center mb-6">
+            <ArthneetiLogo3D className="w-48 h-48 md:w-64 md:h-64" />
+          </div>
           <ShinyText
             text="✨ NEPALESE YOUTH LED MOVEMENT"
             speed={2}
