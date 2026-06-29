@@ -5,6 +5,7 @@ import { Play, Check, BookOpen, Download } from 'lucide-react';
 import { db } from '../lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
+import LessonCommentSection from './LessonCommentSection';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
