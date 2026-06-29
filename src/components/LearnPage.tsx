@@ -319,6 +319,75 @@ export const LESSONS: Lesson[] = [
       },
     ],
   },
+  {
+    id: 'modern-finance-intro',
+    level: 'Advanced',
+    title: 'Introduction to Modern Finance & Quantitative Trading',
+    desc: 'An overview of core financial products, market operations, trading types, and how advanced mathematics has transformed the industry over the last 30 years.',
+    duration: '22:00',
+    tag: 'Financial Literacy',
+    videoUrl: 'https://www.youtube.com/embed/P56591aoV90',
+    thumbnail: 'https://img.youtube.com/vi/P56591aoV90/hqdefault.jpg',
+    chapters: [
+      'Core Financial Products (Stocks, Bonds, and Derivatives)',
+      'How Markets Operate (Primary vs. Secondary & Exchanges vs. OTC)',
+      'The Players: Market Makers vs. Brokers',
+      'The Three Main Types of Trading',
+      'The Transformation of Finance Through Mathematics',
+    ],
+    faqs: [
+      {
+        topic: 'Financial Literacy',
+        question: 'What is the main purpose of this course and what will I learn?',
+        answer: 'The goal of the course is to provide a "sampling menu" of how mathematics is applied in modern finance, helping students decide if they want to pursue a career in the industry. It combines foundational math lectures with practical examples taught by industry practitioners from firms like Morgan Stanley.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What kind of mathematical foundation do I need for quantitative finance?',
+        answer: 'To understand the financial models used by practitioners, students need a strong mathematical foundation in subjects like linear algebra, probability, statistics, and stochastic calculus.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Has finance always been a highly mathematical field?',
+        answer: 'No, quantitative finance is a relatively new field. Over the last 30 years, the industry has rapidly transformed from relying on under-educated "gut traders" to hiring professionals with advanced degrees in mathematics and computer science.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What is the difference between a primary market and a secondary market?',
+        answer: 'When a private company wants to raise capital by issuing stock to the public for the first time, it goes through an Initial Public Offering (IPO) in the primary market. Once those shares are officially listed on an exchange and begin trading among investors, that trading takes place in the secondary market.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How does a broker differ from a market maker (or dealer)?',
+        answer: 'A broker acts as a matchmaker, connecting buyers with sellers for a commission without taking on principal financial risk. A market maker or dealer steps in to provide liquidity by quoting a price to buy (the bid) and a price to sell (the offer), taking the other side of your trade and assuming the financial risk themselves.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What are the main ways advanced mathematics is used in modern finance?',
+        answer: 'Mathematics is primarily used in three core areas: building pricing models for complex derivative products (which often involves solving differential equations), managing portfolio risk management, and developing sophisticated trading strategies.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What are "the Greeks" and why are they important?',
+        answer: '"The Greeks" are mathematical parameters used in risk management to measure a portfolio\'s sensitivity to various market changes. For example, Delta measures sensitivity to the underlying asset\'s price, Gamma measures curvature or convexity, Theta measures time decay, and Vega (sometimes called Kappa at certain firms) measures sensitivity to volatility.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What does "arbitrage" mean in trading?',
+        answer: 'Arbitrage is a proprietary trading strategy where a trader looks for mispriced relationships between different assets or markets. If a deterministic or mathematical relationship between prices temporarily breaks down, an arbitrageur attempts to profit from that discrepancy.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Why do investors often hold onto losing stocks instead of cutting their losses?',
+        answer: 'Due to a human behavioral tendency known as risk aversion, people naturally dislike locking in a guaranteed loss. Even if closing the position is mathematically the smarter choice with a better expected value, many traders will hold onto a losing trade hoping it will bounce back, which highlights the importance of strict risk management discipline.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What kind of real-world projects do quantitative finance interns work on?',
+        answer: 'Interns often tackle highly technical, data-driven problems. For example, previous students have worked on finding the optimal shift size for calculating numerical derivatives (like Delta) in noisy Monte Carlo simulations, and using Kalman filters to better predict currency exchange rates for electronic trading platforms.',
+      },
+    ],
+  },
 ];
 
 const GUIDES: Guide[] = [
@@ -391,7 +460,7 @@ const MODULES: Module[] = [
     id: 'financial-literacy',
     title: 'Financial Literacy',
     description: 'Personal finance fundamentals — budgeting, saving, and understanding how NRB policy affects your wallet.',
-    lessonIds: ['budgeting-emergency-fund'],
+    lessonIds: ['budgeting-emergency-fund', 'modern-finance-intro'],
     guideIds: ['financial-literacy'],
   },
   {
