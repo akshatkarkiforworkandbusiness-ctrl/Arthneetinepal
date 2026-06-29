@@ -595,6 +595,75 @@ export const LESSONS: Lesson[] = [
       },
     ],
   },
+  {
+    id: 'technical-analysis-intro',
+    level: 'Beginner',
+    title: 'Technical Analysis & Chart Patterns',
+    desc: 'Master the basics of technical analysis including support/resistance, candlestick patterns, major chart patterns, RSI, MACD, and Bollinger Bands.',
+    duration: '15:00',
+    tag: 'Technical Analysis',
+    videoUrl: 'https://www.youtube.com/embed/Zpw7GEU0vYg',
+    thumbnail: 'https://img.youtube.com/vi/Zpw7GEU0vYg/hqdefault.jpg',
+    chapters: [
+      'Support and Resistance',
+      'Candlestick Patterns',
+      'Major Chart Patterns (Reversals and Continuations)',
+      'The Relative Strength Index (RSI)',
+      'MACD and Bollinger Bands (Momentum and Volatility)',
+    ],
+    faqs: [
+      {
+        topic: 'Technical Analysis',
+        question: 'What exactly are support and resistance levels?',
+        answer: 'Support is a price area on a chart where buying pressure historically steps in to prevent an asset from falling further, essentially acting as a floor. Conversely, resistance is a price level where selling pressure usually emerges, stopping the price from rising higher and acting as a ceiling. Interestingly, when a support level is broken, it often flips to become the new resistance level, and a broken resistance level frequently becomes future support.',
+      },
+      {
+        topic: 'Technical Analysis',
+        question: 'What do candlestick charts show that line charts do not?',
+        answer: 'While standard line charts only show one data point (the closing price), candlestick charts provide five key pieces of information for a given period: the open, the close, the high of the day, the low of the day, and the direction of the price movement. This provides a much clearer window into market psychology.',
+      },
+      {
+        topic: 'Technical Analysis',
+        question: 'How do traders use candlestick patterns like the "hammer" or "shooting star"?',
+        answer: 'Candlestick patterns act as "entry triggers" that tell traders whether buyers or sellers are momentarily in control. For example, a hammer candle (which has a long lower wick) indicates that sellers pushed the price down, but buyers eventually overwhelmed them to push the price back up, signaling a bullish reversal. On the other hand, a shooting star shows that buyers pushed the price high, but sellers took control to push it back down, acting as a bearish reversal signal.',
+      },
+      {
+        topic: 'Technical Analysis',
+        question: 'What does a "Head and Shoulders" pattern indicate?',
+        answer: 'The Head and Shoulders pattern is considered one of the most reliable indicators that a current uptrend is reversing into a downtrend. It consists of three peaks: a large central peak (the head) flanked by two slightly lower peaks (the shoulders), all sitting on a support line known as the "neckline".',
+      },
+      {
+        topic: 'Technical Analysis',
+        question: 'How can I identify Double Top and Double Bottom patterns?',
+        answer: 'A double top pattern resembles the letter \'M\'; it forms when a price hits a high point twice with a moderate drop in between, signaling a bearish reversal (prices are likely to fall). A double bottom resembles the letter \'W\'; it forms when a price hits a low point twice with a moderate rise in between, signaling a bullish reversal (prices are likely to rise).',
+      },
+      {
+        topic: 'Technical Analysis',
+        question: 'What is a continuation pattern?',
+        answer: 'While reversal patterns (like Double Tops) indicate a trend is changing direction, continuation patterns signal a temporary consolidation or pause in the middle of a trend before the original trend resumes. Common examples of continuation patterns include rectangles, triangles, flags, and pennants.',
+      },
+      {
+        topic: 'Technical Analysis',
+        question: 'How does the Relative Strength Index (RSI) work?',
+        answer: 'The RSI is a momentum oscillator that measures the speed and magnitude of price movements on a scale from 0 to 100, acting like a speedometer for the market. Typically, a reading above 70 indicates that an asset may be "overbought" or overvalued, while a reading below 30 suggests it may be "oversold" or undervalued.',
+      },
+      {
+        topic: 'Technical Analysis',
+        question: 'What is RSI divergence?',
+        answer: 'RSI divergence occurs when the price of an asset and the RSI momentum indicator move in opposite directions. For example, if an asset\'s price continues to drop to lower lows, but the RSI begins trending upward (a bullish divergence), it can be a strong signal that the market trend is about to reverse.',
+      },
+      {
+        topic: 'Technical Analysis',
+        question: 'What does the MACD indicator tell traders?',
+        answer: 'The Moving Average Convergence Divergence (MACD) tracks trend momentum by subtracting a 26-period exponential moving average (EMA) from a 12-period EMA. A 9-period EMA (the "signal line") is then plotted on top of the MACD; when the MACD line crosses its signal line, traders often use it as a trigger to buy or sell.',
+      },
+      {
+        topic: 'Technical Analysis',
+        question: 'How are Bollinger Bands used to track volatility?',
+        answer: 'Bollinger Bands consist of a simple moving average (the middle band) and two standard deviations acting as the upper and lower bands. The bands contract during periods of low volatility—a phase known as a "squeeze"—and expand when volatility increases. Traders use this squeeze to anticipate when a major, volatile price breakout is about to happen.',
+      },
+    ],
+  },
 ];
 
 const GUIDES: Guide[] = [
@@ -674,7 +743,7 @@ const MODULES: Module[] = [
     id: 'investing-markets',
     title: 'Investing & Markets',
     description: 'How NEPSE works, how to read it, and how to start investing in Nepal\'s stock market.',
-    lessonIds: ['demystifying-nepse', 'nepse-fundamental-analysis'],
+    lessonIds: ['demystifying-nepse', 'nepse-fundamental-analysis', 'technical-analysis-intro'],
     guideIds: ['nepse-guide'],
   },
   {
