@@ -123,10 +123,9 @@ service cloud.firestore {
       allow update: if (isSignedIn() && (
         (incoming().diff(existing()).affectedKeys().hasOnly(['likes']) && (incoming().likes == existing().likes + 1 || incoming().likes == existing().likes - 1)) ||
         (incoming().diff(existing()).affectedKeys().hasOnly(['commentCount']))
-      )) || (isOwner(existing().authorId) && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'content', 'abstract', 'category', 'updatedAt'])) || isAdmin();
+      )) || (isOwner(existing().authorId) && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'content', 'abstract', 'category', 'updatedAt']) && request.time < existing().createdAt + duration.value(24, 'h')) || isAdmin();
       
-      // Deliberate decision: allowing authors to hard-delete a post with an active comment thread.
-      allow delete: if isOwner(existing().authorId) || isAdmin();
+      allow delete: if (isOwner(existing().authorId) && existing().commentCount == 0) || isAdmin();
 
       // Comments Subcollection
       match /comments/{commentId} {

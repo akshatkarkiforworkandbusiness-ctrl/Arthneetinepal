@@ -37,7 +37,13 @@ export default function PostDetailPage() {
   const [editData, setEditData] = useState({ title: '', content: '', abstract: '', category: 'Finance' as any });
 
   const isAuthor = !!user && !!post && user.uid === post.authorId;
-  const canManage = isAuthor || isAdmin;
+  
+  const createdAtTime = post?.createdAt?.toDate ? post.createdAt.toDate().getTime() : Date.now();
+  const isWithin24Hours = createdAtTime > Date.now() - 24 * 60 * 60 * 1000;
+  
+  const canEdit = isAdmin || (isAuthor && isWithin24Hours);
+  const canDelete = isAdmin || (isAuthor && post?.commentCount === 0);
+  const canManage = canEdit || canDelete;
 
   // Load post
   useEffect(() => {
@@ -236,7 +242,7 @@ export default function PostDetailPage() {
             </button>
             {showActions && (
               <div className="absolute right-0 mt-2 w-44 bg-surface-raised border border-surface-high rounded-lg shadow-xl z-20 overflow-hidden">
-                {isAuthor && (
+                {canEdit && (
                   <button
                     onClick={() => { setShowEditModal(true); setShowActions(false); }}
                     className="w-full flex items-center gap-2 px-4 py-3 text-xs font-bold text-text-primary hover:bg-surface-high transition-colors"
@@ -244,12 +250,14 @@ export default function PostDetailPage() {
                     <Pencil size={14} /> Edit Post
                   </button>
                 )}
-                <button
-                  onClick={() => { setShowDeleteConfirm(true); setShowActions(false); }}
-                  className="w-full flex items-center gap-2 px-4 py-3 text-xs font-bold text-red-400 hover:bg-surface-high transition-colors"
-                >
-                  <Trash2 size={14} /> Delete Post
-                </button>
+                {canDelete && (
+                  <button
+                    onClick={() => { setShowDeleteConfirm(true); setShowActions(false); }}
+                    className="w-full flex items-center gap-2 px-4 py-3 text-xs font-bold text-red-400 hover:bg-surface-high transition-colors"
+                  >
+                    <Trash2 size={14} /> Delete Post
+                  </button>
+                )}
               </div>
             )}
           </div>
