@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import LogoLoop from './LogoLoop';
-import LiquidOcean from './LiquidOcean';
+
 
 export default function AboutUsPage() {
   const values = [
@@ -77,9 +77,7 @@ export default function AboutUsPage() {
     >
       {/* Introduction */}
       <section className="relative min-h-[600px] flex items-center justify-center bg-black overflow-hidden border-b border-white/10">
-        <div className="absolute inset-0 z-0">
-          <LiquidOcean />
-        </div>
+
         <div className="relative z-10 max-w-4xl mx-auto px-6 py-32 pointer-events-none">
           <span className="text-[10px] font-black text-electric-mint mb-8 block uppercase tracking-[0.4em]">INTRODUCING ARTHNEETI</span>
           <h1 className="text-5xl md:text-7xl text-white italic leading-tight mb-12 drop-shadow-2xl">Who We Are</h1>
