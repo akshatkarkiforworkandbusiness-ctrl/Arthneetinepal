@@ -604,6 +604,9 @@ export default function LearnPage() {
                 </div>
               </div>
             )}
+
+            {/* Lesson Discussion */}
+            <LessonCommentSection lessonId={activeLesson.id} />
           </div>
         </div>
       )}
