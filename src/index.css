@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;1,400;1,500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -57,17 +56,6 @@
   --color-gainer:     #00f59b;
   --color-loser:      #ef4444;
   --color-chart-grid: #1e293b;
-
-  /* ORYZO AI TOKENS */
-  --color-studio-black: #100904;
-  --color-warm-cream: #ffedd7;
-  --color-cork-shadow: #40372e;
-  --color-dark-cork: #382416;
-  --color-burnt-sienna: #dc5000;
-  --color-grey-brown: #6c5f51;
-  --color-forest-grid: #445231;
-
-  --font-halyard: "DM Sans", ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
