@@ -7,6 +7,7 @@ import AboutUsPage from './components/MissionPage'; // Repurposing MissionPage a
 import LearnPage from './components/LearnPage';
 import EventsPage from './components/EventsPage';
 import ProfilePage from './components/ProfilePage';
+import PostDetailPage from './components/PostDetailPage';
 import { AuthProvider } from './contexts/AuthContext';
 import { Toaster } from '@/components/ui/sonner';
 import Lightfall from './components/Lightfall';
@@ -31,12 +32,14 @@ export default function App() {
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/community" element={<CommunityPage />} />
+              <Route path="/post/:postId" element={<PostDetailPage />} />
               <Route path="/discover" element={<ExplorePage />} />
               <Route path="/about-us" element={<AboutUsPage />} />
               <Route path="/learn" element={<LearnPage />} />
               <Route path="/learn/:lessonId" element={<LearnPage />} />
               <Route path="/events" element={<EventsPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/profile/:userId" element={<ProfilePage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>

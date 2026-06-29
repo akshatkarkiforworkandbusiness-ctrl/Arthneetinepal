@@ -1,9 +1,10 @@
 import { motion } from 'motion/react';
 import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Mail, Briefcase, User as UserIcon } from 'lucide-react';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
-import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, orderBy, onSnapshot, doc, getDoc } from 'firebase/firestore';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -19,23 +20,59 @@ interface UserPost {
   content: string;
 }
 
+// Public-safe projection only — never includes email, even though the doc
+// itself may contain it. See firestore.rules note: users/{uid} read is
+// currently open to any signed-in user, so this client-side omission is a
+// stopgap, not a real fix.
+interface PublicProfile {
+  name: string;
+  topics: string[];
+}
+
 export default function ProfilePage() {
-  const { user, profile, handleJoinAction } = useAuth();
+  const { userId } = useParams<{ userId?: string }>();
+  const { user, profile: ownProfile, handleJoinAction } = useAuth();
+
+  // Viewing someone else's profile vs. your own
+  const isOwnProfile = !userId || (!!user && userId === user.uid);
+  const targetUid = isOwnProfile ? user?.uid : userId;
+
   const [activeTab, setActiveTab] = useState('posts');
   const [myPosts, setMyPosts] = useState<UserPost[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
+  const [publicProfile, setPublicProfile] = useState<PublicProfile | null>(null);
+  const [loadingProfile, setLoadingProfile] = useState(!isOwnProfile);
+
+  // Fetch the public profile doc when viewing someone else
+  useEffect(() => {
+    if (isOwnProfile || !targetUid) { setLoadingProfile(false); return; }
+    let cancelled = false;
+    getDoc(doc(db, 'users', targetUid))
+      .then(snap => {
+        if (cancelled) return;
+        if (snap.exists()) {
+          const data = snap.data();
+          setPublicProfile({ name: data.name, topics: data.topics || [] });
+        } else {
+          setPublicProfile(null);
+        }
+      })
+      .catch(error => handleFirestoreError(error, OperationType.GET, `users/${targetUid}`))
+      .finally(() => { if (!cancelled) setLoadingProfile(false); });
+    return () => { cancelled = true; };
+  }, [isOwnProfile, targetUid]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!targetUid) return;
 
     const path = 'posts';
     const q = query(
       collection(db, path),
-      where('authorId', '==', user.uid),
+      where('authorId', '==', targetUid),
       orderBy('createdAt', 'desc')
     );
 
-    const unsubscribe = onSnapshot(q, 
+    const unsubscribe = onSnapshot(q,
       (snapshot) => {
         setMyPosts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as UserPost)));
         setLoadingPosts(false);
@@ -47,9 +84,9 @@ export default function ProfilePage() {
     );
 
     return () => unsubscribe();
-  }, [user]);
+  }, [targetUid]);
 
-  if (!user) return (
+  if (isOwnProfile && !user) return (
     <div className="min-h-screen flex items-center justify-center bg-[#0B0F19]">
        <div className="text-center p-12 bg-[#161F30] rounded-lg-2xl shadow-xl border border-[#1F2A3F] flex flex-col items-center">
           <h2 className="text-3xl text-white italic font-sans tracking-tight font-semibold mb-4">Access Denied</h2>
@@ -63,6 +100,26 @@ export default function ProfilePage() {
        </div>
     </div>
   );
+
+  if (!isOwnProfile && loadingProfile) {
+    return (
+      <main className="max-w-7xl mx-auto px-6 py-20">
+        <Skeleton className="h-64 w-full bg-white/5 rounded-lg-2xl" />
+      </main>
+    );
+  }
+
+  if (!isOwnProfile && !publicProfile) {
+    return (
+      <main className="max-w-3xl mx-auto px-6 py-32 text-center">
+        <h2 className="text-3xl text-text-primary italic font-sans tracking-tight font-semibold mb-4">Member not found</h2>
+        <p className="text-text-muted">This profile doesn't exist or has been removed.</p>
+      </main>
+    );
+  }
+
+  const displayName = isOwnProfile ? (ownProfile?.name || user?.displayName) : publicProfile?.name;
+  const displayTopics = isOwnProfile ? (ownProfile?.topics || ['Economics', 'Finance']) : (publicProfile?.topics || []);
 
   return (
     <motion.main 
@@ -81,23 +138,26 @@ export default function ProfilePage() {
             <div className="flex flex-col md:flex-row md:items-end gap-8">
               <div className="w-40 h-40 bg-white rounded-lg-2xl border-8 border-white shadow-2xl flex items-center justify-center overflow-hidden">
                 <div className="w-full h-full bg-electric-mint flex items-center justify-center text-slate-base text-5xl font-black font-sans tracking-tight font-semibold italic">
-                  {(profile?.name || user.displayName || 'U').charAt(0)}
+                  {(displayName || 'U').charAt(0)}
                 </div>
               </div>
               
               <div className="pb-4">
                 <h1 className="text-5xl text-slate-base italic font-sans tracking-tight font-semibold mb-4 leading-tight">
-                  {profile?.name || user.displayName}
+                  {displayName}
                 </h1>
                 <div className="flex flex-wrap items-center gap-6">
                   <div className="flex items-center gap-2 text-slate-base/40">
                     <UserIcon size={14} className="text-electric-mint" />
                     <span className="text-[10px] font-black uppercase tracking-widest leading-none">Member</span>
                   </div>
-                  <div className="flex items-center gap-2 text-slate-base/40">
-                    <Mail size={14} className="text-club-green" />
-                    <span className="text-[10px] font-black uppercase tracking-widest leading-none">{profile?.email || user.email}</span>
-                  </div>
+                  {/* Email is intentionally never shown on a profile that isn't your own. */}
+                  {isOwnProfile && (
+                    <div className="flex items-center gap-2 text-slate-base/40">
+                      <Mail size={14} className="text-club-green" />
+                      <span className="text-[10px] font-black uppercase tracking-widest leading-none">{ownProfile?.email || user?.email}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -107,7 +167,7 @@ export default function ProfilePage() {
              <div>
                 <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-base/40 mb-4">Interests</h4>
                 <div className="flex flex-wrap gap-2">
-                  {(profile?.topics || ['Economics', 'Finance']).map(topic => (
+                  {displayTopics.map(topic => (
                     <Badge key={topic} variant="outline" className="px-4 py-1.5 bg-surface-base border border-surface-high rounded-lg text-[10px] font-black uppercase tracking-widest text-text-muted">
                       {topic}
                     </Badge>
@@ -129,11 +189,13 @@ export default function ProfilePage() {
                    </div>
                 </div>
              </div>
-             <div className="flex items-center justify-md-end">
-                <button className="bg-electric-mint text-slate-base px-8 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-club-green transition-all shadow-xl">
-                   Edit Profile
-                </button>
-             </div>
+             {isOwnProfile && (
+               <div className="flex items-center justify-md-end">
+                  <button className="bg-electric-mint text-slate-base px-8 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-club-green transition-all shadow-xl">
+                     Edit Profile
+                  </button>
+               </div>
+             )}
           </div>
         </div>
       </section>
@@ -142,9 +204,11 @@ export default function ProfilePage() {
       <Tabs defaultValue="posts" value={activeTab} onValueChange={setActiveTab} className="mb-16">
         <TabsList className="flex gap-12 border-b border-slate-base/5 mb-16 overflow-x-auto bg-transparent p-0 rounded-lg-none w-full justify-start h-auto">
           {[
-            { id: 'posts', label: 'My Contributions' },
-            { id: 'bookmarks', label: 'Saved Analysis' },
-            { id: 'activity', label: 'Activity Log' },
+            { id: 'posts', label: isOwnProfile ? 'My Contributions' : 'Contributions' },
+            ...(isOwnProfile ? [
+              { id: 'bookmarks', label: 'Saved Analysis' },
+              { id: 'activity', label: 'Activity Log' },
+            ] : []),
           ].map(tab => (
             <TabsTrigger
               key={tab.id}
@@ -167,8 +231,9 @@ export default function ProfilePage() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
                 {myPosts.map((post, i) => (
-                  <motion.div
+                  <motion.a
                     key={post.id}
+                    href={`/post/${post.id}`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
@@ -189,7 +254,7 @@ export default function ProfilePage() {
                     <p className="text-[10px] font-bold text-slate-base/40 uppercase tracking-widest">
                       {post.category}
                     </p>
-                  </motion.div>
+                  </motion.a>
                 ))}
               </div>
 
@@ -200,7 +265,7 @@ export default function ProfilePage() {
                    </div>
                    <h3 className="text-3xl text-text-primary italic font-sans tracking-tight font-semibold mb-4">No Activity Yet</h3>
                    <p className="text-text-muted font-sans italic max-w-sm">
-                     Start contributing to the community feed to build your intellectual portfolio.
+                     {isOwnProfile ? 'Start contributing to the community feed to build your intellectual portfolio.' : 'This member hasn\u2019t contributed anything yet.'}
                    </p>
                 </div>
               )}
@@ -208,23 +273,27 @@ export default function ProfilePage() {
           )}
         </TabsContent>
 
-        <TabsContent value="bookmarks">
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-             <h3 className="text-2xl text-text-primary italic font-sans tracking-tight font-semibold mb-4">No Bookmarked Analysis</h3>
-             <p className="text-text-muted font-sans italic max-w-sm">
-               Bookmark posts from the explore page to read them later.
-             </p>
-          </div>
-        </TabsContent>
+        {isOwnProfile && (
+          <>
+            <TabsContent value="bookmarks">
+              <div className="flex flex-col items-center justify-center py-20 text-center">
+                 <h3 className="text-2xl text-text-primary italic font-sans tracking-tight font-semibold mb-4">No Bookmarked Analysis</h3>
+                 <p className="text-text-muted font-sans italic max-w-sm">
+                   Bookmark posts from the explore page to read them later.
+                 </p>
+              </div>
+            </TabsContent>
 
-        <TabsContent value="activity">
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-             <h3 className="text-2xl text-text-primary italic font-sans tracking-tight font-semibold mb-4">No Recent Activity</h3>
-             <p className="text-text-muted font-sans italic max-w-sm">
-               Your recent interactions and activities will be displayed here.
-             </p>
-          </div>
-        </TabsContent>
+            <TabsContent value="activity">
+              <div className="flex flex-col items-center justify-center py-20 text-center">
+                 <h3 className="text-2xl text-text-primary italic font-sans tracking-tight font-semibold mb-4">No Recent Activity</h3>
+                 <p className="text-text-muted font-sans italic max-w-sm">
+                   Your recent interactions and activities will be displayed here.
+                 </p>
+              </div>
+            </TabsContent>
+          </>
+        )}
       </Tabs>
     </motion.main>
   );

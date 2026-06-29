@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react';
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -11,216 +12,19 @@ import {
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../contexts/AuthContext';
-import { Heart, MessageSquare, Share2, Download, Plus, Send, X, FileText, HelpCircle, MoreVertical } from 'lucide-react';
+import { Heart, MessageSquare, Share2, Download, Plus, FileText, HelpCircle, MoreVertical } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { GradientCard } from './GradientCard';
-
-// --- Types ---
-interface Post {
-  id: string;
-  type: 'discussion' | 'research' | 'question';
-  title?: string;
-  author: string;
-  authorId: string;
-  category: 'Finance' | 'Economics' | 'Other';
-  content: string; // HTML for discussion/research, plain text for question
-  abstract?: string;
-  imageUrl?: string;
-  pdfUrl?: string;
-  likes: number;
-  commentCount: number;
-  createdAt: any;
-  seeded?: boolean;
-}
-
-interface Comment {
-  id: string;
-  authorId: string;
-  authorName: string;
-  text: string;
-  likes: number;
-  createdAt: any;
-  parentId?: string;
-}
-
-// --- Components ---
-
-interface CommentItemProps {
-  comment: Comment;
-  postId: string;
-  onReply: (parentId: string, authorName: string) => void;
-}
-
-const CommentItem: React.FC<CommentItemProps> = ({ 
-  comment, 
-  postId, 
-  onReply 
-}) => {
-  const { user } = useAuth();
-  
-  const handleLike = async () => {
-    if (!user) return;
-    try {
-      await updateDoc(doc(db, `posts/${postId}/comments`, comment.id), {
-        likes: increment(1)
-      });
-      toast.success("Comment liked!");
-    } catch (error) {
-      toast.error("Failed to like comment.");
-    }
-  };
-
-  return (
-    <div className="flex gap-4">
-      <div className="w-8 h-8 rounded-lg bg-electric-mint flex items-center justify-center text-slate-base font-black text-[10px] shrink-0">
-        {comment.authorName?.[0]}
-      </div>
-      <div className="flex-1">
-        <div className="bg-surface-base p-4 rounded-lg border border-surface-high">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-black text-text-primary uppercase tracking-widest">{comment.authorName}</span>
-            <span className="text-[10px] text-text-muted font-medium">
-              {comment.createdAt?.toDate ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(comment.createdAt.toDate()) : '...'}
-            </span>
-          </div>
-          <p className="text-sm text-text-muted leading-relaxed">{comment.text}</p>
-        </div>
-        <div className="flex items-center gap-6 mt-2 ml-2">
-          <button 
-            onClick={handleLike}
-            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-text-muted hover:text-electric-mint transition-colors"
-          >
-            <Heart size={12} fill={comment.likes > 0 ? 'currentColor' : 'none'} className={comment.likes > 0 ? 'text-electric-mint' : ''} />
-            {comment.likes}
-          </button>
-          {!comment.parentId && (
-            <button 
-              onClick={() => onReply(comment.id, comment.authorName)}
-              className="text-[10px] font-black uppercase tracking-widest text-text-muted hover:text-text-primary transition-colors"
-            >
-              Reply
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function CommentSection({ postId }: { postId: string }) {
-  const { user, profile } = useAuth();
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState('');
-  const [replyTo, setReplyTo] = useState<{ id: string; name: string } | null>(null);
-
-  useEffect(() => {
-    const path = `posts/${postId}/comments`;
-    const qComments = query(
-      collection(db, path),
-      orderBy('createdAt', 'desc')
-    );
-    const unsubscribe = onSnapshot(qComments, 
-      (snapshot) => {
-        setComments(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Comment)));
-      },
-      (error) => handleFirestoreError(error, OperationType.GET, path)
-    );
-    return () => unsubscribe();
-  }, [postId]);
-
-  const handleAddComment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user || !newComment.trim()) return;
-    const path = `posts/${postId}/comments`;
-
-    try {
-      const commentData: any = {
-        authorId: user.uid,
-        authorName: profile?.name || user.displayName || 'Anonymous',
-        text: newComment,
-        likes: 0,
-        createdAt: serverTimestamp(),
-      };
-      if (replyTo) {
-        commentData.parentId = replyTo.id;
-      }
-
-      await addDoc(collection(db, path), commentData);
-      await updateDoc(doc(db, 'posts', postId), {
-        commentCount: increment(1)
-      });
-      setNewComment('');
-      setReplyTo(null);
-      toast.success("Comment added!");
-    } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, path);
-      toast.error("Failed to add comment.");
-    }
-  };
-
-  const rootComments = comments.filter(c => !c.parentId);
-  const getReplies = (parentId: string) => comments.filter(c => c.parentId === parentId);
-
-  return (
-    <div className="mt-8 pt-8 border-t border-slate-base/5 space-y-8">
-      {user && (
-        <form onSubmit={handleAddComment} className="relative mb-12">
-          {replyTo && (
-            <div className="flex justify-between items-center bg-electric-mint/10 p-2 px-4 rounded-lg mb-2">
-              <span className="text-[10px] font-black text-electric-mint uppercase tracking-widest">Replying to {replyTo.name}</span>
-              <button onClick={() => setReplyTo(null)} className="text-text-muted hover:text-text-primary"><X size={14} /></button>
-            </div>
-          )}
-          <textarea 
-            value={newComment}
-            onChange={e => setNewComment(e.target.value)}
-            placeholder="Share your thoughts..."
-            className="w-full bg-surface-base border border-surface-high rounded-lg p-5 text-sm text-text-primary outline-none focus:border-electric-mint transition-all resize-none h-24"
-          />
-          <button 
-            type="submit"
-            disabled={!newComment.trim()}
-            className="absolute bottom-4 right-4 bg-slate-base text-slate-base p-3 rounded-lg hover:bg-electric-mint transition-all disabled:opacity-20"
-          >
-            <Send size={18} />
-          </button>
-        </form>
-      )}
-
-      <div className="space-y-10">
-        {rootComments.map((comment) => (
-          <div key={comment.id} className="space-y-6">
-            <CommentItem 
-              comment={comment} 
-              postId={postId} 
-              onReply={(id, name) => setReplyTo({ id, name })} 
-            />
-            {/* Replies */}
-            <div className="ml-12 space-y-6 border-l-2 border-slate-raised/5 pl-8">
-              {getReplies(comment.id).map(reply => (
-                <CommentItem 
-                  key={reply.id}
-                  comment={reply} 
-                  postId={postId} 
-                  onReply={(pid, name) => setReplyTo({ id: pid, name })} 
-                />
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+import type { Post } from '../types/post';
 
 export default function CommunityPage() {
+  const navigate = useNavigate();
   const { user, profile } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'discussions' | 'research' | 'questions'>('discussions');
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [expandedPost, setExpandedPost] = useState<string | null>(null);
   
   // Create Post State
   const [isUploading, setIsUploading] = useState(false);
@@ -415,9 +219,9 @@ const handleLike = async (postId: string) => {
 };
 
   const handleShare = (postId: string) => {
-    const url = `${window.location.origin}/community?post=${postId}`;
+    const url = `${window.location.origin}/post/${postId}`;
     navigator.clipboard.writeText(url);
-    toast('Link copied to clipboard!'); // Replace with toast later
+    toast.success('Link copied to clipboard!');
   };
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
@@ -583,7 +387,7 @@ const handleLike = async (postId: string) => {
                 className="mb-8"
               >
                 <GradientCard 
-                  onClick={() => post.type === 'discussion' ? setExpandedPost(expandedPost === post.id ? null : post.id) : undefined}
+                  onClick={() => navigate(`/post/${post.id}`)}
                 >
                   <div className="flex justify-between items-start mb-8 w-full">
                     <div className="flex items-center gap-4">
@@ -615,11 +419,14 @@ const handleLike = async (postId: string) => {
                         <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                       </div>
                     )}
-                    <div className={`text-gray-300 leading-relaxed font-sans mb-6 ${expandedPost === post.id ? '' : 'line-clamp-3'}`}>
+                    <div className="text-gray-300 leading-relaxed font-sans mb-6 line-clamp-3">
                       <div dangerouslySetInnerHTML={{ __html: post.content }} />
                     </div>
-                    {!expandedPost && post.content.length > 200 && (
-                      <button className="text-club-green text-[10px] font-black uppercase tracking-widest hover:text-white transition-colors mb-6 block">
+                    {post.content.length > 200 && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); navigate(`/post/${post.id}`); }}
+                        className="text-club-green text-[10px] font-black uppercase tracking-widest hover:text-white transition-colors mb-6 block"
+                      >
                         Read more →
                       </button>
                     )}
@@ -661,8 +468,8 @@ const handleLike = async (postId: string) => {
                       <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{post.likes}</span>
                     </button>
                     <button 
-                      onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)}
-                      className={`flex items-center gap-2 group ${expandedPost === post.id ? 'text-club-green' : 'text-gray-400 hover:text-club-green transition-colors'}`}
+                      onClick={() => navigate(`/post/${post.id}#comments`)}
+                      className="flex items-center gap-2 group text-gray-400 hover:text-club-green transition-colors"
                     >
                       <MessageSquare size={18} />
                       <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest group-hover:text-club-green">{post.commentCount}</span>
@@ -675,20 +482,6 @@ const handleLike = async (postId: string) => {
                     </button>
                   </div>
                 </div>
-
-                <AnimatePresence>
-                  {expandedPost === post.id && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="overflow-hidden w-full"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                       <CommentSection postId={post.id} />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
                 </GradientCard>
               </motion.div>
             ))}
