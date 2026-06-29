@@ -141,6 +141,14 @@ service cloud.firestore {
       }
     }
 
+    // Lesson Comments
+    match /lessons/{lessonId}/comments/{commentId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isValidComment(incoming());
+      allow update: if (isSignedIn() && incoming().diff(existing()).affectedKeys().hasOnly(['likes'])) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
     // Events
     match /events/{eventId} {
       allow read: if true;
