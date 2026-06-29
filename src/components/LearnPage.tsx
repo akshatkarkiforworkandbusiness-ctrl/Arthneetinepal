@@ -457,6 +457,75 @@ export const LESSONS: Lesson[] = [
       },
     ],
   },
+  {
+    id: 'digital-payments-security',
+    level: 'Beginner',
+    title: 'Digital Payments & Cyber Security in Nepal',
+    desc: 'An overview of Nepal\'s digital payment ecosystem, cybersecurity threats, and how to protect yourself against financial fraud and cybercrimes.',
+    duration: '15:00',
+    tag: 'Financial Literacy',
+    videoUrl: 'https://www.youtube.com/embed/WkVeC2MSNKA',
+    thumbnail: 'https://img.youtube.com/vi/WkVeC2MSNKA/hqdefault.jpg',
+    chapters: [
+      'Expansion and Innovation in the Digital Payment Ecosystem',
+      'Escalating Cybersecurity Threats and the Need for User Vigilance',
+      'Development of Comprehensive National Cyber Security Frameworks',
+      'Institutional Cyber Resilience and Strict Risk Management',
+      'Combating Financial Crimes and Enhancing AML/CFT Compliance',
+    ],
+    faqs: [
+      {
+        topic: 'Financial Literacy',
+        question: 'What are the key innovations currently driving Nepal\'s digital payment ecosystem?',
+        answer: 'Nepal is advancing its digital payment infrastructure through initiatives like the National Payment Switch (NPS), the domestically routed NEPALPAY Card, and connectIPS tokenization. Furthermore, the Nepal Rastra Bank (NRB) is developing a Wholesale Central Bank Digital Currency (wCBDC) and promoting fintech solutions through an established Digital Finance Innovation Hub.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How does tokenization improve the safety of digital transactions for consumers?',
+        answer: 'Tokenization secures digital payments by replacing sensitive bank account details with a unique digital token. This allows users to perform one-time or recurring transactions through an e-mandate without repeatedly exposing their actual financial information, significantly minimizing the risk of data theft.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What are the main cybersecurity threats targeting Nepali digital payment users?',
+        answer: 'The rapid adoption of digital wallets and mobile banking has inevitably attracted cybercriminals, leading to increased incidents of phishing, fraud, data breaches, and unauthorized access. Scammers frequently use fraudulent links or impersonate bank officials to trick users into revealing their One-Time Passwords (OTPs), PINs, and personal data.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What are the most effective ways for users to protect their online financial transactions?',
+        answer: 'Users are strongly advised to use complex and unique passwords, enable Two-Factor or Multi-Factor Authentication (2FA/MFA), and use biometric logins such as fingerprint or facial recognition. Additionally, they must never share OTPs or PINs, avoid using unsecured public Wi-Fi for payments, and remain highly vigilant against suspicious messages and phishing attempts.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What are the primary objectives of the National Cyber Security Policy, 2023?',
+        answer: 'The policy\'s long-term vision is to build a secure and resilient cyberspace in Nepal. It aims to protect critical national infrastructure, enhance cyber security research and human resource capacity, improve the reliability of digital services, and establish the National Cyber Security Center to act as a 24/7 contact agency for threat response.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How does the Electronic Transactions Act, 2008 support digital security?',
+        answer: 'The Act provides the foundational legal framework for electronic transactions by granting legal recognition to electronic records and digital signatures. It is designed to make electronic communication reliable and secure while establishing legal provisions to control unauthorized access and the illegal alteration of electronic records.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What does the NRB\'s Cyber Resilience Guidelines mandate for financial institutions?',
+        answer: 'The guidelines require institutions to adopt a "resilience by design" approach, implement robust protective controls (like defense-in-depth), and ensure they can safely resume critical operations within two hours of a disruptive event. Institutions must also utilize continuous monitoring and multi-layered detection systems to identify anomalous activities and contain cyber threats swiftly.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What is PCI DSS certification, and why is it important for the payment industry?',
+        answer: 'The Payment Card Industry Data Security Standard (PCI DSS) is a globally recognized compliance scheme designed to secure credit and debit card transactions against data theft and fraud. Fonepay recently became Nepal\'s first payment service to achieve this certification, setting a high standard and inspiring other payment gateways to prioritize institutional data security.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Why was Nepal placed on the FATF "grey list," and what does it entail?',
+        answer: 'Nepal was placed on the Financial Action Task Force (FATF) "grey list" due to strategic deficiencies in its Anti-Money Laundering (AML) and Counter-Terrorist Financing (CFT) frameworks. Being on this list means the country is under increased international monitoring and must implement strict action plans to address these shortcomings, which could otherwise deter foreign investment and impact cross-border transactions.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How are payment systems in Nepal regulated to combat money laundering and financial fraud?',
+        answer: 'Payment service providers must implement stringent measures, including comprehensive customer due diligence (CDD), continuous transaction monitoring, and the reporting of large or suspicious activities to the Financial Information Unit (FIU). The NRB also highly encourages companies to integrate Artificial Intelligence (AI) and machine learning into their risk management systems for real-time fraud detection.',
+      },
+    ],
+  },
 ];
 
 const GUIDES: Guide[] = [
@@ -529,7 +598,7 @@ const MODULES: Module[] = [
     id: 'financial-literacy',
     title: 'Financial Literacy',
     description: 'Personal finance fundamentals — budgeting, saving, and understanding how NRB policy affects your wallet.',
-    lessonIds: ['budgeting-emergency-fund', 'modern-finance-intro', 'financial-literacy-youth'],
+    lessonIds: ['budgeting-emergency-fund', 'modern-finance-intro', 'financial-literacy-youth', 'digital-payments-security'],
     guideIds: ['financial-literacy'],
   },
   {
