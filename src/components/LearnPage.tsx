@@ -526,6 +526,75 @@ export const LESSONS: Lesson[] = [
       },
     ],
   },
+  {
+    id: 'nepse-fundamental-analysis',
+    level: 'Beginner',
+    title: 'Fundamental Analysis & Banking Stocks in NEPSE',
+    desc: 'Learn how to analyze core financial statements, understand EPS and P/E ratios, and evaluate banking stocks in the Nepal Stock Exchange.',
+    duration: '15:00',
+    tag: 'Stock Market',
+    videoUrl: 'https://www.youtube.com/embed/rDXDy7_Lclw',
+    thumbnail: 'https://img.youtube.com/vi/rDXDy7_Lclw/hqdefault.jpg',
+    chapters: [
+      'The Role of Core Financial Statements',
+      'Earnings Per Share (EPS) and the "Annualized" Trap',
+      'Price-to-Earnings (P/E) Ratio and Sector Comparisons',
+      'Book Value (Net Worth Per Share) and the Rs 100 Par Value',
+      'The Current Undervaluation of the Banking Sector',
+    ],
+    faqs: [
+      {
+        topic: 'Stock Market',
+        question: 'What are the essential financial statements used for fundamental analysis in NEPSE?',
+        answer: 'The core financial statements include the Balance Sheet (Statement of Financial Position), which highlights a company\'s assets, liabilities, and net worth; the Income Statement (Statement of Profit or Loss), which reveals revenue and profit trends; and the Cash Flow Statement, which shows liquidity and operational stability. The Nepal Rastra Bank (NRB) mandates a comprehensive and standardized format for these statements for "A" class Commercial Banks to ensure full transparency.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What is Earnings Per Share (EPS) and how is it calculated?',
+        answer: 'EPS represents the net profit behind a single share of a company. It is calculated by dividing the company\'s net profit by the total number of its outstanding shares. EPS is a fundamental indicator of how much profit each share generates.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Why should investors be cautious of "annualized" EPS in quarterly reports?',
+        answer: 'In NEPSE, companies publish unaudited quarterly results where EPS is often "annualized," meaning the earnings from a single quarter are scaled up to estimate a full twelve months. Investors must be careful because a single unusually strong quarter can artificially inflate the annualized figure, making the company look cheaper than it actually is when the final audited year-end results are released.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What does the Price-to-Earnings (P/E) ratio tell investors?',
+        answer: 'The P/E ratio indicates how much you are paying for every rupee a company earns. It is calculated by dividing the current share price by the EPS. A high P/E ratio generally means the market expects strong future growth and is willing to pay a premium, while a low P/E might mean the market is skeptical or the stock is undervalued.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Can I compare the P/E ratio of a commercial bank with a microfinance company?',
+        answer: 'No, you should always compare P/E ratios within the same sector. Different sectors have completely different "normal" ranges. For example, NEPSE commercial banks typically trade at lower P/E ratios (roughly 10-18), whereas sectors like microfinance or hydropower often trade at much higher multiples of 15-30 or more.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What is Book Value (Net Worth Per Share) and how does it relate to the Rs 100 par value?',
+        answer: 'Book value per share is the accounting value left for shareholders after all debts are paid, calculated by dividing shareholders\' equity by the number of shares. In Nepal, shares have a standard par value of Rs 100. If a company\'s net worth per share is Rs 200, it means the company has accumulated Rs 100 of reserves and retained earnings above its original par value.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'How is the Price-to-Book (P/B) ratio used to evaluate banks?',
+        answer: 'The P/B ratio measures how much investors are willing to pay relative to the company\'s net worth. A P/B ratio below 1 can signal that a stock is undervalued, while a normal range for NEPSE banks is typically between 1 and 3 times their book value.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What is the current valuation of the NEPSE market versus the commercial banking sector?',
+        answer: 'As of late October 2025, the overall NEPSE market is trading at highly elevated valuations, with an average P/E ratio of 38.32 and a P/B ratio of 2.78. Conversely, the commercial banking sector remains significantly undervalued, boasting a moderate P/E of roughly 15.80 and a P/B of 1.51, making it one of the most viable opportunities for long-term value investors.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What is the difference between a Trailing P/E and a Forward P/E?',
+        answer: 'The Trailing P/E ratio uses actual past earnings data from the last 12 months, providing a clear picture of historical performance. The Forward P/E ratio uses projected expected earnings for the next 12 months. While Forward P/E offers insights into future growth expectations, it is more speculative as it relies on estimates.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Does a low P/E ratio always mean a stock is a good investment?',
+        answer: 'No, a low P/E ratio does not automatically make a stock a "must buy". While it might suggest a stock is cheap or undervalued, it can also mean that the company has fundamental problems, is facing challenges, or that the market is losing confidence in its future prospects. It is crucial to investigate why the P/E is low before investing.',
+      },
+    ],
+  },
 ];
 
 const GUIDES: Guide[] = [
@@ -605,7 +674,7 @@ const MODULES: Module[] = [
     id: 'investing-markets',
     title: 'Investing & Markets',
     description: 'How NEPSE works, how to read it, and how to start investing in Nepal\'s stock market.',
-    lessonIds: ['demystifying-nepse'],
+    lessonIds: ['demystifying-nepse', 'nepse-fundamental-analysis'],
     guideIds: ['nepse-guide'],
   },
   {
