@@ -388,6 +388,75 @@ export const LESSONS: Lesson[] = [
       },
     ],
   },
+  {
+    id: 'financial-literacy-youth',
+    level: 'Beginner',
+    title: 'Financial Literacy & Personal Wealth Management in Nepal',
+    desc: 'Learn about budgeting with the 50/30/20 rule, building an emergency fund, calculating savings interest, and smart borrowing strategies for youth in Nepal.',
+    duration: '15:00',
+    tag: 'Financial Literacy',
+    videoUrl: 'https://www.youtube.com/embed/axpx1CYe8JI',
+    thumbnail: 'https://img.youtube.com/vi/axpx1CYe8JI/hqdefault.jpg',
+    chapters: [
+      'Budgeting with the 50/30/20 Rule',
+      'Building a 3-6 Month Emergency Fund',
+      'Calculating Savings Account Interest',
+      'Financial Goal Setting for Youth',
+      'Smart Borrowing and Income Pathways',
+    ],
+    faqs: [
+      {
+        topic: 'Financial Literacy',
+        question: 'How should I divide my monthly income or allowance to manage my money better?',
+        answer: 'A highly recommended method is the 50/30/20 rule. Under this budgeting framework, you allocate 50% of your income for essential needs (such as rent, groceries, and school fees), 30% for discretionary wants (like eating out or entertainment), and 20% toward savings and investments.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What is the exact difference between a "need" and a "want"?',
+        answer: 'Needs are basic requirements that must be met for your daily survival and living, such as food, clothing, and shelter. Wants are things that are nice to have but are not strictly required, such as going to the movies or buying designer jeans. Understanding this difference is a core part of financial planning, as cutting down on "wants" is the easiest way to increase your savings.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How much money should I save for emergencies?',
+        answer: 'Financial experts recommend building an emergency fund large enough to cover 3 to 6 months of your basic living expenses. This fund acts as a safety net to protect you from taking out high-interest loans during unpredictable events, such as a medical emergency or a sudden job loss.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Where is the best place to keep my emergency fund?',
+        answer: 'Your emergency fund should be kept in a safe place where you can access the cash easily when needed. A standard savings account is a great starting point for liquidity. As your fund grows, you can use Fixed Deposit (FD) laddering—splitting your money into multiple short-term FDs (like 3-month and 6-month terms) so you earn a higher interest rate while ensuring some money frequently becomes available.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How is interest actually calculated on my savings account in Nepal?',
+        answer: 'Unlike older methods that only paid interest on your lowest monthly balance, Nepali banks now calculate savings interest based on your daily closing balance. The formula is: (day\'s closing balance × annual rate) ÷ 365. This means every single rupee earns interest for the exact number of days it sits in your account, and the bank totals these daily slices to credit to your account, usually on a quarterly basis.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Will I lose my interest if my savings account drops below the minimum balance?',
+        answer: 'No, you do not lose your earned interest. Because interest is calculated daily, the days you maintained a higher balance still earn their full interest. However, dropping below the minimum balance may trigger a separate flat non-maintenance fee charged by the bank. To avoid this, you can look into zero-balance or student accounts.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Do I have to pay taxes on the interest I earn from my savings?',
+        answer: 'Yes. In Nepal, banks automatically deduct a 6% Tax Deducted at Source (TDS) on interest paid to individuals. This is considered a final tax, meaning the interest figure you see deposited into your account is the net amount after taxes have already been taken out.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What makes a loan "good" versus "bad"?',
+        answer: 'A good loan is borrowed money used for productive investment, such as starting a business, purchasing equipment, or paying for education, which will generate future income to help you repay the debt. A bad loan is borrowing money to pay for everyday consumption, temporary wants, or emergencies, because these do not generate new revenue and can trap you in a cycle of debt.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'As a youth, should I aim for wage-employment (a job) or self-employment (starting a business)?',
+        answer: 'Both pathways have distinct advantages and disadvantages depending on your skills and personality. Wage-employment offers a fixed, regular income, opportunities to learn from a boss, and less stress at the end of the day, but it gives you less control over your schedule and decisions. Self-employment allows you to be your own boss, set your own hours, and follow your passions, but it requires initial capital, involves carrying the stress of the business\'s success, and your income can fluctuate heavily.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What is insurance and why do I need it?',
+        answer: 'Insurance is a financial protection measure against unpredictable risks (like illness, accidents, or natural disasters). By paying a small, regular fee called a premium, you join a pooled fund managed by an insurance company. If an unfortunate event occurs, the insurance company pays you a benefit (financial compensation) to help cover the losses, ensuring that a single crisis doesn\'t destroy your long-term savings or plunge your family into debt.',
+      },
+    ],
+  },
 ];
 
 const GUIDES: Guide[] = [
@@ -460,7 +529,7 @@ const MODULES: Module[] = [
     id: 'financial-literacy',
     title: 'Financial Literacy',
     description: 'Personal finance fundamentals — budgeting, saving, and understanding how NRB policy affects your wallet.',
-    lessonIds: ['budgeting-emergency-fund', 'modern-finance-intro'],
+    lessonIds: ['budgeting-emergency-fund', 'modern-finance-intro', 'financial-literacy-youth'],
     guideIds: ['financial-literacy'],
   },
   {
