@@ -664,6 +664,50 @@ export const LESSONS: Lesson[] = [
       },
     ],
   },
+  {
+    id: 'ipo-vs-secondary-market',
+    level: 'Beginner',
+    title: 'IPO vs Secondary Market',
+    desc: 'Understand the core differences between the primary (IPO) market and the secondary market, including risk levels, investment requirements, and profit potential.',
+    duration: '15:00',
+    tag: 'Stock Market',
+    videoUrl: 'https://www.youtube.com/embed/VZiZwDl9RaI',
+    thumbnail: 'https://img.youtube.com/vi/VZiZwDl9RaI/hqdefault.jpg',
+    chapters: [
+      'Definitions and Market Basics',
+      'Risk Levels and Emotional Stress',
+      'Investment Requirements and Allotment Guarantees',
+      'Profit Potential and Wealth Building',
+      'Required Knowledge and Strategy',
+    ],
+    faqs: [
+      {
+        topic: 'Stock Market',
+        question: 'What is the core difference between the IPO and secondary markets?',
+        answer: 'An IPO is the primary market where a private company sells its shares to the public for the first time at a fixed price. The secondary market is where these shares are traded daily, with prices fluctuating based on supply and demand.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Why are IPOs considered a low-risk entry point into the stock market?',
+        answer: 'IPOs are low-risk because the price is fixed and the investment amount is usually very small, meaning there is minimal emotional stress or fear of sudden, large losses.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Is getting shares guaranteed when applying for an IPO?',
+        answer: 'No, because of high demand, getting shares in an IPO is not guaranteed and relies on a lottery system. In contrast, in the secondary market, your purchase is guaranteed as you buy available shares at the current market price.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Where is long-term wealth primarily built: IPOs or the secondary market?',
+        answer: 'The secondary market is where long-term wealth is built. While IPOs offer excellent short-term listing gains, buying quality blue-chip stocks during market corrections and holding them for years offers much larger compounding profits and dividend returns.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Do I need advanced financial knowledge to apply for an IPO?',
+        answer: 'No, IPOs are highly beginner-friendly and require virtually no fundamental or technical analysis. However, succeeding in the secondary market requires an intermediate to advanced level of financial knowledge to read financial statements and identify strong companies.',
+      },
+    ],
+  },
 ];
 
 const GUIDES: Guide[] = [
@@ -743,7 +787,7 @@ const MODULES: Module[] = [
     id: 'investing-markets',
     title: 'Investing & Markets',
     description: 'How NEPSE works, how to read it, and how to start investing in Nepal\'s stock market.',
-    lessonIds: ['demystifying-nepse', 'nepse-fundamental-analysis', 'technical-analysis-intro'],
+    lessonIds: ['demystifying-nepse', 'nepse-fundamental-analysis', 'technical-analysis-intro', 'ipo-vs-secondary-market'],
     guideIds: ['nepse-guide'],
   },
   {
