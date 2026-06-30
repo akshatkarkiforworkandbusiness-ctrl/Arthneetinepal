@@ -1,5 +1,8 @@
 {
   "firestore": {
     "rules": "firestore.rules"
+  },
+  "observability": {
+    "enabled": false
   }
 }
