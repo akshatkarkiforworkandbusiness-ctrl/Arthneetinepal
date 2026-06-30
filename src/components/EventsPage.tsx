@@ -1,7 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react';
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { toast } from 'sonner';
-import { Badge } from '@/components/ui/badge';
 import { db, storage, handleFirestoreError, OperationType } from '../lib/firebase';
 import {
   collection, query, orderBy, onSnapshot, addDoc, serverTimestamp,
@@ -9,7 +8,10 @@ import {
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../contexts/AuthContext';
-import { Calendar, MapPin, Clock, Plus, Edit2, Trash2, X, ChevronRight, CheckCircle, ImagePlus, Loader2 } from 'lucide-react';
+import { Calendar, Plus, X, ImagePlus, Loader2 } from 'lucide-react';
+import AnimatedEventCard from './AnimatedEventCard';
+
+const EventScene = lazy(() => import('./EventScene'));
 
 /* ── Types ───────────────────────────────────────────────────────── */
 
@@ -25,63 +27,6 @@ interface Event {
   imageUrl?: string;
 }
 
-/* ── 3D Tilt Card ────────────────────────────────────────────────── */
-
-function TiltCard({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [style, setStyle] = useState<React.CSSProperties>({});
-
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const el = ref.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * -8;
-    const rotateY = ((x - centerX) / centerX) * 8;
-    setStyle({
-      transform: `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02,1.02,1.02)`,
-      transition: 'transform 0.1s ease-out',
-    });
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setStyle({
-      transform: 'perspective(800px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)',
-      transition: 'transform 0.4s ease-out',
-    });
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={style}
-      className={className}
-    >
-      {children}
-    </div>
-  );
-}
-
-/* ── Category colors ─────────────────────────────────────────────── */
-
-const CATEGORY_STYLES: Record<string, { bg: string; text: string; border: string }> = {
-  Workshop:   { bg: 'bg-[#00f59b]/10', text: 'text-[#00f59b]', border: 'border-[#00f59b]/20' },
-  Session:    { bg: 'bg-[#3b82f6]/10', text: 'text-[#3b82f6]', border: 'border-[#3b82f6]/20' },
-  Conference: { bg: 'bg-[#a855f7]/10', text: 'text-[#a855f7]', border: 'border-[#a855f7]/20' },
-  Meetup:     { bg: 'bg-[#f59e0b]/10', text: 'text-[#f59e0b]', border: 'border-[#f59e0b]/20' },
-  Webinar:    { bg: 'bg-[#06b6d4]/10', text: 'text-[#06b6d4]', border: 'border-[#06b6d4]/20' },
-  Other:      { bg: 'bg-[#94a3b8]/10', text: 'text-[#94a3b8]', border: 'border-[#94a3b8]/20' },
-};
-
-function getCategoryStyle(cat: string) {
-  return CATEGORY_STYLES[cat] ?? CATEGORY_STYLES.Other;
-}
-
 /* ── Component ───────────────────────────────────────────────────── */
 
 export default function EventsPage() {
@@ -92,13 +37,7 @@ export default function EventsPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [formData, setFormData] = useState({
-    title: '',
-    date: '',
-    time: '',
-    location: '',
-    description: '',
-    category: 'Workshop',
-    imageUrl: '',
+    title: '', date: '', time: '', location: '', description: '', category: 'Workshop', imageUrl: '',
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
@@ -109,12 +48,20 @@ export default function EventsPage() {
   const [hasMore, setHasMore] = useState(true);
   const [markingDone, setMarkingDone] = useState<string | null>(null);
   const [studentCount, setStudentCount] = useState('');
+  const [newEventIds, setNewEventIds] = useState<Set<string>>(new Set());
 
-  /* ── Firestore subscription ── */
+  /* ── Firestore ── */
   useEffect(() => {
     const q = query(collection(db, 'events'), orderBy('dateTime', 'asc'), limit(PAGE_SIZE));
     const unsubscribe = onSnapshot(q,
       (snapshot) => {
+        const newIds = new Set<string>();
+        snapshot.docs.forEach(d => {
+          const existing = events.find(e => e.id === d.id);
+          if (!existing) newIds.add(d.id);
+        });
+        if (newIds.size > 0) setNewEventIds(prev => new Set([...prev, ...newIds]));
+
         setEvents(snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Event)));
         setLastDoc(snapshot.docs[snapshot.docs.length - 1] ?? null);
         setHasMore(snapshot.docs.length === PAGE_SIZE);
@@ -137,7 +84,6 @@ export default function EventsPage() {
     setHasMore(snapshot.docs.length === PAGE_SIZE);
   };
 
-  /* ── Seed placeholder ── */
   useEffect(() => {
     const seed = async () => {
       try {
@@ -159,14 +105,11 @@ export default function EventsPage() {
     seed();
   }, [isAdmin]);
 
-  /* ── Image handling ── */
+  /* ── Image ── */
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image must be under 5MB');
-      return;
-    }
+    if (file.size > 5 * 1024 * 1024) { toast.error('Image must be under 5MB'); return; }
     setImageFile(file);
     setImagePreview(URL.createObjectURL(file));
   };
@@ -178,7 +121,7 @@ export default function EventsPage() {
     return getDownloadURL(snapshot.ref);
   };
 
-  /* ── Form submit ── */
+  /* ── Submit ── */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setUploading(true);
@@ -188,13 +131,9 @@ export default function EventsPage() {
     try {
       const imageUrl = await uploadImage();
       const payload = {
-        title: formData.title,
-        date: formData.date,
-        time: formData.time,
-        location: formData.location,
-        description: formData.description,
-        category: formData.category,
-        imageUrl: imageUrl || '',
+        title: formData.title, date: formData.date, time: formData.time,
+        location: formData.location, description: formData.description,
+        category: formData.category, imageUrl: imageUrl || '',
         dateTime: Timestamp.fromDate(dateTime),
       };
 
@@ -202,21 +141,13 @@ export default function EventsPage() {
         await updateDoc(doc(db, 'events', editingEvent.id), payload);
         toast.success("Event updated successfully!");
       } else {
-        const eventRef = await addDoc(collection(db, 'events'), {
-          ...payload,
-          createdAt: serverTimestamp()
-        });
+        const eventRef = await addDoc(collection(db, 'events'), { ...payload, createdAt: serverTimestamp() });
+        setNewEventIds(prev => new Set([...prev, eventRef.id]));
         await addDoc(collection(db, 'posts'), {
-          title: `New Event: ${formData.title}`,
-          author: 'Arthneeti Admin',
-          authorId: user?.uid || 'admin',
-          category: 'Other',
-          type: 'discussion',
+          title: `New Event: ${formData.title}`, author: 'Arthneeti Admin',
+          authorId: user?.uid || 'admin', category: 'Other', type: 'discussion',
           content: `We just added a new event: ${formData.title}. \n\nLocation: ${formData.location} \nDescription: ${formData.description}`,
-          createdAt: serverTimestamp(),
-          likes: 0,
-          commentCount: 0,
-          eventId: eventRef.id
+          createdAt: serverTimestamp(), likes: 0, commentCount: 0, eventId: eventRef.id
         });
         toast.success("Event published successfully!");
       }
@@ -239,65 +170,103 @@ export default function EventsPage() {
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Delete this event?')) {
-      try {
-        await deleteDoc(doc(db, 'events', id));
-        toast.success("Event deleted successfully!");
-      } catch (err) {
-        handleFirestoreError(err, OperationType.DELETE, `events/${id}`);
-        toast.error("Failed to delete event.");
-      }
+      try { await deleteDoc(doc(db, 'events', id)); toast.success("Event deleted!"); }
+      catch (err) { handleFirestoreError(err, OperationType.DELETE, `events/${id}`); toast.error("Failed to delete."); }
     }
   };
 
   const handleMarkDone = async (eventId: string) => {
     const count = parseInt(studentCount);
     if (isNaN(count) || count < 0) return;
-    try {
-      await updateDoc(doc(db, 'events', eventId), { completed: true, studentsReached: count });
-      setMarkingDone(null);
-      setStudentCount('');
-    } catch (error) {
-      handleFirestoreError(error, OperationType.UPDATE, `events/${eventId}`);
-    }
+    try { await updateDoc(doc(db, 'events', eventId), { completed: true, studentsReached: count }); setMarkingDone(null); setStudentCount(''); }
+    catch (error) { handleFirestoreError(error, OperationType.UPDATE, `events/${eventId}`); }
   };
 
   const downloadICS = (event: Event) => {
     const date = event.dateTime.toDate();
     const dateStr = date.toISOString().replace(/-|:|\.\d+/g, "");
-    const icsContent = [
-      "BEGIN:VCALENDAR", "VERSION:2.0", "BEGIN:VEVENT",
+    const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "BEGIN:VEVENT",
       `DTSTART:${dateStr}`, `DTEND:${dateStr}`,
       `SUMMARY:${event.title}`, `DESCRIPTION:${event.description}`,
-      `LOCATION:${event.location}`, "END:VEVENT", "END:VCALENDAR"
-    ].join("\n");
-    const blob = new Blob([icsContent], { type: "text/calendar" });
+      `LOCATION:${event.location}`, "END:VEVENT", "END:VCALENDAR"].join("\n");
+    const blob = new Blob([ics], { type: "text/calendar" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.href = url;
-    link.download = `${event.title.replace(/\s+/g, "_")}.ics`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    toast.success("Calendar event (.ics) downloaded!");
+    link.href = url; link.download = `${event.title.replace(/\s+/g, "_")}.ics`;
+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    toast.success("Calendar event downloaded!");
+  };
+
+  const openEditModal = (event: Event) => {
+    const date = event.dateTime?.toDate();
+    setEditingEvent(event);
+    setFormData({
+      title: event.title,
+      date: date?.toISOString().split('T')[0] || '',
+      time: date?.toTimeString().split(' ')[0].slice(0, 5) || '',
+      location: event.location, description: event.description,
+      category: event.category, imageUrl: event.imageUrl || '',
+    });
+    setImagePreview(event.imageUrl || '');
+    setShowModal(true);
   };
 
   return (
-    <motion.main initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-32 px-6">
-      <div className="max-w-7xl mx-auto">
+    <main className="relative py-32 px-6 min-h-screen overflow-hidden">
+      {/* 3D Background */}
+      <Suspense fallback={null}>
+        <EventScene />
+      </Suspense>
+
+      <div className="relative z-10 max-w-7xl mx-auto">
 
         {/* ─── Header ─── */}
-        <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
+        <motion.div
+          className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        >
           <div>
-            <span className="text-[10px] font-black text-[#00f59b] mb-4 block uppercase tracking-[0.4em]">CALENDAR</span>
-            <h1 className="text-6xl md:text-8xl text-white italic font-sans tracking-tight font-semibold">Upcoming Events</h1>
-            <p className="text-[#94a3b8] text-sm mt-4 max-w-md">Workshops, sessions, and talks from the Arthneeti community.</p>
+            <motion.span
+              className="text-[10px] font-black text-[#00f59b] mb-4 block uppercase tracking-[0.4em]"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              CALENDAR
+            </motion.span>
+            <motion.h1
+              className="text-6xl md:text-8xl text-white italic font-sans tracking-tight font-semibold"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+            >
+              Upcoming Events
+            </motion.h1>
+            <motion.p
+              className="text-[#94a3b8] text-sm mt-4 max-w-md"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              Workshops, sessions, and talks from the Arthneeti community.
+            </motion.p>
           </div>
           {isAdmin && (
-            <button onClick={() => setShowModal(true)} className="bg-[#00f59b] text-[#0f172a] px-8 py-4 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-white transition-all shadow-xl flex items-center gap-3">
+            <motion.button
+              onClick={() => setShowModal(true)}
+              className="bg-[#00f59b] text-[#0f172a] px-8 py-4 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-white transition-all shadow-xl flex items-center gap-3"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+            >
               <Plus size={16} strokeWidth={3} /> Add Event
-            </button>
+            </motion.button>
           )}
-        </div>
+        </motion.div>
 
         {/* ─── Loading ─── */}
         {eventsLoading && (
@@ -315,19 +284,23 @@ export default function EventsPage() {
           </div>
         )}
 
-        {/* ─── Empty state ─── */}
+        {/* ─── Empty ─── */}
         {!eventsLoading && events.length === 0 && (
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-center py-32 text-center">
-            <div className="w-20 h-20 rounded-2xl bg-[#161F30] border border-[#1F2A3F] flex items-center justify-center mb-8">
-              <Calendar size={32} className="text-[#00f59b]" strokeWidth={1.5} />
-            </div>
+            <motion.div
+              className="w-24 h-24 rounded-2xl bg-[#161F30] border border-[#1F2A3F] flex items-center justify-center mb-8"
+              animate={{ rotateY: [0, 360] }}
+              transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+            >
+              <Calendar size={36} className="text-[#00f59b]" strokeWidth={1.5} />
+            </motion.div>
             <h3 className="font-sans font-semibold text-4xl text-white italic mb-4">No events yet</h3>
             <p className="text-[#94a3b8] text-sm max-w-sm leading-relaxed mb-2">Events will appear here once scheduled.</p>
             <p className="text-[#94a3b8]/40 text-xs font-black uppercase tracking-widest">Check back soon</p>
             {isAdmin && (
-              <button onClick={() => setShowModal(true)} className="mt-10 bg-[#00f59b] text-[#0f172a] px-8 py-4 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-white transition-all shadow-xl flex items-center gap-3">
+              <motion.button onClick={() => setShowModal(true)} className="mt-10 bg-[#00f59b] text-[#0f172a] px-8 py-4 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-white transition-all shadow-xl flex items-center gap-3" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Plus size={16} strokeWidth={3} /> Add First Event
-              </button>
+              </motion.button>
             )}
           </motion.div>
         )}
@@ -335,151 +308,34 @@ export default function EventsPage() {
         {/* ─── Events Grid ─── */}
         {!eventsLoading && events.length > 0 && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {events.map((event, i) => {
-              const date = event.dateTime?.toDate();
-              const cat = getCategoryStyle(event.category);
-              return (
-                <motion.div
+            <AnimatePresence mode="popLayout">
+              {events.map((event, i) => (
+                <AnimatedEventCard
                   key={event.id}
-                  initial={{ opacity: 0, y: 40, rotateX: -5 }}
-                  animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                  transition={{ delay: i * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <TiltCard className="h-full">
-                    <div className="bg-[#161F30] border border-[#1F2A3F] rounded-2xl overflow-hidden hover:border-[#00875a]/50 transition-all duration-500 group h-full flex flex-col shadow-2xl hover:shadow-[#00875a]/10">
-                      {/* Image */}
-                      {event.imageUrl ? (
-                        <div className="relative h-48 overflow-hidden">
-                          <img src={event.imageUrl} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#161F30] via-transparent to-transparent" />
-                          {/* Floating date badge */}
-                          <div className="absolute top-4 left-4 bg-[#0f172a]/90 backdrop-blur-sm border border-[#1F2A3F] rounded-xl px-4 py-2 text-center">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-[#00f59b] block">
-                              {date ? new Intl.DateTimeFormat('en-US', { month: 'short' }).format(date) : '...'}
-                            </span>
-                            <span className="text-2xl font-black font-mono text-white">
-                              {date ? date.getDate() : '...'}
-                            </span>
-                          </div>
-                          {/* Category badge */}
-                          <div className="absolute top-4 right-4">
-                            <Badge variant="outline" className={`text-[9px] font-black uppercase tracking-widest ${cat.bg} ${cat.text} border-transparent px-3 py-1 rounded-lg backdrop-blur-sm`}>
-                              {event.category}
-                            </Badge>
-                          </div>
-                        </div>
-                      ) : (
-                        /* No image — date card header */
-                        <div className="relative h-32 bg-gradient-to-br from-[#0B0F19] to-[#161F30] flex items-center justify-center overflow-hidden">
-                          <div className="absolute inset-0 opacity-10">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-[#00f59b] rounded-full blur-3xl" />
-                            <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#00875a] rounded-full blur-3xl" />
-                          </div>
-                          <div className="relative text-center">
-                            <span className="text-xs font-black uppercase tracking-widest text-[#00f59b] block mb-1">
-                              {date ? new Intl.DateTimeFormat('en-US', { month: 'short' }).format(date) : '...'}
-                            </span>
-                            <span className="text-5xl font-black font-mono text-white">
-                              {date ? date.getDate() : '...'}
-                            </span>
-                          </div>
-                          <div className="absolute top-4 right-4">
-                            <Badge variant="outline" className={`text-[9px] font-black uppercase tracking-widest ${cat.bg} ${cat.text} border-transparent px-3 py-1 rounded-lg`}>
-                              {event.category}
-                            </Badge>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Content */}
-                      <div className="p-8 flex flex-col flex-1">
-                        <div className="flex justify-between items-start mb-4">
-                          <div className="flex items-center gap-3">
-                            {event.completed && (
-                              <Badge className="text-[9px] font-black uppercase tracking-widest bg-[#10b981]/10 text-[#10b981] border-transparent px-2 py-0.5 rounded-lg">
-                                <CheckCircle size={10} className="mr-1" /> Done
-                              </Badge>
-                            )}
-                            {event.completed && event.studentsReached !== undefined && (
-                              <span className="text-[9px] font-bold text-[#94a3b8]">{event.studentsReached} students</span>
-                            )}
-                          </div>
-                          {isAdmin && (
-                            <div className="flex gap-3">
-                              {!event.completed && (
-                                <button onClick={() => { setMarkingDone(event.id); setStudentCount(''); }} className="text-[#94a3b8]/30 hover:text-[#10b981] transition-colors" title="Mark Done">
-                                  <CheckCircle size={15} />
-                                </button>
-                              )}
-                              <button onClick={() => {
-                                setEditingEvent(event);
-                                setFormData({
-                                  title: event.title,
-                                  date: date?.toISOString().split('T')[0] || '',
-                                  time: date?.toTimeString().split(' ')[0].slice(0, 5) || '',
-                                  location: event.location,
-                                  description: event.description,
-                                  category: event.category,
-                                  imageUrl: event.imageUrl || '',
-                                });
-                                setImagePreview(event.imageUrl || '');
-                                setShowModal(true);
-                              }} className="text-[#94a3b8]/30 hover:text-white transition-colors"><Edit2 size={15} /></button>
-                              <button onClick={() => handleDelete(event.id)} className="text-[#94a3b8]/30 hover:text-[#ef4444] transition-colors"><Trash2 size={15} /></button>
-                            </div>
-                          )}
-                        </div>
-
-                        <h3 className="text-2xl text-white font-sans font-semibold mb-4 group-hover:text-[#00f59b] transition-colors leading-tight">
-                          {event.title}
-                        </h3>
-
-                        <div className="flex items-center gap-5 mb-4">
-                          <div className="flex items-center gap-2 text-[#94a3b8]">
-                            <Clock size={13} className="text-[#00f59b]" />
-                            <span className="text-[10px] font-bold uppercase tracking-wider">
-                              {date ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'TBD'}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2 text-[#94a3b8]">
-                            <MapPin size={13} className="text-[#00875a]" />
-                            <span className="text-[10px] font-bold uppercase tracking-wider truncate max-w-[160px]">{event.location}</span>
-                          </div>
-                        </div>
-
-                        <p className="text-[#94a3b8] text-sm leading-relaxed mb-6 flex-1 line-clamp-3">{event.description}</p>
-
-                        {/* Mark done input */}
-                        {isAdmin && markingDone === event.id && (
-                          <div className="flex items-center gap-3 bg-[#0B0F19] rounded-xl p-4 border border-[#1F2A3F] mb-4">
-                            <input type="number" min="0" placeholder="Students reached" value={studentCount} onChange={e => setStudentCount(e.target.value)}
-                              className="flex-1 bg-[#161F30] p-3 rounded-lg outline-none border-2 border-transparent focus:border-[#00f59b] font-bold text-white text-sm transition-all placeholder:text-[#94a3b8]/30" autoFocus />
-                            <button onClick={() => handleMarkDone(event.id)} className="px-4 py-3 bg-[#10b981] text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#059669] transition-all">Confirm</button>
-                            <button onClick={() => { setMarkingDone(null); setStudentCount(''); }} className="px-4 py-3 bg-[#1F2A3F] text-[#94a3b8] rounded-lg text-[10px] font-black uppercase tracking-widest hover:text-[#00f59b] transition-all">Cancel</button>
-                          </div>
-                        )}
-
-                        {/* Actions */}
-                        <button onClick={() => downloadICS(event)} className="flex items-center gap-2 text-[#94a3b8]/30 hover:text-[#00f59b] transition-all group/btn mt-auto">
-                          <Calendar size={14} />
-                          <span className="text-[10px] font-black uppercase tracking-widest">Add to Calendar</span>
-                          <ChevronRight size={12} className="opacity-0 group-hover/btn:opacity-100 -translate-x-2 group-hover/btn:translate-x-0 transition-all" />
-                        </button>
-                      </div>
-                    </div>
-                  </TiltCard>
-                </motion.div>
-              );
-            })}
+                  event={event}
+                  index={i}
+                  isAdmin={isAdmin}
+                  onEdit={openEditModal}
+                  onDelete={handleDelete}
+                  onMarkDone={(id) => { setMarkingDone(id); setStudentCount(''); }}
+                  onDownloadICS={downloadICS}
+                  markingDone={markingDone}
+                  studentCount={studentCount}
+                  onStudentCountChange={setStudentCount}
+                  onConfirmDone={handleMarkDone}
+                  onCancelDone={() => { setMarkingDone(null); setStudentCount(''); }}
+                />
+              ))}
+            </AnimatePresence>
           </div>
         )}
 
         {hasMore && !eventsLoading && (
-          <div className="flex justify-center mt-12">
-            <button onClick={loadMore} className="px-8 py-3 bg-[#00875a]/20 text-[#00875a] border border-[#00875a]/30 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-[#00875a] hover:text-white transition-all">
+          <motion.div className="flex justify-center mt-12" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
+            <motion.button onClick={loadMore} className="px-8 py-3 bg-[#00875a]/20 text-[#00875a] border border-[#00875a]/30 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-[#00875a] hover:text-white transition-all" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               Load More
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
         )}
       </div>
 
@@ -488,51 +344,64 @@ export default function EventsPage() {
         {showModal && (
           <div className="fixed inset-0 z-[100] bg-[#0f172a]/85 backdrop-blur-md flex items-center justify-center p-4">
             <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              initial={{ scale: 0.8, opacity: 0, y: 40, rotateX: -10 }}
+              animate={{ scale: 1, opacity: 1, y: 0, rotateX: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              transition={{ type: 'spring', damping: 20, stiffness: 250 }}
               className="bg-[#161F30] border border-[#1F2A3F] p-8 md:p-10 rounded-2xl max-w-2xl w-full relative shadow-2xl max-h-[90vh] overflow-y-auto"
+              style={{ perspective: '1000px' }}
             >
               <button onClick={closeModal} className="absolute top-6 right-6 text-[#94a3b8]/40 hover:text-white transition-colors"><X size={22} /></button>
-              <h2 className="font-sans font-semibold text-3xl text-white italic mb-8">{editingEvent ? 'Edit Event' : 'New Event'}</h2>
+              <motion.h2
+                className="font-sans font-semibold text-3xl text-white italic mb-8"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.15 }}
+              >
+                {editingEvent ? 'Edit Event' : 'New Event'}
+              </motion.h2>
 
               <form onSubmit={handleSubmit} className="space-y-5">
-                <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8] mb-2 block">Event Title</label>
-                  <input required type="text" className="w-full bg-[#0B0F19] p-4 rounded-xl outline-none focus:border-[#00f59b] border-2 border-[#1F2A3F] font-bold text-white transition-all placeholder:text-[#94a3b8]/30" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} />
-                </div>
+                {[
+                  { label: 'Event Title', key: 'title', type: 'text', required: true },
+                ].map((field, i) => (
+                  <motion.div key={field.key} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.05 }}>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8] mb-2 block">{field.label}</label>
+                    <input required={field.required} type={field.type}
+                      className="w-full bg-[#0B0F19] p-4 rounded-xl outline-none focus:border-[#00f59b] border-2 border-[#1F2A3F] font-bold text-white transition-all placeholder:text-[#94a3b8]/30"
+                      value={(formData as any)[field.key]} onChange={e => setFormData({ ...formData, [field.key]: e.target.value })} />
+                  </motion.div>
+                ))}
 
-                <div className="grid grid-cols-2 gap-5">
+                <motion.div className="grid grid-cols-2 gap-5" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
                   <div>
                     <label className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8] mb-2 block">Date</label>
-                    <input required type="date" className="w-full bg-[#0B0F19] p-4 rounded-xl outline-none focus:border-[#00f59b] border-2 border-[#1F2A3F] font-bold text-white transition-all" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
+                    <input required type="date" className="w-full bg-[#0B0F19] p-4 rounded-xl outline-none focus:border-[#00f59b] border-2 border-[#1F2A3F] font-bold text-white transition-all" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} />
                   </div>
                   <div>
                     <label className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8] mb-2 block">Time</label>
-                    <input required type="time" className="w-full bg-[#0B0F19] p-4 rounded-xl outline-none focus:border-[#00f59b] border-2 border-[#1F2A3F] font-bold text-white transition-all" value={formData.time} onChange={e => setFormData({...formData, time: e.target.value})} />
+                    <input required type="time" className="w-full bg-[#0B0F19] p-4 rounded-xl outline-none focus:border-[#00f59b] border-2 border-[#1F2A3F] font-bold text-white transition-all" value={formData.time} onChange={e => setFormData({ ...formData, time: e.target.value })} />
                   </div>
-                </div>
+                </motion.div>
 
-                <div>
+                <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
                   <label className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8] mb-2 block">Location</label>
-                  <input required type="text" className="w-full bg-[#0B0F19] p-4 rounded-xl outline-none focus:border-[#00f59b] border-2 border-[#1F2A3F] font-bold text-white transition-all placeholder:text-[#94a3b8]/30" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} />
-                </div>
+                  <input required type="text" className="w-full bg-[#0B0F19] p-4 rounded-xl outline-none focus:border-[#00f59b] border-2 border-[#1F2A3F] font-bold text-white transition-all placeholder:text-[#94a3b8]/30" value={formData.location} onChange={e => setFormData({ ...formData, location: e.target.value })} />
+                </motion.div>
 
-                <div>
+                <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
                   <label className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8] mb-2 block">Category</label>
-                  <select className="w-full bg-[#0B0F19] p-4 rounded-xl outline-none focus:border-[#00f59b] border-2 border-[#1F2A3F] font-bold text-white transition-all" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
+                  <select className="w-full bg-[#0B0F19] p-4 rounded-xl outline-none focus:border-[#00f59b] border-2 border-[#1F2A3F] font-bold text-white transition-all" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>
                     {['Workshop', 'Session', 'Conference', 'Meetup', 'Webinar', 'Other'].map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
-                </div>
+                </motion.div>
 
-                <div>
+                <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
                   <label className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8] mb-2 block">Description</label>
-                  <textarea required className="w-full bg-[#0B0F19] p-4 rounded-xl outline-none focus:border-[#00f59b] border-2 border-[#1F2A3F] font-bold text-white transition-all h-24 resize-none placeholder:text-[#94a3b8]/30" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />
-                </div>
+                  <textarea required className="w-full bg-[#0B0F19] p-4 rounded-xl outline-none focus:border-[#00f59b] border-2 border-[#1F2A3F] font-bold text-white transition-all h-24 resize-none placeholder:text-[#94a3b8]/30" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
+                </motion.div>
 
-                {/* Photo upload */}
-                <div>
+                <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
                   <label className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8] mb-2 block">Event Photo (optional)</label>
                   <div className="flex items-center gap-4">
                     <label className="flex-1 flex items-center justify-center gap-3 bg-[#0B0F19] border-2 border-dashed border-[#1F2A3F] hover:border-[#00f59b]/50 rounded-xl p-6 cursor-pointer transition-all">
@@ -543,24 +412,28 @@ export default function EventsPage() {
                     {(imagePreview || formData.imageUrl) && (
                       <div className="relative w-20 h-20 rounded-xl overflow-hidden border border-[#1F2A3F] shrink-0">
                         <img src={imagePreview || formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                        <button type="button" onClick={() => { setImageFile(null); setImagePreview(''); setFormData({...formData, imageUrl: ''}); }}
+                        <button type="button" onClick={() => { setImageFile(null); setImagePreview(''); setFormData({ ...formData, imageUrl: '' }); }}
                           className="absolute top-1 right-1 bg-[#0f172a]/80 rounded-full p-0.5 hover:bg-[#ef4444] transition-colors">
                           <X size={12} className="text-white" />
                         </button>
                       </div>
                     )}
                   </div>
-                </div>
+                </motion.div>
 
-                <button type="submit" disabled={uploading} className="w-full bg-[#00f59b] text-[#0f172a] py-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all shadow-xl disabled:opacity-50 flex items-center justify-center gap-2">
+                <motion.button type="submit" disabled={uploading}
+                  className="w-full bg-[#00f59b] text-[#0f172a] py-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all shadow-xl disabled:opacity-50 flex items-center justify-center gap-2"
+                  whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                  initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
+                >
                   {uploading && <Loader2 size={14} className="animate-spin" />}
                   {editingEvent ? 'SAVE CHANGES' : 'PUBLISH EVENT'}
-                </button>
+                </motion.button>
               </form>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
-    </motion.main>
+    </main>
   );
 }
