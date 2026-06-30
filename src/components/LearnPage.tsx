@@ -1085,6 +1085,97 @@ export const LESSONS: Lesson[] = [
         correctIndex: 2
       }
     ]
+  },
+  {
+    id: 'retirement-social-security',
+    level: 'Beginner',
+    title: 'Retirement & Social Security in Nepal',
+    desc: 'How the Citizen Investment Trust (CIT), Employees Provident Fund (EPF), and Social Security Fund (SSF) work, and why starting early matters.',
+    duration: '15:00',
+    tag: 'Financial Literacy',
+    videoUrl: 'https://www.youtube.com/embed/KFGgvgBV4JQ',
+    thumbnail: 'https://img.youtube.com/vi/KFGgvgBV4JQ/maxresdefault.jpg',
+    chapters: [
+      'The Unique Purpose of Each Scheme',
+      'Different Contribution Structures',
+      'Payouts: Lump Sum vs. Monthly Pension',
+      'Comprehensive Insurance and Risk Coverage',
+      'Tax Benefits, Loans, and Liquidity',
+    ],
+    faqs: [
+      {
+        topic: 'Financial Literacy',
+        question: 'I’m a student doing freelance or part-time work. Can I still join a retirement fund?',
+        answer: 'Yes, you can! While the Employees Provident Fund (EPF) and Social Security Fund (SSF) are primarily for formal employees, the Citizen Investment Trust (CIT) offers the "Nagarik Pension Yojana" (Citizen Pension Scheme), which is completely voluntary and open to everyone, including freelancers, self-employed individuals, and workers in the informal sector.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'I don\'t have a large income right now. What is the minimum amount I need to start saving?',
+        answer: 'You don\'t need a lot of money to begin. Under the CIT\'s voluntary Citizen Pension Scheme, you can start contributing with as little as NPR 500 per month. You also have the flexibility to make payments on a monthly, quarterly, or yearly schedule that suits your student budget.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Why should I bother starting a savings plan now while I\'m still studying?',
+        answer: 'Starting early allows you to take advantage of the "power of compounding," where the interest you earn generates even more interest over time. For example, if you start saving Rs 5,000 a month at age 25, your money could grow to approximately Rs 95 lakh by age 58, whereas starting at age 35 would yield less than half that amount.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Can I use the money in these funds to pay for my higher education later?',
+        answer: 'Yes, both CIT and SSF offer loan facilities that can help fund your education. CIT members can take out an educational loan against their savings at an 8.50% interest rate. If you are working and enrolled in the SSF, you can take out substantial loans for education after you have made regular contributions for three years.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'I plan to study or work abroad after graduation. What happens to my savings?',
+        answer: 'If you go abroad for studies or foreign employment, you can open or continue to contribute voluntarily to a CIT account to ensure your investments keep growing in Nepal. While you are overseas, participation in mandatory workplace schemes like SSF is not required, but keeping a CIT account active is a great way to build wealth back home.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What is the difference between EPF, CIT, and SSF in simple terms?',
+        answer: 'EPF is a traditional, stable savings fund that automatically deducts money from your paycheck and gives you a guaranteed lump sum when you retire. SSF acts like a combined insurance policy and pension plan, offering active protection for medical emergencies, workplace accidents, and a lifetime monthly pension. CIT is a wealth-building investment trust with flexible schemes, allowing you to invest in capital markets and mutual funds for higher potential returns.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'When I get a formal job after graduation, which fund will my employer enroll me in?',
+        answer: 'It depends on the type of organization you join. If you work for the government or a public enterprise, you will likely be enrolled in the EPF. However, if you join a private sector company, it is legally mandatory for your employer to register you under the SSF.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How much of my salary will be deducted once I start working?',
+        answer: 'For EPF, a fixed 10% of your basic salary is deducted, and your employer matches it with another 10%. For SSF, 11% is deducted from your gross salary, and your employer is required to add an additional 20%.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Will I be able to track my savings from my phone?',
+        answer: 'Yes, managing these funds has become highly digitized. For example, you can log into the EPF portal via your mobile browser or computer using your user ID and password. From the online dashboard, you can check your balance, view statements, apply for special loans, and even repay loans using mobile banking or digital wallets.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Can I take my money out whenever I want to buy things?',
+        answer: 'No, these funds are designed for long-term security, so you cannot withdraw the money freely for casual spending. EPF allows partial withdrawals and special loans under specific conditions, locking the rest until retirement. SSF heavily restricts early withdrawals for your main pension fund, though it provides immediate medical and accident coverage during your working years. CIT withdrawal rules depend entirely on the specific scheme you are enrolled in.',
+      },
+    ],
+    quiz: [
+      {
+        question: 'What is the required total contribution for the Social Security Fund (SSF)?',
+        options: ['10% from employee, 10% from employer', '11% from employee, 20% from employer', '5% from employee, 5% from employer', 'Voluntary starting at Rs 500'],
+        correctIndex: 1
+      },
+      {
+        question: 'Which fund is completely voluntary and open to everyone, including students and freelancers?',
+        options: ['Employees Provident Fund (EPF)', 'Social Security Fund (SSF)', 'Citizen Investment Trust (CIT)', 'Nepal Rastra Bank (NRB)'],
+        correctIndex: 2
+      },
+      {
+        question: 'How does the Employees Provident Fund (EPF) pay out your money when you retire?',
+        options: ['As a lifetime monthly pension', 'As a single lump sum of your entire accumulated balance', 'In yearly installments', 'It cannot be withdrawn until age 80'],
+        correctIndex: 1
+      },
+      {
+        question: 'If you join a private sector company after graduation, which fund is your employer legally mandated to register you under?',
+        options: ['Citizen Investment Trust (CIT)', 'Employees Provident Fund (EPF)', 'Social Security Fund (SSF)', 'None of the above'],
+        correctIndex: 2
+      }
+    ]
   }
 ];
 
@@ -1158,7 +1249,7 @@ const MODULES: Module[] = [
     id: 'financial-literacy',
     title: 'Financial Literacy',
     description: 'Personal finance fundamentals — budgeting, saving, and understanding how NRB policy affects your wallet.',
-    lessonIds: ['budgeting-emergency-fund', 'financial-literacy-youth', 'digital-payments-security', 'navigating-taxes-nepal'],
+    lessonIds: ['budgeting-emergency-fund', 'financial-literacy-youth', 'digital-payments-security', 'navigating-taxes-nepal', 'retirement-social-security'],
     guideIds: ['financial-literacy'],
   },
   {
