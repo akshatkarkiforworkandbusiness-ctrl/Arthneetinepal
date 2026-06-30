@@ -1358,6 +1358,97 @@ export const LESSONS: Lesson[] = [
         correctIndex: 1
       }
     ]
+  },
+  {
+    id: 'portfolio-risk-management',
+    level: 'Intermediate',
+    title: 'Portfolio Construction & Risk Management',
+    desc: 'How to balance a portfolio across commercial banks, hydropower, and microfinance to minimize sector risk in NEPSE.',
+    duration: '16:00',
+    tag: 'Stock Market',
+    videoUrl: 'https://www.youtube.com/embed/mwuj_4jnAiY',
+    thumbnail: 'https://img.youtube.com/vi/mwuj_4jnAiY/maxresdefault.jpg',
+    chapters: [
+      'Optimum Portfolio Construction Using Sharpe\'s Single Index Model',
+      'Sector Allocation and Rotation (Banking vs. Hydropower)',
+      'Managing Systemic Risk and Stock Volatility',
+      'Credit Portfolio Management in Microfinance Institutions',
+      'Individual Risk Management and Emotional Discipline',
+    ],
+    faqs: [
+      {
+        topic: 'Stock Market',
+        question: 'What makes up an optimal portfolio in the Nepal Stock Exchange (NEPSE)?',
+        answer: 'Based on an empirical study utilizing Sharpe\'s Single Index Model, an optimal portfolio in NEPSE consists of five specific sectors: non-life insurance, hydropower, finance, microfinance, and development banks. To balance risk and return, the model suggests allocating the highest proportion of investment to the finance sector (36.6%) and the lowest to development banks (11%).',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Should commercial banks be included in a high-return portfolio?',
+        answer: 'Surprisingly, commercial banks did not qualify for the mathematically optimal portfolio in recent Single Index Model studies, as their excess return to beta ratio fell below the required cut-off value. However, the commercial banking sector has very low unsystematic risk, making it an excellent choice for risk-averse investors prioritizing stability and reliable dividends over aggressive growth.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'How do the banking and hydropower sectors differ for investors?',
+        answer: 'Banking and hydropower serve entirely different purposes in a Nepalese portfolio. Banks are the backbone of the market, offering stability, large market capitalization, and a history of regular dividends, though they are highly sensitive to liquidity crunches. Conversely, hydropower is heavily retail-driven and speculative, offering high momentum and short-term trading opportunities fueled by IPO excitement.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What financial factors determine systemic risk in Nepalese companies?',
+        answer: 'Research on NEPSE-listed companies indicates that a firm\'s size and profitability are positively associated with systemic risk, meaning larger and more profitable firms can sometimes be more sensitive to market-wide movements. On the other hand, consistent dividend payments are negatively related to systemic risk, making dividend-paying stocks a safer bet. Factors like leverage, liquidity, and operating efficiency do not significantly impact systemic risk in Nepal\'s market.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'How does a microfinance company\'s profitability affect its stock price volatility?',
+        answer: 'A microfinance institution\'s ability to generate profits has a significant stabilizing effect on its share price. Higher Return on Equity (ROE) and Return on Assets (ROA) are shown to decrease stock price volatility. However, an increase in the Book Value Per Share (BVPS) has a considerable positive impact on volatility, meaning higher BVPS can lead to larger price fluctuations.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Why is Credit Portfolio Management (CPM) so crucial for Microfinance Institutions (MFIs)?',
+        answer: 'CPM is a critical survival mechanism for MFIs because outstanding microloans make up nearly 90% of their total assets. Implementing strong CPM practices—such as loan portfolio diversification, scientific interest rates, credit monitoring, and capital optimization—directly reduces credit risk and loan delinquency, ensuring the institution\'s long-term financial sustainability.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Can foreign investors easily invest in the Nepal Stock Exchange?',
+        answer: 'While Nepal\'s legal framework recognizes foreign investment in listed securities in theory, practical secondary market access for ordinary foreign portfolio investors is currently restricted. Non-resident portfolio investments are generally limited to the private equity and venture capital space, meaning NEPSE is currently better suited for approved, strategic Foreign Direct Investment (FDI) transactions rather than everyday international trading.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Why is the NEPSE index so heavily influenced by the banking sector?',
+        answer: 'The NEPSE index is highly sensitive to the banking sector because banks, financial institutions, and insurance companies collectively make up 51.7% of the market\'s total capitalization. The commercial banking sector alone accounts for over one-third (approx. 38%) of the market\'s total share, meaning any price movement in bank stocks heavily sways the overall index.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What are the best risk management strategies for individual Nepalese investors?',
+        answer: 'Individual investors can protect their capital by diversifying their portfolios across different sectors (e.g., mixing stable banking stocks with manufacturing or hydropower) and setting clear investment goals. Additionally, using stop-loss orders to limit downside risk, controlling position sizes, investing only what one can afford to lose, and maintaining emotional discipline during market volatility are essential practices.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'How is the Nepalese government supporting investments in the hydropower sector?',
+        answer: 'To combat rising construction costs and high interest rates that deter investment, Nepal\'s Electricity Regulatory Commission has introduced differentiated Power Purchase Agreement (PPA) rates for storage hydropower projects. Projects up to 100 MW are now capped at higher rates (NPR 14.80 per kWh in winter and NPR 8.45 in the monsoon), and rates for larger projects will be determined based on actual total project costs.',
+      }
+    ],
+    quiz: [
+      {
+        question: 'According to recent studies using Sharpe\'s Single Index Model on NEPSE, which sector is surprisingly NOT included in the mathematically optimal high-return portfolio?',
+        options: ['Non-life insurance', 'Commercial banks', 'Hydropower', 'Microfinance'],
+        correctIndex: 1
+      },
+      {
+        question: 'Which of the following financial factors in Nepalese companies has been shown to be negatively related to systemic risk, making the stock a safer bet?',
+        options: ['Large firm size', 'Consistent dividend payments', 'High leverage (debt)', 'Low liquidity'],
+        correctIndex: 1
+      },
+      {
+        question: 'Why is Credit Portfolio Management (CPM) considered a critical survival mechanism for Microfinance Institutions (MFIs)?',
+        options: ['Because outstanding microloans make up nearly 90% of their total assets', 'Because it allows them to invest in foreign stocks', 'Because it guarantees a 100% tax exemption from the government', 'Because they are legally required to manage the portfolios of individual retail investors'],
+        correctIndex: 0
+      },
+      {
+        question: 'Why is the NEPSE index so heavily influenced by the banking sector?',
+        options: ['Because banks are the only companies allowed to trade on NEPSE', 'Because banks, financial institutions, and insurance companies collectively make up over 50% of the market\'s total capitalization', 'Because foreign investors exclusively buy banking stocks', 'Because the government sets the share prices for all banks daily'],
+        correctIndex: 1
+      }
+    ]
   }
 ];
 
@@ -1438,7 +1529,7 @@ const MODULES: Module[] = [
     id: 'investing-markets',
     title: 'Investing & Markets',
     description: 'How NEPSE works, how to read it, and how to start investing in Nepal\'s stock market.',
-    lessonIds: ['demystifying-nepse', 'nepse-fundamental-analysis', 'technical-analysis-intro', 'ipo-vs-secondary-market', 'modern-finance-intro', 'mutual-funds-sips'],
+    lessonIds: ['demystifying-nepse', 'nepse-fundamental-analysis', 'technical-analysis-intro', 'ipo-vs-secondary-market', 'modern-finance-intro', 'mutual-funds-sips', 'portfolio-risk-management'],
     guideIds: ['nepse-guide'],
   },
   {
