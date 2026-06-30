@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import About3DExperience from './About3DExperience';
+import Hero3DObject from './Hero3DObject';
 
 export default function AboutUsPage() {
   return (
@@ -9,13 +10,35 @@ export default function AboutUsPage() {
       className="flex flex-col bg-surface-base"
     >
       {/* Introduction */}
-      <section className="relative min-h-[500px] flex items-center justify-center bg-black overflow-hidden border-b border-white/10">
+      <section className="relative min-h-[600px] flex items-center justify-center bg-black overflow-hidden border-b border-white/10">
+        <Hero3DObject />
         <div className="relative z-10 max-w-4xl mx-auto px-6 py-24 pointer-events-none text-center">
-          <span className="text-[10px] font-black text-electric-mint mb-8 block uppercase tracking-[0.4em]">INTRODUCING ARTHNEETI</span>
-          <h1 className="text-5xl md:text-7xl text-white italic leading-tight mb-8 drop-shadow-2xl">Who We Are</h1>
-          <p className="text-xl md:text-2xl text-white/90 italic leading-relaxed font-sans tracking-tight font-semibold max-w-3xl mx-auto">
+          <motion.span 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+            className="text-[10px] font-black text-electric-mint mb-8 block uppercase tracking-[0.4em]"
+          >
+            INTRODUCING ARTHNEETI
+          </motion.span>
+          
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="text-5xl md:text-7xl text-white italic leading-tight mb-8 drop-shadow-2xl"
+          >
+            Who We Are
+          </motion.h1>
+          
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.8 }}
+            className="text-xl md:text-2xl text-white/90 italic leading-relaxed font-sans tracking-tight font-semibold max-w-3xl mx-auto drop-shadow-xl"
+          >
             "Arthneeti is a student-led collective dedicated to bringing real economic intelligence into the lives of Nepali youth. We believe that financial freedom isn't a gift — it's a skill."
-          </p>
+          </motion.p>
         </div>
       </section>
 
