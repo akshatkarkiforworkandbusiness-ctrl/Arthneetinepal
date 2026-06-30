@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Play, Check, BookOpen, Download, Lock } from 'lucide-react';
+import { Play, Check, BookOpen, Download } from 'lucide-react';
 import { db } from '../lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
@@ -1345,21 +1345,14 @@ export default function LearnPage() {
             {/* Lesson Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {moduleLessons.map((lesson, index) => {
-                const isLocked = index > 0 && !completed.has(moduleLessons[index - 1].id);
-
                 return (
                   <button
                     key={lesson.id}
-                    onClick={() => !isLocked && playLesson(lesson)}
-                    disabled={isLocked}
-                    className={`text-left bg-white/3 border rounded-xl overflow-hidden transition-all group ${
-                      isLocked
-                        ? 'border-white/5 opacity-40 cursor-not-allowed'
-                        : 'hover:border-royal/50 ' + (
-                            activeLesson.id === lesson.id && isPlaying
-                              ? 'border-royal/50 bg-royal/5'
-                              : 'border-white/10'
-                          )
+                    onClick={() => playLesson(lesson)}
+                    className={`text-left bg-white/3 border rounded-xl overflow-hidden transition-all group hover:border-royal/50 ${
+                      activeLesson.id === lesson.id && isPlaying
+                        ? 'border-royal/50 bg-royal/5'
+                        : 'border-white/10'
                     }`}
                   >
                     {/* Thumbnail */}
@@ -1367,21 +1360,13 @@ export default function LearnPage() {
                       <img
                         src={lesson.thumbnail}
                         alt={lesson.title}
-                        className={`w-full h-full object-cover transition-transform duration-500 ${!isLocked && 'group-hover:scale-105'}`}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
-                      {isLocked ? (
-                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                          <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur flex items-center justify-center">
-                            <Lock size={18} className="text-white/60" />
-                          </div>
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
+                          <Play size={20} className="text-white ml-1" />
                         </div>
-                      ) : (
-                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                          <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
-                            <Play size={20} className="text-white ml-1" />
-                          </div>
-                        </div>
-                      )}
+                      </div>
                       {completed.has(lesson.id) && (
                         <div className="absolute top-3 right-3 bg-green-500 rounded-full p-1">
                           <Check size={12} className="text-white" />
