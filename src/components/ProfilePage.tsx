@@ -62,6 +62,8 @@ export default function ProfilePage() {
       .catch(error => handleFirestoreError(error, OperationType.GET, `users/${targetUid}`))
       .finally(() => { if (!cancelled) setLoadingProfile(false); });
     return () => { cancelled = true; };
+  }, [isOwnProfile, targetUid]);
+
   useEffect(() => {
     if (!targetUid) return;
     const fetchProgress = async () => {
