@@ -1,11 +1,12 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Play, Check, BookOpen, Download } from 'lucide-react';
+import { Play, Check, BookOpen, Download, Lock } from 'lucide-react';
 import { db } from '../lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import LessonCommentSection from './LessonCommentSection';
+import LessonQuiz from './LessonQuiz';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -13,6 +14,12 @@ interface FAQ {
   question: string;
   answer: string;
   topic: string;
+}
+
+interface QuizQuestion {
+  question: string;
+  options: string[];
+  correctIndex: number;
 }
 
 interface Lesson {
@@ -26,6 +33,7 @@ interface Lesson {
   thumbnail: string;
   chapters: string[];
   faqs?: FAQ[];
+  quiz?: QuizQuestion[];
 }
 
 interface Guide {
@@ -111,6 +119,33 @@ export const LESSONS: Lesson[] = [
         answer: 'A circuit breaker is an automatic trading halt designed to stop extreme panic or euphoria. For individual stocks, NEPSE enforces a daily price band where a stock cannot rise or fall more than 10% in a single session. For the overall market, if the NEPSE index moves ±5% in the first two hours of trading, the market pauses for 15 minutes — and if it hits a ±8% swing at any point, the entire market closes for the rest of the day.',
       },
     ],
+    quiz: [
+      {
+        question: 'Which organization acts as the regulatory body (the "police") of Nepal\'s capital market?',
+        options: ['NEPSE', 'SEBON', 'CDSC', 'Nepal Rastra Bank'],
+        correctIndex: 1
+      },
+      {
+        question: 'What is the purpose of the ASBA system during an IPO application?',
+        options: ['To immediately deduct the money from your account', 'To block the application money in your account while it continues to earn interest', 'To guarantee you will receive shares', 'To transfer your shares to the secondary market'],
+        correctIndex: 1
+      },
+      {
+        question: 'If you buy shares in NEPSE\'s secondary market on Sunday, when will they arrive in your Demat account under the T+3 settlement cycle?',
+        options: ['Sunday', 'Monday', 'Wednesday', 'Thursday'],
+        correctIndex: 2
+      },
+      {
+        question: 'How do bonus shares affect your total wealth immediately after they are issued?',
+        options: ['They double your wealth', 'They decrease your wealth because the share price drops', 'Your total wealth stays exactly the same', 'They only increase your wealth if you sell them immediately'],
+        correctIndex: 2
+      },
+      {
+        question: 'Why is sector diversification recommended in NEPSE?',
+        options: ['To avoid taxes', 'To concentrate all your risk in commercial banking', 'To protect your portfolio in case one specific sector underperforms', 'Because SEBON requires it'],
+        correctIndex: 2
+      }
+    ]
   },
   {
     id: 'budgeting-emergency-fund',
@@ -180,6 +215,33 @@ export const LESSONS: Lesson[] = [
         answer: 'Yes, up to a limit. Deposits up to Rs. 5,00,000 per depositor per licensed commercial bank are insured by the Deposit and Credit Guarantee Corporation (DCGC). This protection does not fully apply to unregulated schemes or cooperatives, which is why keeping large sums in cooperatives carries higher risk.',
       },
     ],
+    quiz: [
+      {
+        question: 'Under the 50/30/20 budgeting rule, how should you divide your after-tax income?',
+        options: ['50% to savings, 30% to wants, 20% to needs', '50% to needs, 30% to wants, 20% to savings and debt repayment', '50% to investments, 30% to housing, 20% to entertainment', '50% to needs, 30% to savings, 20% to wants'],
+        correctIndex: 1
+      },
+      {
+        question: 'What is the primary difference between compound interest and inflation?',
+        options: ['Compound interest decreases your wealth over time, while inflation increases it.', 'Compound interest only applies to bank loans, while inflation applies to groceries.', 'Compound interest exponentially grows your money, while inflation slowly decreases its purchasing power.', 'They are exactly the same concept applied to different currencies.'],
+        correctIndex: 2
+      },
+      {
+        question: 'When setting a SMART financial goal, what does the "M" stand for?',
+        options: ['Meaningful (It must be important to you)', 'Measurable (You must be able to track your exact progress)', 'Manageable (It must be easy to achieve)', 'Monetary (It must involve cash)'],
+        correctIndex: 1
+      },
+      {
+        question: 'What role does Nepal\'s Credit Information Bureau (CIB) play when you apply for a loan?',
+        options: ['It provides the actual money for the loan.', 'It determines the national interest rate for all banks.', 'It maintains a record of your borrowing history to help banks assess how risky it is to lend to you.', 'It forgives your debt if you cannot pay your EMI on time.'],
+        correctIndex: 2
+      },
+      {
+        question: 'How do Nepal Rastra Bank (NRB) policy decisions typically affect your personal wallet?',
+        options: ['They directly control how much your employer pays you.', 'They dictate the exact prices of vegetables in local markets.', 'They influence the interest rates you earn on deposits and pay on loans.', 'They determine how much tax you pay on your income.'],
+        correctIndex: 2
+      }
+    ]
   },
   {
     id: 'monetary-policy-2026',
@@ -249,6 +311,33 @@ export const LESSONS: Lesson[] = [
         answer: 'Yes. NRB has established a digital finance innovation hub and is preparing infrastructure to fully operationalize the National Payment Switch. The government and NRB are also creating frameworks for branchless "Neobanks," and NRB has prepared a study report on a Central Bank Digital Currency (CBDC), currently under discussion.',
       },
     ],
+    quiz: [
+      {
+        question: 'Why did the Nepal Rastra Bank (NRB) adopt a "cautiously accommodative" monetary stance?',
+        options: ['To slow down the economy', 'To make it easier and cheaper to borrow money to support economic recovery', 'To restrict credit to the private sector', 'To increase inflation'],
+        correctIndex: 1
+      },
+      {
+        question: 'What is the "liquidity-credit paradox" currently observed in Nepal?',
+        options: ['Banks have no money, but businesses want to borrow', 'Banks have plenty of liquidity and low rates, but businesses are still not borrowing', 'Borrowing is high, but liquidity is low', 'Interest rates are high, causing a credit boom'],
+        correctIndex: 1
+      },
+      {
+        question: 'Why is the Nepali Rupee pegged to the Indian Rupee?',
+        options: ['To make Nepali exports more expensive', 'To act as a nominal anchor and import price stability from India', 'To allow Nepal to have completely independent monetary policy', 'Because Nepal conducts all its trade with China'],
+        correctIndex: 1
+      },
+      {
+        question: 'How does NFRS 9 change how banks report their income on risky (Stage 3) loans?',
+        options: ['They must recognize all interest immediately', 'They can no longer charge interest', 'They will only recognize interest on a strict cash basis when actually received', 'They must forgive the loans'],
+        correctIndex: 2
+      },
+      {
+        question: 'How is the NRB helping businesses that face unforeseen hardships, like earthquake-affected areas?',
+        options: ['By paying off their debts completely', 'By allowing banks to restructure or reschedule their existing loans', 'By seizing their assets immediately', 'By increasing their interest rates'],
+        correctIndex: 1
+      }
+    ]
   },
   {
     id: 'ssa-reality',
@@ -318,6 +407,33 @@ export const LESSONS: Lesson[] = [
         answer: 'The government is transitioning toward digital solutions like the Integrated Social Registry (ISR) linked to the National Identity (NID) system to overcome geographic barriers and eliminate fraud. Policymakers are also expanding agent banking and home delivery models to transfer funds electronically and directly to disabled and remote beneficiaries without requiring travel.',
       },
     ],
+    quiz: [
+      {
+        question: 'What is the primary characteristic of Nepal\'s Social Security Allowance (SSA)?',
+        options: ['It is a contributory pension only for government workers', 'It is a constitutionally guaranteed, non-contributory cash transfer program', 'It is a loan that must be repaid', 'It is a private insurance scheme'],
+        correctIndex: 1
+      },
+      {
+        question: 'When the SSA was first introduced in 1994/95, what was the monthly allowance amount?',
+        options: ['Rs. 100', 'Rs. 500', 'Rs. 1,000', 'Rs. 4,000'],
+        correctIndex: 0
+      },
+      {
+        question: 'According to beneficiaries, what is the primary expenditure for the SSA funds?',
+        options: ['Entertainment and travel', 'Healthcare and medicines', 'Starting a business', 'Paying off bank loans'],
+        correctIndex: 1
+      },
+      {
+        question: 'What is one of the biggest administrative challenges facing the SSA program?',
+        options: ['Too many people contributing to the fund', 'The program is too small to matter', 'Ghost names where allowances are distributed to individuals who have died or migrated', 'Beneficiaries refusing to accept the money'],
+        correctIndex: 2
+      },
+      {
+        question: 'Why are economic experts worried about the long-term financial sustainability of the SSA?',
+        options: ['The program only costs NPR 1 billion', 'Lowering the eligibility age combined with an aging population rapidly increases the financial burden', 'The government is ending the program next year', 'There are too few elderly citizens'],
+        correctIndex: 1
+      }
+    ]
   },
   {
     id: 'modern-finance-intro',
@@ -325,7 +441,7 @@ export const LESSONS: Lesson[] = [
     title: 'Introduction to Modern Finance & Quantitative Trading',
     desc: 'An overview of core financial products, market operations, trading types, and how advanced mathematics has transformed the industry over the last 30 years.',
     duration: '22:00',
-    tag: 'Financial Literacy',
+    tag: 'Investing & Markets',
     videoUrl: 'https://www.youtube.com/embed/P56591aoV90',
     thumbnail: 'https://img.youtube.com/vi/P56591aoV90/hqdefault.jpg',
     chapters: [
@@ -387,6 +503,33 @@ export const LESSONS: Lesson[] = [
         answer: 'Interns often tackle highly technical, data-driven problems. For example, previous students have worked on finding the optimal shift size for calculating numerical derivatives (like Delta) in noisy Monte Carlo simulations, and using Kalman filters to better predict currency exchange rates for electronic trading platforms.',
       },
     ],
+    quiz: [
+      {
+        question: 'How has the finance industry fundamentally transformed over the last 30 years?',
+        options: ['It has become entirely unregulated', 'It relies less on math and more on gut feeling', 'It has heavily integrated advanced mathematics and computer science', 'It stopped trading derivative products'],
+        correctIndex: 2
+      },
+      {
+        question: 'What is the key difference between a broker and a market maker?',
+        options: ['A broker takes on financial risk, while a market maker does not', 'A broker acts as a matchmaker for a commission, while a market maker takes the other side of the trade and assumes risk', 'They are exactly the same thing', 'A broker only works in the primary market'],
+        correctIndex: 1
+      },
+      {
+        question: 'In risk management, what does Delta measure?',
+        options: ['Sensitivity to the underlying asset\'s price', 'Time decay', 'Sensitivity to volatility', 'Curvature or convexity'],
+        correctIndex: 0
+      },
+      {
+        question: 'What is an arbitrage strategy?',
+        options: ['Buying and holding a stock for 10 years', 'Profiting from a broken deterministic or mathematical pricing relationship between assets', 'Taking wild guesses on market direction', 'Only trading during IPOs'],
+        correctIndex: 1
+      },
+      {
+        question: 'Why do traders often struggle to cut their losses on a bad trade?',
+        options: ['Because The Greeks prevent them from selling', 'Due to human risk aversion and a reluctance to lock in a guaranteed loss', 'Because the secondary market does not allow selling at a loss', 'Because holding a losing trade always guarantees a profit eventually'],
+        correctIndex: 1
+      }
+    ]
   },
   {
     id: 'financial-literacy-youth',
@@ -456,6 +599,33 @@ export const LESSONS: Lesson[] = [
         answer: 'Insurance is a financial protection measure against unpredictable risks (like illness, accidents, or natural disasters). By paying a small, regular fee called a premium, you join a pooled fund managed by an insurance company. If an unfortunate event occurs, the insurance company pays you a benefit (financial compensation) to help cover the losses, ensuring that a single crisis doesn\'t destroy your long-term savings or plunge your family into debt.',
       },
     ],
+    quiz: [
+      {
+        question: 'Under the 50/30/20 rule, what does the 30% represent?',
+        options: ['Needs', 'Savings', 'Discretionary wants', 'Taxes'],
+        correctIndex: 2
+      },
+      {
+        question: 'How many months of basic living expenses should an emergency fund ideally cover?',
+        options: ['1 month', '3 to 6 months', '1 to 2 years', '10 years'],
+        correctIndex: 1
+      },
+      {
+        question: 'How is interest currently calculated on savings accounts by Nepali banks?',
+        options: ['Based on the lowest balance of the month', 'Based on the daily closing balance', 'Based on the balance on the first day of the year', 'It is a fixed flat fee regardless of balance'],
+        correctIndex: 1
+      },
+      {
+        question: 'What defines a "good" loan?',
+        options: ['Borrowing money to buy the latest smartphone', 'Borrowing money to pay for a luxury vacation', 'Borrowing money for productive investment that generates future income', 'Borrowing money to pay off another bad loan'],
+        correctIndex: 2
+      },
+      {
+        question: 'What is the primary purpose of insurance?',
+        options: ['To get rich quickly', 'To provide financial protection against unpredictable risks and crises', 'To earn a high interest rate', 'To avoid paying taxes'],
+        correctIndex: 1
+      }
+    ]
   },
   {
     id: 'digital-payments-security',
@@ -525,6 +695,33 @@ export const LESSONS: Lesson[] = [
         answer: 'Payment service providers must implement stringent measures, including comprehensive customer due diligence (CDD), continuous transaction monitoring, and the reporting of large or suspicious activities to the Financial Information Unit (FIU). The NRB also highly encourages companies to integrate Artificial Intelligence (AI) and machine learning into their risk management systems for real-time fraud detection.',
       },
     ],
+    quiz: [
+      {
+        question: 'What is the purpose of tokenization in digital payments?',
+        options: ['To convert cash into physical tokens', 'To replace sensitive bank details with a unique digital token for security', 'To create a new cryptocurrency', 'To eliminate the need for passwords'],
+        correctIndex: 1
+      },
+      {
+        question: 'Which of the following is strongly advised to protect your online financial transactions?',
+        options: ['Using the same password for all accounts', 'Sharing your OTP with bank officials over the phone', 'Enabling Two-Factor or Multi-Factor Authentication (2FA/MFA)', 'Using public Wi-Fi for all banking activities'],
+        correctIndex: 2
+      },
+      {
+        question: 'What does the National Cyber Security Policy (2023) aim to establish?',
+        options: ['A ban on all digital wallets', 'A National Cyber Security Center for 24/7 threat response', 'A physical token system for all citizens', 'A new physical currency'],
+        correctIndex: 1
+      },
+      {
+        question: 'What does PCI DSS certification signify for a payment service provider?',
+        options: ['That the provider is free to use', 'That the provider is globally recognized for securing credit and debit card transactions against data theft', 'That the provider only operates in Nepal', 'That the provider is immune to all cyber attacks'],
+        correctIndex: 1
+      },
+      {
+        question: 'Why was Nepal placed on the FATF "grey list"?',
+        options: ['Due to high inflation', 'Due to strategic deficiencies in Anti-Money Laundering (AML) and Counter-Terrorist Financing (CFT) frameworks', 'Because its digital payment adoption was too fast', 'Because it banned cryptocurrency'],
+        correctIndex: 1
+      }
+    ]
   },
   {
     id: 'nepse-fundamental-analysis',
@@ -594,6 +791,33 @@ export const LESSONS: Lesson[] = [
         answer: 'No, a low P/E ratio does not automatically make a stock a "must buy". While it might suggest a stock is cheap or undervalued, it can also mean that the company has fundamental problems, is facing challenges, or that the market is losing confidence in its future prospects. It is crucial to investigate why the P/E is low before investing.',
       },
     ],
+    quiz: [
+      {
+        question: 'Which core financial statement highlights a company\'s assets, liabilities, and net worth?',
+        options: ['The Income Statement', 'The Cash Flow Statement', 'The Balance Sheet', 'The Dividend Report'],
+        correctIndex: 2
+      },
+      {
+        question: 'Why should investors be cautious of "annualized" EPS in unaudited quarterly reports?',
+        options: ['Because a single strong quarter can artificially inflate the estimated twelve-month figure', 'Because annualized EPS is always lower than actual EPS', 'Because it includes taxes that haven\'t been paid', 'Because it is illegal to use annualized EPS'],
+        correctIndex: 0
+      },
+      {
+        question: 'What does a high Price-to-Earnings (P/E) ratio generally suggest about a stock?',
+        options: ['The company is bankrupt', 'The market expects strong future growth and is willing to pay a premium', 'The stock is deeply undervalued', 'The company pays the highest dividends'],
+        correctIndex: 1
+      },
+      {
+        question: 'When comparing P/E ratios, what is the best practice?',
+        options: ['Compare any two companies regardless of industry', 'Compare a commercial bank directly with a microfinance company', 'Only compare P/E ratios within the same sector', 'Always look for the highest P/E ratio across the entire market'],
+        correctIndex: 2
+      },
+      {
+        question: 'What is the standard par value of shares in Nepal?',
+        options: ['Rs. 10', 'Rs. 100', 'Rs. 1,000', 'Rs. 50'],
+        correctIndex: 1
+      }
+    ]
   },
   {
     id: 'technical-analysis-intro',
@@ -663,6 +887,33 @@ export const LESSONS: Lesson[] = [
         answer: 'Bollinger Bands consist of a simple moving average (the middle band) and two standard deviations acting as the upper and lower bands. The bands contract during periods of low volatility—a phase known as a "squeeze"—and expand when volatility increases. Traders use this squeeze to anticipate when a major, volatile price breakout is about to happen.',
       },
     ],
+    quiz: [
+      {
+        question: 'What happens when a "support" level on a stock chart is broken?',
+        options: ['It disappears completely', 'It often flips to become the new resistance level', 'The stock immediately doubles in price', 'Trading on the stock is halted forever'],
+        correctIndex: 1
+      },
+      {
+        question: 'What extra information does a candlestick chart provide compared to a standard line chart?',
+        options: ['Only the closing price', 'The open, close, high, low, and direction of movement', 'The company\'s net profit', 'The names of the buyers and sellers'],
+        correctIndex: 1
+      },
+      {
+        question: 'What does a "Head and Shoulders" pattern typically indicate?',
+        options: ['A current uptrend is reversing into a downtrend', 'A stock is about to pay a massive dividend', 'A current downtrend is accelerating', 'The stock price will remain completely flat'],
+        correctIndex: 0
+      },
+      {
+        question: 'What does a reading above 70 on the Relative Strength Index (RSI) generally suggest?',
+        options: ['The asset is oversold and undervalued', 'The asset may be overbought or overvalued', 'The asset has zero momentum', 'The company is about to go bankrupt'],
+        correctIndex: 1
+      },
+      {
+        question: 'What phase is indicated when Bollinger Bands contract tightly together?',
+        options: ['A highly volatile breakout', 'A squeeze indicating a period of low volatility before a potential breakout', 'A confirmed downtrend', 'A massive sell-off'],
+        correctIndex: 1
+      }
+    ]
   },
   {
     id: 'ipo-vs-secondary-market',
@@ -707,6 +958,33 @@ export const LESSONS: Lesson[] = [
         answer: 'No, IPOs are highly beginner-friendly and require virtually no fundamental or technical analysis. However, succeeding in the secondary market requires an intermediate to advanced level of financial knowledge to read financial statements and identify strong companies.',
       },
     ],
+    quiz: [
+      {
+        question: 'What is the core difference between the primary market (IPO) and the secondary market?',
+        options: ['IPOs are for buying bonds, secondary is for stocks', 'The IPO market is where shares are sold to the public for the first time at a fixed price, while the secondary market involves daily trading with fluctuating prices', 'The secondary market is only for institutional investors', 'IPOs have high risk while the secondary market has low risk'],
+        correctIndex: 1
+      },
+      {
+        question: 'Why are IPOs generally considered a low-risk entry point?',
+        options: ['Because the government guarantees you will make a profit', 'Because the price is fixed and the required investment amount is usually very small', 'Because IPO shares can never be sold', 'Because companies issuing IPOs never fail'],
+        correctIndex: 1
+      },
+      {
+        question: 'Is getting shares guaranteed when you apply for an IPO in Nepal?',
+        options: ['Yes, if you apply early enough', 'Yes, everyone who applies gets shares', 'No, due to high demand it relies on a lottery system', 'Yes, if you pay a premium fee'],
+        correctIndex: 2
+      },
+      {
+        question: 'Where is long-term wealth primarily built?',
+        options: ['Exclusively through IPO lotteries', 'By buying quality stocks in the secondary market and holding them for compounding growth', 'By avoiding the stock market entirely', 'By selling IPO shares on the first day'],
+        correctIndex: 1
+      },
+      {
+        question: 'Which market requires more advanced financial knowledge to succeed?',
+        options: ['The primary market (IPO)', 'The secondary market', 'Neither requires any knowledge', 'They require exactly the same amount of knowledge'],
+        correctIndex: 1
+      }
+    ]
   },
 ];
 
@@ -780,14 +1058,14 @@ const MODULES: Module[] = [
     id: 'financial-literacy',
     title: 'Financial Literacy',
     description: 'Personal finance fundamentals — budgeting, saving, and understanding how NRB policy affects your wallet.',
-    lessonIds: ['budgeting-emergency-fund', 'modern-finance-intro', 'financial-literacy-youth', 'digital-payments-security'],
+    lessonIds: ['budgeting-emergency-fund', 'financial-literacy-youth', 'digital-payments-security'],
     guideIds: ['financial-literacy'],
   },
   {
     id: 'investing-markets',
     title: 'Investing & Markets',
     description: 'How NEPSE works, how to read it, and how to start investing in Nepal\'s stock market.',
-    lessonIds: ['demystifying-nepse', 'nepse-fundamental-analysis', 'technical-analysis-intro', 'ipo-vs-secondary-market'],
+    lessonIds: ['demystifying-nepse', 'nepse-fundamental-analysis', 'technical-analysis-intro', 'ipo-vs-secondary-market', 'modern-finance-intro'],
     guideIds: ['nepse-guide'],
   },
   {
@@ -828,6 +1106,7 @@ export default function LearnPage() {
   );
   const [isPlaying, setIsPlaying]       = useState(!!lessonId);
   const [completed, setCompleted]       = useState<Set<string>>(new Set());
+  const [quizScores, setQuizScores]     = useState<Record<string, number>>({});
   const [expandedGuide, setExpandedGuide] = useState<string | null>(null);
   const [expandedFaq, setExpandedFaq]   = useState<number | null>(null);
   const [expandedLessonFaq, setExpandedLessonFaq] = useState<number | null>(null);
@@ -840,11 +1119,34 @@ export default function LearnPage() {
     const fetch = async () => {
       const snap = await getDoc(doc(db, 'users', user.uid, 'progress', 'lessons'));
       if (snap.exists()) {
-        setCompleted(new Set(snap.data().completed || []));
+        const data = snap.data();
+        setCompleted(new Set(data.completed || []));
+        setQuizScores(data.quizScores || {});
       }
     };
     fetch();
   }, [user]);
+
+  const submitQuiz = async (lessonId: string, scorePercent: number) => {
+    setQuizScores(prev => ({ ...prev, [lessonId]: scorePercent }));
+    if (scorePercent < 60) return;
+
+    const next = new Set(completed);
+    next.add(lessonId);
+    setCompleted(next);
+
+    if (user) {
+      await setDoc(
+        doc(db, 'users', user.uid, 'progress', 'lessons'),
+        {
+          completed: Array.from(next),
+          quizScores: { [lessonId]: scorePercent },
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true }
+      );
+    }
+  };
 
   // ── Mark lesson complete ───────────────────────────────────────────────────
   const markComplete = async (lessonId: string) => {
@@ -946,7 +1248,7 @@ export default function LearnPage() {
               </div>
 
               {/* Mark Complete */}
-              {user && (
+              {user && (!activeLesson.quiz || activeLesson.quiz.length === 0) && (
                 <button
                   onClick={() => markComplete(activeLesson.id)}
                   className={`flex items-center gap-3 px-6 py-3 rounded text-[10px] font-black uppercase tracking-widest transition-all shrink-0 ${
@@ -978,6 +1280,16 @@ export default function LearnPage() {
             )}
 
             {/* Inline FAQs */}
+            {user && activeLesson.quiz && activeLesson.quiz.length > 0 && (
+              <LessonQuiz
+                lessonId={activeLesson.id}
+                questions={activeLesson.quiz}
+                passed={completed.has(activeLesson.id)}
+                existingScore={quizScores[activeLesson.id]}
+                onSubmit={submitQuiz}
+              />
+            )}
+
             {activeLesson.faqs && activeLesson.faqs.length > 0 && (
               <div className="border-t border-white/10 pt-8">
                 <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-6">
@@ -1002,7 +1314,11 @@ export default function LearnPage() {
 
       {/* Module Sections */}
       {MODULES.map((module) => {
-        const moduleLessons = LESSONS.filter(l => module.lessonIds.includes(l.id));
+        const moduleLessons = module.lessonIds
+          .map(id => LESSONS.find(l => l.id === id))
+          .filter((l): l is Lesson => l !== undefined);
+
+        const completedInModule = moduleLessons.filter(l => completed.has(l.id)).length;
         const moduleGuides = GUIDES.filter(g => module.guideIds.includes(g.id));
 
         return (
@@ -1012,58 +1328,97 @@ export default function LearnPage() {
             <div className="border-b border-white/10 pb-6">
               <h2 className="text-2xl font-display italic text-white mb-2">{module.title}</h2>
               <p className="text-gray-500 font-sans text-sm">{module.description}</p>
+              <div className="mt-4 space-y-2">
+                <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-gray-500">
+                  <span>{completedInModule} / {moduleLessons.length} complete</span>
+                  <span>{Math.round((completedInModule / moduleLessons.length) * 100) || 0}%</span>
+                </div>
+                <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-royal transition-all duration-500"
+                    style={{ width: `${(completedInModule / moduleLessons.length) * 100 || 0}%` }}
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Lesson Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {moduleLessons.map((lesson) => (
-                <button
-                  key={lesson.id}
-                  onClick={() => playLesson(lesson)}
-                  className={`text-left bg-white/3 border rounded-xl overflow-hidden hover:border-royal/50 transition-all group ${
-                    activeLesson.id === lesson.id && isPlaying
-                      ? 'border-royal/50 bg-royal/5'
-                      : 'border-white/10'
-                  }`}
-                >
-                  {/* Thumbnail */}
-                  <div className="relative aspect-video overflow-hidden">
-                    <img
-                      src={lesson.thumbnail}
-                      alt={lesson.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
-                        <Play size={20} className="text-white ml-1" />
-                      </div>
-                    </div>
-                    {completed.has(lesson.id) && (
-                      <div className="absolute top-3 right-3 bg-green-500 rounded-full p-1">
-                        <Check size={12} className="text-white" />
-                      </div>
-                    )}
-                  </div>
+              {moduleLessons.map((lesson, index) => {
+                const isLocked = index > 0 && !completed.has(moduleLessons[index - 1].id);
 
-                  {/* Lesson Info */}
-                  <div className="p-6 space-y-3">
-                    <div className="flex items-center gap-3">
-                      <span className={`inline-block text-[9px] font-black uppercase tracking-widest border-transparent px-2 py-0.5 rounded ${
-                        lesson.level === 'Beginner' ? 'bg-green-500/20 text-green-400' :
-                        lesson.level === 'Intermediate' ? 'bg-yellow-500/20 text-yellow-400' :
-                        'bg-crimson/20 text-crimson'
-                      }`}>
-                        {lesson.level}
-                      </span>
-                      <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">{lesson.duration}</span>
+                return (
+                  <button
+                    key={lesson.id}
+                    onClick={() => !isLocked && playLesson(lesson)}
+                    disabled={isLocked}
+                    className={`text-left bg-white/3 border rounded-xl overflow-hidden transition-all group ${
+                      isLocked
+                        ? 'border-white/5 opacity-40 cursor-not-allowed'
+                        : 'hover:border-royal/50 ' + (
+                            activeLesson.id === lesson.id && isPlaying
+                              ? 'border-royal/50 bg-royal/5'
+                              : 'border-white/10'
+                          )
+                    }`}
+                  >
+                    {/* Thumbnail */}
+                    <div className="relative aspect-video overflow-hidden">
+                      <img
+                        src={lesson.thumbnail}
+                        alt={lesson.title}
+                        className={`w-full h-full object-cover transition-transform duration-500 ${!isLocked && 'group-hover:scale-105'}`}
+                      />
+                      {isLocked ? (
+                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                          <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur flex items-center justify-center">
+                            <Lock size={18} className="text-white/60" />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
+                            <Play size={20} className="text-white ml-1" />
+                          </div>
+                        </div>
+                      )}
+                      {completed.has(lesson.id) && (
+                        <div className="absolute top-3 right-3 bg-green-500 rounded-full p-1">
+                          <Check size={12} className="text-white" />
+                        </div>
+                      )}
+                      <div className="absolute top-3 left-3 bg-black/60 backdrop-blur rounded px-2 py-1">
+                        <span className="text-[9px] font-black text-white">{index + 1}</span>
+                      </div>
                     </div>
-                    <h3 className="text-base font-bold text-white group-hover:text-royal transition-colors leading-snug">
-                      {lesson.title}
-                    </h3>
-                    <p className="text-gray-500 font-sans text-xs line-clamp-2">{lesson.desc}</p>
-                  </div>
-                </button>
-              ))}
+
+                    {/* Lesson Info */}
+                    <div className="p-6 space-y-3">
+                      <div className="flex items-center gap-3">
+                        <span className={`inline-block text-[9px] font-black uppercase tracking-widest border-transparent px-2 py-0.5 rounded ${
+                          lesson.level === 'Beginner' ? 'bg-green-500/20 text-green-400' :
+                          lesson.level === 'Intermediate' ? 'bg-yellow-500/20 text-yellow-400' :
+                          'bg-crimson/20 text-crimson'
+                        }`}>
+                          {lesson.level}
+                        </span>
+                        <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">{lesson.duration}</span>
+                      </div>
+                      <h3 className={`text-base font-bold leading-snug transition-colors ${
+                        isLocked ? 'text-gray-500' : 'text-white group-hover:text-royal'
+                      }`}>
+                        {lesson.title}
+                      </h3>
+                      <p className="text-gray-500 font-sans text-xs line-clamp-2">{lesson.desc}</p>
+                      {isLocked && (
+                        <p className="text-[9px] font-black uppercase tracking-widest text-gray-600">
+                          Complete lesson {index} to unlock
+                        </p>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Written Guides — bottom of module */}
