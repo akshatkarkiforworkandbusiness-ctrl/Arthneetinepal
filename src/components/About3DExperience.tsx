@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float, Html, PresentationControls, Environment, ContactShadows, Text, Stars } from '@react-three/drei';
+import { Float, Html, OrbitControls, Environment, ContactShadows, Text, Stars } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion } from 'motion/react';
 
@@ -69,7 +69,7 @@ function CardNode({ data, activeId, setActiveId }: { data: typeof CONTENT_NODES[
         </mesh>
         
         {/* HTML UI Overlay */}
-        <Html transform wrapperClass="html-3d-wrapper" distanceFactor={10} position={[0, 0, 0.2]}>
+        <Html center zIndexRange={[100, 0]} position={[0, 0, 0]}>
           <motion.div
             layout
             initial={false}
@@ -186,27 +186,27 @@ export default function About3DExperience() {
         {/* Background Particles */}
         <Stars radius={100} depth={50} count={2000} factor={4} saturation={0} fade speed={1} />
 
-        <PresentationControls
-          global
-          config={{ mass: 2, tension: 500 }}
-          snap={{ mass: 4, tension: 1500 }}
-          rotation={[0, 0, 0]}
-          polar={[-Math.PI / 3, Math.PI / 3]}
-          azimuth={[-Math.PI / 1.4, Math.PI / 2]}
-        >
-          <group position={[0, 0.5, 0]}>
-            <AbstractCore />
-            
-            {CONTENT_NODES.map((node) => (
-              <CardNode 
-                key={node.id} 
-                data={node} 
-                activeId={activeId} 
-                setActiveId={setActiveId} 
-              />
-            ))}
-          </group>
-        </PresentationControls>
+        <OrbitControls 
+          autoRotate 
+          autoRotateSpeed={1}
+          enableZoom={false} 
+          enablePan={false}
+          minPolarAngle={Math.PI / 3}
+          maxPolarAngle={Math.PI / 2}
+        />
+        
+        <group position={[0, 0.5, 0]}>
+          <AbstractCore />
+          
+          {CONTENT_NODES.map((node) => (
+            <CardNode 
+              key={node.id} 
+              data={node} 
+              activeId={activeId} 
+              setActiveId={setActiveId} 
+            />
+          ))}
+        </group>
 
         {/* Floor Shadow */}
         <ContactShadows position={[0, -3.5, 0]} opacity={0.4} scale={20} blur={2} far={4} />
@@ -215,8 +215,8 @@ export default function About3DExperience() {
       {/* 2D Overlay Help Text */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 pointer-events-none text-center">
         <div className="bg-white/5 backdrop-blur border border-white/10 px-4 py-2 rounded-full inline-flex items-center gap-2">
-          <span className="material-symbols-outlined text-sm text-slate-400">swipe</span>
-          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Drag to rotate • Click nodes to explore</span>
+          <span className="material-symbols-outlined text-sm text-slate-400">touch_app</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Click nodes to explore • Drag to rotate</span>
         </div>
       </div>
     </div>
