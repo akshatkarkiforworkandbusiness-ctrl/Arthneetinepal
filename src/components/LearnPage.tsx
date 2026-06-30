@@ -1267,6 +1267,97 @@ export const LESSONS: Lesson[] = [
         correctIndex: 2
       }
     ]
+  },
+  {
+    id: 'mutual-funds-sips',
+    level: 'Beginner',
+    title: 'Mutual Funds & SIPs',
+    desc: 'A deep dive into Systematic Investment Plans, open-ended vs. close-ended mutual funds, and passive wealth building in NEPSE.',
+    duration: '15:00',
+    tag: 'Stock Market',
+    videoUrl: 'https://www.youtube.com/embed/m3lTigksnQA',
+    thumbnail: 'https://img.youtube.com/vi/m3lTigksnQA/maxresdefault.jpg',
+    chapters: [
+      'The Basics of Mutual Funds',
+      'Systematic Investment Plans (SIPs) & The Power of Compounding',
+      'Rupee Cost Averaging',
+      'Open-Ended vs. Closed-Ended Funds',
+      'Net Asset Value (NAV) and Returns',
+    ],
+    faqs: [
+      {
+        topic: 'Stock Market',
+        question: 'What exactly is a Mutual Fund and a SIP?',
+        answer: 'A mutual fund pools money from multiple investors to invest in a diversified portfolio of assets like stocks and bonds, managed by professional fund managers. A Systematic Investment Plan (SIP) is simply a method of investing in an open-ended mutual fund where you commit to investing a fixed sum of money at regular intervals, such as monthly.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'How much money do I need to start a SIP?',
+        answer: 'As a student, you do not need a lot of capital to start. In Nepal, you can begin investing in a SIP with as little as NPR 1,000 per month. This low entry barrier makes it highly accessible for students on a tight budget.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What is the difference between open-ended and closed-ended mutual funds?',
+        answer: 'Open-ended funds do not have a fixed maturity date. You can buy or sell units directly from the fund manager at any time based on the current Net Asset Value (NAV), making them highly liquid and flexible. Closed-ended funds issue a fixed number of units with a set maturity period, typically between 3 to 7 years. You cannot redeem them early directly from the fund; instead, they are traded on the secondary market (NEPSE), where their market price might differ from their actual NAV.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What is Net Asset Value (NAV)?',
+        answer: 'NAV represents the per-unit market value of a mutual fund. It is calculated at the end of each day by taking the total value of the fund\'s assets, subtracting any liabilities, and dividing that by the total number of outstanding units. When you buy or sell open-ended mutual fund units, you do so at the NAV price.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What happens if I miss my monthly SIP payment?',
+        answer: 'SIPs are very flexible. If you miss a monthly installment, your SIP will not be canceled. You simply miss investing for that particular month and can continue your payments the following month. You also have the option to pause, amend, or cancel your SIP entirely at your convenience.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'How do I actually earn money from my mutual fund?',
+        answer: 'You generate returns in two main ways: capital appreciation (when the NAV of your fund units increases over time) and dividends (profits the mutual fund distributes to investors annually from interest or stock gains). You can also enroll in a dividend reinvestment plan to automatically purchase more units instead of taking cash, helping your money grow faster.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Why should I invest in a SIP instead of saving my money in a bank?',
+        answer: 'SIPs establish investment discipline and offer Rupee Cost Averaging, meaning your fixed monthly investment buys more units when market prices are low and fewer when prices are high, lowering your average cost per unit over time. Furthermore, by reinvesting your returns, you benefit from the power of compounding, which allows your wealth to snowball over a long-term horizon.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Are mutual funds risk-free?',
+        answer: 'No, mutual funds are subject to market risks, and the value of your investments can fluctuate based on market conditions. You are also exposed to liquidity risks (especially with closed-ended funds that rely on secondary market trading volumes) and management risks, as returns depend heavily on the fund manager\'s decisions and expertise.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Do I have to pay taxes on my mutual fund earnings in Nepal?',
+        answer: 'Yes, mutual fund returns are subject to taxation. For individual investors, the mutual fund company will deduct a 5% withholding tax on any dividends you receive. If you sell your units for a profit, you also pay Capital Gains Tax: 5% if you held the units for more than a year, and 7.5% if you held them for less than a year.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Who regulates mutual funds to make sure my money is protected?',
+        answer: 'The mutual fund industry in Nepal is strictly regulated by the Securities Board of Nepal (SEBON). SEBON provides the legal framework, requires fund managers to submit frequent performance reports, and enforces rules to ensure transparency, integrity, and investor protection.',
+      }
+    ],
+    quiz: [
+      {
+        question: 'What is a Systematic Investment Plan (SIP)?',
+        options: ['A strategy to invest a fixed amount of money at regular intervals into a mutual fund', 'A government pension scheme', 'A mandatory tax on investments', 'A type of closed-ended fund'],
+        correctIndex: 0
+      },
+      {
+        question: 'How does Rupee Cost Averaging help you as an investor?',
+        options: ['It eliminates the need to pay taxes on your investments', 'You naturally purchase more units when prices are low and fewer units when prices are high, lowering your average cost per unit', 'It guarantees a 20% return on investment every year', 'It ensures you always buy at the absolute lowest price possible'],
+        correctIndex: 1
+      },
+      {
+        question: 'What is the main difference between Open-Ended and Closed-Ended Mutual Funds?',
+        options: ['Open-ended funds are for government employees only, while closed-ended funds are for the private sector', 'Open-ended funds have high liquidity and no fixed maturity, while closed-ended funds have a set maturity period and trade on the secondary market', 'Open-ended funds never lose money', 'Closed-ended funds can be withdrawn directly from the fund manager at any time'],
+        correctIndex: 1
+      },
+      {
+        question: 'If you hold mutual fund units for more than a year in Nepal, what is the Capital Gains Tax rate when you sell them for a profit?',
+        options: ['0%', '5%', '7.5%', '13%'],
+        correctIndex: 1
+      }
+    ]
   }
 ];
 
@@ -1347,7 +1438,7 @@ const MODULES: Module[] = [
     id: 'investing-markets',
     title: 'Investing & Markets',
     description: 'How NEPSE works, how to read it, and how to start investing in Nepal\'s stock market.',
-    lessonIds: ['demystifying-nepse', 'nepse-fundamental-analysis', 'technical-analysis-intro', 'ipo-vs-secondary-market', 'modern-finance-intro'],
+    lessonIds: ['demystifying-nepse', 'nepse-fundamental-analysis', 'technical-analysis-intro', 'ipo-vs-secondary-market', 'modern-finance-intro', 'mutual-funds-sips'],
     guideIds: ['nepse-guide'],
   },
   {
