@@ -1722,6 +1722,97 @@ export const LESSONS: Lesson[] = [
         correctIndex: 1
       }
     ]
+  },
+  {
+    id: 'trade-deficit-hydropower',
+    level: 'Advanced',
+    title: 'Trade Deficit & Hydropower Export',
+    desc: 'Understanding Nepal\'s import-heavy economy and the future economic potential of exporting electricity to India and Bangladesh.',
+    duration: '25:00',
+    tag: 'Policy & Economics',
+    videoUrl: 'https://www.youtube.com/embed/SSrsr3fRpkc',
+    thumbnail: 'https://img.youtube.com/vi/SSrsr3fRpkc/maxresdefault.jpg',
+    chapters: [
+      'The Burden of a Massive Trade Deficit and Macroeconomic Imbalance',
+      'Foreign Direct Investment (FDI) as a Catalyst for Growth',
+      'Hydropower as the Ultimate Economic Backbone',
+      'Strategic Regional Energy Trade Agreements',
+      'Environmental Challenges and the 10-Year Energy Strategy',
+    ],
+    faqs: [
+      {
+        topic: 'Policy & Economics',
+        question: 'What is the current status of Nepal\'s trade deficit, and why is it a major concern?',
+        answer: 'Nepal is currently experiencing a massive and growing trade deficit, meaning the value of its imports far exceeds its exports. For the first ten months of Fiscal Year 2025/26, the total trade deficit increased by 14.9% to reach Rs. 1443.68 billion. The export-to-import ratio stood at an alarming 14.7%. This is a major concern because it forces Nepal to deplete its foreign exchange reserves to pay for imports, slows down real GDP growth, and increases inflationary pressures on the domestic economy.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'What are the primary causes of Nepal\'s high trade deficit?',
+        answer: 'Several structural and economic factors contribute to the deficit. Nepal\'s landlocked geography prevents direct sea route access, leading to expensive freight and transportation costs. Other significant causes include low domestic productivity, a scarcity of resources and skilled manpower, high production costs due to imported raw materials, and ongoing political instability. Consequently, the country relies heavily on importing goods from India and China.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'How does Nepal manage to finance its massive trade deficit?',
+        answer: 'Nepal primarily finances its trade deficit through foreign remittances sent by Nepalese citizens working abroad. In the first ten months of FY 2025/26, remittance inflows grew by 41.2% to Rs. 1916.90 billion. While this vital income helps stabilize the economy and reduce poverty, it also ironically fuels the trade deficit; higher disposable income increases the purchasing power of the population, which leads to a greater demand for imported consumer goods.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'How is Nepal trying to attract Foreign Direct Investment (FDI)?',
+        answer: 'To offset its economic vulnerabilities and fund large projects, Nepal has implemented several investment-friendly policies. The country allows 100% foreign ownership in numerous sectors, guarantees that foreign-invested industries will not be nationalized, and permits full repatriation of profits and dividends. The government has also launched an "Automatic Route" system, allowing investors in specific sectors (like energy, tourism, and IT) with capital up to NPR 500 million to receive instant FDI approvals online.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'Why is hydropower considered the "game changer" for Nepal\'s economy?',
+        answer: 'Nepal is home to thousands of rivers with an economically feasible hydropower potential of roughly 42,000 to 43,000 Megawatts (MW). Currently, only about 3,269 MW (or 7.8%) of this capacity is operational. Fully developing this sector is viewed as an economic game changer because it would provide clean energy for low-carbon industrialization, substitute the need for costly imported fossil fuels, and generate substantial foreign exchange revenue through electricity exports, directly addressing the trade deficit.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'Who are Nepal\'s main energy trading partners, and how much is it earning?',
+        answer: 'Nepal currently exports electricity to India and Bangladesh. In the first five months of FY 2025/26 alone, Nepal earned over Rs. 18.26 billion by exporting approximately 2.714 billion units of electricity. Furthermore, Nepal recently signed a landmark 25-year long-term power trade agreement with India, aiming to export 10,000 MW of electricity to India over the next decade.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'How does Nepal export electricity to Bangladesh without a shared border?',
+        answer: 'Because Nepal and Bangladesh do not share a physical border, a historic tripartite agreement was signed on October 3, 2024, involving India. This pact allows Nepal to export 40 MW of electricity to Bangladesh using India\'s existing transmission grid. The power travels from Nepal to India via the Dhalkebar-Muzaffarpur transmission line, and then crosses from India to Bangladesh via the Baharampur-Bheramara line.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'What major infrastructure and financial challenges does Nepal\'s hydropower sector face?',
+        answer: 'The sector is constrained by severe transmission grid limitations; Nepal currently has only 6,507 circuit km of transmission lines against a requirement of over 17,000 km by 2035. Projects also face prolonged permitting processes, land acquisition disputes, and high-cost debt financing from domestic banks. Additionally, because 83% of Nepal\'s projects are "run-of-river" (relying on natural river flow), the country produces surplus electricity during the rainy season but faces energy deficits and relies on imports during dry winters.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'How is climate change threatening Nepal\'s energy ambitions?',
+        answer: 'Climate change induces severe weather events, such as erratic monsoons, massive floods, and Glacial Lake Outburst Floods (GLOFs), which actively damage critical energy infrastructure. For instance, recent unprecedented rainfall washed away multiple hydropower sites and transmission lines, disrupting about 1,000 to 1,100 MW of power generation. Increased sediment and abrasive sand loads in the rivers also reduce turbine efficiency and drive up maintenance costs.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'What are the goals of Nepal\'s "10-Year Energy Strategy"?',
+        answer: 'The government\'s "Energy Consumption Growth and Export Strategy (2083)" aims to establish Nepal as South Asia\'s clean energy hub by the year 2035. The ambitious targets include reaching a total electricity production of 28,500 MW, boosting domestic per capita consumption to 1,500 units, and achieving an export capacity of 15,000 MW. To fix the seasonal energy imbalances, the strategy heavily prioritizes the construction of large reservoir-based and pumped storage projects.',
+      }
+    ],
+    quiz: [
+      {
+        question: 'What is the primary way Nepal currently finances its massive trade deficit?',
+        options: ['By exporting manufactured goods to Europe', 'Through foreign remittances sent by Nepalese citizens working abroad', 'By taking large loans from the World Bank', 'Through massive foreign direct investment in the tourism sector'],
+        correctIndex: 1
+      },
+      {
+        question: 'Why is hydropower considered the "game changer" for Nepal\'s economy?',
+        options: ['Because it is the only industry allowed by the government', 'It would provide clean energy, substitute costly imported fossil fuels, and generate substantial revenue through electricity exports', 'Because it requires zero initial investment to build', 'It completely eliminates the need for foreign remittances'],
+        correctIndex: 1
+      },
+      {
+        question: 'How is Nepal able to export electricity to Bangladesh despite not sharing a physical border?',
+        options: ['By using high-capacity underwater cables', 'Through a historic tripartite agreement allowing Nepal to use India\'s existing cross-border transmission grid', 'By transporting batteries via cargo flights', 'Nepal actually does share a direct border with Bangladesh'],
+        correctIndex: 1
+      },
+      {
+        question: 'Why does Nepal sometimes face energy deficits and rely on imports during dry winters, despite its hydropower potential?',
+        options: ['Because 83% of Nepal\'s projects are "run-of-river" and rely on natural river flow, which drops in winter', 'Because the government shuts down power plants in winter to save money', 'Because all electricity is automatically exported to India during winter', 'Because snow completely covers all solar panels during winter'],
+        correctIndex: 0
+      }
+    ]
   }
 ];
 
@@ -1809,7 +1900,7 @@ const MODULES: Module[] = [
     id: 'economics-research',
     title: 'Economics & Research',
     description: 'Macroeconomics, monetary policy, and original Arthneeti research on Nepal\'s economy.',
-    lessonIds: ['monetary-policy-2026', 'ssa-reality', 'national-budget-fiscal-policy', 'remittance-economy'],
+    lessonIds: ['monetary-policy-2026', 'ssa-reality', 'national-budget-fiscal-policy', 'remittance-economy', 'trade-deficit-hydropower'],
     guideIds: ['economics-guidebook'],
   },
 ];
