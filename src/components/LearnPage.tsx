@@ -1540,6 +1540,97 @@ export const LESSONS: Lesson[] = [
         correctIndex: 2
       }
     ]
+  },
+  {
+    id: 'national-budget-fiscal-policy',
+    level: 'Advanced',
+    title: 'The National Budget (Fiscal Policy)',
+    desc: 'How the government raises revenue, allocates spending, and how the annual budget directly impacts businesses and the stock market.',
+    duration: '22:00',
+    tag: 'Policy & Economics',
+    videoUrl: 'https://www.youtube.com/embed/Gj1BnbOZkj0',
+    thumbnail: 'https://img.youtube.com/vi/Gj1BnbOZkj0/maxresdefault.jpg',
+    chapters: [
+      'Ambitious FY 2026/27 Budget Goals and Structural Reforms',
+      'Major Personal Income and Capital Gains Tax Relief',
+      'The "Efficiency Gap" in Provincial Fiscal Federalism',
+      'Accountability Deficits and Audit Irregularities',
+      'Stagnant Growth Amidst Strong External Reserves (World Bank Update)',
+    ],
+    faqs: [
+      {
+        topic: 'Policy & Economics',
+        question: 'What are the government\'s main economic targets for FY 2026/27, and are they realistic?',
+        answer: 'The government has set an ambitious target to achieve a 7% economic growth rate and contain inflation within 6%. However, recent data from the World Bank suggests these targets may be difficult to reach; the World Bank projects a much lower growth rate of 2.3% for FY26 due to weak agricultural performance and social unrest.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'How does the new budget plan to integrate Artificial Intelligence (AI) into Nepal\'s economy?',
+        answer: 'The budget heavily prioritizes technological innovation, planning to establish the country\'s first \'Sovereign AI Compute Center\' in Syuchatar, Kathmandu. The government aims to leverage Nepal\'s clean hydropower to provide subsidized compute capacity to AI entrepreneurs and startups, and plans to invite 15 internationally recognized Nepali researchers to return home through a prestigious AI fellowship.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'How will the new personal income tax changes affect the middle class?',
+        answer: 'To expand the middle class and provide financial relief, the government has doubled the personal income tax exemption threshold to NPR 1 million. Furthermore, the highest marginal personal income tax rate has been drastically reduced from 39% to 29%.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'What are the specific changes to the capital gains tax for stock market investors?',
+        answer: 'The capital gains tax on listed securities has been restructured to 10% for holdings of one year or less, and 7.5% for holdings exceeding one year. Importantly, the government has arranged for this to be treated as a final withholding tax.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'What is the "efficiency gap" in Nepal\'s provincial fiscal federalism?',
+        answer: 'The "efficiency gap" refers to the persistent under-absorption of capital budgets by provincial governments. It highlights that the core constraint holding back subnational development is no longer a lack of funds from the federal government, but rather a weak execution capacity that leaves development funds idle.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'Why do provincial governments struggle to spend their allocated capital budgets?',
+        answer: 'Provinces struggle to execute capital spending due to systemic issues like delays in procurement, land acquisition problems, and weak project preparedness. In infrastructure-poor provinces like Sudurpashchim, these issues are worsened by geographic remoteness, weaker market connectivity, and limited technical capacity within provincial agencies.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'Which province has the highest rate of financial irregularities, and what causes this?',
+        answer: 'Madhesh Province has the highest irregularity ratio at 2.53% of its audited spending, and carries the largest outstanding stock of unsettled advances at NPR 9.2 billion. This accountability deficit is driven by a lack of financial transparency, poor public disclosure of contracts, and a failure to properly allocate local revenue like vehicle taxes.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'What caused the sharp drop in Nepal\'s inflation rate recently?',
+        answer: 'Inflation dropped sharply to 1.7% primarily due to falling food prices. This decline was driven by cheaper vegetables, spices, pulses, and cereal grains, which resulted from favorable harvests and base effects from the first half of the previous fiscal year.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'What is driving Nepal\'s strong external sector and record-high foreign exchange reserves?',
+        answer: 'Nepal\'s external sector has strengthened significantly, with the current account surplus widening to a record high of 6.7% of GDP. This massive surplus, which has boosted foreign exchange reserves to cover 18.1 months of imports, is heavily driven by international remittance inflows.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'How might the conflict in the Middle East negatively impact Nepal\'s economy?',
+        answer: 'The World Bank warns that the Middle East conflict poses severe downside risks across three main channels: it could disrupt remittance inflows (as the region accounts for about 40% of Nepali migrant workers\' remittances), cause energy and fuel costs to rise since Nepal relies entirely on imported petroleum, and negatively affect tourist arrivals due to higher aviation fuel prices and global uncertainty.',
+      }
+    ],
+    quiz: [
+      {
+        question: 'What is the government\'s ambitious economic growth target for FY 2026/27 as stated in the new budget?',
+        options: ['2.3%', '7%', '10%', '6%'],
+        correctIndex: 1
+      },
+      {
+        question: 'What is the new personal income tax exemption threshold introduced in the FY 2026/27 budget?',
+        options: ['NPR 500,000', 'NPR 1 million', 'NPR 2 million', 'NPR 700,000'],
+        correctIndex: 1
+      },
+      {
+        question: 'What does the "efficiency gap" in Nepal\'s provincial fiscal federalism refer to?',
+        options: ['The inability of the federal government to collect taxes', 'The persistent under-absorption of capital budgets by provincial governments due to weak execution capacity', 'The high rate of inflation caused by food prices', 'The lack of foreign direct investment in the banking sector'],
+        correctIndex: 1
+      },
+      {
+        question: 'What is heavily driving Nepal\'s record-high foreign exchange reserves and current account surplus?',
+        options: ['Massive exports of agricultural goods', 'International remittance inflows', 'High foreign direct investment in AI startups', 'Significant tourism revenue from Europe'],
+        correctIndex: 1
+      }
+    ]
   }
 ];
 
@@ -1627,7 +1718,7 @@ const MODULES: Module[] = [
     id: 'economics-research',
     title: 'Economics & Research',
     description: 'Macroeconomics, monetary policy, and original Arthneeti research on Nepal\'s economy.',
-    lessonIds: ['monetary-policy-2026', 'ssa-reality'],
+    lessonIds: ['monetary-policy-2026', 'ssa-reality', 'national-budget-fiscal-policy'],
     guideIds: ['economics-guidebook'],
   },
 ];
