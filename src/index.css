@@ -235,3 +235,24 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
 }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #certificate-container, #certificate-container * {
+    visibility: visible;
+  }
+  #certificate-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+}

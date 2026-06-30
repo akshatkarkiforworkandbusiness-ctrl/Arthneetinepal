@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Play, Check, BookOpen, Download } from 'lucide-react';
+import { Play, Check, BookOpen, Download, Award } from 'lucide-react';
+import CertificateModal from './CertificateModal';
 import { db } from '../lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
@@ -1109,6 +1110,7 @@ export default function LearnPage() {
   const { user } = useAuth();
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
+  const [certificateModule, setCertificateModule] = useState<string | null>(null);
   const [activeLesson, setActiveLesson] = useState<Lesson>(
     LESSONS.find(l => l.id === lessonId) ?? LESSONS[0]
   );
@@ -1370,6 +1372,27 @@ export default function LearnPage() {
                   />
                 </div>
               </div>
+              
+              {/* Certificate Unlock */}
+              {completedInModule === moduleLessons.length && moduleLessons.length > 0 && (
+                <div className="mt-6 bg-gradient-to-r from-royal/20 to-transparent border border-royal/30 p-4 rounded-xl flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-royal/20 p-2 rounded-full border border-royal/50">
+                      <Award size={20} className="text-royal" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-white">Module Completed!</p>
+                      <p className="text-xs text-gray-400">You've unlocked the certificate for {module.title}.</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setCertificateModule(module.title)}
+                    className="px-4 py-2 bg-royal text-white text-[10px] font-black uppercase tracking-widest rounded shadow-[0_0_15px_rgba(0,135,90,0.5)] hover:bg-royal-light transition-all"
+                  >
+                    View Certificate
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Lesson Cards */}
@@ -1495,6 +1518,13 @@ export default function LearnPage() {
         );
       })}
     </div>
+
+    {/* Modals */}
+    <CertificateModal 
+      isOpen={!!certificateModule} 
+      onClose={() => setCertificateModule(null)} 
+      moduleTitle={certificateModule || ''} 
+    />
   </main>
 );
 }
