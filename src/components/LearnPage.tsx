@@ -995,6 +995,97 @@ export const LESSONS: Lesson[] = [
       }
     ]
   },
+  {
+    id: 'navigating-taxes-nepal',
+    level: 'Beginner',
+    title: 'Navigating Taxes in Nepal',
+    desc: 'Understanding Income Tax slabs, PAN vs. VAT, Tax Deducted at Source (TDS), and legal tax-saving strategies.',
+    duration: '15:00',
+    tag: 'Financial Literacy',
+    videoUrl: 'https://www.youtube.com/embed/ZJX6dVp-ybA',
+    thumbnail: 'https://img.youtube.com/vi/ZJX6dVp-ybA/maxresdefault.jpg',
+    chapters: [
+      'Progressive Income Tax Slabs and Rates',
+      'Legal Tax Exemptions and Deductions',
+      'VAT Registration Thresholds and Input Credits',
+      'The Tax Deducted at Source (TDS) Framework',
+      'Tax Filing Deadlines and Compliance Penalties',
+    ],
+    faqs: [
+      {
+        topic: 'Financial Literacy',
+        question: 'Do I need a PAN card to do a part-time job or freelance work?',
+        answer: 'Yes. A Permanent Account Number (PAN) is mandatory for anyone involved in income-generating activities in Nepal. Employers cannot legally route your salary into a bank account without a PAN-linked payroll record. You can register for a personal PAN online for free.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Do I have to file a tax return for my part-time job?',
+        answer: 'Most salaried individuals do not need to file a tax return. If you work for a single employer, earn an annual salary of up to Rs. 40 lakh, and your employer correctly deducts your Tax Deducted at Source (TDS), you are exempt from filing. However, if you have multiple part-time jobs in the same year or earn freelance side-income, filing a tax return becomes mandatory.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'The bank deducted 6% tax from the interest on my student savings account. Can I get a refund since my income is low?',
+        answer: 'No. The 6% TDS deducted by banks on interest from deposits is classified as a final withholding tax. This means it permanently settles your tax liability for that specific income. You cannot report it on a tax return or claim it back, regardless of which tax slab you fall into.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'I earn money from foreign clients on platforms like Upwork. How is this taxed?',
+        answer: 'Foreign-currency inward remittances for digital exports are subject to a 5% withholding tax by the bank. For individuals, this 5% is treated as a final tax. While filing a tax return specifically for this income is technically optional, doing so creates a paper trail that can act as a helpful "insurance policy" against future tax queries.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'I work as a local freelancer/consultant. What tax rate applies to my payments?',
+        answer: 'If you provide services locally and issue a PAN bill (meaning you are not VAT registered), your client is legally required to deduct a 15% TDS from your fee. Fortunately, this is an adjustable withholding tax, which acts as a provisional prepayment. If the total tax withheld exceeds your actual final tax bill for the year, you can claim a refund when you file your annual return.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Can I get a VAT refund for a laptop I bought for my studies?',
+        answer: 'No. Value Added Tax (VAT) is a 13% consumption tax that is ultimately borne by the end consumer. Only VAT-registered businesses can claim an "input tax credit" to recover the VAT they paid on purchases made strictly for business purposes.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How do I know if my freelance business needs to register for VAT instead of just PAN?',
+        answer: 'VAT registration becomes mandatory if your annual turnover from providing services exceeds Rs. 30 lakh. If your service income is below this threshold, you can operate with just a PAN. However, some small businesses opt to register for VAT voluntarily to claim input tax credits or because corporate clients prefer dealing with VAT-registered suppliers.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'I invested my savings in the stock market. Are my dividends taxed?',
+        answer: 'Yes. Dividends distributed by Nepali companies are subject to a 5% TDS. Just like bank interest, this 5% deduction is a final tax for individual shareholders and cannot be reclaimed.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What are legal ways for me to reduce my taxable income?',
+        answer: 'If you earn enough to pay income tax, you can legally reduce your taxable income by claiming the following deductions: Up to Rs. 40,000 a year for life insurance premiums. Up to Rs. 20,000 a year for health insurance. A medical tax credit of 15% of your approved medical costs, capped at Rs. 750. Contributions to approved pension or retirement funds (like the Social Security Fund or Citizen Investment Trust) can be deducted up to Rs. 500,000 or one-third of your assessable income, whichever is lower.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What happens if I am required to file a tax return but I do it late?',
+        answer: 'The standard deadline to file your personal tax return is mid-October (the end of Ashoj). If you file late, the penalty is the higher of 1.5% per year of your assessable income (calculated monthly) or Rs. 1,000 per month of delay. In addition to this fee, you will also be charged a 15% per annum interest rate on any unpaid tax you owe.',
+      },
+    ],
+    quiz: [
+      {
+        question: 'What is the maximum marginal income tax rate for taxable income exceeding Rs. 50,00,000 in Nepal?',
+        options: ['20%', '30%', '36%', '39%'],
+        correctIndex: 3
+      },
+      {
+        question: 'Which of the following is an example of a "Final TDS" that permanently settles your tax liability and cannot be refunded?',
+        options: ['1.5% for VAT-registered service providers', '15% for non-VAT consulting fees', '6% deduction on bank interest', 'Salary withholding'],
+        correctIndex: 2
+      },
+      {
+        question: 'Is it mandatory for a salaried employee to file a tax return if they work for a single employer, earn under Rs. 40 lakh, and have TDS correctly deducted?',
+        options: ['Yes, filing is always mandatory', 'No, they are exempt from filing', 'Only if they are married', 'Only if they want a refund'],
+        correctIndex: 1
+      },
+      {
+        question: 'What is the penalty for filing a tax return late in Nepal?',
+        options: ['A flat fee of Rs. 5,000', '15% of the total tax owed per month', 'The higher of 1.5% per year of assessable income or Rs. 1,000 per month', 'Immediate confiscation of assets'],
+        correctIndex: 2
+      }
+    ]
+  }
 ];
 
 const GUIDES: Guide[] = [
@@ -1067,7 +1158,7 @@ const MODULES: Module[] = [
     id: 'financial-literacy',
     title: 'Financial Literacy',
     description: 'Personal finance fundamentals — budgeting, saving, and understanding how NRB policy affects your wallet.',
-    lessonIds: ['budgeting-emergency-fund', 'financial-literacy-youth', 'digital-payments-security'],
+    lessonIds: ['budgeting-emergency-fund', 'financial-literacy-youth', 'digital-payments-security', 'navigating-taxes-nepal'],
     guideIds: ['financial-literacy'],
   },
   {
