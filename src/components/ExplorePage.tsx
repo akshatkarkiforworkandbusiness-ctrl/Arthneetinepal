@@ -42,8 +42,9 @@ interface ChartPoint {
 const TIMEFRAMES = ['1D', '1W', '1M', '1Y', 'ALL'] as const;
 type Timeframe = typeof TIMEFRAMES[number];
 
-function buildChartData(stock: StockRow, tf: Timeframe): ChartPoint[] {
+function buildChartData(stock: StockRow | undefined, tf: Timeframe): ChartPoint[] {
   const pts: ChartPoint[] = [];
+  if (!stock) return pts;
   const now = new Date();
   const ptsCount = tf === '1D' ? 12 : tf === '1W' ? 7 : tf === '1M' ? 4 : tf === '1Y' ? 12 : 8;
 
