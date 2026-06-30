@@ -1,7 +1,9 @@
 import { motion, useInView } from 'motion/react';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, lazy, Suspense } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, MapPin, Clock, CheckCircle, Edit2, Trash2, ChevronRight } from 'lucide-react';
+
+const CardScene3D = lazy(() => import('./CardScene3D'));
 
 /* ── Types ───────────────────────────────────────────────────────── */
 
@@ -156,9 +158,9 @@ export default function AnimatedEventCard({
           style={{ boxShadow: `0 0 40px ${catColor}08, 0 25px 50px rgba(0,0,0,0.4)` }}
         >
           {/* Glowing top border */}
-          <div className="absolute top-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(90deg, transparent, ${catColor}, transparent)` }} />
+          <div className="absolute top-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20" style={{ background: `linear-gradient(90deg, transparent, ${catColor}, transparent)` }} />
 
-          {/* Image / Header */}
+          {/* Header: Image OR 3D Scene */}
           {event.imageUrl ? (
             <div className="relative h-52 overflow-hidden">
               <motion.img
@@ -173,7 +175,7 @@ export default function AnimatedEventCard({
 
               {/* Floating date */}
               <motion.div
-                className="absolute top-4 left-4 bg-[#0f172a]/90 backdrop-blur-md border border-[#1F2A3F] rounded-xl px-4 py-2.5 text-center"
+                className="absolute top-4 left-4 bg-[#0f172a]/90 backdrop-blur-md border border-[#1F2A3F] rounded-xl px-4 py-2.5 text-center z-10"
                 initial={{ x: -30, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: index * 0.1 + 0.3, duration: 0.5 }}
@@ -188,7 +190,7 @@ export default function AnimatedEventCard({
 
               {/* Category */}
               <motion.div
-                className="absolute top-4 right-4"
+                className="absolute top-4 right-4 z-10"
                 initial={{ x: 30, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: index * 0.1 + 0.4 }}
@@ -199,46 +201,41 @@ export default function AnimatedEventCard({
               </motion.div>
             </div>
           ) : (
-            <div className="relative h-36 overflow-hidden" style={{ background: `linear-gradient(135deg, #0B0F19 0%, #161F30 50%, ${catColor}08 100%)` }}>
-              {/* Animated glow orbs */}
-              <motion.div
-                className="absolute -top-10 -right-10 w-40 h-40 rounded-full blur-3xl"
-                style={{ background: catColor }}
-                animate={{ opacity: [0.05, 0.12, 0.05], scale: [1, 1.2, 1] }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              />
-              <motion.div
-                className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full blur-3xl"
-                style={{ background: '#00875a' }}
-                animate={{ opacity: [0.04, 0.1, 0.04], scale: [1, 1.15, 1] }}
-                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-              />
+            /* ── 3D Object Header ── */
+            <div className="relative h-56 overflow-hidden">
+              {/* 3D Scene */}
+              <Suspense fallback={
+                <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, #0B0F19 0%, #161F30 50%, ${catColor}08 100%)` }} />
+              }>
+                <CardScene3D color={catColor} category={event.category} />
+              </Suspense>
 
-              {/* Date display */}
-              <div className="relative z-10 flex items-center justify-center h-full">
-                <motion.div
-                  className="text-center"
-                  initial={{ scale: 0.5, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: index * 0.1 + 0.2, type: 'spring', damping: 15 }}
-                >
-                  <span className="text-xs font-black uppercase tracking-widest block mb-1" style={{ color: catColor }}>
-                    {date ? new Intl.DateTimeFormat('en-US', { month: 'short' }).format(date) : '...'}
-                  </span>
-                  <span className="text-5xl font-black font-mono text-white drop-shadow-lg">
-                    {date ? date.getDate() : '...'}
-                  </span>
-                </motion.div>
-              </div>
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#161F30] via-[#161F30]/40 to-transparent z-10 pointer-events-none" />
+
+              {/* Floating date badge */}
+              <motion.div
+                className="absolute top-4 left-4 bg-[#0f172a]/90 backdrop-blur-md border border-[#1F2A3F] rounded-xl px-4 py-2.5 text-center z-20"
+                initial={{ x: -30, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: index * 0.1 + 0.3, duration: 0.5 }}
+              >
+                <span className="text-[9px] font-black uppercase tracking-widest block" style={{ color: catColor }}>
+                  {date ? new Intl.DateTimeFormat('en-US', { month: 'short' }).format(date) : '...'}
+                </span>
+                <span className="text-2xl font-black font-mono text-white">
+                  {date ? date.getDate() : '...'}
+                </span>
+              </motion.div>
 
               {/* Category badge */}
               <motion.div
-                className="absolute top-4 right-4"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: index * 0.1 + 0.5 }}
+                className="absolute top-4 right-4 z-20"
+                initial={{ x: 30, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: index * 0.1 + 0.4 }}
               >
-                <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest border-transparent px-3 py-1 rounded-lg" style={{ background: `${catColor}15`, color: catColor }}>
+                <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest border-transparent px-3 py-1 rounded-lg backdrop-blur-sm" style={{ background: `${catColor}20`, color: catColor }}>
                   {event.category}
                 </Badge>
               </motion.div>
@@ -246,7 +243,7 @@ export default function AnimatedEventCard({
           )}
 
           {/* Content */}
-          <div className="p-8 flex flex-col flex-1 relative">
+          <div className="p-8 flex flex-col flex-1 relative z-10">
             {/* Status + Admin actions */}
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-3">
