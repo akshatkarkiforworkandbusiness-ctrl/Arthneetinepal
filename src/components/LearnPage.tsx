@@ -34,6 +34,7 @@ interface Lesson {
   chapters: string[];
   faqs?: FAQ[];
   quiz?: QuizQuestion[];
+  resources?: { title: string; size: string; url: string }[];
 }
 
 interface Guide {
@@ -58,8 +59,12 @@ export const LESSONS: Lesson[] = [
     desc: 'A fast, clear walkthrough of how Nepal\'s stock market actually works — from SEBON and CDSC to IPO lotteries, settlement cycles, and why diversification matters.',
     duration: '8:00',
     tag: 'Stock Market',
-    videoUrl: 'https://www.youtube.com/embed/QZuAJB-sPEQ',
-    thumbnail: 'https://img.youtube.com/vi/QZuAJB-sPEQ/hqdefault.jpg',
+    videoUrl: 'https://www.youtube.com/embed/qB4y1O3Nq3M',
+    thumbnail: 'https://img.youtube.com/vi/qB4y1O3Nq3M/hqdefault.jpg',
+    resources: [
+      { title: 'NEPSE Beginner Cheat Sheet', size: '245 KB PDF', url: '#' },
+      { title: 'Demat Opening Checklist', size: '1.2 MB PDF', url: '#' }
+    ],
     chapters: [
       'Core infrastructure: SEBON, NEPSE, and CDSC explained',
       'Primary markets, IPOs, and the ASBA application system',
@@ -156,6 +161,9 @@ export const LESSONS: Lesson[] = [
     tag: 'Financial Literacy',
     videoUrl: 'https://www.youtube.com/embed/REFRRa9CtS4',
     thumbnail: 'https://img.youtube.com/vi/REFRRa9CtS4/hqdefault.jpg',
+    resources: [
+      { title: '50/30/20 Budgeting Excel Template', size: '45 KB XLSX', url: '#' }
+    ],
     chapters: [
       'The 50/30/20 budgeting rule and building an emergency fund',
       'Compound interest vs inflation — the two forces shaping your wealth',
@@ -1274,6 +1282,28 @@ export default function LearnPage() {
                       </span>
                       <span className="text-sm text-gray-300 font-sans">{chapter}</span>
                     </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Resources */}
+            {activeLesson.resources && activeLesson.resources.length > 0 && (
+              <div className="border-t border-white/10 pt-8 mt-8">
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-4">Downloads & Resources</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {activeLesson.resources.map((resource, i) => (
+                    <a key={i} href={resource.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-4 bg-white/3 border border-white/10 rounded-xl hover:border-royal/50 hover:bg-royal/5 transition-all group">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 group-hover:text-royal transition-colors">
+                          <Download size={16} />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-white group-hover:text-royal transition-colors">{resource.title}</p>
+                          <p className="text-xs text-gray-500 font-sans">{resource.size}</p>
+                        </div>
+                      </div>
+                    </a>
                   ))}
                 </div>
               </div>
