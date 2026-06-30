@@ -1631,6 +1631,97 @@ export const LESSONS: Lesson[] = [
         correctIndex: 1
       }
     ]
+  },
+  {
+    id: 'remittance-economy',
+    level: 'Advanced',
+    title: 'The Remittance Economy',
+    desc: 'Analyzing Nepal\'s heavy reliance on foreign employment, its impact on foreign exchange reserves, and the Dutch Disease phenomenon.',
+    duration: '20:00',
+    tag: 'Policy & Economics',
+    videoUrl: 'https://www.youtube.com/embed/E9ajY0yKzew',
+    thumbnail: 'https://img.youtube.com/vi/E9ajY0yKzew/maxresdefault.jpg',
+    chapters: [
+      'The "Dutch Disease" Risk and Export Stagnation',
+      'Remittance Volatility and Social Vulnerability',
+      'The Vicious Cycle of Labor Export and Food Import',
+      'Misallocation of Credit and Real Estate Bubbles',
+      'Macroeconomic Vulnerability to External Shocks',
+    ],
+    faqs: [
+      {
+        topic: 'Policy & Economics',
+        question: 'What is the "Dutch Disease," and is Nepal currently suffering from it?',
+        answer: 'The "Dutch Disease" occurs when a large influx of foreign currency (like remittances) causes a country\'s real exchange rate to appreciate, making its exports more expensive and less competitive, which ultimately shrinks its domestic manufacturing sector. Studies show mixed evidence for Nepal. Some macroeconomic models indicate Nepal exhibits clear symptoms of Dutch Disease, as massive remittances have coincided with a declining ratio of manufacturing to services. However, other researchers argue that Nepal\'s main issue isn\'t classic Dutch Disease, but rather a failure of domestic institutions to convert remittance savings into productive, exportable capacity.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'How does the volatility of remittance inflows impact students, particularly girls?',
+        answer: 'Because remittances fund approximately 40% of private educational expenses in Nepal, fluctuations in these inflows hit students extremely hard. Girls are disproportionately affected during economic downturns. Research shows that during periods of high remittance volatility, girls\' secondary school enrollment can drop by up to 21%. Families often prioritize immediate consumption needs over long-term social investments, which threatens to reverse decades of progress in gender equity.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'Why is Nepal trapped in a "vicious cycle" of exporting labor and importing food?',
+        answer: 'Due to limited domestic employment opportunities, a massive portion of Nepal\'s youth migrates abroad for work. This creates a severe labor shortage in the agricultural sector, leaving farmland barren and reducing domestic food production. Consequently, Nepal is forced to rely heavily on imported food to meet its domestic needs, using the very remittances earned by its exported labor to pay for it.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'Why are real estate prices in the Kathmandu Valley inflating so rapidly?',
+        answer: 'A massive portion of remittances and bank loans are channeled into the real estate sector rather than productive industries because real estate is perceived as a safe, high-return investment. This surge of liquidity has fueled artificial real estate bubbles in Kathmandu, inflating land prices up to 20-fold over 15 years. This deprives the manufacturing and entrepreneurial sectors of much-needed capital.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'How do global events, such as conflicts in the Middle East, pose a threat to Nepal\'s economy?',
+        answer: 'The Middle East is a critical destination for Nepali migrant workers, accounting for roughly 40% of the country\'s remittance inflows. Geopolitical conflicts in this region pose severe risks because they can disrupt remittance channels, increase global fuel prices (Nepal imports 100% of its refined petroleum), and severely impact aviation connectivity and international tourism, threatening Nepal\'s overall macroeconomic stability.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'What role do Nepal\'s banks play in the country\'s widening trade deficit?',
+        answer: 'Instead of funding productive manufacturing, banks direct a significant portion of their credit (over 20%) to wholesale and retail sectors, which primarily fuels the import of foreign goods. Econometric studies reveal that a 1% increase in bank credit to the private sector actually increases Nepal\'s trade deficit by about 0.5% because the loans boost domestic consumption rather than domestic production.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'Do remittances help improve Nepal\'s export performance?',
+        answer: 'No, remittances largely fail to boost export performance. Studies show that remittances have a strong positive impact on imports but an insignificant effect on exports. Because funds are predominantly absorbed by household consumption and non-tradable sectors (like real estate), they do not translate into technology, skills, or exportable capacity.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'Are rural and urban areas in Nepal equally vulnerable to fluctuations in remittances?',
+        answer: 'No, rural areas are significantly more vulnerable. Specifically, the Far-Western and Mid-Western rural regions experience educational, healthcare, and community development impacts that are more than twice as severe as those in major urban centers when remittance inflows become unstable.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'What is the current macroeconomic condition of Nepal regarding inflation and GDP growth?',
+        answer: 'In the first half of FY26, inflation dropped sharply to 1.7%, primarily driven by falling food prices. However, economic growth has remained stagnant. Real GDP growth is projected to be sluggish at 2.3% for FY26, and inflation is expected to rise to 4.3% due to global uncertainties and external shocks.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'What policies could help Nepal overcome its over-dependence on remittances and imports?',
+        answer: 'Experts suggest Nepal needs a comprehensive shift from simply formalizing remittance flows to actively channeling these funds into productive investments. Key policy recommendations include: Issuing targeted "Remittance Bonds" to fund infrastructure, requiring banks to prioritize loans to the manufacturing and agricultural sectors, and establishing an Emergency Educational Protection Fund to ensure students, especially girls, do not drop out when remittance income fluctuates.',
+      }
+    ],
+    quiz: [
+      {
+        question: 'What does the "Dutch Disease" refer to in the context of Nepal\'s economy?',
+        options: ['An excessive influx of foreign currency causing domestic productive sectors to decline', 'A rapid increase in agricultural exports to European countries', 'A situation where a country completely stops importing goods', 'A viral outbreak affecting the agricultural workforce'],
+        correctIndex: 0
+      },
+      {
+        question: 'How does the volatility of remittance inflows disproportionately impact education in Nepal?',
+        options: ['It causes a massive increase in private university tuitions', 'It forces the government to close public schools', 'It leads to a significant decline in girls\' secondary school enrollment as families prioritize immediate consumption', 'It primarily affects boys\' primary education in urban centers'],
+        correctIndex: 2
+      },
+      {
+        question: 'Why is Nepal described as being trapped in a "vicious cycle" regarding labor and food?',
+        options: ['The government exports food and imports foreign labor', 'It exports its young workforce, which shrinks domestic agriculture, forcing the country to use those earned remittances to import food', 'It imports raw materials to manufacture food for export', 'It refuses to allow citizens to work abroad, causing a food surplus'],
+        correctIndex: 1
+      },
+      {
+        question: 'In Nepal, what is a major negative consequence of banks directing significant credit towards the wholesale and retail sectors instead of manufacturing?',
+        options: ['It creates a massive surplus of domestic goods that cannot be sold', 'It fuels the import of foreign goods and actually increases the trade deficit', 'It immediately solves the issue of youth unemployment', 'It causes real estate prices to drop drastically'],
+        correctIndex: 1
+      }
+    ]
   }
 ];
 
@@ -1718,7 +1809,7 @@ const MODULES: Module[] = [
     id: 'economics-research',
     title: 'Economics & Research',
     description: 'Macroeconomics, monetary policy, and original Arthneeti research on Nepal\'s economy.',
-    lessonIds: ['monetary-policy-2026', 'ssa-reality', 'national-budget-fiscal-policy'],
+    lessonIds: ['monetary-policy-2026', 'ssa-reality', 'national-budget-fiscal-policy', 'remittance-economy'],
     guideIds: ['economics-guidebook'],
   },
 ];
