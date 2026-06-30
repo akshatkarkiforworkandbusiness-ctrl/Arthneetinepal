@@ -1449,6 +1449,97 @@ export const LESSONS: Lesson[] = [
         correctIndex: 1
       }
     ]
+  },
+  {
+    id: 'behavioral-finance',
+    level: 'Advanced',
+    title: 'Behavioral Finance: The Psychology of Trading',
+    desc: 'The psychology of trading — FOMO, panic selling, and how to control emotions during a NEPSE bear market.',
+    duration: '18:00',
+    tag: 'Stock Market',
+    videoUrl: 'https://www.youtube.com/embed/ahHg5Xup1j4',
+    thumbnail: 'https://img.youtube.com/vi/ahHg5Xup1j4/maxresdefault.jpg',
+    chapters: [
+      'Herding Behavior in the NEPSE',
+      'The Dual Forces of Fear and Greed',
+      'FOMO and Overconfidence Biases',
+      'The Role of Neuroplasticity and Financial Literacy',
+      'Mindfulness and Emotional Regulation',
+    ],
+    faqs: [
+      {
+        topic: 'Stock Market',
+        question: 'What is Behavioral Finance, and why is it particularly relevant to the Nepal Stock Exchange (NEPSE)?',
+        answer: 'Behavioral finance is a field that combines cognitive psychology with traditional financial theories to explain why investors often make irrational decisions rather than logical ones based strictly on a company\'s fundamentals. It is highly relevant to NEPSE because Nepal\'s stock market is heavily retail-dominated, meaning daily price fluctuations are largely driven by investor emotions—such as panic selling or FOMO—rather than algorithms or institutional strategies.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What is "Herding Behavior," and what causes it in the Nepalese stock market?',
+        answer: 'Herding behavior occurs when investors ignore their own independent analysis and blindly copy the actions of a larger crowd, finding comfort in numbers. In NEPSE, this phenomenon is often triggered by hasty decision-making, social influence, and rumors. For instance, retail investors might heavily purchase hydropower stocks simply because "everyone else is buying," creating a self-fulfilling loop of market volatility.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'How do the dual forces of "Fear" and "Greed" impact stock prices?',
+        answer: 'Fear and greed are intense emotional forces that can cause stock prices to completely disconnect from a company\'s actual valuation. Greed can irrationally inflate stock valuations and push them into continuous upper circuits, while fear induces panic selling, dragging fundamentally strong companies (like solid banks) below their book value and hitting lower circuits.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What does FOMO mean in trading, and how can it be avoided?',
+        answer: 'FOMO, or the Fear Of Missing Out, is an anxiety-driven emotion that prompts investors to make impulsive, unplanned trades because they are terrified of missing a profitable opportunity. It is commonly triggered by volatile markets, social media hype, recent winning streaks, and rumors. Students can avoid FOMO by investing with a pre-defined plan, taking social media advice with skepticism, keeping a trading journal to track triggers, and never investing money they cannot afford to lose.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What are the most common cognitive biases that cause investors to lose money?',
+        answer: 'Research identifies several major biases that negatively impact financial returns: Overconfidence Bias (overestimating own knowledge and taking excessive risks), Loss Aversion (feeling the pain of a loss 2.5 times more intensely than a gain, causing irrational holding), and Representativeness Bias (making decisions based on stereotypes or short-term trends rather than fundamental analysis).',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What is the "Disposition Effect"?',
+        answer: 'The disposition effect is a behavioral bias where investors sell their winning stocks too quickly to lock in gains, but hold onto their losing stocks for too long. This is heavily linked to "regret aversion," where the investor tries to avoid the psychological pain of accepting a financial loss, irrationally hoping the stock will eventually recover.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'How does "Neuroplasticity" apply to investing and financial literacy?',
+        answer: 'Neuroplasticity refers to an individual\'s cognitive ability to adapt, learn from past experiences, and modify their decision-making patterns over time. In Nepal\'s capital market, having high financial literacy and strong cognitive awareness directly enhances an investor\'s neuroplasticity. Furthermore, an investor\'s risk absorption capacity acts as a crucial bridge, allowing them to translate their financial knowledge into flexible, adaptive investment behavior during market downturns.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Can Technical Analysis actually work in an emotionally driven market like NEPSE?',
+        answer: 'Yes, technical analysis works effectively in retail-heavy markets like NEPSE because price charts reflect the collective emotional state and decisions of the market participants. Standard tools like the RSI (Relative Strength Index), MACD, and moving averages help filter out noise. However, on NEPSE, technical analysis is most powerful when combined with broker flow data (floorsheets) to confirm if a breakout is genuinely backed by institutional accumulation or if it is just a retail trap.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What does it mean for a trader\'s emotions to run "too hot" or "too cold"?',
+        answer: 'A trader\'s emotional state can be visualized as a thermometer. Running "too hot" means the trader is acting out of greed, excitement, anger, panic, or overconfidence, which leads to impulsive mistakes. Conversely, running "too cold" means the trader is overly relaxed, blasé, or unprepared for the trading day. The goal is to regulate emotions to stay in the "sweet spot" or the "zone" of optimal focus and preparation.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'How can mindfulness practices improve my trading performance?',
+        answer: 'Mindfulness practices help traders maintain their emotional "sweet spot" and avoid impulsive reactions in a high-pressure market. Pre-trading: Setting clear daily intentions and using 5–10 minutes of meditation can build focus. During trading: Using the 4-7-8 breathing technique during stressful moments, taking tech-free breaks, and mentally labeling emotions (e.g., "I\'m feeling greedy") can drastically reduce anxiety. Post-trading: Journaling successes and mistakes without self-criticism, alongside practicing gratitude, helps disconnect from the market and reinforces positive behavior.',
+      }
+    ],
+    quiz: [
+      {
+        question: 'What causes "Herding Behavior" in the Nepalese stock market?',
+        options: ['Strict regulations enforced by SEBON', 'Investors ignoring independent analysis and blindly copying the actions of a larger crowd due to social influence and rumors', 'A sudden increase in corporate dividends', 'Algorithms programmed by institutional investors'],
+        correctIndex: 1
+      },
+      {
+        question: 'How does FOMO (Fear Of Missing Out) typically affect an investor\'s decision-making?',
+        options: ['It makes them highly cautious and unwilling to trade', 'It prompts them to make impulsive, unplanned trades because they are terrified of missing a profitable opportunity', 'It forces them to only buy government bonds', 'It encourages them to do deep fundamental analysis before buying'],
+        correctIndex: 1
+      },
+      {
+        question: 'What is the "Disposition Effect" in behavioral finance?',
+        options: ['Selling winning stocks too quickly to lock in gains, but holding onto losing stocks for too long', 'Selling losing stocks immediately and holding winning stocks forever', 'The tendency to only invest in companies with a high disposition of cash', 'The refusal to ever sell a stock, regardless of its performance'],
+        correctIndex: 0
+      },
+      {
+        question: 'According to the video, what does it mean for a trader\'s emotions to run "too hot"?',
+        options: ['The trader is highly focused and perfectly prepared for the day', 'The trader is overly relaxed and blasé about the market', 'The trader is acting out of greed, excitement, anger, panic, or overconfidence, leading to impulsive mistakes', 'The trader has made a continuous streak of profitable trades'],
+        correctIndex: 2
+      }
+    ]
   }
 ];
 
@@ -1529,7 +1620,7 @@ const MODULES: Module[] = [
     id: 'investing-markets',
     title: 'Investing & Markets',
     description: 'How NEPSE works, how to read it, and how to start investing in Nepal\'s stock market.',
-    lessonIds: ['demystifying-nepse', 'nepse-fundamental-analysis', 'technical-analysis-intro', 'ipo-vs-secondary-market', 'modern-finance-intro', 'mutual-funds-sips', 'portfolio-risk-management'],
+    lessonIds: ['demystifying-nepse', 'nepse-fundamental-analysis', 'technical-analysis-intro', 'ipo-vs-secondary-market', 'modern-finance-intro', 'mutual-funds-sips', 'portfolio-risk-management', 'behavioral-finance'],
     guideIds: ['nepse-guide'],
   },
   {
