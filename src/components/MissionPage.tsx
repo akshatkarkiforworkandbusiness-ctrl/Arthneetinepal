@@ -1,6 +1,23 @@
 import { motion } from 'motion/react';
 import About3DExperience from './About3DExperience';
 import Hero3DObject from './Hero3DObject';
+import { ProvideVisual, NeedVisual } from './Partner3DVisuals';
+
+// Shared animation variants for the lists
+const listVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.5 } }
+};
 
 export default function AboutUsPage() {
   return (
@@ -62,44 +79,71 @@ export default function AboutUsPage() {
       <section className="py-32 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="bg-slate-raised rounded-2xl overflow-hidden shadow-sm border border-[#1F2A3F] grid grid-cols-1 md:grid-cols-2">
-            <div className="p-12 md:p-20 border-b md:border-b-0 md:border-r border-[#1F2A3F]">
-              <h2 className="text-4xl text-slate-base mb-8">What We Provide</h2>
-              <ul className="space-y-4">
-                {[
-                  'Full session curriculum & materials',
-                  'Professional guest speakers (optional)',
-                  'Interactive tools & simulated markets',
-                  'Continuous mentorship for students'
-                ].map(item => (
-                  <li key={item} className="flex items-center gap-3 text-text-muted font-sans italic">
-                    <div className="w-1.5 h-1.5 bg-electric-mint rounded-lg" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
+            
+            {/* What We Provide Column */}
+            <div className="relative p-12 md:p-20 border-b md:border-b-0 md:border-r border-[#1F2A3F] group overflow-hidden">
+              <ProvideVisual />
+              <div className="relative z-10">
+                <h2 className="text-4xl text-slate-base mb-8">What We Provide</h2>
+                <motion.ul 
+                  className="space-y-4"
+                  variants={listVariants}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }}
+                >
+                  {[
+                    'Full session curriculum & materials',
+                    'Professional guest speakers (optional)',
+                    'Interactive tools & simulated markets',
+                    'Continuous mentorship for students'
+                  ].map(item => (
+                    <motion.li key={item} variants={itemVariants} className="flex items-center gap-3 text-white/80 font-sans italic">
+                      <div className="w-1.5 h-1.5 bg-electric-mint rounded-lg shadow-[0_0_10px_#00f59b]" />
+                      {item}
+                    </motion.li>
+                  ))}
+                </motion.ul>
+              </div>
             </div>
-            <div className="p-12 md:p-20 relative overflow-hidden">
-               <h2 className="text-4xl text-slate-base mb-8">What We Need From You</h2>
-               <ul className="space-y-4 mb-12">
-                {[
-                  'A hall or classroom for the session',
-                  'Projector & basic AV setup',
-                  '1.5 - 2 hours of dedicated time',
-                  'Enthusiastic students ready to learn!'
-                ].map(item => (
-                  <li key={item} className="flex items-center gap-3 text-text-muted font-sans italic">
-                    <div className="w-1.5 h-1.5 bg-electric-mint rounded-lg" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <a 
-                href="mailto:learnarthneeti@gmail.com"
-                className="inline-flex items-center gap-3 bg-electric-mint text-slate-base px-10 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-white hover:text-electric-mint transition-all"
-              >
-                Get In Touch <span className="material-symbols-outlined text-sm">arrow_forward</span>
-              </a>
+
+            {/* What We Need Column */}
+            <div className="relative p-12 md:p-20 group overflow-hidden">
+              <NeedVisual />
+              <div className="relative z-10">
+                 <h2 className="text-4xl text-slate-base mb-8">What We Need From You</h2>
+                 <motion.ul 
+                  className="space-y-4 mb-12"
+                  variants={listVariants}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }}
+                 >
+                  {[
+                    'A hall or classroom for the session',
+                    'Projector & basic AV setup',
+                    '1.5 - 2 hours of dedicated time',
+                    'Enthusiastic students ready to learn!'
+                  ].map(item => (
+                    <motion.li key={item} variants={itemVariants} className="flex items-center gap-3 text-white/80 font-sans italic">
+                      <div className="w-1.5 h-1.5 bg-club-green rounded-lg shadow-[0_0_10px_#00875a]" />
+                      {item}
+                    </motion.li>
+                  ))}
+                </motion.ul>
+                <motion.a 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8, duration: 0.5 }}
+                  viewport={{ once: true }}
+                  href="mailto:learnarthneeti@gmail.com"
+                  className="inline-flex items-center gap-3 bg-electric-mint text-slate-base px-10 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-white hover:text-electric-mint transition-all shadow-[0_0_20px_rgba(0,245,155,0.3)]"
+                >
+                  Get In Touch <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                </motion.a>
+              </div>
             </div>
+            
           </div>
         </div>
       </section>
