@@ -1566,12 +1566,15 @@ export default function LearnPage() {
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
   const [certificateModule, setCertificateModule] = useState<string | null>(null);
+  const [masterExamModule, setMasterExamModule] = useState<string | null>(null);
   const [activeLesson, setActiveLesson] = useState<Lesson>(
     LESSONS.find(l => l.id === lessonId) ?? LESSONS[0]
   );
   const [isPlaying, setIsPlaying]       = useState(!!lessonId);
   const [completed, setCompleted]       = useState<Set<string>>(new Set());
   const [quizScores, setQuizScores]     = useState<Record<string, number>>({});
+  const [masterExamScores, setMasterExamScores] = useState<Record<string, number>>({});
+  const [badges, setBadges] = useState<Set<string>>(new Set());
   const [expandedGuide, setExpandedGuide] = useState<string | null>(null);
   const [expandedFaq, setExpandedFaq]   = useState<number | null>(null);
   const [expandedLessonFaq, setExpandedLessonFaq] = useState<number | null>(null);
@@ -1587,29 +1590,79 @@ export default function LearnPage() {
         const data = snap.data();
         setCompleted(new Set(data.completed || []));
         setQuizScores(data.quizScores || {});
+        setMasterExamScores(data.masterExamScores || {});
+        setBadges(new Set(data.badges || []));
       }
     };
     fetch();
   }, [user]);
 
   const submitQuiz = async (lessonId: string, scorePercent: number) => {
-    setQuizScores(prev => ({ ...prev, [lessonId]: scorePercent }));
-    if (scorePercent < 60) return;
+    const newQuizScores = { ...quizScores, [lessonId]: scorePercent };
+    setQuizScores(newQuizScores);
+    
+    // Check for "Quiz Whiz" badge (100% on 3 different quizzes)
+    const newBadges = new Set(badges);
+    if (!newBadges.has('Quiz Whiz')) {
+      const perfectScores = Object.values(newQuizScores).filter(s => s === 100).length;
+      if (perfectScores >= 3 || (scorePercent === 100 && perfectScores === 2)) {
+        newBadges.add('Quiz Whiz');
+      }
+    }
+    
+    if (scorePercent < 60) {
+      if (user) {
+        await setDoc(doc(db, 'users', user.uid, 'progress', 'lessons'), { quizScores: newQuizScores, updatedAt: serverTimestamp() }, { merge: true });
+      }
+      return;
+    }
 
     const next = new Set(completed);
     next.add(lessonId);
     setCompleted(next);
+
+    if (!newBadges.has('First Steps') && next.size >= 1) {
+      newBadges.add('First Steps');
+    }
+    
+    setBadges(newBadges);
 
     if (user) {
       await setDoc(
         doc(db, 'users', user.uid, 'progress', 'lessons'),
         {
           completed: Array.from(next),
-          quizScores: { [lessonId]: scorePercent },
+          quizScores: newQuizScores,
+          badges: Array.from(newBadges),
           updatedAt: serverTimestamp(),
         },
         { merge: true }
       );
+    }
+  };
+
+  const submitMasterExam = async (moduleId: string, scorePercent: number) => {
+    const newMasterScores = { ...masterExamScores, [moduleId]: scorePercent };
+    setMasterExamScores(newMasterScores);
+    setMasterExamModule(null);
+
+    if (scorePercent >= 80) {
+      const newBadges = new Set(badges);
+      if (moduleId === 'financial-literacy' && !newBadges.has('Financial Literacy Master')) newBadges.add('Financial Literacy Master');
+      if (moduleId === 'investing-markets' && !newBadges.has('Market Maestro')) newBadges.add('Market Maestro');
+      
+      setBadges(newBadges);
+      
+      if (user) {
+        await setDoc(doc(db, 'users', user.uid, 'progress', 'lessons'), {
+          masterExamScores: newMasterScores,
+          badges: Array.from(newBadges),
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+      }
+      
+      const mod = MODULES.find(m => m.id === moduleId);
+      if (mod) setCertificateModule(mod.title);
     }
   };
 
@@ -1828,24 +1881,40 @@ export default function LearnPage() {
                 </div>
               </div>
               
-              {/* Certificate Unlock */}
+              {/* Certificate & Master Exam Unlock */}
               {completedInModule === moduleLessons.length && moduleLessons.length > 0 && (
-                <div className="mt-6 bg-gradient-to-r from-royal/20 to-transparent border border-royal/30 p-4 rounded-xl flex items-center justify-between">
+                <div className="mt-6 bg-gradient-to-r from-royal/20 to-transparent border border-royal/30 p-4 rounded-xl flex items-center justify-between flex-wrap gap-4">
                   <div className="flex items-center gap-3">
                     <div className="bg-royal/20 p-2 rounded-full border border-royal/50">
                       <Award size={20} className="text-royal" />
                     </div>
                     <div>
                       <p className="text-sm font-bold text-white">Module Completed!</p>
-                      <p className="text-xs text-gray-400">You've unlocked the certificate for {module.title}.</p>
+                      <p className="text-xs text-gray-400">
+                        {masterExamScores[module.id] >= 80 
+                          ? `You passed the Master Exam with ${masterExamScores[module.id]}%.` 
+                          : `Unlock your certificate by passing the Master Exam.`}
+                      </p>
                     </div>
                   </div>
-                  <button
-                    onClick={() => setCertificateModule(module.title)}
-                    className="px-4 py-2 bg-royal text-white text-[10px] font-black uppercase tracking-widest rounded shadow-[0_0_15px_rgba(0,135,90,0.5)] hover:bg-royal-light transition-all"
-                  >
-                    View Certificate
-                  </button>
+                  <div className="flex gap-2">
+                    {(!masterExamScores[module.id] || masterExamScores[module.id] < 80) && (
+                      <button
+                        onClick={() => setMasterExamModule(module.id)}
+                        className="px-4 py-2 bg-royal text-white text-[10px] font-black uppercase tracking-widest rounded shadow-[0_0_15px_rgba(0,135,90,0.5)] hover:bg-royal-light transition-all"
+                      >
+                        Take Master Exam
+                      </button>
+                    )}
+                    {masterExamScores[module.id] >= 80 && (
+                      <button
+                        onClick={() => setCertificateModule(module.title)}
+                        className="px-4 py-2 bg-transparent text-royal border border-royal text-[10px] font-black uppercase tracking-widest rounded hover:bg-royal/10 transition-all"
+                      >
+                        View Certificate
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
             </div>

@@ -2,7 +2,7 @@ import { motion } from 'motion/react';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Mail, Briefcase, User as UserIcon } from 'lucide-react';
+import { Mail, Briefcase, User as UserIcon, Award, BookOpen, Star } from 'lucide-react';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { collection, query, where, orderBy, onSnapshot, doc, getDoc } from 'firebase/firestore';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -42,6 +42,8 @@ export default function ProfilePage() {
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [publicProfile, setPublicProfile] = useState<PublicProfile | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(!isOwnProfile);
+  const [learningProgress, setLearningProgress] = useState<{completed: string[], quizScores: Record<string, number>, badges: string[]}>({completed: [], quizScores: {}, badges: []});
+  const [loadingProgress, setLoadingProgress] = useState(true);
 
   // Fetch the public profile doc when viewing someone else
   useEffect(() => {
@@ -60,7 +62,27 @@ export default function ProfilePage() {
       .catch(error => handleFirestoreError(error, OperationType.GET, `users/${targetUid}`))
       .finally(() => { if (!cancelled) setLoadingProfile(false); });
     return () => { cancelled = true; };
-  }, [isOwnProfile, targetUid]);
+  useEffect(() => {
+    if (!targetUid) return;
+    const fetchProgress = async () => {
+      try {
+        const snap = await getDoc(doc(db, 'users', targetUid, 'progress', 'lessons'));
+        if (snap.exists()) {
+          const data = snap.data();
+          setLearningProgress({
+            completed: data.completed || [],
+            quizScores: data.quizScores || {},
+            badges: data.badges || []
+          });
+        }
+      } catch (err) {
+        console.error("Failed to load progress", err);
+      } finally {
+        setLoadingProgress(false);
+      }
+    };
+    fetchProgress();
+  }, [targetUid]);
 
   useEffect(() => {
     if (!targetUid) return;
@@ -206,6 +228,7 @@ export default function ProfilePage() {
           {[
             { id: 'posts', label: isOwnProfile ? 'My Contributions' : 'Contributions' },
             ...(isOwnProfile ? [
+              { id: 'learning', label: 'My Learning' },
               { id: 'bookmarks', label: 'Saved Analysis' },
               { id: 'activity', label: 'Activity Log' },
             ] : []),
@@ -275,6 +298,67 @@ export default function ProfilePage() {
 
         {isOwnProfile && (
           <>
+            <TabsContent value="learning">
+              {loadingProgress ? (
+                <div className="flex flex-col items-center justify-center py-20 text-center">
+                  <Skeleton className="h-48 w-full bg-white/5 border border-slate-base/5 rounded-lg-2xl max-w-2xl" />
+                </div>
+              ) : (
+                <div className="max-w-4xl mx-auto space-y-12">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="p-8 bg-white border border-slate-base/5 rounded-lg-2xl shadow-sm text-center">
+                      <div className="w-16 h-16 bg-electric-mint/10 text-electric-mint mx-auto rounded-full flex items-center justify-center mb-4">
+                        <BookOpen size={32} />
+                      </div>
+                      <h4 className="text-3xl text-slate-base font-sans tracking-tight font-semibold italic">{learningProgress.completed.length}</h4>
+                      <p className="text-[10px] text-slate-base/40 uppercase font-black tracking-widest mt-2">Lessons Completed</p>
+                    </div>
+                    <div className="p-8 bg-white border border-slate-base/5 rounded-lg-2xl shadow-sm text-center">
+                      <div className="w-16 h-16 bg-amber-400/10 text-amber-400 mx-auto rounded-full flex items-center justify-center mb-4">
+                        <Star size={32} />
+                      </div>
+                      <h4 className="text-3xl text-slate-base font-sans tracking-tight font-semibold italic">
+                        {Object.keys(learningProgress.quizScores).length > 0 
+                          ? Math.round(Object.values(learningProgress.quizScores).reduce((a, b) => a + b, 0) / Object.keys(learningProgress.quizScores).length)
+                          : 0}%
+                      </h4>
+                      <p className="text-[10px] text-slate-base/40 uppercase font-black tracking-widest mt-2">Avg. Quiz Score</p>
+                    </div>
+                    <div className="p-8 bg-white border border-slate-base/5 rounded-lg-2xl shadow-sm text-center">
+                      <div className="w-16 h-16 bg-club-green/10 text-club-green mx-auto rounded-full flex items-center justify-center mb-4">
+                        <Award size={32} />
+                      </div>
+                      <h4 className="text-3xl text-slate-base font-sans tracking-tight font-semibold italic">{learningProgress.badges.length}</h4>
+                      <p className="text-[10px] text-slate-base/40 uppercase font-black tracking-widest mt-2">Badges Earned</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-2xl text-slate-base italic font-sans tracking-tight font-semibold mb-6">Earned Badges</h3>
+                    {learningProgress.badges.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center py-12 text-center bg-slate-50 rounded-lg-2xl border border-slate-base/5">
+                        <Award size={48} className="text-slate-base/20 mb-4" />
+                        <p className="text-text-muted font-sans italic">Complete lessons and quizzes to earn badges.</p>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        {learningProgress.badges.map(badge => (
+                          <div key={badge} className="p-6 bg-white border border-slate-base/5 rounded-lg-2xl shadow-sm text-center flex flex-col items-center justify-center relative overflow-hidden group">
+                            <div className="absolute inset-0 bg-gradient-to-br from-electric-mint/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="w-20 h-20 bg-slate-base text-electric-mint rounded-full flex items-center justify-center shadow-2xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
+                               <Award size={40} />
+                            </div>
+                            <h4 className="text-sm font-sans tracking-tight font-semibold italic text-slate-base mb-1">{badge}</h4>
+                            <p className="text-[8px] font-black uppercase tracking-widest text-club-green">Unlocked</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </TabsContent>
+
             <TabsContent value="bookmarks">
               <div className="flex flex-col items-center justify-center py-20 text-center">
                  <h3 className="text-2xl text-text-primary italic font-sans tracking-tight font-semibold mb-4">No Bookmarked Analysis</h3>
