@@ -1176,6 +1176,97 @@ export const LESSONS: Lesson[] = [
         correctIndex: 2
       }
     ]
+  },
+  {
+    id: 'insurance-101',
+    level: 'Beginner',
+    title: 'Insurance 101 in Nepal',
+    desc: 'Decoding life vs. non-life insurance, term policies, and health insurance in the Nepali context.',
+    duration: '14:00',
+    tag: 'Financial Literacy',
+    videoUrl: 'https://www.youtube.com/embed/O7jCy4OzSSA',
+    thumbnail: 'https://img.youtube.com/vi/O7jCy4OzSSA/maxresdefault.jpg',
+    chapters: [
+      'Distinctions Between Life, Health, and Non-Life Insurance',
+      'The Term vs. Endowment Life Insurance Dilemma',
+      'Navigating Health Insurance Claims and Rejections',
+      'The Legal and Regulatory Framework (Insurance Act 2079)',
+      'Tax Benefits of Insurance',
+    ],
+    faqs: [
+      {
+        topic: 'Financial Literacy',
+        question: 'As a student on a tight budget, what is the most affordable health insurance I can get?',
+        answer: 'The most affordable entry point for health insurance in Nepal is the Sahara Health Insurance, launched through eSewa. It starts at a premium of just Rs 1,399 per year, offers sum-insured tiers up to Rs 6 lakh, allows cashless treatments at 26 hospitals, and can be purchased instantly via the eSewa app.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'I am planning to study abroad. Are there any specific taxes or fees I should know about?',
+        answer: 'Yes. When you take out a foreign exchange facility from a bank to go abroad for higher education, a 3% education service fee is collected. Additionally, there is a 5% advance tax applied to the payment of registration, educational, or exam fees to foreign colleges and universities.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'I ride a scooter to college. Do I really have to get it insured, and how much does it cost?',
+        answer: 'Yes, third-party motor insurance is mandatory under Nepal\'s law to legally operate a vehicle on public roads. It protects you financially if you cause injury or damage to others. For a motorcycle or scooter below 150 cc, the annual premium is very affordable, ranging from Rs 1,700 to Rs 2,200, and it can easily be renewed online.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'I want to start life insurance early, but my income is low. Which type of policy should I choose?',
+        answer: 'Term insurance is the best and cheapest choice for young people on a tight budget. It provides pure protection without an expensive savings component, making the premiums significantly lower—often 3 to 5 times cheaper than endowment plans.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'My parents enrolled our family in the government Health Insurance Board (HIB) scheme. Is that enough?',
+        answer: 'While the government HIB scheme is a good safety net, it is currently facing a massive financial crisis and owes hospitals around Rs 18 billion. Because of this, over 50 hospitals nationwide have suspended cashless services for HIB patients. It is highly recommended to have a private health insurance policy of at least Rs 5 lakh as your primary coverage to avoid out-of-pocket emergencies.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'If I buy health insurance and just need a quick check-up at the hospital, will my insurance pay for it?',
+        answer: 'Usually, no. The biggest rule to remember is that standard Nepali health policies require a minimum 24-hour inpatient admission to trigger coverage. Pure Outpatient Department (OPD) visits and same-day discharges are generally not covered unless you have specifically purchased an extra OPD rider.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Are there insurance plans that can help pay for my younger siblings\' future university fees?',
+        answer: 'Yes, insurers offer "Child Insurance Plans" (a type of endowment insurance) that are specifically designed to turn regular premiums into a guaranteed lump sum for future milestones. For example, plans like the SuryaJyoti Naulo Baal Jeevan Beema focus on education savings and offer parent protection features to secure a child\'s future.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What happens if I hide a pre-existing medical condition when buying health insurance?',
+        answer: 'Non-disclosure of a Pre-Existing Disease (PED) is the single most common reason insurance claims are rejected in Nepal. If you are admitted to the hospital and your medical file shows your condition predates your policy, your claim will be entirely denied. Always disclose your medical history fully when buying a policy.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How long does an insurance company legally take to pay a health claim?',
+        answer: 'Under Section 123 of the Insurance Act 2079, insurance companies are legally mandated to settle valid health claims within 30 days of receiving complete documentation. If they delay without a legitimate reason, you can escalate the issue to the Nepal Insurance Authority (NIA).',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'I am studying IT and want to launch a digital startup after graduation. Are there tax benefits for new businesses?',
+        answer: 'Yes! To encourage innovation, the government provides a 100% income tax exemption for the first 5 years of operation for startup businesses based on innovative knowledge, skills, or technology with an annual turnover of up to Rs 100 million. Additionally, information technology industries that provide direct employment to 100 or more Nepalese citizens receive a 10% tax concession.',
+      },
+    ],
+    quiz: [
+      {
+        question: 'What is the main difference between Term Insurance and Endowment Life Insurance?',
+        options: ['Term insurance provides pure protection at a low cost without returns, while endowment combines protection with a savings component and guaranteed returns.', 'Term insurance is mandatory by law, while endowment is voluntary.', 'Term insurance only covers health, while endowment covers life.', 'Term insurance is 3 to 5 times more expensive than endowment insurance.'],
+        correctIndex: 0
+      },
+      {
+        question: 'Under standard Nepali health insurance policies, what is the "24-Hour Rule"?',
+        options: ['You must pay your premium within 24 hours', 'The insurance company must pay your claim within 24 hours', 'You must be admitted to the hospital for a minimum of 24 hours to trigger coverage', 'You can only visit the hospital once every 24 hours'],
+        correctIndex: 2
+      },
+      {
+        question: 'What is the single most common reason insurance claims are completely rejected in Nepal?',
+        options: ['The hospital was too expensive', 'Non-disclosure of a Pre-Existing Disease (PED) when buying the policy', 'Filing the claim on a weekend', 'Not having a government job'],
+        correctIndex: 1
+      },
+      {
+        question: 'Under the Insurance Act 2079, how long do insurance companies legally have to settle valid health claims after receiving complete documentation?',
+        options: ['7 days', '14 days', '30 days', '90 days'],
+        correctIndex: 2
+      }
+    ]
   }
 ];
 
@@ -1249,7 +1340,7 @@ const MODULES: Module[] = [
     id: 'financial-literacy',
     title: 'Financial Literacy',
     description: 'Personal finance fundamentals — budgeting, saving, and understanding how NRB policy affects your wallet.',
-    lessonIds: ['budgeting-emergency-fund', 'financial-literacy-youth', 'digital-payments-security', 'navigating-taxes-nepal', 'retirement-social-security'],
+    lessonIds: ['budgeting-emergency-fund', 'financial-literacy-youth', 'digital-payments-security', 'navigating-taxes-nepal', 'retirement-social-security', 'insurance-101'],
     guideIds: ['financial-literacy'],
   },
   {
