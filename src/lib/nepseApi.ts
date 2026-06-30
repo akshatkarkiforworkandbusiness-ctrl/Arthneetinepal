@@ -57,10 +57,30 @@ export interface MarketIndex {
   percentChange: number;
 }
 
+export interface TopStock {
+  symbol: string;
+  ltp: number;
+  change: number;
+  percentChange: number;
+}
+
 export interface TopStocks {
-  top_gainers: { symbol: string; ltp: number; change: number; percentChange: number }[];
-  top_losers: { symbol: string; ltp: number; change: number; percentChange: number }[];
+  top_gainers: TopStock[];
+  top_losers: TopStock[];
   top_turnover: { symbol: string; turnover: number }[];
+}
+
+interface RawTopStock {
+  symbol: string;
+  ltp: number;
+  pointChange: number;
+  percentageChange: number;
+}
+
+interface RawTopStocks {
+  top_gainer?: RawTopStock[];
+  top_loser?: RawTopStock[];
+  top_turnover?: { symbol: string; turnover: number }[];
 }
 
 export interface MarketSummary {
@@ -75,28 +95,113 @@ export interface MarketStatus {
   market_message?: string;
 }
 
+/* ── Raw API types ───────────────────────────────────────────────── */
+
+interface RawStock {
+  symbol: string;
+  name: string;
+  ltp: number;
+  previous_close: number;
+  change: number;
+  percent_change: number;
+  high: number;
+  low: number;
+  volume: number | null;
+  turnover: number | null;
+  trades: number | null;
+}
+
+interface RawIndex {
+  index: string;
+  close: number;
+  currentValue: number;
+  change: number;
+  perChange: number;
+}
+
+/* ── Mappers ─────────────────────────────────────────────────────── */
+
+function mapStock(raw: RawStock): StockRow | null {
+  if (!raw.symbol || raw.ltp == null) return null;
+  return {
+    symbol: raw.symbol,
+    name: raw.name ?? raw.symbol,
+    ltp: Number(raw.ltp) || 0,
+    change: Number(raw.change) || 0,
+    percentChange: Number(raw.percent_change) || 0,
+    open: Number(raw.previous_close) || 0,
+    high: Number(raw.high) || 0,
+    low: Number(raw.low) || 0,
+    close: Number(raw.previous_close) || 0,
+    volume: Number(raw.volume) || 0,
+    turnover: Number(raw.turnover) || 0,
+    trades: Number(raw.trades) || 0,
+  };
+}
+
+function mapIndex(raw: RawIndex): MarketIndex | null {
+  if (!raw.index) return null;
+  return {
+    index: raw.index,
+    close: Number(raw.close ?? raw.currentValue) || 0,
+    change: Number(raw.change) || 0,
+    percentChange: Number(raw.perChange) || 0,
+  };
+}
+
 /* ── Public fetchers ─────────────────────────────────────────────── */
 
 export async function fetchStocks(): Promise<StockRow[]> {
-  const data = await cachedFetch<StockRow[]>('stocks', `${YONEPSE_BASE}/data/nepse_data.json`);
-  return data ?? [];
+  const raw = await cachedFetch<RawStock[]>('stocks', `${YONEPSE_BASE}/data/nepse_data.json`);
+  if (!raw) return [];
+  return raw.map(mapStock).filter(Boolean) as StockRow[];
 }
 
 export async function fetchIndices(): Promise<MarketIndex[]> {
-  const data = await cachedFetch<MarketIndex[]>('indices', `${YONEPSE_BASE}/data/market/indices.json`);
-  return data ?? [];
+  const raw = await cachedFetch<RawIndex[]>('indices', `${YONEPSE_BASE}/data/market/indices.json`);
+  if (!raw) return [];
+  return raw.map(mapIndex).filter(Boolean) as MarketIndex[];
 }
 
 export async function fetchTopStocks(): Promise<TopStocks | null> {
-  return cachedFetch<TopStocks>('top_stocks', `${YONEPSE_BASE}/data/market/top_stocks.json`);
+  const raw = await cachedFetch<RawTopStocks>('top_stocks', `${YONEPSE_BASE}/data/market/top_stocks.json`);
+  if (!raw) return null;
+  return {
+    top_gainers: (raw.top_gainer ?? []).map(s => ({ symbol: s.symbol, ltp: s.ltp, change: s.pointChange, percentChange: s.percentageChange })),
+    top_losers: (raw.top_loser ?? []).map(s => ({ symbol: s.symbol, ltp: s.ltp, change: s.pointChange, percentChange: s.percentageChange })),
+    top_turnover: raw.top_turnover ?? [],
+  };
+}
+
+interface RawSummaryItem {
+  detail: string;
+  value: number;
+}
+
+interface RawStatus {
+  is_open: boolean;
+  last_checked?: string;
 }
 
 export async function fetchMarketSummary(): Promise<MarketSummary | null> {
-  return cachedFetch<MarketSummary>('summary', `${YONEPSE_BASE}/data/market/summary.json`);
+  const raw = await cachedFetch<RawSummaryItem[]>('summary', `${YONEPSE_BASE}/data/market/summary.json`);
+  if (!raw || !Array.isArray(raw)) return null;
+  const get = (key: string) => raw.find(r => r.detail.includes(key))?.value ?? 0;
+  return {
+    total_turnover: get('Turnover'),
+    total_shares: get('Shares'),
+    total_transactions: get('Transactions'),
+    total_scrips: get('Scrips'),
+  };
 }
 
 export async function fetchMarketStatus(): Promise<MarketStatus | null> {
-  return cachedFetch<MarketStatus>('status', `${YONEPSE_BASE}/data/market/status.json`);
+  const raw = await cachedFetch<RawStatus>('status', `${YONEPSE_BASE}/data/market/status.json`);
+  if (!raw) return null;
+  return {
+    market_open: raw.is_open ?? false,
+    market_message: raw.last_checked,
+  };
 }
 
 /* ── Fallback: NepseAPI-Unofficial ───────────────────────────────── */

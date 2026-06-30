@@ -148,7 +148,7 @@ export default function ExplorePage() {
   }, []);
 
   /* ── Derived ── */
-  const nepseIndex = useMemo(() => indices.find(i => i.index === 'NEPSE') ?? indices[0], [indices]);
+  const nepseIndex = useMemo(() => indices.find(i => i.index === 'NEPSE Index') ?? indices[0], [indices]);
   const activeStock = useMemo(() => stocks.find(s => s.symbol === selectedSymbol), [stocks, selectedSymbol]);
 
   const chartData = useMemo(() => {
