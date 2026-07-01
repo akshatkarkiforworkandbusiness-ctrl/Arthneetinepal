@@ -36,53 +36,18 @@ export interface SectorNewsResult {
   generatedAt: string;
 }
 
-function getApiKey(): string {
-  const key = import.meta.env.VITE_NVIDIA_API_KEY || import.meta.env.NVIDIA_API_KEY;
-  if (!key) throw new Error('NVIDIA API key not configured. Set VITE_NVIDIA_API_KEY in .env');
-  return key;
-}
-
 export async function researchSectorNews(sector: Sector): Promise<SectorNewsResult> {
-  const apiKey = getApiKey();
-
-  const prompt = `You are a financial news researcher for Nepal's stock market (NEPSE). 
-Research and summarize the LATEST news about the "${sector}" sector in Nepal.
-Return a JSON array of recent news articles. Each article must have:
-- "title": concise headline
-- "summary": 2-3 sentence summary of key developments
-- "date": approximate date (use "Today", "Yesterday", or "This week")
-- "source": where this news might be found (e.g., "NEPSE", "NRB", "Sharesansar", "Bizmandu")
-- "url": a likely URL path (optional, use "/nepse" or "/news" as placeholder)
-
-Focus on:
-- Recent policy changes from Nepal Rastra Bank (NRB) affecting this sector
-- NEPSE performance of stocks in this sector
-- New listings, mergers, acquisitions, or dividends
-- Government budget announcements impacting this sector
-- Economic indicators relevant to this sector
-
-Return ONLY a valid JSON array with no markdown formatting or code blocks.
-
-Example:
-[{"title":"NRB eases margin lending rules for banks","summary":"Nepal Rastra Bank has relaxed margin lending norms for commercial banks...","date":"Today","source":"Sharesansar","url":"/news/nrb-margin-lending"}]
-`;
-
-  const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
+  const response = await fetch('/api/news', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`
     },
-    body: JSON.stringify({
-      model: 'meta/llama-3.1-70b-instruct',
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.3,
-      max_tokens: 4096,
-    })
+    body: JSON.stringify({ sector })
   });
 
   if (!response.ok) {
-    throw new Error(`NVIDIA API error: ${response.status} ${response.statusText}`);
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Backend error: ${response.status} ${response.statusText}`);
   }
 
   const data = await response.json();
