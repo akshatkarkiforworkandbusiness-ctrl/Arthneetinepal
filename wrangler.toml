@@ -1,6 +1,9 @@
 name = "arthneetinepal"
 compatibility_date = "2026-06-21"
 
+# Required environment variables (set in Cloudflare Pages dashboard):
+# NVIDIA_API_KEY - Your NVIDIA NIM API key for AI-powered sector news research
+
 [assets]
 directory = "./dist"
 not_found_handling = "single-page-application"

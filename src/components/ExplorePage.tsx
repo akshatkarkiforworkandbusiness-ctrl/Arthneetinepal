@@ -525,7 +525,7 @@ export default function ExplorePage() {
                 <span className="material-symbols-outlined text-red-400 text-2xl mb-2 block">error</span>
                 <p className="text-sm font-bold text-white mb-1">Research Failed</p>
                 <p className="text-[10px] text-[#9f9fa0] px-4">
-                  {newsError.includes('API key') || newsError.includes('400') ? 'Invalid Gemini API Key. Please update VITE_GEMINI_API_KEY in your .env file.' : newsError}
+                  {newsError.includes('API key') || newsError.includes('NVIDIA') ? 'NVIDIA API key is not configured. Please set NVIDIA_API_KEY in your Cloudflare Pages environment variables.' : newsError}
                 </p>
               </div>
             ) : sectorNews && sectorNews.articles.length > 0 ? (
