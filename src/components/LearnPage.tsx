@@ -2330,17 +2330,10 @@ export default function LearnPage() {
                         </span>
                         <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">{lesson.duration}</span>
                       </div>
-                      <h3 className={`text-base font-bold leading-snug transition-colors ${
-                        isLocked ? 'text-gray-500' : 'text-white group-hover:text-royal'
-                      }`}>
+                      <h3 className="text-base font-bold leading-snug transition-colors text-white group-hover:text-royal">
                         {lesson.title}
                       </h3>
                       <p className="text-gray-500 font-sans text-xs line-clamp-2">{lesson.desc}</p>
-                      {isLocked && (
-                        <p className="text-[9px] font-black uppercase tracking-widest text-gray-600">
-                          Complete lesson {index} to unlock
-                        </p>
-                      )}
                     </div>
                   </button>
                 );
