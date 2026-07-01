@@ -257,10 +257,11 @@ export default function ExplorePage() {
           ].map((card, i) => (
             <motion.div
               key={card.label}
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.06 }}
-              className="bg-[#161F30] border border-[#1F2A3F] rounded-xl p-5 hover:border-[#00875a]/40 transition-colors"
+              transition={{ delay: i * 0.08, type: 'spring', stiffness: 100, damping: 15 }}
+              whileHover={{ y: -5, scale: 1.02, transition: { type: 'spring', stiffness: 300, damping: 15 } }}
+              className="bg-[#161F30] border border-[#1F2A3F] rounded-xl p-5 hover:border-[#00875a]/40 transition-colors shadow-lg hover:shadow-xl cursor-default"
             >
               <p className="text-[10px] font-bold text-[#94a3b8] uppercase tracking-wider mb-1">{card.label}</p>
               <p className="text-xl font-black font-mono text-white">{card.value}</p>
@@ -304,15 +305,29 @@ export default function ExplorePage() {
           </div>
 
           {/* Timeframe Tabs */}
-          <Tabs defaultValue="1D" value={timeframe} onValueChange={(v) => setTimeframe(v as unknown as Timeframe)} className="mb-4">
-            <TabsList className="flex border-b border-[#1F2A3F] pb-3 gap-2 bg-transparent p-0 w-full justify-start h-auto">
-              {TIMEFRAMES.map((tf) => (
-                <TabsTrigger key={tf} value={tf} className="px-4 py-1.5 text-xs font-black uppercase tracking-wider rounded-lg transition-all text-[#94a3b8] hover:text-white hover:bg-[#0B0F19]/50 data-[state=active]:bg-[#00875a] data-[state=active]:text-white h-auto">
+          <div className="flex border-b border-[#1F2A3F] pb-3 gap-2 w-full justify-start mb-4">
+            {TIMEFRAMES.map((tf) => {
+              const isActive = timeframe === tf;
+              return (
+                <button
+                  key={tf}
+                  onClick={() => setTimeframe(tf)}
+                  className={`relative px-4 py-1.5 text-xs font-black uppercase tracking-wider rounded-lg transition-colors duration-300 z-10 ${
+                    isActive ? 'text-white' : 'text-[#94a3b8] hover:text-white hover:bg-[#0B0F19]/50'
+                  }`}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTimeframe"
+                      className="absolute inset-0 bg-[#00875a] rounded-lg -z-10"
+                      transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
                   {tf}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+                </button>
+              );
+            })}
+          </div>
 
           {/* Chart */}
           <div className="relative w-full h-[260px] bg-[#0B0F19]/60 rounded-xl border border-[#1F2A3F] p-4">
@@ -370,21 +385,31 @@ export default function ExplorePage() {
                   return (
                     <motion.button
                       key={s.symbol}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
+                      layout="position"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      whileHover={{ scale: active ? 1 : 1.02, x: active ? 0 : 4 }}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() => { setSelectedSymbol(s.symbol); setHoverIndex(null); }}
-                      className={`w-full text-left p-3 rounded-lg border transition-all duration-200 flex justify-between items-center ${
+                      className={`relative w-full text-left p-3 rounded-lg border transition-colors duration-200 flex justify-between items-center overflow-hidden ${
                         active
                           ? 'bg-[#0B0F19] border-[#00875a] shadow-lg'
                           : 'bg-[#161F30] border-[#1F2A3F] hover:border-[#94a3b8]/30 hover:bg-[#0B0F19]/40'
                       }`}
                     >
-                      <div className="min-w-0">
+                      {active && (
+                        <motion.div
+                          layoutId="activeStockGlow"
+                          className="absolute left-0 top-0 bottom-0 w-1 bg-[#00f59b]"
+                          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                        />
+                      )}
+                      <div className="min-w-0 pl-1 z-10">
                         <h4 className="text-xs font-black font-mono text-white truncate">{s.symbol}</h4>
                         <p className="text-[9px] text-[#94a3b8] truncate">{s.name}</p>
                       </div>
-                      <div className="text-right shrink-0 ml-3">
+                      <div className="text-right shrink-0 ml-3 z-10">
                         <p className="text-xs font-black font-mono text-white">{s.ltp.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
                         <p className="text-[9px] font-bold font-mono" style={{ color: s.change >= 0 ? '#00f59b' : '#ef4444' }}>
                           {s.change >= 0 ? '+' : ''}{s.percentChange.toFixed(2)}%
@@ -448,15 +473,21 @@ export default function ExplorePage() {
             {TRENDING_SECTORS.map((sector, i) => (
               <motion.div
                 key={sector}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="group bg-[#161F30] border border-[#1F2A3F] rounded-2xl p-6 hover:border-[#00875a]/60 transition-all duration-300 shadow-xl hover:shadow-[#00875a]/5"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-20px" }}
+                whileHover={{ y: -6, transition: { type: 'spring', stiffness: 300 } }}
+                transition={{ delay: i * 0.05, type: 'spring', damping: 20 }}
+                className="group bg-[#161F30] border border-[#1F2A3F] rounded-2xl p-6 hover:border-[#00875a]/60 transition-all duration-300 shadow-xl hover:shadow-[#00875a]/10"
               >
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#0B0F19] border border-[#1F2A3F] flex items-center justify-center text-[#00f59b] group-hover:bg-[#00875a]/20 group-hover:border-[#00875a]/40 transition-all shrink-0">
+                  <motion.div
+                    whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
+                    transition={{ duration: 0.5 }}
+                    className="w-12 h-12 rounded-xl bg-[#0B0F19] border border-[#1F2A3F] flex items-center justify-center text-[#00f59b] group-hover:bg-[#00875a]/20 group-hover:border-[#00875a]/40 transition-all shrink-0 cursor-default"
+                  >
                     <span className="material-symbols-outlined text-2xl">{SECTOR_ICONS[sector]}</span>
-                  </div>
+                  </motion.div>
                   <div className="min-w-0">
                     <h3 className="font-sans font-semibold text-xl text-white italic group-hover:text-[#00875a] transition-colors leading-tight">
                       {sector}
@@ -466,21 +497,25 @@ export default function ExplorePage() {
                 </div>
 
                 <div className="flex flex-wrap gap-2 mt-auto">
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => navigate(`/community?sector=${encodeURIComponent(sector)}`)}
                     className="flex items-center gap-1.5 px-4 py-2 bg-[#00875a]/10 border border-[#00875a]/30 text-[#00f59b] rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-[#00875a] hover:text-white transition-all"
                   >
                     <span className="material-symbols-outlined text-sm">forum</span>
                     Discuss
-                  </button>
-                  <button
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => handleSectorClick(sector)}
                     disabled={newsLoading && selectedSector === sector}
                     className="flex items-center gap-1.5 px-4 py-2 bg-[#0B0F19] border border-[#1F2A3F] text-white rounded-lg text-[9px] font-black uppercase tracking-widest hover:border-[#00875a]/50 transition-all disabled:opacity-40"
                   >
                     <span className="material-symbols-outlined text-sm">travel_explore</span>
                     {newsLoading && selectedSector === sector ? 'Researching...' : 'Latest News'}
-                  </button>
+                  </motion.button>
                 </div>
               </motion.div>
             ))}

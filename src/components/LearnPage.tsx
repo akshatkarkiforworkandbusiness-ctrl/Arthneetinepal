@@ -2229,7 +2229,13 @@ export default function LearnPage() {
           <section key={module.id} className="space-y-6">
             
             {/* Module Header */}
-            <div className="border-b border-white/10 pb-6">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+              className="border-b border-white/10 pb-6"
+            >
               <h2 className="text-2xl font-display italic text-white mb-2">{module.title}</h2>
               <p className="text-gray-500 font-sans text-sm">{module.description}</p>
               <div className="mt-4 space-y-2">
@@ -2238,16 +2244,24 @@ export default function LearnPage() {
                   <span>{Math.round((completedInModule / moduleLessons.length) * 100) || 0}%</span>
                 </div>
                 <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-royal transition-all duration-500"
-                    style={{ width: `${(completedInModule / moduleLessons.length) * 100 || 0}%` }}
+                  <motion.div
+                    initial={{ width: 0 }}
+                    whileInView={{ width: `${(completedInModule / moduleLessons.length) * 100 || 0}%` }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1, delay: 0.2, type: 'spring' }}
+                    className="h-full bg-royal"
                   />
                 </div>
               </div>
               
               {/* Certificate & Master Exam Unlock */}
               {completedInModule === moduleLessons.length && moduleLessons.length > 0 && (
-                <div className="mt-6 bg-gradient-to-r from-royal/20 to-transparent border border-royal/30 p-4 rounded-xl flex items-center justify-between flex-wrap gap-4">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ type: 'spring', bounce: 0.5 }}
+                  className="mt-6 bg-gradient-to-r from-royal/20 to-transparent border border-royal/30 p-4 rounded-xl flex items-center justify-between flex-wrap gap-4"
+                >
                   <div className="flex items-center gap-3">
                     <div className="bg-royal/20 p-2 rounded-full border border-royal/50">
                       <Award size={20} className="text-royal" />
@@ -2263,57 +2277,70 @@ export default function LearnPage() {
                   </div>
                   <div className="flex gap-2">
                     {(!masterExamScores[module.id] || masterExamScores[module.id] < 80) && (
-                      <button
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => setMasterExamModule(module.id)}
                         className="px-4 py-2 bg-royal text-white text-[10px] font-black uppercase tracking-widest rounded shadow-[0_0_15px_rgba(0,135,90,0.5)] hover:bg-royal-light transition-all"
                       >
                         Take Master Exam
-                      </button>
+                      </motion.button>
                     )}
                     {masterExamScores[module.id] >= 80 && (
-                      <button
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => setCertificateModule(module.title)}
                         className="px-4 py-2 bg-transparent text-royal border border-royal text-[10px] font-black uppercase tracking-widest rounded hover:bg-royal/10 transition-all"
                       >
                         View Certificate
-                      </button>
+                      </motion.button>
                     )}
                   </div>
-                </div>
+                </motion.div>
               )}
-            </div>
+            </motion.div>
 
             {/* Lesson Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {moduleLessons.map((lesson, index) => {
                 return (
-                  <button
+                  <motion.button
                     key={lesson.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-20px" }}
+                    transition={{ delay: index * 0.1, type: 'spring', stiffness: 200, damping: 20 }}
+                    whileHover={{ scale: 1.02, y: -4 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={() => playLesson(lesson)}
                     className={`text-left bg-white/3 border rounded-xl overflow-hidden transition-all group hover:border-royal/50 ${
                       activeLesson.id === lesson.id && isPlaying
-                        ? 'border-royal/50 bg-royal/5'
+                        ? 'border-royal/50 bg-royal/5 shadow-[0_0_20px_rgba(0,135,90,0.15)]'
                         : 'border-white/10'
                     }`}
                   >
                     {/* Thumbnail */}
                     <div className="relative aspect-video overflow-hidden">
-                      <img
+                      <motion.img
                         src={lesson.thumbnail}
                         alt={lesson.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
+                        <motion.div 
+                          whileHover={{ scale: 1.2 }}
+                          className="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center"
+                        >
                           <Play size={20} className="text-white ml-1" />
-                        </div>
+                        </motion.div>
                       </div>
                       {completed.has(lesson.id) && (
-                        <div className="absolute top-3 right-3 bg-green-500 rounded-full p-1">
+                        <div className="absolute top-3 right-3 bg-green-500 rounded-full p-1 shadow-lg">
                           <Check size={12} className="text-white" />
                         </div>
                       )}
-                      <div className="absolute top-3 left-3 bg-black/60 backdrop-blur rounded px-2 py-1">
+                      <div className="absolute top-3 left-3 bg-black/60 backdrop-blur rounded px-2 py-1 shadow-lg">
                         <span className="text-[9px] font-black text-white">{index + 1}</span>
                       </div>
                     </div>
@@ -2335,7 +2362,7 @@ export default function LearnPage() {
                       </h3>
                       <p className="text-gray-500 font-sans text-xs line-clamp-2">{lesson.desc}</p>
                     </div>
-                  </button>
+                  </motion.button>
                 );
               })}
             </div>
@@ -2344,8 +2371,15 @@ export default function LearnPage() {
             {moduleGuides.length > 0 && (
               <div className="space-y-3">
                 <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Written Guide</p>
-                {moduleGuides.map((guide) => (
-                  <div key={guide.id} className="bg-white/3 border border-white/10 rounded-xl p-6">
+                {moduleGuides.map((guide, idx) => (
+                  <motion.div 
+                    key={guide.id} 
+                    initial={{ opacity: 0, y: 15 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: idx * 0.1, type: 'spring' }}
+                    className="bg-white/3 border border-white/10 rounded-xl p-6 hover:border-white/20 transition-all shadow-lg"
+                  >
                     <div className="flex items-start justify-between gap-6 flex-wrap">
                       <div className="space-y-2 flex-1">
                         <div className="flex items-center gap-3">
@@ -2374,24 +2408,30 @@ export default function LearnPage() {
                       {/* Actions */}
                       <div className="flex flex-col gap-3 shrink-0">
                         
-                          <a href={guide.htmlUrl}
+                          <motion.a 
+                          href={guide.htmlUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="flex items-center gap-2 px-5 py-3 bg-royal/20 text-royal border border-royal/30 rounded text-[10px] font-black uppercase tracking-widest hover:bg-royal hover:text-white transition-all"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="flex items-center justify-center gap-2 px-5 py-3 bg-royal/20 text-royal border border-royal/30 rounded text-[10px] font-black uppercase tracking-widest hover:bg-royal hover:text-white transition-all shadow-sm"
                         >
                           <BookOpen size={14} /> Read Online
-                        </a>
+                        </motion.a>
                         
-                          <a href={guide.pdfUrl}
+                          <motion.a 
+                          href={guide.pdfUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="flex items-center gap-2 px-5 py-3 bg-white/5 text-gray-400 border border-white/10 rounded text-[10px] font-black uppercase tracking-widest hover:text-white hover:border-white/30 transition-all"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="flex items-center justify-center gap-2 px-5 py-3 bg-white/5 text-gray-400 border border-white/10 rounded text-[10px] font-black uppercase tracking-widest hover:text-white hover:border-white/30 transition-all shadow-sm"
                         >
                           <Download size={14} /> Download PDF
-                        </a>
+                        </motion.a>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             )}
