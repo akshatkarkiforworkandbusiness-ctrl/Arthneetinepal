@@ -1,4 +1,4 @@
-import { GoogleGenAI } from '@google/genai';
+
 
 const SECTORS = ['Banking', 'Hydropower', 'Microfinance', 'IPO Market', 'Mutual Funds', 'Inflation', 'Remittance'] as const;
 export type Sector = typeof SECTORS[number];
@@ -37,14 +37,13 @@ export interface SectorNewsResult {
 }
 
 function getApiKey(): string {
-  const key = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.GEMINI_API_KEY;
-  if (!key) throw new Error('Gemini API key not configured. Set VITE_GEMINI_API_KEY in .env');
+  const key = import.meta.env.VITE_NVIDIA_API_KEY || import.meta.env.NVIDIA_API_KEY;
+  if (!key) throw new Error('NVIDIA API key not configured. Set VITE_NVIDIA_API_KEY in .env');
   return key;
 }
 
 export async function researchSectorNews(sector: Sector): Promise<SectorNewsResult> {
   const apiKey = getApiKey();
-  const ai = new GoogleGenAI({ apiKey });
 
   const prompt = `You are a financial news researcher for Nepal's stock market (NEPSE). 
 Research and summarize the LATEST news about the "${sector}" sector in Nepal.
@@ -68,22 +67,32 @@ Example:
 [{"title":"NRB eases margin lending rules for banks","summary":"Nepal Rastra Bank has relaxed margin lending norms for commercial banks...","date":"Today","source":"Sharesansar","url":"/news/nrb-margin-lending"}]
 `;
 
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.0-flash',
-    contents: prompt,
-    config: {
-      temperature: 0.3,
-      maxOutputTokens: 4096,
+  const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
     },
+    body: JSON.stringify({
+      model: 'meta/llama-3.1-70b-instruct',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.3,
+      max_tokens: 4096,
+    })
   });
 
-  const text = response.text || '[]';
+  if (!response.ok) {
+    throw new Error(`NVIDIA API error: ${response.status} ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  const text = data.choices?.[0]?.message?.content || '[]';
   let articles: NewsArticle[] = [];
   try {
     const cleaned = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
     articles = JSON.parse(cleaned);
   } catch {
-    articles = [{ title: `Latest ${sector} News`, summary: text.substring(0, 500), date: 'Today', source: 'Gemini AI' }];
+    articles = [{ title: `Latest ${sector} News`, summary: text.substring(0, 500), date: 'Today', source: 'NVIDIA AI' }];
   }
 
   return {
