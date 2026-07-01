@@ -1,4 +1,4 @@
-import { GoogleGenAI } from '@google/genai';
+
 
 const SECTORS = ['Banking', 'Hydropower', 'Microfinance', 'IPO Market', 'Mutual Funds', 'Inflation', 'Remittance'] as const;
 export type Sector = typeof SECTORS[number];
@@ -36,54 +36,28 @@ export interface SectorNewsResult {
   generatedAt: string;
 }
 
-function getApiKey(): string {
-  const key = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.GEMINI_API_KEY;
-  if (!key) throw new Error('Gemini API key not configured. Set VITE_GEMINI_API_KEY in .env');
-  return key;
-}
-
 export async function researchSectorNews(sector: Sector): Promise<SectorNewsResult> {
-  const apiKey = getApiKey();
-  const ai = new GoogleGenAI({ apiKey });
-
-  const prompt = `You are a financial news researcher for Nepal's stock market (NEPSE). 
-Research and summarize the LATEST news about the "${sector}" sector in Nepal.
-Return a JSON array of recent news articles. Each article must have:
-- "title": concise headline
-- "summary": 2-3 sentence summary of key developments
-- "date": approximate date (use "Today", "Yesterday", or "This week")
-- "source": where this news might be found (e.g., "NEPSE", "NRB", "Sharesansar", "Bizmandu")
-- "url": a likely URL path (optional, use "/nepse" or "/news" as placeholder)
-
-Focus on:
-- Recent policy changes from Nepal Rastra Bank (NRB) affecting this sector
-- NEPSE performance of stocks in this sector
-- New listings, mergers, acquisitions, or dividends
-- Government budget announcements impacting this sector
-- Economic indicators relevant to this sector
-
-Return ONLY a valid JSON array with no markdown formatting or code blocks.
-
-Example:
-[{"title":"NRB eases margin lending rules for banks","summary":"Nepal Rastra Bank has relaxed margin lending norms for commercial banks...","date":"Today","source":"Sharesansar","url":"/news/nrb-margin-lending"}]
-`;
-
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.0-flash',
-    contents: prompt,
-    config: {
-      temperature: 0.3,
-      maxOutputTokens: 4096,
+  const response = await fetch('/api/news', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
     },
+    body: JSON.stringify({ sector })
   });
 
-  const text = response.text || '[]';
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Backend error: ${response.status} ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  const text = data.choices?.[0]?.message?.content || '[]';
   let articles: NewsArticle[] = [];
   try {
     const cleaned = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
     articles = JSON.parse(cleaned);
   } catch {
-    articles = [{ title: `Latest ${sector} News`, summary: text.substring(0, 500), date: 'Today', source: 'Gemini AI' }];
+    articles = [{ title: `Latest ${sector} News`, summary: text.substring(0, 500), date: 'Today', source: 'NVIDIA AI' }];
   }
 
   return {
