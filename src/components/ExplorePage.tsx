@@ -153,19 +153,27 @@ export default function ExplorePage() {
   const isGainer = (activeStock?.change ?? 0) >= 0;
   const themeColor = isGainer ? '#00f59b' : '#ef4444';
 
-  const handleResearchSector = async (sector: Sector) => {
+  const handleSectorClick = useCallback(async (sector: Sector) => {
+    if (selectedSector === sector) {
+      setSelectedSector(null);
+      setSectorNews(null);
+      setNewsError(null);
+      return;
+    }
     setSelectedSector(sector);
     setNewsLoading(true);
     setSectorNews(null);
+    setNewsError(null);
     try {
       const result = await researchSectorNews(sector);
       setSectorNews(result);
-    } catch {
-      setSectorNews(null);
+    } catch (err: unknown) {
+      console.error('Sector News Error:', err);
+      setNewsError(err instanceof Error ? err.message : 'Failed to fetch AI research. Please check your API key.');
     } finally {
       setNewsLoading(false);
     }
-  };
+  }, [selectedSector]);
 
   /* ── Loading skeleton ── */
   if (loading) {
@@ -511,18 +519,35 @@ export default function ExplorePage() {
                 <Skeleton className="h-20 bg-[#1F2A3F] rounded-xl" />
                 <Skeleton className="h-20 bg-[#1F2A3F] rounded-xl" />
               </div>
+            ) : newsError ? (
+              <div className="text-center py-6 bg-red-500/10 border border-red-500/20 rounded-xl">
+                <span className="material-symbols-outlined text-red-400 text-2xl mb-2 block">error</span>
+                <p className="text-sm font-bold text-white mb-1">Research Failed</p>
+                <p className="text-[10px] text-[#94a3b8] px-4">
+                  {newsError.includes('API key') || newsError.includes('400') ? 'Invalid Gemini API Key. Please update VITE_GEMINI_API_KEY in your .env file.' : newsError}
+                </p>
+              </div>
             ) : sectorNews && sectorNews.articles.length > 0 ? (
-              <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
+              <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
                 {sectorNews.articles.slice(0, 5).map((article, i) => (
-                  <div key={i} className="bg-[#0B0F19] rounded-xl p-4 border border-[#1F2A3F] hover:border-[#00875a]/30 transition-all">
+                  <div key={i} className="bg-[#0B0F19] rounded-xl p-4 border border-[#1F2A3F] hover:border-[#00875a]/30 transition-all flex flex-col h-full">
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <h4 className="text-[11px] font-bold text-white leading-tight">{article.title}</h4>
                       <span className="text-[8px] text-[#00f59b] font-mono whitespace-nowrap shrink-0">{article.date}</span>
                     </div>
-                    <p className="text-[10px] text-[#94a3b8] leading-relaxed">{article.summary}</p>
-                    {article.source && (
-                      <p className="text-[8px] text-[#94a3b8]/50 mt-2 font-mono uppercase tracking-wider">Source: {article.source}</p>
-                    )}
+                    <p className="text-[10px] text-[#94a3b8] leading-relaxed flex-grow">{article.summary}</p>
+                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#1F2A3F]">
+                      {article.source ? (
+                        <p className="text-[8px] text-[#94a3b8]/50 font-mono uppercase tracking-wider">Source: {article.source}</p>
+                      ) : <span />}
+                      <Link
+                        to="/community"
+                        className="flex items-center gap-1 text-[8px] font-black uppercase tracking-widest text-[#00875a] hover:text-[#00f59b] transition-colors"
+                      >
+                        <span className="material-symbols-outlined text-[10px]">forum</span>
+                        Discuss
+                      </Link>
+                    </div>
                   </div>
                 ))}
               </div>
