@@ -81,11 +81,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signIn = async () => {
-    await signInWithPopup(auth, googleProvider);
-    setShowAuthModal(false);
+    try {
+      await signInWithPopup(auth, googleProvider);
+      setShowAuthModal(false);
+    } catch (error: any) {
+      if (error.code === 'auth/popup-closed-by-user') {
+        return;
+      }
+      throw error;
+    }
   };
 
-  const logout = () => signOut(auth);
+  const logout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('Logout error:', error);
+      throw error;
+    }
+  };
 
   const handleJoinAction = async () => {
     if (!user) {
@@ -121,33 +135,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signUpWithEmail = async (email: string, password: string, name: string, topics: string[]) => {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const firebaseUser = userCredential.user;
-    
-    await firebaseUpdateProfile(firebaseUser, { displayName: name });
-    
-    const docRef = doc(db, 'users', firebaseUser.uid);
-    const profileData: UserProfile = {
-      uid: firebaseUser.uid,
-      name,
-      email,
-      topics,
-      role: 'member',
-      joinedAt: serverTimestamp()
-    };
-    
-    await setDoc(docRef, profileData);
-    setProfile(profileData);
-    setShowAuthModal(false);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const firebaseUser = userCredential.user;
+      
+      await firebaseUpdateProfile(firebaseUser, { displayName: name });
+      
+      const docRef = doc(db, 'users', firebaseUser.uid);
+      const profileData: UserProfile = {
+        uid: firebaseUser.uid,
+        name,
+        email,
+        topics,
+        role: 'member',
+        joinedAt: serverTimestamp()
+      };
+      
+      await setDoc(docRef, profileData);
+      setProfile(profileData);
+      setShowAuthModal(false);
+    } catch (error: any) {
+      console.error('Sign up error:', error);
+      throw error;
+    }
   };
 
   const signInWithEmail = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password);
-    setShowAuthModal(false);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      setShowAuthModal(false);
+    } catch (error: any) {
+      console.error('Sign in error:', error);
+      throw error;
+    }
   };
 
   const resetPassword = async (email: string) => {
-    await sendPasswordResetEmail(auth, email);
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error: any) {
+      console.error('Password reset error:', error);
+      throw error;
+    }
   };
 
   return (
