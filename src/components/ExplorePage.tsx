@@ -96,6 +96,7 @@ export default function ExplorePage() {
   const [selectedSector, setSelectedSector] = useState<Sector | null>(null);
   const [sectorNews, setSectorNews] = useState<SectorNewsResult | null>(null);
   const [newsLoading, setNewsLoading] = useState(false);
+  const [newsError, setNewsError] = useState<string | null>(null);
 
   /* ── Load data ── */
   const loadMarketData = useCallback(async () => {
@@ -473,7 +474,7 @@ export default function ExplorePage() {
                     Discuss
                   </button>
                   <button
-                    onClick={() => handleResearchSector(sector)}
+                    onClick={() => handleSectorClick(sector)}
                     disabled={newsLoading && selectedSector === sector}
                     className="flex items-center gap-1.5 px-4 py-2 bg-[#0B0F19] border border-[#1F2A3F] text-white rounded-lg text-[9px] font-black uppercase tracking-widest hover:border-[#00875a]/50 transition-all disabled:opacity-40"
                   >
