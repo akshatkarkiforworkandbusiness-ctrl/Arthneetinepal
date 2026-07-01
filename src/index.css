@@ -306,6 +306,28 @@
   --sidebar-ring: #9f9fa0;
 }
 
+/* ═══════════════════════════════════════════════
+ * Profile Theme — Bright Purple + Teal
+ * ═══════════════════════════════════════════════ */
+.profile-gradient-banner {
+  background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 25%, #06b6d4 75%, #14b8a6 100%);
+}
+
+.profile-gradient-text {
+  background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.profile-card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.profile-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px -12px rgba(124, 58, 237, 0.15);
+}
+
 @media print {
   body * {
     visibility: hidden;
