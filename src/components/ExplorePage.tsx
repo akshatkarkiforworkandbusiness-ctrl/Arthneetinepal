@@ -180,15 +180,15 @@ export default function ExplorePage() {
   if (loading) {
     return (
       <motion.main initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-7xl mx-auto px-4 md:px-12 py-24 min-h-screen">
-        <Skeleton className="h-8 w-48 mb-2 bg-[#1F2A3F]" />
-        <Skeleton className="h-14 w-72 mb-12 bg-[#1F2A3F]" />
+        <Skeleton className="h-8 w-48 mb-2 bg-[#2e2e2e]" />
+        <Skeleton className="h-14 w-72 mb-12 bg-[#2e2e2e]" />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
           <div className="lg:col-span-8">
-            <Skeleton className="h-[420px] rounded-2xl bg-[#161F30]" />
+            <Skeleton className="h-[420px] rounded-2xl bg-[#090a0b]" />
           </div>
           <div className="lg:col-span-4 space-y-6">
-            <Skeleton className="h-64 rounded-2xl bg-[#161F30]" />
-            <Skeleton className="h-48 rounded-2xl bg-[#161F30]" />
+            <Skeleton className="h-64 rounded-2xl bg-[#090a0b]" />
+            <Skeleton className="h-48 rounded-2xl bg-[#090a0b]" />
           </div>
         </div>
       </motion.main>
@@ -199,11 +199,11 @@ export default function ExplorePage() {
   if (error && stocks.length === 0) {
     return (
       <motion.main initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-7xl mx-auto px-4 md:px-12 py-24 min-h-screen flex items-center justify-center">
-        <div className="text-center bg-[#161F30] border border-[#1F2A3F] rounded-2xl p-12 max-w-md">
+        <div className="text-center bg-[#090a0b] border border-white/[0.06] rounded-2xl p-12 max-w-md">
           <span className="material-symbols-outlined text-6xl text-[#ef4444] mb-4 block">cloud_off</span>
           <h2 className="text-xl font-bold text-white mb-2">Market Data Unavailable</h2>
-          <p className="text-sm text-[#94a3b8] mb-6">Unable to fetch live NEPSE data. The market data service may be temporarily down.</p>
-          <button onClick={() => { setLoading(true); setError(false); loadMarketData(); }} className="px-6 py-3 bg-[#00875a] hover:bg-[#00f59b] hover:text-[#0f172a] text-white text-xs font-black uppercase tracking-widest rounded-lg transition-all">
+          <p className="text-sm text-[#9f9fa0] mb-6">Unable to fetch live NEPSE data. The market data service may be temporarily down.</p>
+          <button onClick={() => { setLoading(true); setError(false); loadMarketData(); }} className="px-6 py-3 bg-[#847dff] hover:bg-[#847dff] hover:text-[#090a0b] text-white text-xs font-black uppercase tracking-widest rounded-lg transition-all">
             Retry
           </button>
         </div>
@@ -217,11 +217,11 @@ export default function ExplorePage() {
       {/* ─── Header ─── */}
       <header className="mb-10">
         <div className="flex items-center gap-3 mb-2">
-          <span className="text-[10px] font-black text-[#00f59b] uppercase tracking-[0.4em]">FINANCIAL INTELLIGENCE HUB</span>
+          <span className="text-[10px] font-black text-[#847dff] uppercase tracking-[0.4em]">FINANCIAL INTELLIGENCE HUB</span>
           {marketOpen !== null && (
             <span className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider">
-              <span className={`w-2 h-2 rounded-full ${marketOpen ? 'bg-[#00f59b] animate-pulse' : 'bg-[#94a3b8]'}`} />
-              <span className={marketOpen ? 'text-[#00f59b]' : 'text-[#94a3b8]'}>{marketOpen ? 'Market Open' : 'Market Closed'}</span>
+              <span className={`w-2 h-2 rounded-full ${marketOpen ? 'bg-[#847dff] animate-pulse' : 'bg-[#9f9fa0]'}`} />
+              <span className={marketOpen ? 'text-[#847dff]' : 'text-[#9f9fa0]'}>{marketOpen ? 'Market Open' : 'Market Closed'}</span>
             </span>
           )}
         </div>
@@ -229,17 +229,17 @@ export default function ExplorePage() {
 
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
           <div className="relative flex-1 max-w-2xl">
-            <span className="absolute left-6 top-1/2 -translate-y-1/2 material-symbols-outlined text-[#94a3b8]">search</span>
+            <span className="absolute left-6 top-1/2 -translate-y-1/2 material-symbols-outlined text-[#9f9fa0]">search</span>
             <input
               type="text"
               placeholder="Search NEPSE counters..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#161F30] border border-[#1F2A3F] rounded-full px-16 py-4 text-sm focus:border-[#00875a] outline-none shadow-xl text-white placeholder:text-[#94a3b8]/50 transition-all"
+              className="w-full bg-[#090a0b] border border-white/[0.06] rounded-full px-16 py-4 text-sm focus:border-[#847dff] outline-none shadow-xl text-white placeholder:text-[#9f9fa0]/50 transition-all"
             />
           </div>
           {lastUpdated && (
-            <span className="text-[10px] text-[#94a3b8] font-mono whitespace-nowrap">
+            <span className="text-[10px] text-[#9f9fa0] font-mono whitespace-nowrap">
               Updated {lastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
             </span>
           )}
@@ -260,9 +260,9 @@ export default function ExplorePage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.06 }}
-              className="bg-[#161F30] border border-[#1F2A3F] rounded-xl p-5 hover:border-[#00875a]/40 transition-colors"
+              className="bg-[#090a0b] border border-white/[0.06] rounded-xl p-5 hover:border-[#847dff]/40 transition-colors"
             >
-              <p className="text-[10px] font-bold text-[#94a3b8] uppercase tracking-wider mb-1">{card.label}</p>
+              <p className="text-[10px] font-bold text-[#9f9fa0] uppercase tracking-wider mb-1">{card.label}</p>
               <p className="text-xl font-black font-mono text-white">{card.value}</p>
               {card.isIndex && card.change !== undefined && (
                 <p className="text-xs font-bold font-mono mt-1" style={{ color: card.change >= 0 ? '#00f59b' : '#ef4444' }}>
@@ -278,17 +278,17 @@ export default function ExplorePage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
 
         {/* Chart Widget */}
-        <section className="lg:col-span-8 bg-[#161F30] border border-[#1F2A3F] rounded-2xl p-6 md:p-8 flex flex-col shadow-2xl">
+        <section className="lg:col-span-8 bg-[#090a0b] border border-white/[0.06] rounded-2xl p-6 md:p-8 flex flex-col shadow-2xl">
           {/* Stock Selector + Info */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
             <div>
               <div className="flex items-center gap-3 mb-1">
                 <span className="text-2xl font-black text-white font-mono tracking-tight">{activeStock?.symbol ?? selectedSymbol}</span>
-                <Badge variant="outline" className="text-[10px] font-bold text-[#94a3b8] uppercase bg-[#0B0F19] px-2 py-0.5 rounded-lg border border-[#1F2A3F]">
+                <Badge variant="outline" className="text-[10px] font-bold text-[#9f9fa0] uppercase bg-[#0f1011] px-2 py-0.5 rounded-lg border border-white/[0.06]">
                   {activeStock?.name ?? 'Select a stock'}
                 </Badge>
               </div>
-              <p className="text-xs text-[#94a3b8] uppercase tracking-wider">{displayedDate}</p>
+              <p className="text-xs text-[#9f9fa0] uppercase tracking-wider">{displayedDate}</p>
             </div>
             <div className="text-right">
               <div className="text-4xl font-black font-mono text-white tracking-tight">
@@ -305,9 +305,9 @@ export default function ExplorePage() {
 
           {/* Timeframe Tabs */}
           <Tabs defaultValue="1D" value={timeframe} onValueChange={(v) => setTimeframe(v as unknown as Timeframe)} className="mb-4">
-            <TabsList className="flex border-b border-[#1F2A3F] pb-3 gap-2 bg-transparent p-0 w-full justify-start h-auto">
+            <TabsList className="flex border-b border-white/[0.06] pb-3 gap-2 bg-transparent p-0 w-full justify-start h-auto">
               {TIMEFRAMES.map((tf) => (
-                <TabsTrigger key={tf} value={tf} className="px-4 py-1.5 text-xs font-black uppercase tracking-wider rounded-lg transition-all text-[#94a3b8] hover:text-white hover:bg-[#0B0F19]/50 data-[state=active]:bg-[#00875a] data-[state=active]:text-white h-auto">
+                <TabsTrigger key={tf} value={tf} className="px-4 py-1.5 text-xs font-black uppercase tracking-wider rounded-lg transition-all text-[#9f9fa0] hover:text-white hover:bg-[#0f1011]/50 data-[state=active]:bg-[#847dff] data-[state=active]:text-white h-auto">
                   {tf}
                 </TabsTrigger>
               ))}
@@ -315,7 +315,7 @@ export default function ExplorePage() {
           </Tabs>
 
           {/* Chart */}
-          <div className="relative w-full h-[260px] bg-[#0B0F19]/60 rounded-xl border border-[#1F2A3F] p-4">
+          <div className="relative w-full h-[260px] bg-[#0f1011]/60 rounded-xl border border-white/[0.06] p-4">
             {chartData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
@@ -332,22 +332,22 @@ export default function ExplorePage() {
                       <stop offset="95%" stopColor={themeColor} stopOpacity={0.02} />
                     </linearGradient>
                   </defs>
-                  <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: '#94A3B8', fontSize: 10, fontFamily: 'monospace' }} />
-                  <YAxis domain={['auto', 'auto']} tickLine={false} axisLine={false} tick={{ fill: '#94A3B8', fontSize: 10, fontFamily: 'monospace' }} />
+                  <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: '#9f9fa0', fontSize: 10, fontFamily: 'monospace' }} />
+                  <YAxis domain={['auto', 'auto']} tickLine={false} axisLine={false} tick={{ fill: '#9f9fa0', fontSize: 10, fontFamily: 'monospace' }} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#161F30', borderColor: '#1F2A3F', borderRadius: '8px', color: '#FFF', fontSize: '12px' }}
+                    contentStyle={{ backgroundColor: '#090a0b', borderColor: 'rgba(255,255,255,0.06)', borderRadius: '8px', color: '#FFF', fontSize: '12px' }}
                     itemStyle={{ color: themeColor }}
-                    labelStyle={{ color: '#94A3B8', fontWeight: 'bold' }}
+                    labelStyle={{ color: '#9f9fa0', fontWeight: 'bold' }}
                   />
                   <Area type="monotone" dataKey="value" stroke={themeColor} strokeWidth={2.5} fill="url(#chartGrad)" dot={false} activeDot={{ r: 6, fill: '#FFFFFF', stroke: themeColor, strokeWidth: 2 }} />
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
-              <div className="text-[#94a3b8] italic text-xs flex items-center justify-center h-full">No data available</div>
+              <div className="text-[#9f9fa0] italic text-xs flex items-center justify-center h-full">No data available</div>
             )}
           </div>
 
-          <div className="flex justify-between items-center text-[10px] text-[#94a3b8] mt-3 font-mono">
+          <div className="flex justify-between items-center text-[10px] text-[#9f9fa0] mt-3 font-mono">
             <span>{chartData[0]?.date ?? ''}</span>
             <span>Live feed • 60s refresh</span>
             <span>{chartData[chartData.length - 1]?.date ?? ''}</span>
@@ -358,10 +358,10 @@ export default function ExplorePage() {
         <aside className="lg:col-span-4 flex flex-col gap-6">
 
           {/* Stock Watchlist */}
-          <div className="bg-[#161F30] border border-[#1F2A3F] rounded-2xl p-6 shadow-2xl max-h-[420px] flex flex-col">
-            <h3 className="text-sm font-black uppercase tracking-widest text-[#94a3b8] mb-4 flex items-center justify-between">
+          <div className="bg-[#090a0b] border border-white/[0.06] rounded-2xl p-6 shadow-2xl max-h-[420px] flex flex-col">
+            <h3 className="text-sm font-black uppercase tracking-widest text-[#9f9fa0] mb-4 flex items-center justify-between">
               <span>NEPSE Watchlist</span>
-              <span className="text-[10px] font-normal normal-case tracking-normal text-[#94a3b8]/60">{filteredStocks.length} stocks</span>
+              <span className="text-[10px] font-normal normal-case tracking-normal text-[#9f9fa0]/60">{filteredStocks.length} stocks</span>
             </h3>
             <div className="flex flex-col gap-2 overflow-y-auto flex-1 pr-1">
               <AnimatePresence>
@@ -376,13 +376,13 @@ export default function ExplorePage() {
                       onClick={() => { setSelectedSymbol(s.symbol); setHoverIndex(null); }}
                       className={`w-full text-left p-3 rounded-lg border transition-all duration-200 flex justify-between items-center ${
                         active
-                          ? 'bg-[#0B0F19] border-[#00875a] shadow-lg'
-                          : 'bg-[#161F30] border-[#1F2A3F] hover:border-[#94a3b8]/30 hover:bg-[#0B0F19]/40'
+                          ? 'bg-[#0f1011] border-[#847dff] shadow-lg'
+                          : 'bg-[#090a0b] border-white/[0.06] hover:border-[#9f9fa0]/30 hover:bg-[#0f1011]/40'
                       }`}
                     >
                       <div className="min-w-0">
                         <h4 className="text-xs font-black font-mono text-white truncate">{s.symbol}</h4>
-                        <p className="text-[9px] text-[#94a3b8] truncate">{s.name}</p>
+                        <p className="text-[9px] text-[#9f9fa0] truncate">{s.name}</p>
                       </div>
                       <div className="text-right shrink-0 ml-3">
                         <p className="text-xs font-black font-mono text-white">{s.ltp.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
@@ -395,24 +395,24 @@ export default function ExplorePage() {
                 })}
               </AnimatePresence>
               {filteredStocks.length === 0 && (
-                <p className="text-xs text-[#94a3b8] italic text-center py-4">No matching stocks</p>
+                <p className="text-xs text-[#9f9fa0] italic text-center py-4">No matching stocks</p>
               )}
             </div>
           </div>
 
           {/* Top Movers */}
           {topStocks && (
-            <div className="bg-[#161F30] border border-[#1F2A3F] rounded-2xl p-6 shadow-2xl">
-              <h3 className="text-sm font-black uppercase tracking-widest text-[#94a3b8] mb-4 flex items-center justify-between">
+            <div className="bg-[#090a0b] border border-white/[0.06] rounded-2xl p-6 shadow-2xl">
+              <h3 className="text-sm font-black uppercase tracking-widest text-[#9f9fa0] mb-4 flex items-center justify-between">
                 Top Movers
-                <span className="material-symbols-outlined text-[#00f59b] text-lg">trending_up</span>
+                <span className="material-symbols-outlined text-[#847dff] text-lg">trending_up</span>
               </h3>
               <div className="space-y-3">
                 {(topStocks.top_gainers ?? []).slice(0, 3).map((g) => (
                   <div key={g.symbol} className="flex items-center justify-between">
                     <div>
                       <span className="text-xs font-bold font-mono text-white">{g.symbol}</span>
-                      <span className="text-[9px] text-[#94a3b8] ml-2">Gainer</span>
+                      <span className="text-[9px] text-[#9f9fa0] ml-2">Gainer</span>
                     </div>
                     <span className="text-xs font-bold font-mono text-[#00f59b]">+{g.percentChange.toFixed(2)}%</span>
                   </div>
@@ -421,7 +421,7 @@ export default function ExplorePage() {
                   <div key={l.symbol} className="flex items-center justify-between">
                     <div>
                       <span className="text-xs font-bold font-mono text-white">{l.symbol}</span>
-                      <span className="text-[9px] text-[#94a3b8] ml-2">Loser</span>
+                      <span className="text-[9px] text-[#9f9fa0] ml-2">Loser</span>
                     </div>
                     <span className="text-xs font-bold font-mono text-[#ef4444]">{l.percentChange.toFixed(2)}%</span>
                   </div>
@@ -437,9 +437,9 @@ export default function ExplorePage() {
 
         {/* Trending Sectors Grid */}
         <section className="lg:col-span-8 space-y-8">
-          <div className="flex justify-between items-end border-b border-[#1F2A3F] pb-4">
+          <div className="flex justify-between items-end border-b border-white/[0.06] pb-4">
             <h2 className="font-sans font-semibold text-3xl text-white italic">Trending Sectors</h2>
-            <Link to="/community" className="text-[10px] font-black text-[#00875a] uppercase tracking-widest hover:text-white transition-colors">
+            <Link to="/community" className="text-[10px] font-black text-[#847dff] uppercase tracking-widest hover:text-white transition-colors">
               EXPLORE ALL DISCUSSIONS
             </Link>
           </div>
@@ -451,24 +451,24 @@ export default function ExplorePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="group bg-[#161F30] border border-[#1F2A3F] rounded-2xl p-6 hover:border-[#00875a]/60 transition-all duration-300 shadow-xl hover:shadow-[#00875a]/5"
+                className="group bg-[#090a0b] border border-white/[0.06] rounded-2xl p-6 hover:border-[#847dff]/60 transition-all duration-300 shadow-xl hover:shadow-[#847dff]/5"
               >
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#0B0F19] border border-[#1F2A3F] flex items-center justify-center text-[#00f59b] group-hover:bg-[#00875a]/20 group-hover:border-[#00875a]/40 transition-all shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-[#0f1011] border border-white/[0.06] flex items-center justify-center text-[#847dff] group-hover:bg-[#847dff]/20 group-hover:border-[#847dff]/40 transition-all shrink-0">
                     <span className="material-symbols-outlined text-2xl">{SECTOR_ICONS[sector]}</span>
                   </div>
                   <div className="min-w-0">
-                    <h3 className="font-sans font-semibold text-xl text-white italic group-hover:text-[#00875a] transition-colors leading-tight">
+                    <h3 className="font-sans font-semibold text-xl text-white italic group-hover:text-[#847dff] transition-colors leading-tight">
                       {sector}
                     </h3>
-                    <p className="text-[10px] text-[#94a3b8] mt-1 leading-relaxed">{SECTOR_DESCRIPTIONS[sector]}</p>
+                    <p className="text-[10px] text-[#9f9fa0] mt-1 leading-relaxed">{SECTOR_DESCRIPTIONS[sector]}</p>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap gap-2 mt-auto">
                   <button
                     onClick={() => navigate(`/community?sector=${encodeURIComponent(sector)}`)}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-[#00875a]/10 border border-[#00875a]/30 text-[#00f59b] rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-[#00875a] hover:text-white transition-all"
+                    className="flex items-center gap-1.5 px-4 py-2 bg-[#847dff]/10 border border-[#847dff]/30 text-[#847dff] rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-[#847dff] hover:text-white transition-all"
                   >
                     <span className="material-symbols-outlined text-sm">forum</span>
                     Discuss
@@ -476,7 +476,7 @@ export default function ExplorePage() {
                   <button
                     onClick={() => handleSectorClick(sector)}
                     disabled={newsLoading && selectedSector === sector}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-[#0B0F19] border border-[#1F2A3F] text-white rounded-lg text-[9px] font-black uppercase tracking-widest hover:border-[#00875a]/50 transition-all disabled:opacity-40"
+                    className="flex items-center gap-1.5 px-4 py-2 bg-[#0f1011] border border-white/[0.06] text-white rounded-lg text-[9px] font-black uppercase tracking-widest hover:border-[#847dff]/50 transition-all disabled:opacity-40"
                   >
                     <span className="material-symbols-outlined text-sm">travel_explore</span>
                     {newsLoading && selectedSector === sector ? 'Researching...' : 'Latest News'}
@@ -490,60 +490,60 @@ export default function ExplorePage() {
         {/* Sidebar Panels */}
         <aside className="lg:col-span-4 space-y-8">
           {/* NRB Policy Center */}
-          <div className="bg-[#161F30] border border-[#1F2A3F] rounded-2xl p-6 shadow-2xl">
-            <h3 className="text-xs font-black uppercase tracking-widest text-[#94a3b8] mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-[#00f59b] text-lg">gavel</span>
+          <div className="bg-[#090a0b] border border-white/[0.06] rounded-2xl p-6 shadow-2xl">
+            <h3 className="text-xs font-black uppercase tracking-widest text-[#9f9fa0] mb-4 flex items-center gap-2">
+              <span className="material-symbols-outlined text-[#847dff] text-lg">gavel</span>
               NRB Policy Center
             </h3>
-            <p className="text-xs text-[#94a3b8] leading-relaxed mb-5">
+            <p className="text-xs text-[#9f9fa0] leading-relaxed mb-5">
               Review regulatory notifications, financial accessibility schemes, and capital market policies from Nepal Rastra Bank.
             </p>
             <div className="flex flex-col gap-3">
-              <a href="https://www.nrb.org.np/financial-literacy/" target="_blank" rel="noreferrer" className="w-full text-center py-3.5 bg-[#0B0F19] hover:bg-[#0B0F19]/50 border border-[#1F2A3F] hover:border-[#00875a] text-white text-[10px] font-black uppercase tracking-widest rounded-lg transition-all">
+              <a href="https://www.nrb.org.np/financial-literacy/" target="_blank" rel="noreferrer" className="w-full text-center py-3.5 bg-[#0f1011] hover:bg-[#0f1011]/50 border border-white/[0.06] hover:border-[#847dff] text-white text-[10px] font-black uppercase tracking-widest rounded-lg transition-all">
                 NRB Literacy Hub
               </a>
-              <a href="https://www.nrb.org.np/category/monetary-policy/" target="_blank" rel="noreferrer" className="w-full text-center py-3.5 bg-transparent border border-[#1F2A3F] hover:border-[#00875a] text-white text-[10px] font-black uppercase tracking-widest rounded-lg transition-all">
+              <a href="https://www.nrb.org.np/category/monetary-policy/" target="_blank" rel="noreferrer" className="w-full text-center py-3.5 bg-transparent border border-white/[0.06] hover:border-[#847dff] text-white text-[10px] font-black uppercase tracking-widest rounded-lg transition-all">
                 Monetary Policy Reports
               </a>
             </div>
           </div>
 
           {/* Sector News Panel */}
-          <div className="bg-[#161F30] border border-[#1F2A3F] rounded-2xl p-6 shadow-2xl">
-            <h3 className="text-xs font-black uppercase tracking-widest text-[#94a3b8] mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-[#00f59b] text-lg">newspaper</span>
+          <div className="bg-[#090a0b] border border-white/[0.06] rounded-2xl p-6 shadow-2xl">
+            <h3 className="text-xs font-black uppercase tracking-widest text-[#9f9fa0] mb-4 flex items-center gap-2">
+              <span className="material-symbols-outlined text-[#847dff] text-lg">newspaper</span>
               {selectedSector ? `${selectedSector} News` : 'Sector News'}
             </h3>
             {newsLoading ? (
               <div className="space-y-3">
-                <Skeleton className="h-20 bg-[#1F2A3F] rounded-xl" />
-                <Skeleton className="h-20 bg-[#1F2A3F] rounded-xl" />
-                <Skeleton className="h-20 bg-[#1F2A3F] rounded-xl" />
+                <Skeleton className="h-20 bg-[#2e2e2e] rounded-xl" />
+                <Skeleton className="h-20 bg-[#2e2e2e] rounded-xl" />
+                <Skeleton className="h-20 bg-[#2e2e2e] rounded-xl" />
               </div>
             ) : newsError ? (
               <div className="text-center py-6 bg-red-500/10 border border-red-500/20 rounded-xl">
                 <span className="material-symbols-outlined text-red-400 text-2xl mb-2 block">error</span>
                 <p className="text-sm font-bold text-white mb-1">Research Failed</p>
-                <p className="text-[10px] text-[#94a3b8] px-4">
+                <p className="text-[10px] text-[#9f9fa0] px-4">
                   {newsError.includes('API key') || newsError.includes('400') ? 'Invalid Gemini API Key. Please update VITE_GEMINI_API_KEY in your .env file.' : newsError}
                 </p>
               </div>
             ) : sectorNews && sectorNews.articles.length > 0 ? (
               <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
                 {sectorNews.articles.slice(0, 5).map((article, i) => (
-                  <div key={i} className="bg-[#0B0F19] rounded-xl p-4 border border-[#1F2A3F] hover:border-[#00875a]/30 transition-all flex flex-col h-full">
+                  <div key={i} className="bg-[#0f1011] rounded-xl p-4 border border-white/[0.06] hover:border-[#847dff]/30 transition-all flex flex-col h-full">
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <h4 className="text-[11px] font-bold text-white leading-tight">{article.title}</h4>
-                      <span className="text-[8px] text-[#00f59b] font-mono whitespace-nowrap shrink-0">{article.date}</span>
+                      <span className="text-[8px] text-[#847dff] font-mono whitespace-nowrap shrink-0">{article.date}</span>
                     </div>
-                    <p className="text-[10px] text-[#94a3b8] leading-relaxed flex-grow">{article.summary}</p>
-                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#1F2A3F]">
+                    <p className="text-[10px] text-[#9f9fa0] leading-relaxed flex-grow">{article.summary}</p>
+                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/[0.06]">
                       {article.source ? (
-                        <p className="text-[8px] text-[#94a3b8]/50 font-mono uppercase tracking-wider">Source: {article.source}</p>
+                        <p className="text-[8px] text-[#9f9fa0]/50 font-mono uppercase tracking-wider">Source: {article.source}</p>
                       ) : <span />}
                       <Link
                         to="/community"
-                        className="flex items-center gap-1 text-[8px] font-black uppercase tracking-widest text-[#00875a] hover:text-[#00f59b] transition-colors"
+                        className="flex items-center gap-1 text-[8px] font-black uppercase tracking-widest text-[#847dff] hover:text-[#847dff] transition-colors"
                       >
                         <span className="material-symbols-outlined text-[10px]">forum</span>
                         Discuss
@@ -554,9 +554,9 @@ export default function ExplorePage() {
               </div>
             ) : (
               <div className="text-center py-8">
-                <span className="material-symbols-outlined text-3xl text-[#94a3b8]/30 block mb-2">travel_explore</span>
-                <p className="text-[10px] text-[#94a3b8] italic">
-                  Click <span className="text-[#00f59b] font-bold">Latest News</span> on any sector above to see real-time AI-researched updates.
+                <span className="material-symbols-outlined text-3xl text-[#9f9fa0]/30 block mb-2">travel_explore</span>
+                <p className="text-[10px] text-[#9f9fa0] italic">
+                  Click <span className="text-[#847dff] font-bold">Latest News</span> on any sector above to see real-time AI-researched updates.
                 </p>
               </div>
             )}

@@ -117,7 +117,7 @@ export function AuthModal() {
                       placeholder="name@email.com"
                       value={resetEmail}
                       onChange={e => setResetEmail(e.target.value)}
-                      className="w-full bg-[#0B0F19] border border-slate-base/5 rounded-lg p-3 text-xs outline-none focus:border-club-green text-white transition-all font-medium"
+                      className="w-full bg-[#0f1011] border border-white/[0.06] rounded-lg p-3 text-xs outline-none focus:border-[#847dff] text-white transition-all font-medium"
                     />
                   </div>
 
@@ -199,7 +199,7 @@ export function AuthModal() {
                     placeholder="e.g. Aayush Shrestha"
                     value={authForm.name}
                     onChange={e => setAuthForm({...authForm, name: e.target.value})}
-                    className="w-full bg-[#0B0F19] border border-slate-base/5 rounded-lg p-3 text-xs outline-none focus:border-club-green text-white transition-all font-medium"
+                    className="w-full bg-[#0f1011] border border-white/[0.06] rounded-lg p-3 text-xs outline-none focus:border-[#847dff] text-white transition-all font-medium"
                   />
                 </div>
               )}
@@ -212,7 +212,7 @@ export function AuthModal() {
                   placeholder="name@email.com"
                   value={authForm.email}
                   onChange={e => setAuthForm({...authForm, email: e.target.value})}
-                  className="w-full bg-[#0B0F19] border border-slate-base/5 rounded-lg p-3 text-xs outline-none focus:border-club-green text-white transition-all font-medium"
+                  className="w-full bg-[#0f1011] border border-white/[0.06] rounded-lg p-3 text-xs outline-none focus:border-[#847dff] text-white transition-all font-medium"
                 />
               </div>
 
@@ -224,7 +224,7 @@ export function AuthModal() {
                   placeholder="••••••••"
                   value={authForm.password}
                   onChange={e => setAuthForm({...authForm, password: e.target.value})}
-                  className="w-full bg-[#0B0F19] border border-slate-base/5 rounded-lg p-3 text-xs outline-none focus:border-club-green text-white transition-all font-medium"
+                  className="w-full bg-[#0f1011] border border-white/[0.06] rounded-lg p-3 text-xs outline-none focus:border-[#847dff] text-white transition-all font-medium"
                 />
                 {!isSignUpMode && (
                   <div className="text-right mt-1.5">
@@ -296,7 +296,7 @@ export function AuthModal() {
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-slate-base/10" />
               </div>
-              <span className="relative px-3 bg-[#161F30] text-[9px] font-black uppercase tracking-widest text-text-muted">or continue with</span>
+              <span className="relative px-3 bg-[#090a0b] text-[9px] font-black uppercase tracking-widest text-text-muted">or continue with</span>
             </div>
 
             <button

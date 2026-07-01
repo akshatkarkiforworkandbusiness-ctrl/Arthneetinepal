@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react';
 import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
-import ShinyText from './ShinyText';
-import { GradientCard } from './GradientCard';
 import { LESSONS, LEVEL_COLORS } from './LearnPage';
 
 interface Topic {
@@ -84,7 +82,6 @@ const pillarsSyllabus = [
   }
 ];
 
-
 const mockPamphlets = [
   {
     title: 'Stock Market Investing in Practice — A NEPSE Guide',
@@ -140,22 +137,25 @@ const mockFAQs = {
   ]
 };
 
+const CHROMATIC_GRADIENTS = [
+  'linear-gradient(135deg, rgba(132,125,255,0.15) 0%, rgba(9,10,11,0.95) 100%)',
+  'linear-gradient(135deg, rgba(0,179,221,0.15) 0%, rgba(9,10,11,0.95) 100%)',
+  'linear-gradient(135deg, rgba(221,144,216,0.15) 0%, rgba(9,10,11,0.95) 100%)',
+  'linear-gradient(135deg, rgba(144,184,240,0.15) 0%, rgba(9,10,11,0.95) 100%)',
+];
+
 export default function LandingPage() {
   const { user, handleJoinAction } = useAuth();
   const [latestTopics, setLatestTopics] = useState<Topic[]>([]);
   const [topicCount, setTopicCount] = useState(100);
 
-  // Market indices simulator
   const [marketIndices, setMarketIndices] = useState<Record<string, IndexState>>(initialIndices);
-  
-  // Interactive UI states
   const [activePillarIndex, setActivePillarIndex] = useState<number | null>(0);
   const [activeResourceTab, setActiveResourceTab] = useState<'videos' | 'pamphlets' | 'faq'>('videos');
   const [selectedVideoEmbed, setSelectedVideoEmbed] = useState<string | null>(null);
   const [faqLanguage, setFaqLanguage] = useState<'en' | 'np'>('en');
   const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(null);
 
-  // Firestore subscription for community updates
   useEffect(() => {
     const qLatest = query(collection(db, 'posts'), orderBy('createdAt', 'desc'), limit(6));
     const unsubscribeLatest = onSnapshot(qLatest, (snapshot) => {
@@ -177,7 +177,6 @@ export default function LandingPage() {
     };
   }, []);
 
-  // Market data: try live API, fall back to simulation if unavailable
   const [marketDataSource, setMarketDataSource] = useState<'live' | 'simulated' | 'loading'>('loading');
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
@@ -199,7 +198,6 @@ export default function LandingPage() {
         const indexData = await indexRes.json();
         const subData = subIndexRes.ok ? await subIndexRes.json() : [];
 
-        // Build combined list
         const all = [indexData, ...(Array.isArray(subData) ? subData : [])];
         const next: Record<string, IndexState> = { ...initialIndices };
 
@@ -224,19 +222,16 @@ export default function LandingPage() {
         setMarketDataSource('live');
         setLastUpdated(new Date());
       } catch {
-        // API unreachable — fall back to animated simulation
         if (marketDataSource === 'loading') setMarketDataSource('simulated');
       }
     };
 
     fetchLiveData();
-    const liveInterval = setInterval(fetchLiveData, 60_000); // refresh every 60s
-
+    const liveInterval = setInterval(fetchLiveData, 60_000);
     return () => clearInterval(liveInterval);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Simulation tick — only runs when API is unavailable
   useEffect(() => {
     if (marketDataSource !== 'simulated') return;
     const interval = setInterval(() => {
@@ -258,20 +253,6 @@ export default function LandingPage() {
     return () => clearInterval(interval);
   }, [marketDataSource]);
 
-  const stats = [
-    { label: 'Active Topics', value: `${topicCount}+` },
-    { label: 'Board Members', value: '4' },
-    { label: 'Core Pillars', value: '3' }
-  ];
-
-  const socialIcons = [
-    { name: 'Women & Girls', icon: 'woman' },
-    { name: 'Children\'s Welfare', icon: 'child_care' },
-    { name: 'Disability Inclusion', icon: 'accessible' },
-    { name: 'Underprivileged Communities', icon: 'groups' }
-  ];
-
-  // Map numbers to SVG sparkline values
   const getSparklinePath = (points: number[]) => {
     if (points.length === 0) return '';
     const width = 120;
@@ -294,143 +275,177 @@ export default function LandingPage() {
     <motion.main 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="flex flex-col bg-[#0B0F19]"
+      className="flex flex-col bg-[#0f1011]"
     >
-      {/* Hero Section */}
-      <section className="relative overflow-hidden pt-32 pb-44 px-6 min-h-[85vh] flex flex-col justify-center items-center text-center">
-        {/* Geometric Dot/Grid Background */}
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="dotPattern" width="30" height="30" patternUnits="userSpaceOnUse">
-                <circle cx="15" cy="15" r="1.5" fill="#94A3B8" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#dotPattern)" />
-          </svg>
-        </div>
+      {/* ═══════════════════════════════════════════
+       * HERO SECTION — Dusk Sky Atmosphere
+       * ═══════════════════════════════════════════ */}
+      <section className="relative overflow-hidden min-h-[90vh] flex flex-col justify-center items-center text-center px-6">
+        {/* Dusk Sky Gradient Background */}
+        <div className="absolute inset-0 gradient-dusk-sky" />
+        
+        {/* Subtle noise texture overlay */}
+        <div 
+          className="absolute inset-0 opacity-[0.03] pointer-events-none"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+          }}
+        />
 
-        {/* Nepal Flag Floating Accents */}
-        <div className="absolute top-20 right-[15%] w-72 h-72 bg-electric-mint/10 rounded-lg blur-3xl" />
-        <div className="absolute bottom-20 left-[15%] w-72 h-72 bg-club-green/10 rounded-lg blur-3xl" />
+        <div className="relative z-10 max-w-4xl mx-auto pt-20">
+          {/* Promo Pill */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mb-10"
+          >
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/[0.05] backdrop-blur-sm text-[11px] font-bold uppercase tracking-[0.182em] text-white">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#847dff] animate-pulse" />
+              Nepali Youth Led Movement
+            </span>
+          </motion.div>
 
-        <motion.div
-          initial={{ y: 30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="relative z-10 max-w-4xl"
-        >
-          <ShinyText
-            text="✨ NEPALESE YOUTH LED MOVEMENT"
-            speed={2}
-            delay={0}
-            color="#FF3366"
-            shineColor="#ffffff"
-            spread={120}
-            direction="left"
-            yoyo={false}
-            pauseOnHover={false}
-            disabled={false}
-            className="text-[10px] font-black mb-4 block uppercase tracking-[0.4em]"
-          />
-          <h1 className="text-5xl md:text-8xl text-white mb-8 leading-tight tracking-tight font-sans tracking-tight font-semibold italic">
+          {/* Display Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.15 }}
+            className="display-heading mb-8"
+          >
             Think Big. <br />
             Invest Smart. <br />
             Lead Nepal.
-          </h1>
-          <p className="text-lg md:text-xl text-text-muted mb-12 max-w-2xl mx-auto font-sans font-medium">
+          </motion.h1>
+
+          {/* Subheading */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="text-lg text-[#9f9fa0] mb-12 max-w-2xl mx-auto font-light leading-relaxed"
+          >
             Building the next generation of economically literate leaders and investors across Nepal.
-          </p>
+          </motion.p>
           
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+          {/* CTA — Single White Pill */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.45 }}
+            className="flex flex-col items-center gap-6"
+          >
             {!user ? (
-              <button 
-                onClick={handleJoinAction}
-                className="bg-electric-mint text-slate-base px-10 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-white hover:text-electric-mint transition-all shadow-2xl cursor-pointer"
-              >
+              <button onClick={handleJoinAction} className="btn-primary-pill text-[12px] px-10 py-4">
                 Join Arthneeti
+                <span className="text-base">→</span>
               </button>
             ) : (
-              <Link 
-                to="/profile" 
-                className="bg-electric-mint text-slate-base px-10 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-white hover:text-electric-mint transition-all shadow-2xl text-center"
-              >
+              <Link to="/profile" className="btn-primary-pill text-[12px] px-10 py-4">
                 Go to Dashboard
+                <span className="text-base">→</span>
               </Link>
             )}
             <Link 
-              to="/discover" 
-              className="border border-[#1F2A3F] bg-[#161F30] text-white px-10 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-club-green hover:border-club-green transition-all text-center"
+              to="/discover"
+              className="text-[11px] font-bold uppercase tracking-[0.182em] text-[#9f9fa0] hover:text-white transition-colors flex items-center gap-2"
             >
-              Explore Ticker & Tools
+              Explore Markets
+              <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </Link>
-          </div>
-        </motion.div>
+          </motion.div>
 
-        {/* Animated Marquee Bottom */}
-        <div className="absolute bottom-0 left-0 w-full bg-[#161F30]/80 py-4 overflow-hidden border-t border-[#1F2A3F]">
-          <div className="flex whitespace-nowrap animate-marquee">
-            {[...Array(8)].map((_, i) => (
-              <span key={i} className="text-text-muted text-[9px] font-black uppercase tracking-[0.4em] mx-10">
-                NEPSE MARKET HUB • CAPITAL EDUCATION • NRB COMPLIANCE • POLICY DISCOURSE • FINANCIAL DEMOCRACY •
-              </span>
-            ))}
-          </div>
+          {/* Award Badges */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.8 }}
+            className="flex items-center justify-center gap-12 mt-20"
+          >
+            <div className="text-center">
+              <span className="text-[10px] font-bold uppercase tracking-[0.182em] text-[#9f9fa0]/60 block mb-1">Featured In</span>
+              <span className="text-sm font-light text-white/80">Student Leadership Forum</span>
+            </div>
+            <div className="w-px h-8 bg-white/10" />
+            <div className="text-center">
+              <span className="text-[10px] font-bold uppercase tracking-[0.182em] text-[#9f9fa0]/60 block mb-1">Recognition</span>
+              <span className="text-sm font-light text-white/80">Nepal Financial Education</span>
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* Market Ticker Sparkline Section */}
-      <section className="bg-[#161F30] border-y border-[#1F2A3F] py-8 px-6">
-        <div className="max-w-7xl mx-auto">
-          {/* Header row with status + disclaimer */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted">NEPSE Market Indices</span>
+      {/* ═══════════════════════════════════════════
+       * MARKET TICKER — Chromatic Illuminated Cards
+       * ═══════════════════════════════════════════ */}
+      <section className="bg-[#0f1011] py-16 px-6">
+        <div className="max-w-[1200px] mx-auto">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-10">
+            <div className="flex items-center gap-3">
+              <span className="tracked-label">NEPSE Market Indices</span>
               {marketDataSource === 'live' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-green-light/10 border border-green-light/30 text-green-light text-[9px] font-black uppercase tracking-widest">
-                  <span className="w-1.5 h-1.5 rounded-lg bg-green-light animate-pulse inline-block" />
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#00f59b]/10 text-[#00f59b] text-[9px] font-bold uppercase tracking-[0.182em]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#00f59b] animate-pulse" />
                   Live
                 </span>
               )}
               {marketDataSource === 'simulated' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-amber-400/10 border border-amber-400/30 text-amber-400 text-[9px] font-black uppercase tracking-widest">
-                  <span className="w-1.5 h-1.5 rounded-lg bg-amber-400 inline-block" />
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#dd90d8]/10 text-[#dd90d8] text-[9px] font-bold uppercase tracking-[0.182em]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#dd90d8]" />
                   Simulated
                 </span>
               )}
-              {marketDataSource === 'loading' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#1F2A3F] text-text-muted text-[9px] font-black uppercase tracking-widest">
-                  <span className="inline-block w-2 h-2 border border-text-muted border-t-transparent rounded-lg animate-spin" />
-                  Loading
-                </span>
-              )}
             </div>
-            <div className="flex flex-col sm:items-end gap-0.5">
-              <p className="text-[9px] text-text-muted leading-relaxed max-w-xs sm:text-right">
-                {marketDataSource === 'live'
-                  ? `Data via NepseAPI (unofficial). For educational use only — not financial advice.${lastUpdated ? ` Updated ${lastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}` : ''}`
-                  : 'Live data unavailable. Showing simulated values for educational illustration only — not real market data.'}
-              </p>
-            </div>
+            <p className="text-[9px] text-[#9f9fa0]/60 max-w-xs sm:text-right leading-relaxed">
+              {marketDataSource === 'live'
+                ? `Data via NepseAPI (unofficial). For educational use only.${lastUpdated ? ` Updated ${lastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}` : ''}`
+                : 'Live data unavailable. Showing simulated values for illustration only.'}
+            </p>
           </div>
 
+          {/* Chromatic Index Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {Object.keys(marketIndices).map((key) => {
+            {Object.keys(marketIndices).map((key, idx) => {
               const item = marketIndices[key];
               const isGain = item.change >= 0;
-              const accentColor = isGain ? '#10B981' : '#F43F5E';
+              const accentColor = isGain ? '#00f59b' : '#ef4444';
               const sign = isGain ? '+' : '';
+              const gradients = [
+                'linear-gradient(135deg, rgba(132,125,255,0.2) 0%, rgba(15,16,17,0.95) 100%)',
+                'linear-gradient(135deg, rgba(0,179,221,0.2) 0%, rgba(15,16,17,0.95) 100%)',
+                'linear-gradient(135deg, rgba(144,184,240,0.2) 0%, rgba(15,16,17,0.95) 100%)',
+              ];
               
               return (
-                <div 
-                  key={key} 
-                  className="bg-[#0B0F19] border border-[#1F2A3F] p-5 rounded-lg-2xl flex justify-between items-center shadow-lg hover:border-club-green/50 transition-all duration-300"
+                <motion.div 
+                  key={key}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="relative overflow-hidden p-6 flex justify-between items-center group"
+                  style={{
+                    borderRadius: '30px',
+                    background: gradients[idx % 3],
+                  }}
                 >
-                  <div>
-                    <span className="text-[10px] font-black uppercase tracking-wider text-text-muted block mb-1">{item.name}</span>
-                    <h4 className="text-2xl font-black font-mono text-white tracking-tight">{item.value.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h4>
+                  {/* Subtle inner glow */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                    style={{
+                      background: `radial-gradient(circle at 50% 100%, ${accentColor}10 0%, transparent 70%)`,
+                    }}
+                  />
+                  
+                  <div className="relative z-10">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.182em] text-[#9f9fa0] block mb-2">
+                      {item.name}
+                    </span>
+                    <h4 className="text-3xl font-light text-white tracking-tight" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      {item.value.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    </h4>
                     <span 
-                      className="text-xs font-bold font-mono inline-flex items-center gap-0.5 mt-1"
+                      className="text-xs font-bold font-mono inline-flex items-center gap-1 mt-2"
                       style={{ color: accentColor }}
                     >
                       <span className="material-symbols-outlined text-[10px]">
@@ -440,63 +455,68 @@ export default function LandingPage() {
                     </span>
                   </div>
                   
-                  {/* Sparkline Graphic */}
-                  <div className="w-[120px] h-[40px] flex items-center">
+                  {/* Sparkline */}
+                  <div className="w-[120px] h-[40px] flex items-center relative z-10">
                     <svg className="w-full h-full">
                       <path 
                         d={getSparklinePath(item.sparkline)}
                         fill="none"
                         stroke={accentColor}
-                        strokeWidth="2"
+                        strokeWidth="1.5"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       />
                     </svg>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>
         </div>
       </section>
 
-      {/* Learning Academy Curriculum Roadmap Section */}
-      <section className="py-28 px-6 bg-[#0B0F19]">
-        <div className="max-w-7xl mx-auto">
+      {/* ═══════════════════════════════════════════
+       * CURRICULUM ROADMAP — Editorial Section
+       * ═══════════════════════════════════════════ */}
+      <section className="py-28 px-6 bg-[#0f1011]">
+        <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
             <div>
-              <span className="text-[10px] font-black text-electric-mint mb-4 block uppercase tracking-[0.4em]">ARTHNEETI ACADEMY</span>
-              <h2 className="text-4xl md:text-6xl text-white leading-tight italic font-sans tracking-tight font-semibold">Curriculum Roadmap</h2>
+              <span className="tracked-label text-[#847dff] mb-4 block">ARTHNEETI ACADEMY</span>
+              <h2 className="section-heading">Curriculum<br />Roadmap</h2>
             </div>
-            <p className="text-text-muted max-w-sm text-sm leading-relaxed">
+            <p className="text-[#9f9fa0] max-w-sm text-sm leading-relaxed">
               Explore the educational path designed to empower students with structural economic knowledge and real market insights.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            {/* Left Side: Accordion Headers */}
-            <div className="lg:col-span-5 flex flex-col gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {/* Left: Accordion Headers */}
+            <div className="lg:col-span-5 flex flex-col gap-3">
               {pillarsSyllabus.map((pillar, i) => (
                 <button
                   key={pillar.title}
                   onClick={() => setActivePillarIndex(activePillarIndex === i ? null : i)}
-                  className={`w-full text-left p-6 rounded-lg-2xl border transition-all duration-300 flex items-start gap-4 ${
+                  className={`w-full text-left p-6 border transition-all duration-300 flex items-start gap-4 ${
                     activePillarIndex === i 
-                      ? 'bg-[#161F30] border-club-green shadow-lg' 
-                      : 'bg-transparent border-[#1F2A3F] hover:border-text-muted/40 hover:bg-[#161F30]/30'
+                      ? 'bg-[#090a0b] border-white/10' 
+                      : 'bg-transparent border-transparent hover:bg-[#090a0b]/50 hover:border-white/[0.04]'
                   }`}
+                  style={{ borderRadius: '16px' }}
                 >
-                  <span className="text-2xl font-sans tracking-tight font-semibold text-club-green/40 font-bold">{pillar.num}</span>
+                  <span className="text-2xl font-light text-[#9f9fa0]/30" style={{ fontFamily: 'Playfair Display, serif' }}>
+                    {pillar.num}
+                  </span>
                   <div>
-                    <h3 className="text-lg font-bold text-white mb-2">{pillar.title}</h3>
-                    <p className="text-xs text-text-muted leading-relaxed">{pillar.desc}</p>
+                    <h3 className="text-base font-medium text-white mb-2">{pillar.title}</h3>
+                    <p className="text-xs text-[#9f9fa0] leading-relaxed">{pillar.desc}</p>
                   </div>
                 </button>
               ))}
             </div>
 
-            {/* Right Side: Accordion Details */}
-            <div className="lg:col-span-7 bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl p-8 flex flex-col justify-between shadow-2xl">
+            {/* Right: Accordion Details */}
+            <div className="lg:col-span-7 bg-[#090a0b] border border-white/[0.06] p-8 flex flex-col justify-between" style={{ borderRadius: '30px' }}>
               <AnimatePresence mode="wait">
                 {activePillarIndex !== null ? (
                   <motion.div
@@ -507,41 +527,60 @@ export default function LandingPage() {
                     className="flex-grow flex flex-col justify-between"
                   >
                     <div>
-                      <div className="flex justify-between items-center border-b border-[#1F2A3F] pb-4 mb-6">
-                        <h4 className="text-xs font-black uppercase tracking-widest text-text-muted">
-                          Syllabus Modules ({pillarsSyllabus[activePillarIndex].title})
+                      <div className="flex justify-between items-center border-b border-white/[0.06] pb-4 mb-6">
+                        <h4 className="tracked-label">
+                          Syllabus Modules — {pillarsSyllabus[activePillarIndex].title}
                         </h4>
-                        <span className="text-[10px] font-black text-club-green uppercase tracking-widest bg-club-green/10 border border-club-green/20 px-3 py-1 rounded-lg">
+                        <span className="tracked-label text-[#847dff] bg-[#847dff]/10 px-3 py-1" style={{ borderRadius: '9999px' }}>
                           {pillarsSyllabus[activePillarIndex].modules.length} Lessons
                         </span>
                       </div>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                         {pillarsSyllabus[activePillarIndex].modules.map((mod, idx) => (
-                          <div key={idx} className="h-[280px]">
-                            <GradientCard 
-                              title={mod.title}
-                              description={`Master ${mod.title.toLowerCase()} in this comprehensive module.`}
-                              tag={`0${idx + 1}`}
-                            />
+                          <div 
+                            key={idx} 
+                            className="p-6 flex flex-col justify-between min-h-[200px]"
+                            style={{
+                              borderRadius: '30px',
+                              background: CHROMATIC_GRADIENTS[idx % CHROMATIC_GRADIENTS.length],
+                            }}
+                          >
+                            <div>
+                              <span className="text-[10px] font-bold uppercase tracking-[0.182em] text-[#847dff] block mb-3">
+                                Module 0{idx + 1}
+                              </span>
+                              <h4 className="text-sm font-medium text-white leading-snug mb-2">
+                                {mod.title}
+                              </h4>
+                              <p className="text-xs text-[#9f9fa0] leading-relaxed">
+                                Master {mod.title.toLowerCase()} in this comprehensive module.
+                              </p>
+                            </div>
+                            <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/[0.06]">
+                              <span className="text-[10px] font-mono text-[#9f9fa0]/60">{mod.duration}</span>
+                              <span className="text-[10px] font-bold uppercase tracking-[0.182em] text-[#9f9fa0]/40">
+                                0{idx + 1}
+                              </span>
+                            </div>
                           </div>
                         ))}
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between border-t border-[#1F2A3F] pt-6 mt-auto">
-                      <span className="text-[10px] text-text-muted italic">Ready to review? Jump into our market explorer.</span>
+                    <div className="flex items-center justify-between border-t border-white/[0.06] pt-6 mt-auto">
+                      <span className="text-xs text-[#9f9fa0]/60 italic">Ready to review? Jump into our market explorer.</span>
                       <Link 
                         to="/learn"
-                        className="bg-club-green text-white px-6 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-club-green transition-all flex items-center gap-1.5"
+                        className="btn-primary-pill text-[10px] py-2.5 px-5"
                       >
-                        Start Learning Modules
+                        Start Learning
                         <span className="material-symbols-outlined text-sm">arrow_forward</span>
                       </Link>
                     </div>
                   </motion.div>
                 ) : (
-                  <div className="h-full flex items-center justify-center text-text-muted italic text-xs py-20 text-center">
+                  <div className="h-full flex items-center justify-center text-[#9f9fa0]/40 italic text-xs py-20 text-center">
                     Select a core pillar roadmap on the left to view lessons and module materials.
                   </div>
                 )}
@@ -551,19 +590,21 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Nepal Rastra Bank (NRB) Financial Resource Portal */}
-      <section className="py-24 px-6 bg-[#161F30] border-y border-[#1F2A3F]">
-        <div className="max-w-7xl mx-auto">
+      {/* ═══════════════════════════════════════════
+       * FINANCIAL RESOURCE LIBRARY — Clean Tabs
+       * ═══════════════════════════════════════════ */}
+      <section className="py-24 px-6 bg-[#090a0b]">
+        <div className="max-w-[1200px] mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-[10px] font-black text-electric-mint mb-2 block uppercase tracking-[0.4em]">NRB-INSPIRED PORTAL</span>
-            <h2 className="text-4xl md:text-5xl text-white font-sans tracking-tight font-semibold italic mb-6">Financial Resource Library</h2>
-            <p className="text-text-muted text-sm leading-relaxed">
+            <span className="tracked-label text-[#847dff] mb-4 block">RESOURCES</span>
+            <h2 className="section-heading mb-6">Financial Resource<br />Library</h2>
+            <p className="text-[#9f9fa0] text-sm leading-relaxed">
               Explore media materials, Central Bank publications, downloadable infographics, and bilingual FAQs.
             </p>
           </div>
 
-          {/* Interactive Navigation Tabs */}
-          <div className="flex justify-center border-b border-[#1F2A3F] pb-4 mb-10 gap-3">
+          {/* Tabs */}
+          <div className="flex justify-center border-b border-white/[0.06] pb-4 mb-10 gap-2">
             {[
               { key: 'videos', label: 'Video Lessons', icon: 'play_circle' },
               { key: 'pamphlets', label: 'Guidelines & PDFs', icon: 'article' },
@@ -575,11 +616,12 @@ export default function LandingPage() {
                   setActiveResourceTab(tab.key as any);
                   setActiveFaqIndex(null);
                 }}
-                className={`px-6 py-3 text-xs font-black uppercase tracking-wider rounded-lg transition-all flex items-center gap-2 ${
+                className={`px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.182em] transition-all flex items-center gap-2 ${
                   activeResourceTab === tab.key 
-                    ? 'bg-club-green text-white shadow-xl' 
-                    : 'text-text-muted hover:text-white hover:bg-[#0B0F19]/60 border border-[#1F2A3F]'
+                    ? 'text-white bg-white/[0.06]' 
+                    : 'text-[#9f9fa0] hover:text-white hover:bg-white/[0.03]'
                 }`}
+                style={{ borderRadius: '9999px' }}
               >
                 <span className="material-symbols-outlined text-sm">{tab.icon}</span>
                 {tab.label}
@@ -587,7 +629,7 @@ export default function LandingPage() {
             ))}
           </div>
 
-          {/* Tab contents */}
+          {/* Tab Content */}
           <div className="min-h-[300px]">
             <AnimatePresence mode="wait">
               {activeResourceTab === 'videos' && (
@@ -596,40 +638,41 @@ export default function LandingPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="grid grid-cols-1 md:grid-cols-3 gap-8"
+                  className="grid grid-cols-1 md:grid-cols-3 gap-6"
                 >
                   {LESSONS.slice(0, 3).map((video, idx) => (
                     <div 
                       key={idx}
-                      className="bg-[#0B0F19] border border-[#1F2A3F] rounded-lg-2xl overflow-hidden group shadow-lg flex flex-col justify-between"
+                      className="bg-[#0f1011] border border-white/[0.06] overflow-hidden group flex flex-col justify-between"
+                      style={{ borderRadius: '30px' }}
                     >
                       <div className="relative aspect-video overflow-hidden bg-black/40">
                         <img 
                           src={video.thumbnail} 
                           alt={video.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-70"
                         />
                         <button 
                           onClick={() => setSelectedVideoEmbed(video.videoUrl)}
-                          className="absolute inset-0 m-auto w-12 h-12 bg-club-green text-white rounded-lg flex items-center justify-center shadow-2xl hover:scale-110 transition-transform cursor-pointer"
+                          className="absolute inset-0 m-auto w-12 h-12 bg-white/90 text-[#090a0b] rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform cursor-pointer"
                         >
                           <span className="material-symbols-outlined text-2xl">play_arrow</span>
                         </button>
-                        <span className="absolute bottom-3 right-3 bg-[#0B0F19] text-white text-[9px] font-bold font-mono px-2 py-0.5 rounded-lg border border-[#1F2A3F]">
+                        <span className="absolute bottom-3 right-3 bg-[#090a0b]/80 backdrop-blur-sm text-white text-[9px] font-mono px-2 py-1 border border-white/[0.06]" style={{ borderRadius: '9999px' }}>
                           {video.duration}
                         </span>
                       </div>
                       
                       <div className="p-6">
                         <div className="flex flex-wrap items-center gap-2 mb-3">
-                          <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border inline-block ${LEVEL_COLORS[video.level]}`}>
+                          <span className="text-[8px] font-bold uppercase tracking-[0.182em] px-2 py-0.5 border border-white/[0.06] text-[#9f9fa0] inline-block" style={{ borderRadius: '9999px' }}>
                             {video.level}
                           </span>
                         </div>
-                        <h4 className="text-sm font-bold text-white group-hover:text-club-green transition-colors mb-3 leading-snug line-clamp-2">
+                        <h4 className="text-sm font-medium text-white group-hover:text-[#847dff] transition-colors mb-2 leading-snug line-clamp-2">
                           {video.title}
                         </h4>
-                        <p className="text-xs text-text-muted leading-relaxed line-clamp-3">
+                        <p className="text-xs text-[#9f9fa0] leading-relaxed line-clamp-3">
                           {video.desc}
                         </p>
                       </div>
@@ -649,20 +692,21 @@ export default function LandingPage() {
                   {mockPamphlets.map((pamphlet, idx) => (
                     <div 
                       key={idx}
-                      className="bg-[#0B0F19] border border-[#1F2A3F] p-6 rounded-lg-2xl flex flex-col justify-between shadow-lg hover:border-club-green/50 transition-all duration-300"
+                      className="bg-[#0f1011] border border-white/[0.06] p-6 flex flex-col justify-between"
+                      style={{ borderRadius: '30px' }}
                     >
                       <div>
                         <div className="flex justify-between items-start mb-4">
-                          <span className="bg-[#161F30] text-text-muted text-[8px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border border-[#1F2A3F]">
+                          <span className="tracked-label text-[#847dff] bg-[#847dff]/10 px-2.5 py-1" style={{ borderRadius: '9999px' }}>
                             {pamphlet.category}
                           </span>
-                          <span className="text-[8px] font-bold font-mono text-text-muted">{pamphlet.size}</span>
+                          <span className="text-[9px] font-mono text-[#9f9fa0]/60">{pamphlet.size}</span>
                         </div>
                         
-                        <h4 className="text-sm font-bold text-white mb-3 leading-snug">
+                        <h4 className="text-sm font-medium text-white mb-2 leading-snug">
                           {pamphlet.title}
                         </h4>
-                        <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-6 block">
+                        <p className="text-[10px] font-bold text-[#9f9fa0]/60 uppercase tracking-[0.182em] mb-6 block">
                           Language: {pamphlet.language}
                         </p>
                       </div>
@@ -671,10 +715,11 @@ export default function LandingPage() {
                         href={pamphlet.downloadUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="w-full py-3 bg-[#161F30] hover:bg-club-green hover:text-white border border-[#1F2A3F] text-white text-[9px] font-black uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1.5"
+                        className="w-full py-3 border border-white/20 text-white text-[10px] font-bold uppercase tracking-[0.182em] transition-all flex items-center justify-center gap-1.5 hover:bg-white hover:text-[#090a0b]"
+                        style={{ borderRadius: '9999px' }}
                       >
                         <span className="material-symbols-outlined text-sm">download</span>
-                        Download PDF Guide
+                        Download PDF
                       </a>
                     </div>
                   ))}
@@ -687,46 +732,50 @@ export default function LandingPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="max-w-3xl mx-auto bg-[#0B0F19] border border-[#1F2A3F] rounded-lg-2xl p-6 md:p-8 shadow-xl"
+                  className="max-w-3xl mx-auto bg-[#0f1011] border border-white/[0.06] p-6 md:p-8"
+                  style={{ borderRadius: '30px' }}
                 >
                   {/* FAQ Header & Language Toggle */}
-                  <div className="flex justify-between items-center border-b border-[#1F2A3F] pb-4 mb-6">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-text-muted">Bilingual FAQ Accordion</span>
-                    <div className="flex gap-1.5 bg-[#161F30] border border-[#1F2A3F] p-1 rounded-lg">
+                  <div className="flex justify-between items-center border-b border-white/[0.06] pb-4 mb-6">
+                    <span className="tracked-label">Bilingual FAQ</span>
+                    <div className="flex gap-1 bg-[#090a0b] border border-white/[0.06] p-1" style={{ borderRadius: '9999px' }}>
                       <button
                         onClick={() => { setFaqLanguage('en'); setActiveFaqIndex(null); }}
-                        className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg-md transition-all ${
-                          faqLanguage === 'en' ? 'bg-club-green text-white' : 'text-text-muted hover:text-white'
+                        className={`px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.182em] transition-all ${
+                          faqLanguage === 'en' ? 'bg-white text-[#090a0b]' : 'text-[#9f9fa0] hover:text-white'
                         }`}
+                        style={{ borderRadius: '9999px' }}
                       >
                         English
                       </button>
                       <button
                         onClick={() => { setFaqLanguage('np'); setActiveFaqIndex(null); }}
-                        className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg-md transition-all ${
-                          faqLanguage === 'np' ? 'bg-club-green text-white' : 'text-text-muted hover:text-white'
+                        className={`px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.182em] transition-all ${
+                          faqLanguage === 'np' ? 'bg-white text-[#090a0b]' : 'text-[#9f9fa0] hover:text-white'
                         }`}
+                        style={{ borderRadius: '9999px' }}
                       >
                         नेपाली
                       </button>
                     </div>
                   </div>
 
-                  {/* Accordion Questions */}
-                  <div className="space-y-4">
+                  {/* Accordion */}
+                  <div className="space-y-3">
                     {mockFAQs[faqLanguage].map((faq, idx) => {
                       const isOpen = activeFaqIndex === idx;
                       return (
                         <div 
                           key={idx}
-                          className="border border-[#1F2A3F] rounded-lg overflow-hidden"
+                          className="border border-white/[0.06] overflow-hidden"
+                          style={{ borderRadius: '16px' }}
                         >
                           <button
                             onClick={() => setActiveFaqIndex(isOpen ? null : idx)}
-                            className="w-full flex justify-between items-center p-4 bg-[#161F30] hover:bg-[#161F30]/80 transition-colors text-left text-xs font-bold text-white"
+                            className="w-full flex justify-between items-center p-5 bg-[#090a0b] hover:bg-[#090a0b]/80 transition-colors text-left text-sm text-white"
                           >
-                            <span>{faq.q}</span>
-                            <span className="material-symbols-outlined text-text-muted transition-transform duration-300" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0)' }}>
+                            <span className="font-medium pr-4">{faq.q}</span>
+                            <span className="material-symbols-outlined text-[#9f9fa0] transition-transform duration-300 shrink-0" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0)' }}>
                               expand_more
                             </span>
                           </button>
@@ -737,9 +786,9 @@ export default function LandingPage() {
                                 initial={{ height: 0 }}
                                 animate={{ height: 'auto' }}
                                 exit={{ height: 0 }}
-                                className="overflow-hidden bg-[#0B0F19]/40 border-t border-[#1F2A3F]"
+                                className="overflow-hidden bg-[#0f1011]/50 border-t border-white/[0.04]"
                               >
-                                <p className="p-4 text-xs text-text-muted leading-relaxed">
+                                <p className="p-5 text-sm text-[#9f9fa0] leading-relaxed">
                                   {faq.a}
                                 </p>
                               </motion.div>
@@ -756,133 +805,147 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Dynamic Community Discussion Section */}
-      <section className="py-24 px-6 bg-[#0B0F19]">
-        <div className="max-w-7xl mx-auto">
+      {/* ═══════════════════════════════════════════
+       * COMMUNITY DISCUSSION — Editorial Cards
+       * ═══════════════════════════════════════════ */}
+      <section className="py-24 px-6 bg-[#0f1011]">
+        <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
             <div className="text-center md:text-left">
-              <span className="text-[10px] font-black text-electric-mint mb-2 block uppercase tracking-[0.4em]">LIVE DISCOURSE FEED</span>
-              <h2 className="text-4xl md:text-5xl text-white italic font-sans tracking-tight font-semibold">Latest Discussion Topics</h2>
+              <span className="tracked-label text-[#847dff] mb-4 block">LIVE DISCOURSE</span>
+              <h2 className="section-heading">Latest Discussions</h2>
             </div>
             <Link 
               to="/community" 
-              className="text-[10px] font-black text-club-green uppercase tracking-widest border border-club-green/30 px-8 py-4 rounded-lg hover:bg-club-green hover:text-white transition-all bg-[#161F30]/50"
+              className="btn-primary-pill text-[10px]"
             >
-              JOIN THE FORUM
+              Join the Forum
+              <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {latestTopics.map((topic, i) => (
               <motion.div
                 key={topic.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group p-8 rounded-lg-2xl bg-[#161F30] border border-[#1F2A3F] hover:border-club-green/50 hover:bg-[#161F30]/80 transition-all duration-300"
+                className="group p-8 bg-[#090a0b] border border-white/[0.06] hover:border-white/[0.12] transition-all duration-300"
+                style={{ borderRadius: '30px' }}
               >
                 <div className="flex justify-between items-start mb-6">
-                  <span className="px-3.5 py-1 bg-club-green/10 text-club-green text-[8px] font-black uppercase tracking-widest rounded-lg border border-club-green/20">
+                  <span className="tracked-label text-[#847dff] bg-[#847dff]/10 px-3 py-1" style={{ borderRadius: '9999px' }}>
                     {topic.category}
                   </span>
-                  <div className="flex items-center gap-1.5 text-electric-mint">
+                  <div className="flex items-center gap-1.5 text-[#9f9fa0]/60">
                     <span className="material-symbols-outlined text-sm">favorite</span>
-                    <span className="text-[10px] font-bold">{topic.likes}</span>
+                    <span className="text-[10px] font-mono">{topic.likes}</span>
                   </div>
                 </div>
                 <Link to="/community" className="block">
-                  <h3 className="text-lg text-white font-sans tracking-tight font-semibold italic mb-4 leading-snug group-hover:text-club-green transition-colors line-clamp-2">
+                  <h3 className="text-base text-white font-medium mb-4 leading-snug group-hover:text-[#847dff] transition-colors line-clamp-2">
                     {topic.title || (topic as any).content?.replace(/<[^>]*>?/gm, '').substring(0, 60) + '...'}
                   </h3>
                 </Link>
-                <div className="flex items-center gap-3 mt-6 pt-6 border-t border-[#1F2A3F]">
-                  <div className="w-8 h-8 rounded-lg bg-club-green/10 border border-club-green/30 flex items-center justify-center text-[10px] font-bold text-club-green uppercase">
+                <div className="flex items-center gap-3 mt-6 pt-6 border-t border-white/[0.06]">
+                  <div className="w-8 h-8 rounded-full bg-[#847dff]/10 border border-white/[0.06] flex items-center justify-center text-[10px] font-bold text-[#847dff] uppercase">
                     {topic.author[0]}
                   </div>
-                  <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">{topic.author}</span>
+                  <span className="tracked-label text-[10px]">{topic.author}</span>
                 </div>
               </motion.div>
             ))}
 
             {latestTopics.length === 0 && (
-              <div className="col-span-full py-20 text-center border-2 border-dashed border-[#1F2A3F] rounded-lg-2xl bg-[#161F30]/40">
-                <p className="text-text-muted italic text-xs">Connecting to community database server...</p>
+              <div className="col-span-full py-20 text-center border border-dashed border-white/[0.06] bg-[#090a0b]/50" style={{ borderRadius: '30px' }}>
+                <p className="text-[#9f9fa0]/40 italic text-xs">Connecting to community database server...</p>
               </div>
             )}
           </div>
         </div>
       </section>
 
-      {/* Social Mission & Equity Support Section */}
-      <section className="bg-[#161F30] border-t border-[#1F2A3F] py-28 px-6 overflow-hidden">
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-20">
+      {/* ═══════════════════════════════════════════
+       * SOCIAL MISSION — Editorial Quote Block
+       * ═══════════════════════════════════════════ */}
+      <section className="bg-[#090a0b] py-28 px-6 overflow-hidden">
+        <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row items-center gap-20">
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="lg:w-1/2 border-l-8 border-club-green pl-10"
+            className="lg:w-1/2 pl-8 border-l border-white/10"
           >
-            <h2 className="text-4xl md:text-5xl text-white leading-tight italic font-sans tracking-tight font-semibold mb-6">
+            <h2 className="text-3xl md:text-4xl text-white leading-snug font-light mb-6" style={{ fontFamily: 'Playfair Display, serif' }}>
               "We don't just teach finance — we use it to build a more equitable Nepal."
             </h2>
-            <p className="text-text-muted text-sm leading-relaxed max-w-lg">
+            <p className="text-[#9f9fa0] text-sm leading-relaxed max-w-lg">
               Arthneeti allocates workshop support and targeted curricula specifically for disadvantaged youths, disabled students, and underprivileged municipal schools to narrow the financial intelligence gap.
             </p>
           </motion.div>
           
-          <div className="lg:w-1/2 grid grid-cols-2 gap-8">
-            {socialIcons.map((item, i) => (
+          <div className="lg:w-1/2 grid grid-cols-2 gap-6">
+            {[
+              { name: 'Women & Girls', icon: 'woman' },
+              { name: "Children's Welfare", icon: 'child_care' },
+              { name: 'Disability Inclusion', icon: 'accessible' },
+              { name: 'Underprivileged Communities', icon: 'groups' }
+            ].map((item, i) => (
               <motion.div 
                 key={item.name} 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="flex flex-col items-center text-center p-6 bg-[#0B0F19] border border-[#1F2A3F] rounded-lg-2xl hover:border-club-green/50 transition-all duration-300"
+                className="flex flex-col items-center text-center p-6 bg-[#0f1011] border border-white/[0.06] hover:border-white/[0.12] transition-all duration-300"
+                style={{ borderRadius: '30px' }}
               >
-                <div className="w-16 h-16 rounded-lg bg-club-green/10 flex items-center justify-center text-club-green mb-4 border border-club-green/20">
-                  <span className="material-symbols-outlined text-3xl">{item.icon}</span>
+                <div className="w-14 h-14 rounded-full bg-[#847dff]/10 flex items-center justify-center text-[#847dff] mb-4 border border-[#847dff]/20">
+                  <span className="material-symbols-outlined text-2xl">{item.icon}</span>
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-white">{item.name}</span>
+                <span className="tracked-label text-[10px] text-white">{item.name}</span>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Executive Board Section */}
-      <section className="py-24 px-6 bg-[#0B0F19] border-t border-[#1F2A3F]">
-        <div className="max-w-7xl mx-auto">
+      {/* ═══════════════════════════════════════════
+       * EXECUTIVE BOARD — Minimal Editorial Cards
+       * ═══════════════════════════════════════════ */}
+      <section className="py-24 px-6 bg-[#0f1011]">
+        <div className="max-w-[1200px] mx-auto">
           <div className="text-center mb-20">
-            <span className="text-[10px] font-black text-electric-mint mb-4 block uppercase tracking-[0.4em]">LEADERSHIP</span>
-            <h2 className="text-4xl md:text-5xl text-white italic mb-6 font-sans tracking-tight font-semibold">Executive Board</h2>
-            <p className="text-text-muted max-w-xl mx-auto italic font-sans text-sm">
+            <span className="tracked-label text-[#847dff] mb-4 block">LEADERSHIP</span>
+            <h2 className="section-heading mb-6">Executive Board</h2>
+            <p className="text-[#9f9fa0] max-w-xl mx-auto text-sm">
               The founding team driving the movement for financial intelligence in Nepal.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
                 name: 'Akshat Karki',
                 role: 'President',
-                bio: "Leading Arthneeti's vision to build Nepal's most impactful youth financial education movement. Focused on school partnerships, club strategy, and driving the mission forward."
+                bio: "Leading Arthneeti's vision to build Nepal's most impactful youth financial education movement."
               },
               {
                 name: 'Manash Koirala',
                 role: 'Vice President',
-                bio: "Supporting club operations and co-leading educational strategy. Passionate about making stock market knowledge accessible to every Nepali high schooler."
+                bio: "Supporting club operations and co-leading educational strategy for accessible stock market knowledge."
               },
               {
                 name: 'Ujjwal Dhungana',
-                role: 'Head of Research & Communication',
-                bio: "Driving Arthneeti's research agenda and external communications. Builds the intellectual content that makes our sessions substantive and credible."
+                role: 'Head of Research',
+                bio: "Driving Arthneeti's research agenda and external communications with substantive, credible content."
               },
               {
                 name: 'Pranjal Khatiwada',
                 role: 'Secretary',
-                bio: "Managing club coordination, records, and logistics. Ensures Arthneeti runs smoothly across all schools and sessions."
+                bio: "Managing club coordination, records, and logistics across all schools and sessions."
               }
             ].map((member, i) => (
               <motion.div
@@ -891,19 +954,20 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-[#161F30] p-10 rounded-lg relative border-t-8 border-electric-mint border border-[#1F2A3F] shadow-2xl flex flex-col items-center text-center group hover:-translate-y-2 transition-all duration-500"
+                className="bg-[#090a0b] border border-white/[0.06] p-8 flex flex-col items-center text-center group hover:border-white/[0.12] transition-all duration-500"
+                style={{ borderRadius: '30px' }}
               >
-                <div className="w-20 h-20 rounded-lg border-4 border-white/10 flex items-center justify-center text-white font-sans tracking-tight font-semibold italic text-3xl mb-8 group-hover:border-electric-mint group-hover:text-electric-mint transition-all duration-500">
+                <div className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center text-white text-lg font-light mb-6 group-hover:border-[#847dff]/40 transition-all duration-500" style={{ fontFamily: 'Playfair Display, serif' }}>
                   {member.name.split(' ').map(n => n[0]).join('')}
                 </div>
-                <h3 className="text-xl text-white font-sans tracking-tight font-semibold italic mb-2">{member.name}</h3>
-                <p className="text-[10px] font-black uppercase tracking-widest text-electric-mint mb-6">{member.role}</p>
-                <p className="text-text-muted text-xs italic font-sans leading-relaxed mb-6">
+                <h3 className="text-base text-white font-medium mb-1">{member.name}</h3>
+                <p className="tracked-label text-[#847dff] text-[9px] mb-4">{member.role}</p>
+                <p className="text-[#9f9fa0] text-xs leading-relaxed mb-6">
                   {member.bio}
                 </p>
                 <a 
                   href="mailto:learnarthneeti@gmail.com"
-                  className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-electric-mint transition-colors"
+                  className="tracked-label text-[9px] text-[#9f9fa0]/40 hover:text-[#847dff] transition-colors mt-auto"
                 >
                   Get In Touch
                 </a>
@@ -913,7 +977,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Video Playback Modal Overlay */}
+      {/* Video Playback Modal */}
       <AnimatePresence>
         {selectedVideoEmbed && (
           <div 
@@ -924,7 +988,8 @@ export default function LandingPage() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl overflow-hidden max-w-3xl w-full shadow-2xl relative"
+              className="bg-[#090a0b] border border-white/[0.06] overflow-hidden max-w-3xl w-full shadow-2xl relative"
+              style={{ borderRadius: '30px' }}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="relative aspect-video">
@@ -937,13 +1002,13 @@ export default function LandingPage() {
                   allowFullScreen
                 />
               </div>
-              <div className="p-4 flex justify-between items-center">
-                <span className="text-[10px] text-text-muted italic">Arthneeti Academy Resource System</span>
+              <div className="p-5 flex justify-between items-center">
+                <span className="text-[10px] text-[#9f9fa0]/60 italic">Arthneeti Academy Resource System</span>
                 <button
                   onClick={() => setSelectedVideoEmbed(null)}
-                  className="bg-club-green text-white px-5 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-white hover:text-club-green transition-all cursor-pointer"
+                  className="btn-primary-pill text-[10px] py-2 px-5"
                 >
-                  Close Player
+                  Close
                 </button>
               </div>
             </motion.div>
@@ -952,6 +1017,5 @@ export default function LandingPage() {
       </AnimatePresence>
 
     </motion.main>
-
   );
 }

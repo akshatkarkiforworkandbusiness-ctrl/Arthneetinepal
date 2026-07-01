@@ -1910,17 +1910,17 @@ const MODULES: Module[] = [
 const FAQS: FAQ[] = LESSONS.flatMap(lesson => lesson.faqs || []);
 
 export const LEVEL_COLORS: Record<string, string> = {
-  'Beginner': 'bg-electric-mint/10 text-electric-mint border-electric-mint/20',
-  'Intermediate': 'bg-amber-400/10 text-amber-400 border-amber-400/20',
-  'Advanced': 'bg-rose-400/10 text-rose-400 border-rose-400/20',
+  'Beginner': 'bg-[#9f9fa0]/10 text-[#9f9fa0] border-electric-mint/20',
+  'Intermediate': 'bg-[#dd90d8]/10 text-[#dd90d8] border-[#dd90d8]/20',
+  'Advanced': 'bg-[#ef4444]/10 text-[#ef4444] border-[#ef4444]/20',
 };
 
 const TAG_COLORS: Record<string, string> = {
-  'Stock Market':       'bg-club-green/10 text-club-green border-club-green/20',
-  'Policy & Economics': 'bg-electric-mint/10 text-electric-mint border-electric-mint/20',
-  'Technical Analysis': 'bg-green-light/10 text-green-light border-green-light/20',
-  'Financial Literacy': 'bg-amber-400/10 text-amber-400 border-amber-400/20',
-  'Research':           'bg-violet-400/10 text-violet-400 border-violet-400/20',
+  'Stock Market':       'bg-[#847dff]/10 text-[#847dff] border-club-green/20',
+  'Policy & Economics': 'bg-[#9f9fa0]/10 text-[#9f9fa0] border-electric-mint/20',
+  'Technical Analysis': 'bg-[#9f9fa0]/10 text-[#9f9fa0] border-green-light/20',
+  'Financial Literacy': 'bg-[#dd90d8]/10 text-[#dd90d8] border-[#dd90d8]/20',
+  'Research':           'bg-[#847dff]/10 text-[#847dff] border-[#847dff]/20',
 };
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -2087,7 +2087,7 @@ export default function LearnPage() {
 
       {/* Page Header */}
       <div className="mb-16">
-        <p className="text-[10px] font-black uppercase tracking-widest text-royal mb-4">Arthneeti Academy</p>
+        <p className="text-[10px] font-black uppercase tracking-widest text-[#847dff] mb-4">Arthneeti Academy</p>
         <h1 className="text-5xl md:text-7xl font-display italic text-white leading-tight mb-6">
           Learn Economics.<br />Understand Nepal.
         </h1>
@@ -2117,9 +2117,9 @@ export default function LearnPage() {
               <div>
                 <div className="flex items-center gap-3 mb-3">
                   <span className={`text-[9px] font-black uppercase tracking-widest border-transparent px-3 py-1 rounded ${
-                    activeLesson.level === 'Beginner' ? 'bg-green-500/20 text-green-400' :
-                    activeLesson.level === 'Intermediate' ? 'bg-yellow-500/20 text-yellow-400' :
-                    'bg-crimson/20 text-crimson'
+                    activeLesson.level === 'Beginner' ? 'bg-[#9f9fa0]/10 text-[#9f9fa0]' :
+                    activeLesson.level === 'Intermediate' ? 'bg-[#dd90d8]/10 text-[#dd90d8]' :
+                    'bg-[#847dff]/20 text-[#847dff]'
                   }`}>
                     {activeLesson.level}
                   </span>
@@ -2135,8 +2135,8 @@ export default function LearnPage() {
                   onClick={() => markComplete(activeLesson.id)}
                   className={`flex items-center gap-3 px-6 py-3 rounded text-[10px] font-black uppercase tracking-widest transition-all shrink-0 ${
                     completed.has(activeLesson.id)
-                      ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                      : 'bg-white/5 text-gray-400 border border-white/10 hover:border-green-500/30 hover:text-green-400'
+                      ? 'bg-[#9f9fa0]/10 text-[#9f9fa0] border border-[#9f9fa0]/20'
+                      : 'bg-white/5 text-gray-400 border border-white/10 hover:border-[#9f9fa0]/30 hover:text-[#9f9fa0]'
                   }`}
                 >
                   {completed.has(activeLesson.id) ? '✓ Completed' : 'Mark Complete'}
@@ -2151,7 +2151,7 @@ export default function LearnPage() {
                 <div className="space-y-2">
                   {activeLesson.chapters.map((chapter, i) => (
                     <div key={i} className="flex items-start gap-4">
-                      <span className="text-[9px] font-black text-royal mt-0.5 shrink-0">
+                      <span className="text-[9px] font-black text-[#847dff] mt-0.5 shrink-0">
                         {String(i + 1).padStart(2, '0')}
                       </span>
                       <span className="text-sm text-gray-300 font-sans">{chapter}</span>
@@ -2167,13 +2167,13 @@ export default function LearnPage() {
                 <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-4">Downloads & Resources</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {activeLesson.resources.map((resource, i) => (
-                    <a key={i} href={resource.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-4 bg-white/3 border border-white/10 rounded-xl hover:border-royal/50 hover:bg-royal/5 transition-all group">
+                    <a key={i} href={resource.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-4 bg-white/3 border border-white/10 rounded-xl hover:border-[#847dff]/50 hover:bg-[#847dff]/5 transition-all group">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 group-hover:text-royal transition-colors">
+                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 group-hover:text-[#847dff] transition-colors">
                           <Download size={16} />
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-white group-hover:text-royal transition-colors">{resource.title}</p>
+                          <p className="text-sm font-bold text-white group-hover:text-[#847dff] transition-colors">{resource.title}</p>
                           <p className="text-xs text-gray-500 font-sans">{resource.size}</p>
                         </div>
                       </div>
@@ -2239,7 +2239,7 @@ export default function LearnPage() {
                 </div>
                 <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-royal transition-all duration-500"
+                    className="h-full bg-[#847dff] transition-all duration-500"
                     style={{ width: `${(completedInModule / moduleLessons.length) * 100 || 0}%` }}
                   />
                 </div>
@@ -2247,10 +2247,10 @@ export default function LearnPage() {
               
               {/* Certificate & Master Exam Unlock */}
               {completedInModule === moduleLessons.length && moduleLessons.length > 0 && (
-                <div className="mt-6 bg-gradient-to-r from-royal/20 to-transparent border border-royal/30 p-4 rounded-xl flex items-center justify-between flex-wrap gap-4">
+                <div className="mt-6 bg-gradient-to-r from-[#847dff]/20 to-transparent border border-[#847dff]/30 p-4 rounded-xl flex items-center justify-between flex-wrap gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="bg-royal/20 p-2 rounded-full border border-royal/50">
-                      <Award size={20} className="text-royal" />
+                    <div className="bg-[#847dff]/20 p-2 rounded-full border border-[#847dff]/50">
+                      <Award size={20} className="text-[#847dff]" />
                     </div>
                     <div>
                       <p className="text-sm font-bold text-white">Module Completed!</p>
@@ -2265,7 +2265,7 @@ export default function LearnPage() {
                     {(!masterExamScores[module.id] || masterExamScores[module.id] < 80) && (
                       <button
                         onClick={() => setMasterExamModule(module.id)}
-                        className="px-4 py-2 bg-royal text-white text-[10px] font-black uppercase tracking-widest rounded shadow-[0_0_15px_rgba(0,135,90,0.5)] hover:bg-royal-light transition-all"
+                        className="px-4 py-2 bg-[#847dff] text-white text-[10px] font-black uppercase tracking-widest rounded shadow-[0_0_15px_rgba(0,135,90,0.5)] hover:bg-[#847dff] transition-all"
                       >
                         Take Master Exam
                       </button>
@@ -2273,7 +2273,7 @@ export default function LearnPage() {
                     {masterExamScores[module.id] >= 80 && (
                       <button
                         onClick={() => setCertificateModule(module.title)}
-                        className="px-4 py-2 bg-transparent text-royal border border-royal text-[10px] font-black uppercase tracking-widest rounded hover:bg-royal/10 transition-all"
+                        className="px-4 py-2 bg-transparent text-[#847dff] border border-[#847dff] text-[10px] font-black uppercase tracking-widest rounded hover:bg-[#847dff]/10 transition-all"
                       >
                         View Certificate
                       </button>
@@ -2290,9 +2290,9 @@ export default function LearnPage() {
                   <button
                     key={lesson.id}
                     onClick={() => playLesson(lesson)}
-                    className={`text-left bg-white/3 border rounded-xl overflow-hidden transition-all group hover:border-royal/50 ${
+                    className={`text-left bg-white/3 border rounded-xl overflow-hidden transition-all group hover:border-[#847dff]/50 ${
                       activeLesson.id === lesson.id && isPlaying
-                        ? 'border-royal/50 bg-royal/5'
+                        ? 'border-[#847dff]/50 bg-[#847dff]/5'
                         : 'border-white/10'
                     }`}
                   >
@@ -2309,7 +2309,7 @@ export default function LearnPage() {
                         </div>
                       </div>
                       {completed.has(lesson.id) && (
-                        <div className="absolute top-3 right-3 bg-green-500 rounded-full p-1">
+                        <div className="absolute top-3 right-3 bg-[#9f9fa0] rounded-full p-1">
                           <Check size={12} className="text-white" />
                         </div>
                       )}
@@ -2322,15 +2322,15 @@ export default function LearnPage() {
                     <div className="p-6 space-y-3">
                       <div className="flex items-center gap-3">
                         <span className={`inline-block text-[9px] font-black uppercase tracking-widest border-transparent px-2 py-0.5 rounded ${
-                          lesson.level === 'Beginner' ? 'bg-green-500/20 text-green-400' :
-                          lesson.level === 'Intermediate' ? 'bg-yellow-500/20 text-yellow-400' :
-                          'bg-crimson/20 text-crimson'
+                          lesson.level === 'Beginner' ? 'bg-[#9f9fa0]/10 text-[#9f9fa0]' :
+                          lesson.level === 'Intermediate' ? 'bg-[#dd90d8]/10 text-[#dd90d8]' :
+                          'bg-[#847dff]/20 text-[#847dff]'
                         }`}>
                           {lesson.level}
                         </span>
                         <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">{lesson.duration}</span>
                       </div>
-                      <h3 className="text-base font-bold leading-snug transition-colors text-white group-hover:text-royal">
+                      <h3 className="text-base font-bold leading-snug transition-colors text-white group-hover:text-[#847dff]">
                         {lesson.title}
                       </h3>
                       <p className="text-gray-500 font-sans text-xs line-clamp-2">{lesson.desc}</p>
@@ -2362,7 +2362,7 @@ export default function LearnPage() {
                         <div className="pt-2 space-y-1">
                           {guide.chapters.map((chapter, i) => (
                             <div key={i} className="flex items-start gap-3">
-                              <span className="text-[9px] font-black text-royal mt-0.5 shrink-0">
+                              <span className="text-[9px] font-black text-[#847dff] mt-0.5 shrink-0">
                                 {String(i + 1).padStart(2, '0')}
                               </span>
                               <span className="text-xs text-gray-400 font-sans">{chapter}</span>
@@ -2377,7 +2377,7 @@ export default function LearnPage() {
                           <a href={guide.htmlUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="flex items-center gap-2 px-5 py-3 bg-royal/20 text-royal border border-royal/30 rounded text-[10px] font-black uppercase tracking-widest hover:bg-royal hover:text-white transition-all"
+                          className="flex items-center gap-2 px-5 py-3 bg-[#847dff]/20 text-[#847dff] border border-[#847dff]/30 rounded text-[10px] font-black uppercase tracking-widest hover:bg-[#847dff] hover:text-white transition-all"
                         >
                           <BookOpen size={14} /> Read Online
                         </a>
