@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react';
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -12,15 +12,24 @@ import {
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../contexts/AuthContext';
-import { Heart, MessageSquare, Share2, Download, Plus, FileText, HelpCircle, MoreVertical } from 'lucide-react';
+import { Heart, MessageSquare, Share2, Download, Plus, FileText, HelpCircle, MoreVertical, X } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { GradientCard } from './GradientCard';
+import {
+  TRENDING_SECTORS,
+  SECTOR_ICONS,
+  SECTOR_DESCRIPTIONS,
+  type Sector,
+} from '../lib/newsService';
 import type { Post } from '../types/post';
 
 export default function CommunityPage() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user, profile } = useAuth();
+  const sectorParam = searchParams.get('sector') as Sector | null;
+  const validSector = sectorParam && TRENDING_SECTORS.includes(sectorParam as Sector) ? sectorParam as Sector : null;
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'discussions' | 'research' | 'questions'>('discussions');
@@ -285,6 +294,14 @@ const handleLike = async (postId: string) => {
     if (activeTab === 'research') return p.type === 'research';
     if (activeTab === 'questions') return p.type === 'question';
     return true;
+  }).filter(p => {
+    if (!validSector) return true;
+    const sector = validSector.toLowerCase();
+    return (
+      (p.title && p.title.toLowerCase().includes(sector)) ||
+      p.category.toLowerCase().includes(sector) ||
+      p.content.toLowerCase().includes(sector)
+    );
   });
 
   return (
@@ -309,6 +326,29 @@ const handleLike = async (postId: string) => {
           </button>
         )}
       </header>
+
+      {/* Sector Banner */}
+      {validSector && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-[#161F30] border border-[#00875a]/30 rounded-2xl p-6 mb-8 flex items-center gap-4"
+        >
+          <div className="w-12 h-12 rounded-xl bg-[#00875a]/20 border border-[#00875a]/40 flex items-center justify-center shrink-0">
+            <span className="material-symbols-outlined text-2xl text-[#00f59b]">{SECTOR_ICONS[validSector]}</span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 className="text-lg font-bold text-white">{validSector} Sector</h2>
+            <p className="text-xs text-[#94a3b8]">{SECTOR_DESCRIPTIONS[validSector]} — {filteredPosts.length} discussion{filteredPosts.length !== 1 ? 's' : ''}</p>
+          </div>
+          <button
+            onClick={() => setSearchParams({})}
+            className="shrink-0 px-4 py-2 bg-[#0B0F19] border border-[#1F2A3F] text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:border-[#ef4444]/50 hover:text-[#ef4444] transition-all flex items-center gap-1.5"
+          >
+            <X size={14} /> Clear Filter
+          </button>
+        </motion.div>
+      )}
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as typeof activeTab)} className="mb-16">

@@ -1,8 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { Link } from 'react-router-dom';
-import { db } from '../lib/firebase';
-import { collection, query, where, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import { Link, useNavigate } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -18,19 +16,15 @@ import {
   type TopStocks,
   type MarketSummary,
 } from '../lib/nepseApi';
-
-/* ── Types ───────────────────────────────────────────────────────── */
-
-interface Post {
-  id: string;
-  title: string;
-  author: string;
-  abstract?: string;
-  content: string;
-  type: string;
-  category: string;
-  pdfUrl?: string;
-}
+import {
+  TRENDING_SECTORS,
+  SECTOR_ICONS,
+  SECTOR_DESCRIPTIONS,
+  researchSectorNews,
+  type Sector,
+  type SectorNewsResult,
+  type NewsArticle,
+} from '../lib/newsService';
 
 interface ChartPoint {
   date: string;
@@ -83,9 +77,6 @@ function formatNumber(n: number): string {
 /* ── Component ───────────────────────────────────────────────────── */
 
 export default function ExplorePage() {
-  /* ── Firestore ── */
-  const [researchPosts, setResearchPosts] = useState<Post[]>([]);
-
   /* ── Market data ── */
   const [stocks, setStocks] = useState<StockRow[]>([]);
   const [indices, setIndices] = useState<MarketIndex[]>([]);
@@ -95,12 +86,16 @@ export default function ExplorePage() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   /* ── UI state ── */
+  const navigate = useNavigate();
   const [selectedSymbol, setSelectedSymbol] = useState<string>('NEPSE');
   const [timeframe, setTimeframe] = useState<Timeframe>('1D');
   const [searchQuery, setSearchQuery] = useState('');
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [selectedSector, setSelectedSector] = useState<Sector | null>(null);
+  const [sectorNews, setSectorNews] = useState<SectorNewsResult | null>(null);
+  const [newsLoading, setNewsLoading] = useState(false);
 
   /* ── Load data ── */
   const loadMarketData = useCallback(async () => {
@@ -133,20 +128,6 @@ export default function ExplorePage() {
     return () => clearInterval(interval);
   }, [loadMarketData]);
 
-  /* ── Firestore subscription ── */
-  useEffect(() => {
-    const q = query(
-      collection(db, 'posts'),
-      where('type', '==', 'research'),
-      orderBy('createdAt', 'desc'),
-      limit(10)
-    );
-    const unsub = onSnapshot(q, (snap) => {
-      setResearchPosts(snap.docs.map(d => ({ id: d.id, ...d.data() } as Post)));
-    });
-    return () => unsub();
-  }, []);
-
   /* ── Derived ── */
   const nepseIndex = useMemo(() => indices.find(i => i.index === 'NEPSE Index') ?? indices[0], [indices]);
   const activeStock = useMemo(() => stocks.find(s => s.symbol === selectedSymbol), [stocks, selectedSymbol]);
@@ -163,12 +144,6 @@ export default function ExplorePage() {
     );
   }, [stocks, searchQuery]);
 
-  const filteredPosts = researchPosts.filter(p =>
-    p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.author.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   const displayedPrice = hoverIndex !== null ? chartData[hoverIndex]?.value : activeStock?.ltp;
   const displayedDate = hoverIndex !== null ? chartData[hoverIndex]?.date : 'Current Price';
   const pricePercentChange = hoverIndex !== null && chartData.length > 0
@@ -177,6 +152,20 @@ export default function ExplorePage() {
 
   const isGainer = (activeStock?.change ?? 0) >= 0;
   const themeColor = isGainer ? '#00f59b' : '#ef4444';
+
+  const handleResearchSector = async (sector: Sector) => {
+    setSelectedSector(sector);
+    setNewsLoading(true);
+    setSectorNews(null);
+    try {
+      const result = await researchSectorNews(sector);
+      setSectorNews(result);
+    } catch {
+      setSectorNews(null);
+    } finally {
+      setNewsLoading(false);
+    }
+  };
 
   /* ── Loading skeleton ── */
   if (loading) {
@@ -234,7 +223,7 @@ export default function ExplorePage() {
             <span className="absolute left-6 top-1/2 -translate-y-1/2 material-symbols-outlined text-[#94a3b8]">search</span>
             <input
               type="text"
-              placeholder="Search NEPSE counters, research papers..."
+              placeholder="Search NEPSE counters..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-[#161F30] border border-[#1F2A3F] rounded-full px-16 py-4 text-sm focus:border-[#00875a] outline-none shadow-xl text-white placeholder:text-[#94a3b8]/50 transition-all"
@@ -434,56 +423,58 @@ export default function ExplorePage() {
         </aside>
       </div>
 
-      {/* ─── Bottom Section: Research + Sidebar ─── */}
+      {/* ─── Bottom Section: Trending Sectors ─── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-        {/* Research Papers */}
+        {/* Trending Sectors Grid */}
         <section className="lg:col-span-8 space-y-8">
           <div className="flex justify-between items-end border-b border-[#1F2A3F] pb-4">
-            <h2 className="font-sans font-semibold text-3xl text-white italic">Featured Research Papers</h2>
+            <h2 className="font-sans font-semibold text-3xl text-white italic">Trending Sectors</h2>
             <Link to="/community" className="text-[10px] font-black text-[#00875a] uppercase tracking-widest hover:text-white transition-colors">
-              VIEW DISCOURSE FEED
+              EXPLORE ALL DISCUSSIONS
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 gap-6">
-            {filteredPosts.map(post => (
-              <div key={post.id} className="bg-[#161F30] p-8 rounded-2xl border border-[#1F2A3F] shadow-xl hover:border-[#00875a]/50 transition-all duration-300 group">
-                <div className="flex gap-3 mb-4 items-center">
-                  <Badge variant="outline" className="bg-[#00875a]/10 text-[#00875a] px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border border-[#00875a]/20">
-                    {post.category}
-                  </Badge>
-                  <Badge variant="outline" className="text-[9px] font-black text-[#94a3b8] uppercase tracking-widest bg-transparent border-transparent">
-                    Academic Analysis
-                  </Badge>
-                </div>
-                <h3 className="font-sans font-semibold text-2xl text-white italic mb-4 group-hover:text-[#00875a] transition-colors leading-tight">
-                  {post.title}
-                </h3>
-                <p className="text-sm text-[#94a3b8] leading-relaxed italic mb-6">
-                  {post.abstract || post.content.substring(0, 160) + '...'}
-                </p>
-                <div className="flex items-center justify-between border-t border-[#1F2A3F] pt-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-[#00875a]/20 border border-[#00875a]/40 rounded-lg flex items-center justify-center text-white font-black text-[10px] uppercase">
-                      {post.author[0]}
-                    </div>
-                    <span className="text-xs font-black text-white tracking-tight uppercase">{post.author}</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {TRENDING_SECTORS.map((sector, i) => (
+              <motion.div
+                key={sector}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+                className="group bg-[#161F30] border border-[#1F2A3F] rounded-2xl p-6 hover:border-[#00875a]/60 transition-all duration-300 shadow-xl hover:shadow-[#00875a]/5"
+              >
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-[#0B0F19] border border-[#1F2A3F] flex items-center justify-center text-[#00f59b] group-hover:bg-[#00875a]/20 group-hover:border-[#00875a]/40 transition-all shrink-0">
+                    <span className="material-symbols-outlined text-2xl">{SECTOR_ICONS[sector]}</span>
                   </div>
-                  {post.pdfUrl && (
-                    <a href={post.pdfUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-[8px] font-black uppercase tracking-widest text-[#94a3b8] hover:text-[#00875a] transition-colors">
-                      <span className="material-symbols-outlined text-sm">download</span>
-                      Download PDF
-                    </a>
-                  )}
+                  <div className="min-w-0">
+                    <h3 className="font-sans font-semibold text-xl text-white italic group-hover:text-[#00875a] transition-colors leading-tight">
+                      {sector}
+                    </h3>
+                    <p className="text-[10px] text-[#94a3b8] mt-1 leading-relaxed">{SECTOR_DESCRIPTIONS[sector]}</p>
+                  </div>
                 </div>
-              </div>
+
+                <div className="flex flex-wrap gap-2 mt-auto">
+                  <button
+                    onClick={() => navigate(`/community?sector=${encodeURIComponent(sector)}`)}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-[#00875a]/10 border border-[#00875a]/30 text-[#00f59b] rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-[#00875a] hover:text-white transition-all"
+                  >
+                    <span className="material-symbols-outlined text-sm">forum</span>
+                    Discuss
+                  </button>
+                  <button
+                    onClick={() => handleResearchSector(sector)}
+                    disabled={newsLoading && selectedSector === sector}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-[#0B0F19] border border-[#1F2A3F] text-white rounded-lg text-[9px] font-black uppercase tracking-widest hover:border-[#00875a]/50 transition-all disabled:opacity-40"
+                  >
+                    <span className="material-symbols-outlined text-sm">travel_explore</span>
+                    {newsLoading && selectedSector === sector ? 'Researching...' : 'Latest News'}
+                  </button>
+                </div>
+              </motion.div>
             ))}
-            {filteredPosts.length === 0 && (
-              <div className="text-center py-12 bg-[#161F30] rounded-2xl border border-[#1F2A3F] border-dashed">
-                <p className="text-[#94a3b8] italic text-xs">No matching research articles found.</p>
-              </div>
-            )}
           </div>
         </section>
 
@@ -508,16 +499,41 @@ export default function ExplorePage() {
             </div>
           </div>
 
-          {/* Trending Sectors */}
+          {/* Sector News Panel */}
           <div className="bg-[#161F30] border border-[#1F2A3F] rounded-2xl p-6 shadow-2xl">
-            <h3 className="text-xs font-black uppercase tracking-widest text-[#94a3b8] mb-4">Trending Sectors</h3>
-            <div className="flex flex-wrap gap-2">
-              {['Banking', 'Hydropower', 'Microfinance', 'IPO Market', 'Mutual Funds', 'Inflation', 'Remittance'].map((sec) => (
-                <span key={sec} className="px-3.5 py-2 bg-[#0B0F19] border border-[#1F2A3F] text-white rounded-lg text-[9px] font-bold uppercase tracking-wider cursor-pointer hover:border-[#00875a]/50 transition-all">
-                  {sec}
-                </span>
-              ))}
-            </div>
+            <h3 className="text-xs font-black uppercase tracking-widest text-[#94a3b8] mb-4 flex items-center gap-2">
+              <span className="material-symbols-outlined text-[#00f59b] text-lg">newspaper</span>
+              {selectedSector ? `${selectedSector} News` : 'Sector News'}
+            </h3>
+            {newsLoading ? (
+              <div className="space-y-3">
+                <Skeleton className="h-20 bg-[#1F2A3F] rounded-xl" />
+                <Skeleton className="h-20 bg-[#1F2A3F] rounded-xl" />
+                <Skeleton className="h-20 bg-[#1F2A3F] rounded-xl" />
+              </div>
+            ) : sectorNews && sectorNews.articles.length > 0 ? (
+              <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
+                {sectorNews.articles.slice(0, 5).map((article, i) => (
+                  <div key={i} className="bg-[#0B0F19] rounded-xl p-4 border border-[#1F2A3F] hover:border-[#00875a]/30 transition-all">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <h4 className="text-[11px] font-bold text-white leading-tight">{article.title}</h4>
+                      <span className="text-[8px] text-[#00f59b] font-mono whitespace-nowrap shrink-0">{article.date}</span>
+                    </div>
+                    <p className="text-[10px] text-[#94a3b8] leading-relaxed">{article.summary}</p>
+                    {article.source && (
+                      <p className="text-[8px] text-[#94a3b8]/50 mt-2 font-mono uppercase tracking-wider">Source: {article.source}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <span className="material-symbols-outlined text-3xl text-[#94a3b8]/30 block mb-2">travel_explore</span>
+                <p className="text-[10px] text-[#94a3b8] italic">
+                  Click <span className="text-[#00f59b] font-bold">Latest News</span> on any sector above to see real-time AI-researched updates.
+                </p>
+              </div>
+            )}
           </div>
         </aside>
       </div>
