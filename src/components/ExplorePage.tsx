@@ -180,15 +180,15 @@ export default function ExplorePage() {
   if (loading) {
     return (
       <motion.main initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-7xl mx-auto px-4 md:px-12 py-24 min-h-screen">
-        <Skeleton className="h-8 w-48 mb-2 bg-[#1F2A3F]" />
-        <Skeleton className="h-14 w-72 mb-12 bg-[#1F2A3F]" />
+        <Skeleton className="h-8 w-48 mb-2 bg-[#2e2e2e]" />
+        <Skeleton className="h-14 w-72 mb-12 bg-[#2e2e2e]" />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
           <div className="lg:col-span-8">
-            <Skeleton className="h-[420px] rounded-2xl bg-[#161F30]" />
+            <Skeleton className="h-[420px] rounded-2xl bg-[#090a0b]" />
           </div>
           <div className="lg:col-span-4 space-y-6">
-            <Skeleton className="h-64 rounded-2xl bg-[#161F30]" />
-            <Skeleton className="h-48 rounded-2xl bg-[#161F30]" />
+            <Skeleton className="h-64 rounded-2xl bg-[#090a0b]" />
+            <Skeleton className="h-48 rounded-2xl bg-[#090a0b]" />
           </div>
         </div>
       </motion.main>
@@ -199,11 +199,11 @@ export default function ExplorePage() {
   if (error && stocks.length === 0) {
     return (
       <motion.main initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-7xl mx-auto px-4 md:px-12 py-24 min-h-screen flex items-center justify-center">
-        <div className="text-center bg-[#161F30] border border-[#1F2A3F] rounded-2xl p-12 max-w-md">
+        <div className="text-center bg-[#090a0b] border border-white/[0.06] rounded-2xl p-12 max-w-md">
           <span className="material-symbols-outlined text-6xl text-[#ef4444] mb-4 block">cloud_off</span>
           <h2 className="text-xl font-bold text-white mb-2">Market Data Unavailable</h2>
-          <p className="text-sm text-[#94a3b8] mb-6">Unable to fetch live NEPSE data. The market data service may be temporarily down.</p>
-          <button onClick={() => { setLoading(true); setError(false); loadMarketData(); }} className="px-6 py-3 bg-[#00875a] hover:bg-[#00f59b] hover:text-[#0f172a] text-white text-xs font-black uppercase tracking-widest rounded-lg transition-all">
+          <p className="text-sm text-[#9f9fa0] mb-6">Unable to fetch live NEPSE data. The market data service may be temporarily down.</p>
+          <button onClick={() => { setLoading(true); setError(false); loadMarketData(); }} className="px-6 py-3 bg-[#847dff] hover:bg-[#847dff] hover:text-[#090a0b] text-white text-xs font-black uppercase tracking-widest rounded-lg transition-all">
             Retry
           </button>
         </div>
@@ -257,7 +257,7 @@ export default function ExplorePage() {
           ].map((card, i) => (
             <motion.div
               key={card.label}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08, type: 'spring', stiffness: 100, damping: 15 }}
               whileHover={{ y: -5, scale: 1.02, transition: { type: 'spring', stiffness: 300, damping: 15 } }}
@@ -324,10 +324,10 @@ export default function ExplorePage() {
                     />
                   )}
                   {tf}
-                </button>
-              );
-            })}
-          </div>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
 
           {/* Chart */}
           <div className="relative w-full h-[300px] bg-sunset-fade/50 rounded-2xl border border-blush-mist p-4">
@@ -385,12 +385,9 @@ export default function ExplorePage() {
                   return (
                     <motion.button
                       key={s.symbol}
-                      layout="position"
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      whileHover={{ scale: active ? 1 : 1.02, x: active ? 0 : 4 }}
-                      whileTap={{ scale: 0.98 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
                       onClick={() => { setSelectedSymbol(s.symbol); setHoverIndex(null); }}
                       className={`relative w-full text-left p-3 rounded-2xl border transition-colors duration-200 flex justify-between items-center overflow-hidden ${
                         active
@@ -487,7 +484,7 @@ export default function ExplorePage() {
                     className="w-12 h-12 rounded-2xl bg-sunset-fade border border-blush-mist flex items-center justify-center text-mint-action group-hover:bg-mint-action/10 group-hover:border-mint-action/30 transition-all shrink-0 cursor-default"
                   >
                     <span className="material-symbols-outlined text-2xl">{SECTOR_ICONS[sector]}</span>
-                  </motion.div>
+                  </div>
                   <div className="min-w-0">
                     <h3 className="font-display font-bold text-xl text-brandwood group-hover:text-coral-flame transition-colors leading-tight">
                       {sector}
@@ -497,25 +494,21 @@ export default function ExplorePage() {
                 </div>
 
                 <div className="flex flex-wrap gap-2 mt-auto">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                  <button
                     onClick={() => navigate(`/community?sector=${encodeURIComponent(sector)}`)}
                     className="flex items-center gap-1.5 px-4 py-2 bg-mint-action/10 border border-mint-action/30 text-mint-action rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-mint-action hover:text-white transition-all shadow-sm"
                   >
                     <span className="material-symbols-outlined text-sm">forum</span>
                     Discuss
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                  </button>
+                  <button
                     onClick={() => handleSectorClick(sector)}
                     disabled={newsLoading && selectedSector === sector}
                     className="flex items-center gap-1.5 px-4 py-2 bg-white border border-blush-mist text-brandwood rounded-xl text-[10px] font-bold uppercase tracking-widest hover:border-coral-flame/50 hover:bg-sunset-fade transition-all shadow-sm disabled:opacity-40"
                   >
                     <span className="material-symbols-outlined text-sm">travel_explore</span>
                     {newsLoading && selectedSector === sector ? 'Researching...' : 'Latest News'}
-                  </motion.button>
+                  </button>
                 </div>
               </motion.div>
             ))}

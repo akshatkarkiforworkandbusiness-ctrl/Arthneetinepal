@@ -26,6 +26,18 @@ function getReadableAuthError(error: any) {
       return 'Too many attempts. Please wait a bit before trying again.';
     case 'auth/popup-closed-by-user':
       return 'Google sign-in was closed before completing.';
+    case 'auth/network-request-failed':
+      return 'Network error. Please check your connection and try again.';
+    case 'auth/invalid-credential':
+      return 'Invalid email or password. Please try again.';
+    case 'auth/account-exists-with-different-credential':
+      return 'An account already exists with the same email but different sign-in method.';
+    case 'auth/credential-already-in-use':
+      return 'This credential is already associated with a different user account.';
+    case 'auth/invalid-action-code':
+      return 'The reset link is invalid or has expired. Please request a new one.';
+    case 'auth/expired-action-code':
+      return 'The reset link has expired. Please request a new one.';
     default:
       return error?.message || 'An error occurred during authentication.';
   }
@@ -100,11 +112,14 @@ export function AuthModal() {
                   try {
                     await resetPassword(resetEmail);
                   } catch (err: any) {
-                    if (err?.code !== 'auth/user-not-found') {
-                      setAuthError(getReadableAuthError(err));
+                    if (err?.code === 'auth/user-not-found') {
+                      setResetSent(true);
                       setResetSubmitting(false);
                       return;
                     }
+                    setAuthError(getReadableAuthError(err));
+                    setResetSubmitting(false);
+                    return;
                   }
                   setResetSubmitting(false);
                   setResetSent(true);
@@ -117,7 +132,7 @@ export function AuthModal() {
                       placeholder="name@email.com"
                       value={resetEmail}
                       onChange={e => setResetEmail(e.target.value)}
-                      className="w-full bg-[#0B0F19] border border-slate-base/5 rounded-lg p-3 text-xs outline-none focus:border-club-green text-white transition-all font-medium"
+                      className="w-full bg-[#0f1011] border border-white/[0.06] rounded-lg p-3 text-xs outline-none focus:border-[#847dff] text-white transition-all font-medium"
                     />
                   </div>
 
@@ -199,7 +214,7 @@ export function AuthModal() {
                     placeholder="e.g. Aayush Shrestha"
                     value={authForm.name}
                     onChange={e => setAuthForm({...authForm, name: e.target.value})}
-                    className="w-full bg-[#0B0F19] border border-slate-base/5 rounded-lg p-3 text-xs outline-none focus:border-club-green text-white transition-all font-medium"
+                    className="w-full bg-[#0f1011] border border-white/[0.06] rounded-lg p-3 text-xs outline-none focus:border-[#847dff] text-white transition-all font-medium"
                   />
                 </div>
               )}
@@ -212,7 +227,7 @@ export function AuthModal() {
                   placeholder="name@email.com"
                   value={authForm.email}
                   onChange={e => setAuthForm({...authForm, email: e.target.value})}
-                  className="w-full bg-[#0B0F19] border border-slate-base/5 rounded-lg p-3 text-xs outline-none focus:border-club-green text-white transition-all font-medium"
+                  className="w-full bg-[#0f1011] border border-white/[0.06] rounded-lg p-3 text-xs outline-none focus:border-[#847dff] text-white transition-all font-medium"
                 />
               </div>
 
@@ -224,7 +239,7 @@ export function AuthModal() {
                   placeholder="••••••••"
                   value={authForm.password}
                   onChange={e => setAuthForm({...authForm, password: e.target.value})}
-                  className="w-full bg-[#0B0F19] border border-slate-base/5 rounded-lg p-3 text-xs outline-none focus:border-club-green text-white transition-all font-medium"
+                  className="w-full bg-[#0f1011] border border-white/[0.06] rounded-lg p-3 text-xs outline-none focus:border-[#847dff] text-white transition-all font-medium"
                 />
                 {!isSignUpMode && (
                   <div className="text-right mt-1.5">
@@ -296,20 +311,24 @@ export function AuthModal() {
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-slate-base/10" />
               </div>
-              <span className="relative px-3 bg-[#161F30] text-[9px] font-black uppercase tracking-widest text-text-muted">or continue with</span>
+              <span className="relative px-3 bg-[#090a0b] text-[9px] font-black uppercase tracking-widest text-text-muted">or continue with</span>
             </div>
 
             <button
               type="button"
+              disabled={authSubmitting}
               onClick={async () => {
                 setAuthError(null);
+                setAuthSubmitting(true);
                 try {
                   await signIn();
                 } catch (err: any) {
                   setAuthError(getReadableAuthError(err));
+                } finally {
+                  setAuthSubmitting(false);
                 }
               }}
-              className="w-full bg-slate-raised border border-slate-base/10 hover:border-club-green text-white py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full bg-slate-raised border border-slate-base/10 hover:border-club-green text-white py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />

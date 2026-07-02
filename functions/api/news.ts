@@ -2,6 +2,12 @@ interface Env {
   NVIDIA_API_KEY: string;
 }
 
+const MODELS = [
+  'meta/llama-3.1-70b-instruct',
+  'meta/llama-3.1-8b-instruct',
+  'meta/llama-3.3-70b-instruct',
+];
+
 export async function onRequestPost({ request, env }: { request: Request, env: Env }) {
   try {
     const body = await request.json() as { sector: string };
@@ -16,7 +22,9 @@ export async function onRequestPost({ request, env }: { request: Request, env: E
 
     const apiKey = env.NVIDIA_API_KEY;
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: "NVIDIA API key not configured on server. Please set NVIDIA_API_KEY in Cloudflare Pages settings." }), { 
+      return new Response(JSON.stringify({ 
+        error: "NVIDIA API key not configured. Please set NVIDIA_API_KEY in Cloudflare Pages > Settings > Environment variables." 
+      }), { 
         status: 500,
         headers: { 'Content-Type': 'application/json' }
       });
@@ -44,30 +52,44 @@ Example:
 [{"title":"NRB eases margin lending rules for banks","summary":"Nepal Rastra Bank has relaxed margin lending norms for commercial banks...","date":"Today","source":"Sharesansar","url":"/news/nrb-margin-lending"}]
 `;
 
-    const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: 'meta/llama-3.1-70b-instruct',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.3,
-        max_tokens: 4096,
-      })
-    });
+    let lastError: Error | null = null;
+    for (const model of MODELS) {
+      try {
+        const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model,
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.3,
+            max_tokens: 4096,
+          })
+        });
 
-    if (!response.ok) {
-      return new Response(JSON.stringify({ error: \`NVIDIA API error: \${response.status} \${response.statusText}\` }), { 
-        status: 502,
-        headers: { 'Content-Type': 'application/json' }
-      });
+        if (response.ok) {
+          const data = await response.json();
+          return new Response(JSON.stringify(data), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
+
+        const errorBody = await response.text();
+        lastError = new Error(`NVIDIA API error (${model}): ${response.status} ${response.statusText} - ${errorBody}`);
+        console.warn(`Model ${model} failed, trying next...`, lastError.message);
+      } catch (err) {
+        lastError = err instanceof Error ? err : new Error(String(err));
+        console.warn(`Model ${model} failed with exception, trying next...`, lastError.message);
+      }
     }
 
-    const data = await response.json();
-    return new Response(JSON.stringify(data), {
-      status: 200,
+    return new Response(JSON.stringify({ 
+      error: lastError?.message || 'All NVIDIA models failed. Please check your API key and try again later.' 
+    }), { 
+      status: 502,
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (error) {

@@ -229,7 +229,7 @@ export default function EventsPage() {
         >
           <div>
             <motion.span
-              className="text-[10px] font-black text-[#00f59b] mb-4 block uppercase tracking-[0.4em]"
+              className="text-[10px] font-black text-[#847dff] mb-4 block uppercase tracking-[0.4em]"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
@@ -245,7 +245,7 @@ export default function EventsPage() {
               Upcoming Events
             </motion.h1>
             <motion.p
-              className="text-[#94a3b8] text-sm mt-4 max-w-md"
+              className="text-[#9f9fa0] text-sm mt-4 max-w-md"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
@@ -256,7 +256,7 @@ export default function EventsPage() {
           {isAdmin && (
             <motion.button
               onClick={() => setShowModal(true)}
-              className="bg-[#00f59b] text-[#0f172a] px-8 py-4 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-white transition-all shadow-xl flex items-center gap-3"
+              className="bg-white text-[#090a0b] px-8 py-4 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-white transition-all shadow-xl flex items-center gap-3"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               initial={{ opacity: 0, x: 20 }}
@@ -272,12 +272,12 @@ export default function EventsPage() {
         {eventsLoading && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-[#161F30] border border-[#1F2A3F] rounded-2xl overflow-hidden animate-pulse">
-                <div className="h-48 bg-[#1F2A3F]" />
+              <div key={i} className="bg-[#090a0b] border border-white/[0.06] rounded-2xl overflow-hidden animate-pulse">
+                <div className="h-48 bg-[#2e2e2e]" />
                 <div className="p-8 space-y-4">
-                  <div className="h-3 bg-[#1F2A3F] rounded w-20" />
-                  <div className="h-6 bg-[#1F2A3F] rounded w-3/4" />
-                  <div className="h-3 bg-[#1F2A3F] rounded w-1/2" />
+                  <div className="h-3 bg-[#2e2e2e] rounded w-20" />
+                  <div className="h-6 bg-[#2e2e2e] rounded w-3/4" />
+                  <div className="h-3 bg-[#2e2e2e] rounded w-1/2" />
                 </div>
               </div>
             ))}
@@ -288,17 +288,17 @@ export default function EventsPage() {
         {!eventsLoading && events.length === 0 && (
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-center py-32 text-center">
             <motion.div
-              className="w-24 h-24 rounded-2xl bg-[#161F30] border border-[#1F2A3F] flex items-center justify-center mb-8"
+              className="w-24 h-24 rounded-2xl bg-[#090a0b] border border-white/[0.06] flex items-center justify-center mb-8"
               animate={{ rotateY: [0, 360] }}
               transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
             >
-              <Calendar size={36} className="text-[#00f59b]" strokeWidth={1.5} />
+              <Calendar size={36} className="text-[#847dff]" strokeWidth={1.5} />
             </motion.div>
             <h3 className="font-sans font-semibold text-4xl text-white italic mb-4">No events yet</h3>
-            <p className="text-[#94a3b8] text-sm max-w-sm leading-relaxed mb-2">Events will appear here once scheduled.</p>
-            <p className="text-[#94a3b8]/40 text-xs font-black uppercase tracking-widest">Check back soon</p>
+            <p className="text-[#9f9fa0] text-sm max-w-sm leading-relaxed mb-2">Events will appear here once scheduled.</p>
+            <p className="text-[#9f9fa0]/40 text-xs font-black uppercase tracking-widest">Check back soon</p>
             {isAdmin && (
-              <motion.button onClick={() => setShowModal(true)} className="mt-10 bg-[#00f59b] text-[#0f172a] px-8 py-4 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-white transition-all shadow-xl flex items-center gap-3" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.button onClick={() => setShowModal(true)} className="mt-10 bg-white text-[#090a0b] px-8 py-4 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-white transition-all shadow-xl flex items-center gap-3" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Plus size={16} strokeWidth={3} /> Add First Event
               </motion.button>
             )}
@@ -332,7 +332,7 @@ export default function EventsPage() {
 
         {hasMore && !eventsLoading && (
           <motion.div className="flex justify-center mt-12" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
-            <motion.button onClick={loadMore} className="px-8 py-3 bg-[#00875a]/20 text-[#00875a] border border-[#00875a]/30 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-[#00875a] hover:text-white transition-all" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <motion.button onClick={loadMore} className="px-8 py-3 bg-[#847dff]/10 text-[#847dff] border border-[#847dff]/30 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-[#847dff] hover:text-white transition-all" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               Load More
             </motion.button>
           </motion.div>
@@ -342,16 +342,16 @@ export default function EventsPage() {
       {/* ─── Admin Modal ─── */}
       <AnimatePresence>
         {showModal && (
-          <div className="fixed inset-0 z-[100] bg-[#0f172a]/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[100] bg-[#0f1011]/85 backdrop-blur-md flex items-center justify-center p-4">
             <motion.div
               initial={{ scale: 0.8, opacity: 0, y: 40, rotateX: -10 }}
               animate={{ scale: 1, opacity: 1, y: 0, rotateX: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ type: 'spring', damping: 20, stiffness: 250 }}
-              className="bg-[#161F30] border border-[#1F2A3F] p-8 md:p-10 rounded-2xl max-w-2xl w-full relative shadow-2xl max-h-[90vh] overflow-y-auto"
+              className="bg-[#090a0b] border border-white/[0.06] p-8 md:p-10 rounded-2xl max-w-2xl w-full relative shadow-2xl max-h-[90vh] overflow-y-auto"
               style={{ perspective: '1000px' }}
             >
-              <button onClick={closeModal} className="absolute top-6 right-6 text-[#94a3b8]/40 hover:text-white transition-colors"><X size={22} /></button>
+              <button onClick={closeModal} className="absolute top-6 right-6 text-[#9f9fa0]/40 hover:text-white transition-colors"><X size={22} /></button>
               <motion.h2
                 className="font-sans font-semibold text-3xl text-white italic mb-8"
                 initial={{ opacity: 0, x: -20 }}
@@ -366,54 +366,54 @@ export default function EventsPage() {
                   { label: 'Event Title', key: 'title', type: 'text', required: true },
                 ].map((field, i) => (
                   <motion.div key={field.key} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.05 }}>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8] mb-2 block">{field.label}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-[#9f9fa0] mb-2 block">{field.label}</label>
                     <input required={field.required} type={field.type}
-                      className="w-full bg-[#0B0F19] p-4 rounded-xl outline-none focus:border-[#00f59b] border-2 border-[#1F2A3F] font-bold text-white transition-all placeholder:text-[#94a3b8]/30"
+                      className="w-full bg-[#0f1011] p-4 rounded-xl outline-none focus:border-[#847dff] border-2 border-white/[0.06] font-bold text-white transition-all placeholder:text-[#9f9fa0]/30"
                       value={(formData as any)[field.key]} onChange={e => setFormData({ ...formData, [field.key]: e.target.value })} />
                   </motion.div>
                 ))}
 
                 <motion.div className="grid grid-cols-2 gap-5" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
                   <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8] mb-2 block">Date</label>
-                    <input required type="date" className="w-full bg-[#0B0F19] p-4 rounded-xl outline-none focus:border-[#00f59b] border-2 border-[#1F2A3F] font-bold text-white transition-all" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-[#9f9fa0] mb-2 block">Date</label>
+                    <input required type="date" className="w-full bg-[#0f1011] p-4 rounded-xl outline-none focus:border-[#847dff] border-2 border-white/[0.06] font-bold text-white transition-all" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} />
                   </div>
                   <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8] mb-2 block">Time</label>
-                    <input required type="time" className="w-full bg-[#0B0F19] p-4 rounded-xl outline-none focus:border-[#00f59b] border-2 border-[#1F2A3F] font-bold text-white transition-all" value={formData.time} onChange={e => setFormData({ ...formData, time: e.target.value })} />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-[#9f9fa0] mb-2 block">Time</label>
+                    <input required type="time" className="w-full bg-[#0f1011] p-4 rounded-xl outline-none focus:border-[#847dff] border-2 border-white/[0.06] font-bold text-white transition-all" value={formData.time} onChange={e => setFormData({ ...formData, time: e.target.value })} />
                   </div>
                 </motion.div>
 
                 <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8] mb-2 block">Location</label>
-                  <input required type="text" className="w-full bg-[#0B0F19] p-4 rounded-xl outline-none focus:border-[#00f59b] border-2 border-[#1F2A3F] font-bold text-white transition-all placeholder:text-[#94a3b8]/30" value={formData.location} onChange={e => setFormData({ ...formData, location: e.target.value })} />
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[#9f9fa0] mb-2 block">Location</label>
+                  <input required type="text" className="w-full bg-[#0f1011] p-4 rounded-xl outline-none focus:border-[#847dff] border-2 border-white/[0.06] font-bold text-white transition-all placeholder:text-[#9f9fa0]/30" value={formData.location} onChange={e => setFormData({ ...formData, location: e.target.value })} />
                 </motion.div>
 
                 <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8] mb-2 block">Category</label>
-                  <select className="w-full bg-[#0B0F19] p-4 rounded-xl outline-none focus:border-[#00f59b] border-2 border-[#1F2A3F] font-bold text-white transition-all" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[#9f9fa0] mb-2 block">Category</label>
+                  <select className="w-full bg-[#0f1011] p-4 rounded-xl outline-none focus:border-[#847dff] border-2 border-white/[0.06] font-bold text-white transition-all" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>
                     {['Workshop', 'Session', 'Conference', 'Meetup', 'Webinar', 'Other'].map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </motion.div>
 
                 <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8] mb-2 block">Description</label>
-                  <textarea required className="w-full bg-[#0B0F19] p-4 rounded-xl outline-none focus:border-[#00f59b] border-2 border-[#1F2A3F] font-bold text-white transition-all h-24 resize-none placeholder:text-[#94a3b8]/30" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[#9f9fa0] mb-2 block">Description</label>
+                  <textarea required className="w-full bg-[#0f1011] p-4 rounded-xl outline-none focus:border-[#847dff] border-2 border-white/[0.06] font-bold text-white transition-all h-24 resize-none placeholder:text-[#9f9fa0]/30" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
                 </motion.div>
 
                 <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8] mb-2 block">Event Photo (optional)</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[#9f9fa0] mb-2 block">Event Photo (optional)</label>
                   <div className="flex items-center gap-4">
-                    <label className="flex-1 flex items-center justify-center gap-3 bg-[#0B0F19] border-2 border-dashed border-[#1F2A3F] hover:border-[#00f59b]/50 rounded-xl p-6 cursor-pointer transition-all">
-                      <ImagePlus size={20} className="text-[#94a3b8]" />
-                      <span className="text-xs font-bold text-[#94a3b8]">{imageFile ? imageFile.name : 'Choose an image (max 5MB)'}</span>
+                    <label className="flex-1 flex items-center justify-center gap-3 bg-[#0f1011] border-2 border-dashed border-white/[0.06] hover:border-[#847dff]/50 rounded-xl p-6 cursor-pointer transition-all">
+                      <ImagePlus size={20} className="text-[#9f9fa0]" />
+                      <span className="text-xs font-bold text-[#9f9fa0]">{imageFile ? imageFile.name : 'Choose an image (max 5MB)'}</span>
                       <input type="file" accept="image/*" className="hidden" onChange={handleImageSelect} />
                     </label>
                     {(imagePreview || formData.imageUrl) && (
-                      <div className="relative w-20 h-20 rounded-xl overflow-hidden border border-[#1F2A3F] shrink-0">
+                      <div className="relative w-20 h-20 rounded-xl overflow-hidden border border-white/[0.06] shrink-0">
                         <img src={imagePreview || formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
                         <button type="button" onClick={() => { setImageFile(null); setImagePreview(''); setFormData({ ...formData, imageUrl: '' }); }}
-                          className="absolute top-1 right-1 bg-[#0f172a]/80 rounded-full p-0.5 hover:bg-[#ef4444] transition-colors">
+                          className="absolute top-1 right-1 bg-[#0f1011]/80 rounded-full p-0.5 hover:bg-[#ef4444] transition-colors">
                           <X size={12} className="text-white" />
                         </button>
                       </div>
@@ -422,7 +422,7 @@ export default function EventsPage() {
                 </motion.div>
 
                 <motion.button type="submit" disabled={uploading}
-                  className="w-full bg-[#00f59b] text-[#0f172a] py-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all shadow-xl disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full bg-white text-[#090a0b] py-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all shadow-xl disabled:opacity-50 flex items-center justify-center gap-2"
                   whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                   initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
                 >

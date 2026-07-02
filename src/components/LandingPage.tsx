@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react';
 import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
-import ShinyText from './ShinyText';
-import { GradientCard } from './GradientCard';
 import { LESSONS, LEVEL_COLORS } from './LearnPage';
 
 interface Topic {
@@ -84,7 +82,6 @@ const pillarsSyllabus = [
   }
 ];
 
-
 const mockPamphlets = [
   {
     title: 'Stock Market Investing in Practice — A NEPSE Guide',
@@ -140,22 +137,25 @@ const mockFAQs = {
   ]
 };
 
+const CHROMATIC_GRADIENTS = [
+  'linear-gradient(135deg, rgba(132,125,255,0.15) 0%, rgba(9,10,11,0.95) 100%)',
+  'linear-gradient(135deg, rgba(0,179,221,0.15) 0%, rgba(9,10,11,0.95) 100%)',
+  'linear-gradient(135deg, rgba(221,144,216,0.15) 0%, rgba(9,10,11,0.95) 100%)',
+  'linear-gradient(135deg, rgba(144,184,240,0.15) 0%, rgba(9,10,11,0.95) 100%)',
+];
+
 export default function LandingPage() {
   const { user, handleJoinAction } = useAuth();
   const [latestTopics, setLatestTopics] = useState<Topic[]>([]);
   const [topicCount, setTopicCount] = useState(100);
 
-  // Market indices simulator
   const [marketIndices, setMarketIndices] = useState<Record<string, IndexState>>(initialIndices);
-  
-  // Interactive UI states
   const [activePillarIndex, setActivePillarIndex] = useState<number | null>(0);
   const [activeResourceTab, setActiveResourceTab] = useState<'videos' | 'pamphlets' | 'faq'>('videos');
   const [selectedVideoEmbed, setSelectedVideoEmbed] = useState<string | null>(null);
   const [faqLanguage, setFaqLanguage] = useState<'en' | 'np'>('en');
   const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(null);
 
-  // Firestore subscription for community updates
   useEffect(() => {
     const qLatest = query(collection(db, 'posts'), orderBy('createdAt', 'desc'), limit(6));
     const unsubscribeLatest = onSnapshot(qLatest, (snapshot) => {
@@ -177,7 +177,6 @@ export default function LandingPage() {
     };
   }, []);
 
-  // Market data: try live API, fall back to simulation if unavailable
   const [marketDataSource, setMarketDataSource] = useState<'live' | 'simulated' | 'loading'>('loading');
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
@@ -199,7 +198,6 @@ export default function LandingPage() {
         const indexData = await indexRes.json();
         const subData = subIndexRes.ok ? await subIndexRes.json() : [];
 
-        // Build combined list
         const all = [indexData, ...(Array.isArray(subData) ? subData : [])];
         const next: Record<string, IndexState> = { ...initialIndices };
 
@@ -224,19 +222,16 @@ export default function LandingPage() {
         setMarketDataSource('live');
         setLastUpdated(new Date());
       } catch {
-        // API unreachable — fall back to animated simulation
         if (marketDataSource === 'loading') setMarketDataSource('simulated');
       }
     };
 
     fetchLiveData();
-    const liveInterval = setInterval(fetchLiveData, 60_000); // refresh every 60s
-
+    const liveInterval = setInterval(fetchLiveData, 60_000);
     return () => clearInterval(liveInterval);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Simulation tick — only runs when API is unavailable
   useEffect(() => {
     if (marketDataSource !== 'simulated') return;
     const interval = setInterval(() => {
@@ -258,20 +253,6 @@ export default function LandingPage() {
     return () => clearInterval(interval);
   }, [marketDataSource]);
 
-  const stats = [
-    { label: 'Active Topics', value: `${topicCount}+` },
-    { label: 'Board Members', value: '4' },
-    { label: 'Core Pillars', value: '3' }
-  ];
-
-  const socialIcons = [
-    { name: 'Women & Girls', icon: 'woman' },
-    { name: 'Children\'s Welfare', icon: 'child_care' },
-    { name: 'Disability Inclusion', icon: 'accessible' },
-    { name: 'Underprivileged Communities', icon: 'groups' }
-  ];
-
-  // Map numbers to SVG sparkline values
   const getSparklinePath = (points: number[]) => {
     if (points.length === 0) return '';
     const width = 120;
@@ -311,7 +292,7 @@ export default function LandingPage() {
           </h1>
           <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-2xl font-sans">
             Building the next generation of economically literate leaders and investors across Nepal.
-          </p>
+          </motion.p>
           
           <div className="flex flex-col sm:flex-row gap-6">
             {!user ? (
@@ -327,26 +308,35 @@ export default function LandingPage() {
                 className="outlined-cta"
               >
                 Go to Dashboard
+                <span className="text-base">→</span>
               </Link>
             )}
             <Link 
               to="/discover" 
               className="bg-white/20 backdrop-blur-sm border border-white/40 text-white rounded-[16px] px-6 py-2.5 font-sans font-medium transition-transform active:scale-95 hover:bg-white hover:text-coral-flame text-center"
             >
-              Explore Ticker & Tools
+              Explore Markets
+              <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </Link>
-          </div>
-        </motion.div>
+          </motion.div>
 
-        {/* Animated Marquee Bottom */}
-        <div className="absolute bottom-0 left-0 w-full bg-[#161F30]/80 py-4 overflow-hidden border-t border-[#1F2A3F]">
-          <div className="flex whitespace-nowrap animate-marquee">
-            {[...Array(8)].map((_, i) => (
-              <span key={i} className="text-text-muted text-[9px] font-black uppercase tracking-[0.4em] mx-10">
-                NEPSE MARKET HUB • CAPITAL EDUCATION • NRB COMPLIANCE • POLICY DISCOURSE • FINANCIAL DEMOCRACY •
-              </span>
-            ))}
-          </div>
+          {/* Award Badges */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.8 }}
+            className="flex items-center justify-center gap-12 mt-20"
+          >
+            <div className="text-center">
+              <span className="text-[10px] font-bold uppercase tracking-[0.182em] text-[#9f9fa0]/60 block mb-1">Featured In</span>
+              <span className="text-sm font-light text-white/80">Student Leadership Forum</span>
+            </div>
+            <div className="w-px h-8 bg-white/10" />
+            <div className="text-center">
+              <span className="text-[10px] font-bold uppercase tracking-[0.182em] text-[#9f9fa0]/60 block mb-1">Recognition</span>
+              <span className="text-sm font-light text-white/80">Nepal Financial Education</span>
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -383,14 +373,25 @@ export default function LandingPage() {
                   : 'Live data unavailable. Showing simulated values for educational illustration only — not real market data.'}
               </p>
             </div>
+            <p className="text-[9px] text-[#9f9fa0]/60 max-w-xs sm:text-right leading-relaxed">
+              {marketDataSource === 'live'
+                ? `Data via NepseAPI (unofficial). For educational use only.${lastUpdated ? ` Updated ${lastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}` : ''}`
+                : 'Live data unavailable. Showing simulated values for illustration only.'}
+            </p>
           </div>
 
+          {/* Chromatic Index Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {Object.keys(marketIndices).map((key) => {
+            {Object.keys(marketIndices).map((key, idx) => {
               const item = marketIndices[key];
               const isGain = item.change >= 0;
               const accentColor = isGain ? '#34c771' : '#f73b20';
               const sign = isGain ? '+' : '';
+              const gradients = [
+                'linear-gradient(135deg, rgba(132,125,255,0.2) 0%, rgba(15,16,17,0.95) 100%)',
+                'linear-gradient(135deg, rgba(0,179,221,0.2) 0%, rgba(15,16,17,0.95) 100%)',
+                'linear-gradient(135deg, rgba(144,184,240,0.2) 0%, rgba(15,16,17,0.95) 100%)',
+              ];
               
               return (
                 <div 
@@ -424,7 +425,7 @@ export default function LandingPage() {
                       />
                     </svg>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>
@@ -443,9 +444,9 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            {/* Left Side: Accordion Headers */}
-            <div className="lg:col-span-5 flex flex-col gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {/* Left: Accordion Headers */}
+            <div className="lg:col-span-5 flex flex-col gap-3">
               {pillarsSyllabus.map((pillar, i) => (
                 <button
                   key={pillar.title}
@@ -455,6 +456,7 @@ export default function LandingPage() {
                       ? 'bg-white border-coral-flame shadow-warm-lift' 
                       : 'bg-transparent border-blush-mist hover:border-coral-flame hover:bg-sunset-fade'
                   }`}
+                  style={{ borderRadius: '16px' }}
                 >
                   <span className="text-2xl font-sans tracking-tight text-coral-flame/40 font-bold">{pillar.num}</span>
                   <div>
@@ -486,7 +488,7 @@ export default function LandingPage() {
                         </span>
                       </div>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                         {pillarsSyllabus[activePillarIndex].modules.map((mod, idx) => (
                           <div key={idx} className="h-[280px]">
                             <div className="h-full bg-white border border-blush-mist rounded-2xl p-6 shadow-warm-lift flex flex-col justify-between">
@@ -549,6 +551,7 @@ export default function LandingPage() {
                     ? 'bg-coral-flame text-white shadow-warm-float' 
                     : 'text-text-muted hover:text-brandwood hover:bg-white border border-blush-mist'
                 }`}
+                style={{ borderRadius: '9999px' }}
               >
                 <span className="material-symbols-outlined text-lg">{tab.icon}</span>
                 {tab.label}
@@ -556,7 +559,7 @@ export default function LandingPage() {
             ))}
           </div>
 
-          {/* Tab contents */}
+          {/* Tab Content */}
           <div className="min-h-[300px]">
             <AnimatePresence mode="wait">
               {activeResourceTab === 'videos' && (
@@ -565,7 +568,7 @@ export default function LandingPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="grid grid-cols-1 md:grid-cols-3 gap-8"
+                  className="grid grid-cols-1 md:grid-cols-3 gap-6"
                 >
                   {LESSONS.slice(0, 3).map((video, idx) => (
                     <div 
@@ -631,7 +634,7 @@ export default function LandingPage() {
                         <h4 className="text-lg font-bold text-brandwood mb-3 leading-snug font-display">
                           {pamphlet.title}
                         </h4>
-                        <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-6 block">
+                        <p className="text-[10px] font-bold text-[#9f9fa0]/60 uppercase tracking-[0.182em] mb-6 block">
                           Language: {pamphlet.language}
                         </p>
                       </div>
@@ -643,7 +646,7 @@ export default function LandingPage() {
                         className="w-full py-3 bg-sunset-fade hover:bg-coral-flame hover:text-white border border-blush-mist hover:border-coral-flame text-brandwood text-[10px] font-bold uppercase tracking-widest rounded-2xl transition-all flex items-center justify-center gap-1.5 shadow-sm"
                       >
                         <span className="material-symbols-outlined text-sm">download</span>
-                        Download PDF Guide
+                        Download PDF
                       </a>
                     </div>
                   ))}
@@ -667,6 +670,7 @@ export default function LandingPage() {
                         className={`px-4 py-2 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all ${
                           faqLanguage === 'en' ? 'bg-coral-flame text-white shadow-sm' : 'text-brandwood/70 hover:text-brandwood hover:bg-white'
                         }`}
+                        style={{ borderRadius: '9999px' }}
                       >
                         English
                       </button>
@@ -675,14 +679,15 @@ export default function LandingPage() {
                         className={`px-4 py-2 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all ${
                           faqLanguage === 'np' ? 'bg-coral-flame text-white shadow-sm' : 'text-brandwood/70 hover:text-brandwood hover:bg-white'
                         }`}
+                        style={{ borderRadius: '9999px' }}
                       >
                         नेपाली
                       </button>
                     </div>
                   </div>
 
-                  {/* Accordion Questions */}
-                  <div className="space-y-4">
+                  {/* Accordion */}
+                  <div className="space-y-3">
                     {mockFAQs[faqLanguage].map((faq, idx) => {
                       const isOpen = activeFaqIndex === idx;
                       return (
@@ -741,12 +746,12 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {latestTopics.map((topic, i) => (
               <motion.div
                 key={topic.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
                 className="group p-8 rounded-3xl bg-sunset-fade border border-blush-mist hover:border-coral-flame/50 hover:bg-white transition-all duration-300 shadow-warm-lift"
@@ -757,7 +762,7 @@ export default function LandingPage() {
                   </span>
                   <div className="flex items-center gap-1.5 text-mint-action">
                     <span className="material-symbols-outlined text-sm">favorite</span>
-                    <span className="text-[10px] font-bold">{topic.likes}</span>
+                    <span className="text-[10px] font-mono">{topic.likes}</span>
                   </div>
                 </div>
                 <Link to="/community" className="block">
@@ -769,7 +774,7 @@ export default function LandingPage() {
                   <div className="w-8 h-8 rounded-xl bg-coral-flame/10 border border-coral-flame/20 flex items-center justify-center text-[10px] font-bold text-coral-flame uppercase">
                     {topic.author[0]}
                   </div>
-                  <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">{topic.author}</span>
+                  <span className="tracked-label text-[10px]">{topic.author}</span>
                 </div>
               </motion.div>
             ))}
@@ -800,8 +805,13 @@ export default function LandingPage() {
             </p>
           </motion.div>
           
-          <div className="lg:w-1/2 grid grid-cols-2 gap-8">
-            {socialIcons.map((item, i) => (
+          <div className="lg:w-1/2 grid grid-cols-2 gap-6">
+            {[
+              { name: 'Women & Girls', icon: 'woman' },
+              { name: "Children's Welfare", icon: 'child_care' },
+              { name: 'Disability Inclusion', icon: 'accessible' },
+              { name: 'Underprivileged Communities', icon: 'groups' }
+            ].map((item, i) => (
               <motion.div 
                 key={item.name} 
                 initial={{ opacity: 0, y: 20 }}
@@ -831,27 +841,27 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
                 name: 'Akshat Karki',
                 role: 'President',
-                bio: "Leading Arthneeti's vision to build Nepal's most impactful youth financial education movement. Focused on school partnerships, club strategy, and driving the mission forward."
+                bio: "Leading Arthneeti's vision to build Nepal's most impactful youth financial education movement."
               },
               {
                 name: 'Manash Koirala',
                 role: 'Vice President',
-                bio: "Supporting club operations and co-leading educational strategy. Passionate about making stock market knowledge accessible to every Nepali high schooler."
+                bio: "Supporting club operations and co-leading educational strategy for accessible stock market knowledge."
               },
               {
                 name: 'Ujjwal Dhungana',
-                role: 'Head of Research & Communication',
-                bio: "Driving Arthneeti's research agenda and external communications. Builds the intellectual content that makes our sessions substantive and credible."
+                role: 'Head of Research',
+                bio: "Driving Arthneeti's research agenda and external communications with substantive, credible content."
               },
               {
                 name: 'Pranjal Khatiwada',
                 role: 'Secretary',
-                bio: "Managing club coordination, records, and logistics. Ensures Arthneeti runs smoothly across all schools and sessions."
+                bio: "Managing club coordination, records, and logistics across all schools and sessions."
               }
             ].map((member, i) => (
               <motion.div
@@ -882,7 +892,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Video Playback Modal Overlay */}
+      {/* Video Playback Modal */}
       <AnimatePresence>
         {selectedVideoEmbed && (
           <div 
@@ -912,7 +922,7 @@ export default function LandingPage() {
                   onClick={() => setSelectedVideoEmbed(null)}
                   className="bg-coral-flame text-white px-5 py-2 text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-coral-flame/90 transition-all cursor-pointer shadow-sm"
                 >
-                  Close Player
+                  Close
                 </button>
               </div>
             </motion.div>
@@ -921,6 +931,5 @@ export default function LandingPage() {
       </AnimatePresence>
 
     </motion.main>
-
   );
 }

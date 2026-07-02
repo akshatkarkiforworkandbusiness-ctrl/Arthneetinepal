@@ -194,7 +194,7 @@ export default function PostDetailPage() {
       <main className="max-w-3xl mx-auto px-6 py-32 text-center">
         <h2 className="text-3xl text-text-primary italic font-sans tracking-tight font-semibold mb-4">Post not found</h2>
         <p className="text-text-muted mb-8">This post may have been removed, or the link is incorrect.</p>
-        <Link to="/community" className="bg-electric-mint text-slate-base px-8 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-club-green transition-all">
+        <Link to="/community" className="bg-[#847dff] text-[#f5f5f7] px-8 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-[#847dff] transition-all">
           Back to Community
         </Link>
       </main>
@@ -218,13 +218,13 @@ export default function PostDetailPage() {
       {/* Header: author + meta + management */}
       <div className="flex justify-between items-start mb-8">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-lg bg-club-green flex items-center justify-center text-white font-black text-sm uppercase">
+          <div className="w-10 h-10 rounded-lg bg-[#847dff] flex items-center justify-center text-white font-black text-sm uppercase">
             {post.author?.[0]}
           </div>
           <div>
             <h4 className="text-xs font-black text-text-primary uppercase tracking-widest">{post.author}</h4>
             <div className="flex items-center gap-3 mt-1">
-              <Badge variant="outline" className="text-[9px] font-black text-text-primary border-surface-high uppercase tracking-widest bg-surface-raised px-2 py-0.5 rounded-lg">
+              <Badge variant="outline" className="text-[9px] font-black text-text-primary border-white/[0.06] uppercase tracking-widest bg-[#090a0b] px-2 py-0.5 rounded-lg">
                 {post.category}
               </Badge>
               <span className="text-[9px] font-medium text-text-muted uppercase tracking-widest">
@@ -241,11 +241,11 @@ export default function PostDetailPage() {
               <MoreVertical size={18} />
             </button>
             {showActions && (
-              <div className="absolute right-0 mt-2 w-44 bg-surface-raised border border-surface-high rounded-lg shadow-xl z-20 overflow-hidden">
+              <div className="absolute right-0 mt-2 w-44 bg-[#090a0b] border border-white/[0.06] rounded-lg shadow-xl z-20 overflow-hidden">
                 {canEdit && (
                   <button
                     onClick={() => { setShowEditModal(true); setShowActions(false); }}
-                    className="w-full flex items-center gap-2 px-4 py-3 text-xs font-bold text-text-primary hover:bg-surface-high transition-colors"
+                    className="w-full flex items-center gap-2 px-4 py-3 text-xs font-bold text-text-primary hover:bg-[#2e2e2e] transition-colors"
                   >
                     <Pencil size={14} /> Edit Post
                   </button>
@@ -253,7 +253,7 @@ export default function PostDetailPage() {
                 {canDelete && (
                   <button
                     onClick={() => { setShowDeleteConfirm(true); setShowActions(false); }}
-                    className="w-full flex items-center gap-2 px-4 py-3 text-xs font-bold text-red-400 hover:bg-surface-high transition-colors"
+                    className="w-full flex items-center gap-2 px-4 py-3 text-xs font-bold text-red-400 hover:bg-[#2e2e2e] transition-colors"
                   >
                     <Trash2 size={14} /> Delete Post
                   </button>
@@ -273,7 +273,7 @@ export default function PostDetailPage() {
       {post.type === 'discussion' && (
         <>
           {post.imageUrl && (
-            <div className="aspect-video rounded-lg-2xl overflow-hidden mb-10 border border-surface-high shadow-lg">
+            <div className="aspect-video rounded-lg-2xl overflow-hidden mb-10 border border-white/[0.06] shadow-lg">
               <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             </div>
           )}
@@ -284,8 +284,8 @@ export default function PostDetailPage() {
       )}
 
       {post.type === 'research' && (
-        <div className="bg-surface-raised p-10 rounded-lg-2xl border border-surface-high flex flex-col items-center text-center mb-10">
-          <div className="w-16 h-16 bg-surface-high/40 rounded-lg flex items-center justify-center text-club-green mb-6 shadow-sm border border-surface-high">
+        <div className="bg-[#090a0b] p-10 rounded-lg-2xl border border-white/[0.06] flex flex-col items-center text-center mb-10">
+          <div className="w-16 h-16 bg-[#2e2e2e]/40 rounded-lg flex items-center justify-center text-[#847dff] mb-6 shadow-sm border border-white/[0.06]">
             <FileText size={32} />
           </div>
           <p className="text-text-muted text-base italic font-sans max-w-lg mb-8">"{post.abstract}"</p>
@@ -293,7 +293,7 @@ export default function PostDetailPage() {
             href={post.pdfUrl}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-3 bg-club-green/20 text-club-green px-8 py-3 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-club-green hover:text-white border border-club-green/30 transition-all"
+            className="flex items-center gap-3 bg-[#847dff]/20 text-[#847dff] px-8 py-3 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-[#847dff] hover:text-white border border-[#847dff]/30 transition-all"
           >
             <Download size={14} /> Download PDF
           </a>
@@ -305,12 +305,12 @@ export default function PostDetailPage() {
       )}
 
       {/* Inline action row (stays in flow; floating bar below mirrors it on scroll) */}
-      <div className="flex items-center gap-8 pt-6 border-t border-surface-high">
+      <div className="flex items-center gap-8 pt-6 border-t border-white/[0.06]">
         <button onClick={handleLike} className="flex items-center gap-2 group" disabled={!user}>
-          <Heart size={18} fill={hasLiked ? 'currentColor' : 'none'} className={hasLiked ? 'text-electric-mint' : 'text-text-muted group-hover:text-electric-mint transition-colors'} />
+          <Heart size={18} fill={hasLiked ? 'currentColor' : 'none'} className={hasLiked ? 'text-[#847dff]' : 'text-text-muted group-hover:text-[#847dff] transition-colors'} />
           <span className="text-[10px] font-black text-text-muted uppercase tracking-widest">{post.likes}</span>
         </button>
-        <button onClick={jumpToComments} className="flex items-center gap-2 group text-text-muted hover:text-club-green transition-colors">
+        <button onClick={jumpToComments} className="flex items-center gap-2 group text-text-muted hover:text-[#847dff] transition-colors">
           <MessageSquare size={18} />
           <span className="text-[10px] font-black uppercase tracking-widest">{post.commentCount}</span>
         </button>
@@ -329,7 +329,7 @@ export default function PostDetailPage() {
 
       {/* Related / more from this author */}
       <div className="mt-16">
-        <h3 className="text-[10px] font-black text-electric-mint uppercase tracking-[0.3em] mb-6">Keep Reading</h3>
+        <h3 className="text-[10px] font-black text-[#847dff] uppercase tracking-[0.3em] mb-6">Keep Reading</h3>
         <RelatedPosts post={post} />
       </div>
 
@@ -339,15 +339,15 @@ export default function PostDetailPage() {
       {/* Floating action bar — long-read companion */}
       <FloatingActionBar visible={showFloatingBar}>
         <button onClick={handleLike} className="flex items-center gap-2" disabled={!user}>
-          <Heart size={16} fill={hasLiked ? 'currentColor' : 'none'} className={hasLiked ? 'text-electric-mint' : 'text-text-muted'} />
+          <Heart size={16} fill={hasLiked ? 'currentColor' : 'none'} className={hasLiked ? 'text-[#847dff]' : 'text-text-muted'} />
           <span className="text-[10px] font-black text-text-muted">{post.likes}</span>
         </button>
-        <span className="w-px h-5 bg-surface-high" />
-        <button onClick={jumpToComments} className="flex items-center gap-2 text-text-muted hover:text-club-green transition-colors">
+        <span className="w-px h-5 bg-[#2e2e2e]" />
+        <button onClick={jumpToComments} className="flex items-center gap-2 text-text-muted hover:text-[#847dff] transition-colors">
           <MessageSquare size={16} />
           <span className="text-[10px] font-black">{post.commentCount}</span>
         </button>
-        <span className="w-px h-5 bg-surface-high" />
+        <span className="w-px h-5 bg-[#2e2e2e]" />
         <button onClick={handleCopyLink} className="text-text-muted hover:text-text-primary transition-colors">
           <Share2 size={16} />
         </button>
@@ -355,11 +355,11 @@ export default function PostDetailPage() {
 
       {/* Edit Modal */}
       {showEditModal && (
-        <div className="fixed inset-0 z-[100] bg-slate-base/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[100] bg-[#0f1011]/80 backdrop-blur-md flex items-center justify-center p-4">
           <motion.div
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-surface-raised p-8 md:p-12 rounded-lg-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl"
+            className="bg-[#090a0b] p-8 md:p-12 rounded-lg-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl"
           >
             <button onClick={() => setShowEditModal(false)} className="absolute top-8 right-8 text-text-muted hover:text-text-primary transition-colors">
               <X size={24} />
@@ -371,7 +371,7 @@ export default function PostDetailPage() {
                 <select
                   value={editData.category}
                   onChange={e => setEditData({ ...editData, category: e.target.value as any })}
-                  className="w-full bg-surface-base border-2 border-surface-high rounded-lg p-4 outline-none focus:border-electric-mint transition-all font-bold text-text-primary"
+                  className="w-full bg-[#0f1011] border-2 border-white/[0.06] rounded-lg p-4 outline-none focus:border-[#847dff] transition-all font-bold text-text-primary"
                 >
                   {['Finance', 'Economics', 'Business', 'Policy', 'Other'].map(c => <option key={c}>{c}</option>)}
                 </select>
@@ -384,7 +384,7 @@ export default function PostDetailPage() {
                     type="text"
                     value={editData.title}
                     onChange={e => setEditData({ ...editData, title: e.target.value })}
-                    className="w-full bg-surface-base border-2 border-surface-high rounded-lg p-4 outline-none focus:border-electric-mint transition-all font-bold text-text-primary"
+                    className="w-full bg-[#0f1011] border-2 border-white/[0.06] rounded-lg p-4 outline-none focus:border-[#847dff] transition-all font-bold text-text-primary"
                   />
                 </div>
               )}
@@ -395,7 +395,7 @@ export default function PostDetailPage() {
                   <textarea
                     value={editData.abstract}
                     onChange={e => setEditData({ ...editData, abstract: e.target.value })}
-                    className="w-full bg-surface-base border-2 border-surface-high rounded-lg p-4 outline-none focus:border-electric-mint transition-all font-bold text-text-primary resize-none h-24"
+                    className="w-full bg-[#0f1011] border-2 border-white/[0.06] rounded-lg p-4 outline-none focus:border-[#847dff] transition-all font-bold text-text-primary resize-none h-24"
                   />
                 </div>
               )}
@@ -406,16 +406,16 @@ export default function PostDetailPage() {
                   <textarea
                     value={editData.content}
                     onChange={e => setEditData({ ...editData, content: e.target.value })}
-                    className="w-full bg-surface-base border-2 border-surface-high rounded-lg p-4 outline-none focus:border-electric-mint transition-all font-bold text-text-primary resize-none h-32"
+                    className="w-full bg-[#0f1011] border-2 border-white/[0.06] rounded-lg p-4 outline-none focus:border-[#847dff] transition-all font-bold text-text-primary resize-none h-32"
                   />
                 ) : (
-                  <div className="bg-surface-base rounded-lg border-2 border-surface-high focus-within:border-electric-mint transition-all overflow-hidden font-sans">
-                    <ReactQuill theme="snow" value={editData.content} onChange={val => setEditData({ ...editData, content: val })} className="bg-surface-base min-h-[200px]" />
+                  <div className="bg-[#0f1011] rounded-lg border-2 border-white/[0.06] focus-within:border-[#847dff] transition-all overflow-hidden font-sans">
+                    <ReactQuill theme="snow" value={editData.content} onChange={val => setEditData({ ...editData, content: val })} className="bg-[#0f1011] min-h-[200px]" />
                   </div>
                 )}
               </div>
 
-              <button type="submit" className="w-full bg-electric-mint text-slate-base py-5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-club-green transition-all shadow-xl">
+              <button type="submit" className="w-full bg-[#847dff] text-[#f5f5f7] py-5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#847dff] transition-all shadow-xl">
                 Save Changes
               </button>
             </form>
@@ -425,16 +425,16 @@ export default function PostDetailPage() {
 
       {/* Delete Confirm */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 z-[100] bg-slate-base/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[100] bg-[#0f1011]/80 backdrop-blur-md flex items-center justify-center p-4">
           <motion.div
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-surface-raised p-10 rounded-lg-2xl max-w-md w-full text-center shadow-2xl"
+            className="bg-[#090a0b] p-10 rounded-lg-2xl max-w-md w-full text-center shadow-2xl"
           >
             <h2 className="text-2xl text-text-primary font-bold mb-4">Delete this post?</h2>
             <p className="text-text-muted text-sm mb-8">This can't be undone. Comments and likes on this post will be orphaned.</p>
             <div className="flex gap-4">
-              <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 py-4 rounded-lg text-xs font-black uppercase tracking-widest border border-surface-high text-text-muted hover:text-text-primary transition-all">
+              <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 py-4 rounded-lg text-xs font-black uppercase tracking-widest border border-white/[0.06] text-text-muted hover:text-text-primary transition-all">
                 Cancel
               </button>
               <button onClick={handleDelete} className="flex-1 py-4 rounded-lg text-xs font-black uppercase tracking-widest bg-red-500/90 text-white hover:bg-red-500 transition-all">
@@ -452,14 +452,14 @@ function ShareMenu({ onCopy, onTwitter, onLinkedIn, onClose }: { onCopy: () => v
   return (
     <>
       <div className="fixed inset-0 z-10" onClick={onClose} />
-      <div className="absolute right-0 mt-2 w-52 bg-surface-raised border border-surface-high rounded-lg shadow-xl z-20 overflow-hidden">
-        <button onClick={onCopy} className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-text-primary hover:bg-surface-high transition-colors">
+      <div className="absolute right-0 mt-2 w-52 bg-[#090a0b] border border-white/[0.06] rounded-lg shadow-xl z-20 overflow-hidden">
+        <button onClick={onCopy} className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-text-primary hover:bg-[#2e2e2e] transition-colors">
           <Link2 size={14} /> Copy Link
         </button>
-        <button onClick={onTwitter} className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-text-primary hover:bg-surface-high transition-colors">
+        <button onClick={onTwitter} className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-text-primary hover:bg-[#2e2e2e] transition-colors">
           <Twitter size={14} /> Share to Twitter
         </button>
-        <button onClick={onLinkedIn} className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-text-primary hover:bg-surface-high transition-colors">
+        <button onClick={onLinkedIn} className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-text-primary hover:bg-[#2e2e2e] transition-colors">
           <Linkedin size={14} /> Share to LinkedIn
         </button>
       </div>
@@ -473,7 +473,7 @@ function FloatingActionBar({ visible, children }: { visible: boolean; children: 
       initial={false}
       animate={{ y: visible ? 0 : 80, opacity: visible ? 1 : 0 }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
-      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-surface-raised border border-surface-high rounded-lg-2xl shadow-2xl px-6 py-3 flex items-center gap-5"
+      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#090a0b] border border-white/[0.06] rounded-lg-2xl shadow-2xl px-6 py-3 flex items-center gap-5"
       style={{ pointerEvents: visible ? 'auto' : 'none' }}
     >
       {children}

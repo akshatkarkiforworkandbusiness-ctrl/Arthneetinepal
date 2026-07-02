@@ -1,4 +1,9 @@
-const key = "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";
+const key = process.env.NVIDIA_API_KEY;
+if (!key) {
+  console.error('NVIDIA_API_KEY environment variable is not set.');
+  console.error('Usage: NVIDIA_API_KEY=your_key node test-cors.js');
+  process.exit(1);
+}
 
 async function testCORS() {
   try {

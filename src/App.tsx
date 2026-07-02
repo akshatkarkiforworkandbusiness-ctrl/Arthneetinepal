@@ -3,7 +3,7 @@ import { Navigation, Footer } from './components/Layout';
 import LandingPage from './components/LandingPage';
 import CommunityPage from './components/CommunityPage';
 import ExplorePage from './components/ExplorePage';
-import AboutUsPage from './components/MissionPage'; // Repurposing MissionPage as AboutUsPage
+import AboutUsPage from './components/MissionPage';
 import LearnPage from './components/LearnPage';
 import EventsPage from './components/EventsPage';
 import ProfilePage from './components/ProfilePage';

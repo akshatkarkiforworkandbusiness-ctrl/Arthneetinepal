@@ -2277,42 +2277,32 @@ export default function LearnPage() {
                   </div>
                   <div className="flex gap-2">
                     {(!masterExamScores[module.id] || masterExamScores[module.id] < 80) && (
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                      <button
                         onClick={() => setMasterExamModule(module.id)}
                         className="px-4 py-2 bg-coral-flame text-white text-[10px] font-bold uppercase tracking-widest rounded-xl shadow-[0_4px_15px_rgba(247,59,32,0.3)] hover:opacity-90 transition-all"
                       >
                         Take Master Exam
-                      </motion.button>
+                      </button>
                     )}
                     {masterExamScores[module.id] >= 80 && (
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                      <button
                         onClick={() => setCertificateModule(module.title)}
                         className="px-4 py-2 bg-white text-coral-flame border border-blush-mist text-[10px] font-bold uppercase tracking-widest rounded-xl hover:border-coral-flame/50 hover:bg-sunset-fade transition-all"
                       >
                         View Certificate
-                      </motion.button>
+                      </button>
                     )}
                   </div>
-                </motion.div>
+                </div>
               )}
-            </motion.div>
+            </div>
 
             {/* Lesson Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {moduleLessons.map((lesson, index) => {
                 return (
-                  <motion.button
+                  <button
                     key={lesson.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-20px" }}
-                    transition={{ delay: index * 0.1, type: 'spring', stiffness: 200, damping: 20 }}
-                    whileHover={{ scale: 1.02, y: -4 }}
-                    whileTap={{ scale: 0.98 }}
                     onClick={() => playLesson(lesson)}
                     className={`text-left bg-white border rounded-3xl overflow-hidden transition-all group hover:border-mint-action/50 shadow-warm-lift hover:shadow-warm-float ${
                       activeLesson.id === lesson.id && isPlaying
@@ -2322,10 +2312,10 @@ export default function LearnPage() {
                   >
                     {/* Thumbnail */}
                     <div className="relative aspect-video overflow-hidden">
-                      <motion.img
+                      <img
                         src={lesson.thumbnail}
                         alt={lesson.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-brandwood/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <motion.div 
@@ -2362,7 +2352,7 @@ export default function LearnPage() {
                       </h3>
                       <p className="text-text-muted font-sans text-xs line-clamp-2">{lesson.desc}</p>
                     </div>
-                  </motion.button>
+                  </button>
                 );
               })}
             </div>
@@ -2408,8 +2398,7 @@ export default function LearnPage() {
                       {/* Actions */}
                       <div className="flex flex-col gap-3 shrink-0">
                         
-                          <motion.a 
-                          href={guide.htmlUrl}
+                          <a href={guide.htmlUrl}
                           target="_blank"
                           rel="noreferrer"
                           whileHover={{ scale: 1.05 }}
@@ -2417,10 +2406,9 @@ export default function LearnPage() {
                           className="flex items-center justify-center gap-2 px-5 py-3 bg-mint-action/10 text-mint-action border border-mint-action/30 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-mint-action hover:text-white transition-all shadow-sm"
                         >
                           <BookOpen size={14} /> Read Online
-                        </motion.a>
+                        </a>
                         
-                          <motion.a 
-                          href={guide.pdfUrl}
+                          <a href={guide.pdfUrl}
                           target="_blank"
                           rel="noreferrer"
                           whileHover={{ scale: 1.05 }}
@@ -2428,10 +2416,10 @@ export default function LearnPage() {
                           className="flex items-center justify-center gap-2 px-5 py-3 bg-white text-text-muted border border-blush-mist rounded-xl text-[10px] font-bold uppercase tracking-widest hover:text-brandwood hover:border-coral-flame transition-all shadow-sm"
                         >
                           <Download size={14} /> Download PDF
-                        </motion.a>
+                        </a>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             )}

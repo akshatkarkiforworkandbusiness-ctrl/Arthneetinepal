@@ -7,7 +7,6 @@ import { OnboardingModal } from './OnboardingModal';
 import { AuthModal } from './AuthModal';
 
 const navLinks = [
-  { name: 'Home', path: '/' },
   { name: 'Discover', path: '/discover' },
   { name: 'Learn', path: '/learn' },
   { name: 'Community', path: '/community' },
