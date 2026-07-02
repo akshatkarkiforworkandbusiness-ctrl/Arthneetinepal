@@ -17,7 +17,7 @@ export function ProfileDropdown() {
     <div className="relative">
       <button 
         onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-        className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-500 to-teal-400 flex items-center justify-center text-white font-black text-sm uppercase cursor-pointer hover:from-purple-600 hover:to-teal-500 transition-all shadow-lg shadow-purple-200 hover:shadow-xl hover:shadow-purple-300 hover:-translate-y-0.5"
+        className="w-10 h-10 rounded-2xl bg-sunset-fade border border-blush-mist flex items-center justify-center text-brandwood font-black text-sm uppercase cursor-pointer hover:bg-white hover:border-coral-flame hover:text-coral-flame transition-all shadow-warm-lift hover:-translate-y-0.5"
       >
         {profile?.name?.[0] || user?.displayName?.[0] || 'U'}
       </button>
@@ -34,12 +34,12 @@ export function ProfileDropdown() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 mt-4 w-72 bg-white rounded-3xl shadow-2xl border border-gray-100 z-50 overflow-hidden"
+              className="absolute right-0 mt-3 w-72 bg-white rounded-3xl shadow-warm-float border border-blush-mist z-50 overflow-hidden"
             >
               {/* Header */}
-              <div className="p-5 bg-gradient-to-r from-purple-600 to-teal-500 text-white">
-                <p className="text-sm font-bold font-sans tracking-tight mb-1">{profile?.name || user?.displayName}</p>
-                <p className="text-xs text-white/70 font-medium">
+              <div className="p-5 bg-sunset-fade border-b border-blush-mist">
+                <p className="text-sm font-bold font-sans text-brandwood tracking-tight mb-1">{profile?.name || user?.displayName}</p>
+                <p className="text-xs text-text-muted font-medium">
                   {profile?.topics?.slice(0, 3).join(' · ') || 'Member'}
                 </p>
               </div>
@@ -49,10 +49,10 @@ export function ProfileDropdown() {
                 <Link 
                   to="/profile" 
                   onClick={() => setShowProfileDropdown(false)}
-                  className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-2xl transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-widest text-brandwood hover:bg-mint-action/10 hover:text-mint-action rounded-2xl transition-colors"
                 >
-                  <div className="w-8 h-8 bg-purple-100 rounded-xl flex items-center justify-center">
-                    <span className="material-symbols-outlined text-purple-600 text-lg">person</span>
+                  <div className="w-8 h-8 bg-mint-action/10 border border-mint-action/20 rounded-xl flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-mint-action text-[18px]">person</span>
                   </div>
                   My Profile
                 </Link>
@@ -61,10 +61,10 @@ export function ProfileDropdown() {
                     logout();
                     setShowProfileDropdown(false);
                   }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-red-500 hover:bg-red-50 rounded-2xl transition-colors cursor-pointer"
+                  className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-widest text-coral-flame hover:bg-sunset-fade rounded-2xl transition-colors cursor-pointer"
                 >
-                  <div className="w-8 h-8 bg-red-100 rounded-xl flex items-center justify-center">
-                    <span className="material-symbols-outlined text-red-500 text-lg">logout</span>
+                  <div className="w-8 h-8 bg-coral-flame/10 border border-coral-flame/20 rounded-xl flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-coral-flame text-[18px]">logout</span>
                   </div>
                   Sign Out
                 </button>

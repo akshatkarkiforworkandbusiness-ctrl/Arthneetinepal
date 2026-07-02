@@ -198,7 +198,7 @@ export default function ExplorePage() {
   /* ── Error state ── */
   if (error && stocks.length === 0) {
     return (
-      <motion.main initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-7xl mx-auto px-4 md:px-12 py-24 min-h-screen flex items-center justify-center">
+      <motion.main initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-7xl mx-auto px-4 md:px-12 pt-32 pb-24 min-h-screen flex items-center justify-center">
         <div className="text-center bg-[#090a0b] border border-white/[0.06] rounded-2xl p-12 max-w-md">
           <span className="material-symbols-outlined text-6xl text-[#ef4444] mb-4 block">cloud_off</span>
           <h2 className="text-xl font-bold text-white mb-2">Market Data Unavailable</h2>
@@ -212,7 +212,7 @@ export default function ExplorePage() {
   }
 
   return (
-    <motion.main initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-7xl mx-auto px-4 md:px-12 py-24 min-h-screen">
+    <motion.main initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-7xl mx-auto px-4 md:px-12 pt-32 pb-24 min-h-screen">
 
       {/* ─── Header ─── */}
       <header className="mb-10">
