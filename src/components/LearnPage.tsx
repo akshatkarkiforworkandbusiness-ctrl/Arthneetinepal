@@ -1910,17 +1910,17 @@ const MODULES: Module[] = [
 const FAQS: FAQ[] = LESSONS.flatMap(lesson => lesson.faqs || []);
 
 export const LEVEL_COLORS: Record<string, string> = {
-  'Beginner': 'bg-electric-mint/10 text-electric-mint border-electric-mint/20',
-  'Intermediate': 'bg-amber-400/10 text-amber-400 border-amber-400/20',
-  'Advanced': 'bg-rose-400/10 text-rose-400 border-rose-400/20',
+  'Beginner': 'bg-mint-action/10 text-mint-action border-mint-action/20',
+  'Intermediate': 'bg-amber-400/10 text-amber-500 border-amber-400/20',
+  'Advanced': 'bg-coral-flame/10 text-coral-flame border-coral-flame/20',
 };
 
 const TAG_COLORS: Record<string, string> = {
-  'Stock Market':       'bg-club-green/10 text-club-green border-club-green/20',
-  'Policy & Economics': 'bg-electric-mint/10 text-electric-mint border-electric-mint/20',
-  'Technical Analysis': 'bg-green-light/10 text-green-light border-green-light/20',
-  'Financial Literacy': 'bg-amber-400/10 text-amber-400 border-amber-400/20',
-  'Research':           'bg-violet-400/10 text-violet-400 border-violet-400/20',
+  'Stock Market':       'bg-mint-action/10 text-mint-action border-mint-action/20',
+  'Policy & Economics': 'bg-cobalt-blue/10 text-cobalt-blue border-cobalt-blue/20',
+  'Technical Analysis': 'bg-amber-400/10 text-amber-500 border-amber-400/20',
+  'Financial Literacy': 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
+  'Research':           'bg-coral-flame/10 text-coral-flame border-coral-flame/20',
 };
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -2082,23 +2082,23 @@ export default function LearnPage() {
     : 0;
 
   return (
-  <main className="py-32 px-6 min-h-screen">
+  <main className="py-32 px-6 min-h-screen bg-white">
     <div className="max-w-7xl mx-auto space-y-8">
 
       {/* Page Header */}
       <div className="mb-16">
-        <p className="text-[10px] font-black uppercase tracking-widest text-royal mb-4">Arthneeti Academy</p>
-        <h1 className="text-5xl md:text-7xl font-display italic text-white leading-tight mb-6">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-mint-action mb-4">Arthneeti Academy</p>
+        <h1 className="text-5xl md:text-7xl font-display text-brandwood leading-[0.90] mb-6">
           Learn Economics.<br />Understand Nepal.
         </h1>
-        <p className="text-gray-400 font-sans max-w-xl">
+        <p className="text-text-muted font-sans max-w-xl">
           Structured lessons, written guides, and research — built for Nepali students who want to understand markets, policy, and money.
         </p>
       </div>
 
       {/* Active Lesson Player — shown when a lesson is playing */}
       {isPlaying && (
-        <div ref={playerRef} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden mb-16">
+        <div ref={playerRef} className="bg-white border border-blush-mist rounded-3xl overflow-hidden mb-16 shadow-warm-lift">
           
           {/* Video */}
           <div className="aspect-video w-full">
@@ -2116,27 +2116,27 @@ export default function LearnPage() {
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div>
                 <div className="flex items-center gap-3 mb-3">
-                  <span className={`text-[9px] font-black uppercase tracking-widest border-transparent px-3 py-1 rounded ${
-                    activeLesson.level === 'Beginner' ? 'bg-green-500/20 text-green-400' :
-                    activeLesson.level === 'Intermediate' ? 'bg-yellow-500/20 text-yellow-400' :
-                    'bg-crimson/20 text-crimson'
+                  <span className={`text-[9px] font-bold uppercase tracking-widest border-transparent px-3 py-1 rounded-lg ${
+                    activeLesson.level === 'Beginner' ? 'bg-mint-action/10 text-mint-action' :
+                    activeLesson.level === 'Intermediate' ? 'bg-amber-400/10 text-amber-500' :
+                    'bg-coral-flame/10 text-coral-flame'
                   }`}>
                     {activeLesson.level}
                   </span>
-                  <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">{activeLesson.duration}</span>
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-text-muted">{activeLesson.duration}</span>
                 </div>
-                <h2 className="text-3xl font-display italic text-white">{activeLesson.title}</h2>
-                <p className="text-gray-400 font-sans mt-2 max-w-2xl">{activeLesson.desc}</p>
+                <h2 className="text-3xl font-display text-brandwood">{activeLesson.title}</h2>
+                <p className="text-text-muted font-sans mt-2 max-w-2xl">{activeLesson.desc}</p>
               </div>
 
               {/* Mark Complete */}
               {user && (!activeLesson.quiz || activeLesson.quiz.length === 0) && (
                 <button
                   onClick={() => markComplete(activeLesson.id)}
-                  className={`flex items-center gap-3 px-6 py-3 rounded text-[10px] font-black uppercase tracking-widest transition-all shrink-0 ${
+                  className={`flex items-center gap-3 px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all shrink-0 ${
                     completed.has(activeLesson.id)
-                      ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                      : 'bg-white/5 text-gray-400 border border-white/10 hover:border-green-500/30 hover:text-green-400'
+                      ? 'bg-mint-action/10 text-mint-action border border-mint-action/30'
+                      : 'bg-white text-text-muted border border-blush-mist hover:border-mint-action/30 hover:text-mint-action'
                   }`}
                 >
                   {completed.has(activeLesson.id) ? '✓ Completed' : 'Mark Complete'}
@@ -2147,14 +2147,14 @@ export default function LearnPage() {
             {/* Chapters */}
             {activeLesson.chapters.length > 0 && (
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-4">What's covered</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-4">What's covered</p>
                 <div className="space-y-2">
                   {activeLesson.chapters.map((chapter, i) => (
                     <div key={i} className="flex items-start gap-4">
-                      <span className="text-[9px] font-black text-royal mt-0.5 shrink-0">
+                      <span className="text-[9px] font-bold text-mint-action mt-0.5 shrink-0">
                         {String(i + 1).padStart(2, '0')}
                       </span>
-                      <span className="text-sm text-gray-300 font-sans">{chapter}</span>
+                      <span className="text-sm text-brandwood font-sans">{chapter}</span>
                     </div>
                   ))}
                 </div>
@@ -2163,18 +2163,18 @@ export default function LearnPage() {
 
             {/* Resources */}
             {activeLesson.resources && activeLesson.resources.length > 0 && (
-              <div className="border-t border-white/10 pt-8 mt-8">
-                <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-4">Downloads & Resources</p>
+              <div className="border-t border-blush-mist pt-8 mt-8">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-4">Downloads & Resources</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {activeLesson.resources.map((resource, i) => (
-                    <a key={i} href={resource.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-4 bg-white/3 border border-white/10 rounded-xl hover:border-royal/50 hover:bg-royal/5 transition-all group">
+                    <a key={i} href={resource.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-4 bg-white border border-blush-mist rounded-2xl hover:border-mint-action/50 hover:bg-sunset-fade transition-all group shadow-sm">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 group-hover:text-royal transition-colors">
+                        <div className="w-10 h-10 rounded-full bg-sunset-fade flex items-center justify-center text-text-muted group-hover:text-mint-action transition-colors">
                           <Download size={16} />
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-white group-hover:text-royal transition-colors">{resource.title}</p>
-                          <p className="text-xs text-gray-500 font-sans">{resource.size}</p>
+                          <p className="text-sm font-bold text-brandwood group-hover:text-mint-action transition-colors">{resource.title}</p>
+                          <p className="text-xs text-text-muted font-sans">{resource.size}</p>
                         </div>
                       </div>
                     </a>
@@ -2195,15 +2195,15 @@ export default function LearnPage() {
             )}
 
             {activeLesson.faqs && activeLesson.faqs.length > 0 && (
-              <div className="border-t border-white/10 pt-8">
-                <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-6">
+              <div className="border-t border-blush-mist pt-8">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-6">
                   Frequently Asked Questions
                 </p>
                 <div className="space-y-4">
                   {activeLesson.faqs.map((faq, i) => (
-                    <div key={i} className="bg-white/3 border border-white/10 rounded-xl p-6">
-                      <h4 className="text-sm font-bold text-white mb-3">{faq.question}</h4>
-                      <p className="text-gray-400 font-sans text-sm leading-relaxed">{faq.answer}</p>
+                    <div key={i} className="bg-white border border-blush-mist rounded-2xl p-6 shadow-sm">
+                      <h4 className="text-sm font-bold text-brandwood mb-3">{faq.question}</h4>
+                      <p className="text-text-muted font-sans text-sm leading-relaxed">{faq.answer}</p>
                     </div>
                   ))}
                 </div>
@@ -2234,22 +2234,22 @@ export default function LearnPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-              className="border-b border-white/10 pb-6"
+              className="border-b border-blush-mist pb-6"
             >
-              <h2 className="text-2xl font-display italic text-white mb-2">{module.title}</h2>
-              <p className="text-gray-500 font-sans text-sm">{module.description}</p>
+              <h2 className="text-2xl font-display text-brandwood mb-2">{module.title}</h2>
+              <p className="text-text-muted font-sans text-sm">{module.description}</p>
               <div className="mt-4 space-y-2">
-                <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-gray-500">
+                <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-text-muted">
                   <span>{completedInModule} / {moduleLessons.length} complete</span>
                   <span>{Math.round((completedInModule / moduleLessons.length) * 100) || 0}%</span>
                 </div>
-                <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-sunset-fade rounded-full overflow-hidden border border-blush-mist">
                   <motion.div
                     initial={{ width: 0 }}
                     whileInView={{ width: `${(completedInModule / moduleLessons.length) * 100 || 0}%` }}
                     viewport={{ once: true }}
                     transition={{ duration: 1, delay: 0.2, type: 'spring' }}
-                    className="h-full bg-royal"
+                    className="h-full bg-mint-action"
                   />
                 </div>
               </div>
@@ -2260,15 +2260,15 @@ export default function LearnPage() {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ type: 'spring', bounce: 0.5 }}
-                  className="mt-6 bg-gradient-to-r from-royal/20 to-transparent border border-royal/30 p-4 rounded-xl flex items-center justify-between flex-wrap gap-4"
+                  className="mt-6 bg-sunset-fade border border-blush-mist p-4 rounded-2xl flex items-center justify-between flex-wrap gap-4 shadow-sm"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="bg-royal/20 p-2 rounded-full border border-royal/50">
-                      <Award size={20} className="text-royal" />
+                    <div className="bg-white p-2 rounded-2xl border border-blush-mist shadow-warm-lift">
+                      <Award size={20} className="text-coral-flame" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-white">Module Completed!</p>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-sm font-bold text-brandwood">Module Completed!</p>
+                      <p className="text-xs text-text-muted">
                         {masterExamScores[module.id] >= 80 
                           ? `You passed the Master Exam with ${masterExamScores[module.id]}%.` 
                           : `Unlock your certificate by passing the Master Exam.`}
@@ -2281,7 +2281,7 @@ export default function LearnPage() {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setMasterExamModule(module.id)}
-                        className="px-4 py-2 bg-royal text-white text-[10px] font-black uppercase tracking-widest rounded shadow-[0_0_15px_rgba(0,135,90,0.5)] hover:bg-royal-light transition-all"
+                        className="px-4 py-2 bg-coral-flame text-white text-[10px] font-bold uppercase tracking-widest rounded-xl shadow-[0_4px_15px_rgba(247,59,32,0.3)] hover:opacity-90 transition-all"
                       >
                         Take Master Exam
                       </motion.button>
@@ -2291,7 +2291,7 @@ export default function LearnPage() {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setCertificateModule(module.title)}
-                        className="px-4 py-2 bg-transparent text-royal border border-royal text-[10px] font-black uppercase tracking-widest rounded hover:bg-royal/10 transition-all"
+                        className="px-4 py-2 bg-white text-coral-flame border border-blush-mist text-[10px] font-bold uppercase tracking-widest rounded-xl hover:border-coral-flame/50 hover:bg-sunset-fade transition-all"
                       >
                         View Certificate
                       </motion.button>
@@ -2314,10 +2314,10 @@ export default function LearnPage() {
                     whileHover={{ scale: 1.02, y: -4 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => playLesson(lesson)}
-                    className={`text-left bg-white/3 border rounded-xl overflow-hidden transition-all group hover:border-royal/50 ${
+                    className={`text-left bg-white border rounded-3xl overflow-hidden transition-all group hover:border-mint-action/50 shadow-warm-lift hover:shadow-warm-float ${
                       activeLesson.id === lesson.id && isPlaying
-                        ? 'border-royal/50 bg-royal/5 shadow-[0_0_20px_rgba(0,135,90,0.15)]'
-                        : 'border-white/10'
+                        ? 'border-mint-action/50 bg-sunset-fade'
+                        : 'border-blush-mist'
                     }`}
                   >
                     {/* Thumbnail */}
@@ -2327,40 +2327,40 @@ export default function LearnPage() {
                         alt={lesson.title}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
-                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="absolute inset-0 bg-brandwood/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <motion.div 
                           whileHover={{ scale: 1.2 }}
-                          className="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center"
+                          className="w-12 h-12 rounded-2xl bg-white backdrop-blur flex items-center justify-center shadow-warm-lift"
                         >
-                          <Play size={20} className="text-white ml-1" />
+                          <Play size={20} className="text-mint-action ml-1" />
                         </motion.div>
                       </div>
                       {completed.has(lesson.id) && (
-                        <div className="absolute top-3 right-3 bg-green-500 rounded-full p-1 shadow-lg">
+                        <div className="absolute top-3 right-3 bg-mint-action rounded-2xl p-1.5 shadow-warm-lift border border-white">
                           <Check size={12} className="text-white" />
                         </div>
                       )}
-                      <div className="absolute top-3 left-3 bg-black/60 backdrop-blur rounded px-2 py-1 shadow-lg">
-                        <span className="text-[9px] font-black text-white">{index + 1}</span>
+                      <div className="absolute top-3 left-3 bg-white/90 backdrop-blur rounded-xl px-2 py-1 shadow-sm border border-blush-mist">
+                        <span className="text-[9px] font-bold text-brandwood">{index + 1}</span>
                       </div>
                     </div>
 
                     {/* Lesson Info */}
                     <div className="p-6 space-y-3">
                       <div className="flex items-center gap-3">
-                        <span className={`inline-block text-[9px] font-black uppercase tracking-widest border-transparent px-2 py-0.5 rounded ${
-                          lesson.level === 'Beginner' ? 'bg-green-500/20 text-green-400' :
-                          lesson.level === 'Intermediate' ? 'bg-yellow-500/20 text-yellow-400' :
-                          'bg-crimson/20 text-crimson'
+                        <span className={`inline-block text-[9px] font-bold uppercase tracking-widest border-transparent px-2 py-0.5 rounded-lg ${
+                          lesson.level === 'Beginner' ? 'bg-mint-action/10 text-mint-action' :
+                          lesson.level === 'Intermediate' ? 'bg-amber-400/10 text-amber-500' :
+                          'bg-coral-flame/10 text-coral-flame'
                         }`}>
                           {lesson.level}
                         </span>
-                        <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">{lesson.duration}</span>
+                        <span className="text-[9px] font-bold uppercase tracking-widest text-text-muted">{lesson.duration}</span>
                       </div>
-                      <h3 className="text-base font-bold leading-snug transition-colors text-white group-hover:text-royal">
+                      <h3 className="text-base font-bold leading-snug transition-colors text-brandwood group-hover:text-coral-flame font-display">
                         {lesson.title}
                       </h3>
-                      <p className="text-gray-500 font-sans text-xs line-clamp-2">{lesson.desc}</p>
+                      <p className="text-text-muted font-sans text-xs line-clamp-2">{lesson.desc}</p>
                     </div>
                   </motion.button>
                 );
@@ -2370,7 +2370,7 @@ export default function LearnPage() {
             {/* Written Guides — bottom of module */}
             {moduleGuides.length > 0 && (
               <div className="space-y-3">
-                <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Written Guide</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted">Written Guide</p>
                 {moduleGuides.map((guide, idx) => (
                   <motion.div 
                     key={guide.id} 
@@ -2378,28 +2378,28 @@ export default function LearnPage() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: idx * 0.1, type: 'spring' }}
-                    className="bg-white/3 border border-white/10 rounded-xl p-6 hover:border-white/20 transition-all shadow-lg"
+                    className="bg-white border border-blush-mist rounded-3xl p-6 hover:border-mint-action/50 transition-all shadow-warm-lift"
                   >
                     <div className="flex items-start justify-between gap-6 flex-wrap">
                       <div className="space-y-2 flex-1">
                         <div className="flex items-center gap-3">
-                          <span className="inline-block text-[9px] font-black uppercase tracking-widest bg-white/5 text-gray-400 border-transparent px-2 py-0.5 rounded">
+                          <span className="inline-block text-[9px] font-bold uppercase tracking-widest bg-sunset-fade text-brandwood border border-blush-mist px-2 py-0.5 rounded-lg">
                             {guide.category}
                           </span>
-                          <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">{guide.readingTime}</span>
-                          <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">{guide.language}</span>
+                          <span className="text-[9px] font-bold uppercase tracking-widest text-text-muted">{guide.readingTime}</span>
+                          <span className="text-[9px] font-bold uppercase tracking-widest text-text-muted">{guide.language}</span>
                         </div>
-                        <h3 className="text-base font-bold text-white">{guide.title}</h3>
-                        <p className="text-gray-500 font-sans text-sm">{guide.description}</p>
+                        <h3 className="text-base font-bold text-brandwood">{guide.title}</h3>
+                        <p className="text-text-muted font-sans text-sm">{guide.description}</p>
 
                         {/* Chapters */}
                         <div className="pt-2 space-y-1">
                           {guide.chapters.map((chapter, i) => (
                             <div key={i} className="flex items-start gap-3">
-                              <span className="text-[9px] font-black text-royal mt-0.5 shrink-0">
+                              <span className="text-[9px] font-bold text-mint-action mt-0.5 shrink-0">
                                 {String(i + 1).padStart(2, '0')}
                               </span>
-                              <span className="text-xs text-gray-400 font-sans">{chapter}</span>
+                              <span className="text-xs text-brandwood font-sans">{chapter}</span>
                             </div>
                           ))}
                         </div>
@@ -2414,7 +2414,7 @@ export default function LearnPage() {
                           rel="noreferrer"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="flex items-center justify-center gap-2 px-5 py-3 bg-royal/20 text-royal border border-royal/30 rounded text-[10px] font-black uppercase tracking-widest hover:bg-royal hover:text-white transition-all shadow-sm"
+                          className="flex items-center justify-center gap-2 px-5 py-3 bg-mint-action/10 text-mint-action border border-mint-action/30 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-mint-action hover:text-white transition-all shadow-sm"
                         >
                           <BookOpen size={14} /> Read Online
                         </motion.a>
@@ -2425,7 +2425,7 @@ export default function LearnPage() {
                           rel="noreferrer"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="flex items-center justify-center gap-2 px-5 py-3 bg-white/5 text-gray-400 border border-white/10 rounded text-[10px] font-black uppercase tracking-widest hover:text-white hover:border-white/30 transition-all shadow-sm"
+                          className="flex items-center justify-center gap-2 px-5 py-3 bg-white text-text-muted border border-blush-mist rounded-xl text-[10px] font-bold uppercase tracking-widest hover:text-brandwood hover:border-coral-flame transition-all shadow-sm"
                         >
                           <Download size={14} /> Download PDF
                         </motion.a>

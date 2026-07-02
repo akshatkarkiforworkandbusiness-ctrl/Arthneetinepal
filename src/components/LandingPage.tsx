@@ -294,73 +294,44 @@ export default function LandingPage() {
     <motion.main 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="flex flex-col bg-[#0B0F19]"
+      className="flex flex-col bg-white"
     >
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-32 pb-44 px-6 min-h-[85vh] flex flex-col justify-center items-center text-center">
-        {/* Geometric Dot/Grid Background */}
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="dotPattern" width="30" height="30" patternUnits="userSpaceOnUse">
-                <circle cx="15" cy="15" r="1.5" fill="#94A3B8" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#dotPattern)" />
-          </svg>
-        </div>
-
-        {/* Nepal Flag Floating Accents */}
-        <div className="absolute top-20 right-[15%] w-72 h-72 bg-electric-mint/10 rounded-lg blur-3xl" />
-        <div className="absolute bottom-20 left-[15%] w-72 h-72 bg-club-green/10 rounded-lg blur-3xl" />
-
+      <section className="hero-gradient relative overflow-hidden pt-40 pb-32 px-6 min-h-[100vh] flex flex-col justify-center items-start text-left">
         <motion.div
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="relative z-10 max-w-4xl"
+          className="relative z-10 max-w-7xl mx-auto w-full"
         >
-          <ShinyText
-            text="✨ NEPALESE YOUTH LED MOVEMENT"
-            speed={2}
-            delay={0}
-            color="#FF3366"
-            shineColor="#ffffff"
-            spread={120}
-            direction="left"
-            yoyo={false}
-            pauseOnHover={false}
-            disabled={false}
-            className="text-[10px] font-black mb-4 block uppercase tracking-[0.4em]"
-          />
-          <h1 className="text-5xl md:text-8xl text-white mb-8 leading-tight tracking-tight font-sans tracking-tight font-semibold italic">
-            Think Big. <br />
-            Invest Smart. <br />
+          <h1 className="text-6xl md:text-[155px] text-white leading-[0.9] tracking-[0.03em] font-display font-medium mb-8">
+            Think Big.<br />
+            Invest Smart.<br />
             Lead Nepal.
           </h1>
-          <p className="text-lg md:text-xl text-text-muted mb-12 max-w-2xl mx-auto font-sans font-medium">
+          <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-2xl font-sans">
             Building the next generation of economically literate leaders and investors across Nepal.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+          <div className="flex flex-col sm:flex-row gap-6">
             {!user ? (
               <button 
                 onClick={handleJoinAction}
-                className="bg-electric-mint text-slate-base px-10 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-white hover:text-electric-mint transition-all shadow-2xl cursor-pointer"
+                className="outlined-cta"
               >
-                Join Arthneeti
+                Sign up
               </button>
             ) : (
               <Link 
                 to="/profile" 
-                className="bg-electric-mint text-slate-base px-10 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-white hover:text-electric-mint transition-all shadow-2xl text-center"
+                className="outlined-cta"
               >
                 Go to Dashboard
               </Link>
             )}
             <Link 
               to="/discover" 
-              className="border border-[#1F2A3F] bg-[#161F30] text-white px-10 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-club-green hover:border-club-green transition-all text-center"
+              className="bg-white/20 backdrop-blur-sm border border-white/40 text-white rounded-[16px] px-6 py-2.5 font-sans font-medium transition-transform active:scale-95 hover:bg-white hover:text-coral-flame text-center"
             >
               Explore Ticker & Tools
             </Link>
@@ -380,33 +351,33 @@ export default function LandingPage() {
       </section>
 
       {/* Market Ticker Sparkline Section */}
-      <section className="bg-[#161F30] border-y border-[#1F2A3F] py-8 px-6">
+      <section className="bg-white py-16 px-6">
         <div className="max-w-7xl mx-auto">
           {/* Header row with status + disclaimer */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted">NEPSE Market Indices</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-brandwood">NEPSE Market Indices</span>
               {marketDataSource === 'live' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-green-light/10 border border-green-light/30 text-green-light text-[9px] font-black uppercase tracking-widest">
-                  <span className="w-1.5 h-1.5 rounded-lg bg-green-light animate-pulse inline-block" />
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-mint-action/10 border border-mint-action/30 text-mint-action text-[9px] font-bold uppercase tracking-widest">
+                  <span className="w-1.5 h-1.5 rounded-full bg-mint-action animate-pulse inline-block" />
                   Live
                 </span>
               )}
               {marketDataSource === 'simulated' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-amber-400/10 border border-amber-400/30 text-amber-400 text-[9px] font-black uppercase tracking-widest">
-                  <span className="w-1.5 h-1.5 rounded-lg bg-amber-400 inline-block" />
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-coral-flame/10 border border-coral-flame/30 text-coral-flame text-[9px] font-bold uppercase tracking-widest">
+                  <span className="w-1.5 h-1.5 rounded-full bg-coral-flame inline-block" />
                   Simulated
                 </span>
               )}
               {marketDataSource === 'loading' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#1F2A3F] text-text-muted text-[9px] font-black uppercase tracking-widest">
-                  <span className="inline-block w-2 h-2 border border-text-muted border-t-transparent rounded-lg animate-spin" />
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-blush-mist text-brandwood text-[9px] font-bold uppercase tracking-widest">
+                  <span className="inline-block w-2 h-2 border border-brandwood border-t-transparent rounded-full animate-spin" />
                   Loading
                 </span>
               )}
             </div>
             <div className="flex flex-col sm:items-end gap-0.5">
-              <p className="text-[9px] text-text-muted leading-relaxed max-w-xs sm:text-right">
+              <p className="text-[10px] text-text-muted leading-relaxed max-w-xs sm:text-right">
                 {marketDataSource === 'live'
                   ? `Data via NepseAPI (unofficial). For educational use only — not financial advice.${lastUpdated ? ` Updated ${lastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}` : ''}`
                   : 'Live data unavailable. Showing simulated values for educational illustration only — not real market data.'}
@@ -418,22 +389,22 @@ export default function LandingPage() {
             {Object.keys(marketIndices).map((key) => {
               const item = marketIndices[key];
               const isGain = item.change >= 0;
-              const accentColor = isGain ? '#10B981' : '#F43F5E';
+              const accentColor = isGain ? '#34c771' : '#f73b20';
               const sign = isGain ? '+' : '';
               
               return (
                 <div 
                   key={key} 
-                  className="bg-[#0B0F19] border border-[#1F2A3F] p-5 rounded-lg-2xl flex justify-between items-center shadow-lg hover:border-club-green/50 transition-all duration-300"
+                  className="bg-sunset-fade p-6 rounded-3xl flex justify-between items-center shadow-warm-lift transition-all duration-300 border border-blush-mist"
                 >
                   <div>
-                    <span className="text-[10px] font-black uppercase tracking-wider text-text-muted block mb-1">{item.name}</span>
-                    <h4 className="text-2xl font-black font-mono text-white tracking-tight">{item.value.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h4>
+                    <span className="text-xs font-bold uppercase tracking-wider text-brandwood/60 block mb-1">{item.name}</span>
+                    <h4 className="text-3xl font-medium font-display text-brandwood tracking-tight">{item.value.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h4>
                     <span 
-                      className="text-xs font-bold font-mono inline-flex items-center gap-0.5 mt-1"
+                      className="text-sm font-bold font-sans inline-flex items-center gap-0.5 mt-1"
                       style={{ color: accentColor }}
                     >
-                      <span className="material-symbols-outlined text-[10px]">
+                      <span className="material-symbols-outlined text-[12px]">
                         {isGain ? 'arrow_upward' : 'arrow_downward'}
                       </span>
                       <span>{sign}{item.changePercent}%</span>
@@ -441,13 +412,13 @@ export default function LandingPage() {
                   </div>
                   
                   {/* Sparkline Graphic */}
-                  <div className="w-[120px] h-[40px] flex items-center">
+                  <div className="w-[100px] h-[40px] flex items-center">
                     <svg className="w-full h-full">
                       <path 
                         d={getSparklinePath(item.sparkline)}
                         fill="none"
                         stroke={accentColor}
-                        strokeWidth="2"
+                        strokeWidth="2.5"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       />
@@ -461,14 +432,13 @@ export default function LandingPage() {
       </section>
 
       {/* Learning Academy Curriculum Roadmap Section */}
-      <section className="py-28 px-6 bg-[#0B0F19]">
+      <section className="py-24 px-6 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
             <div>
-              <span className="text-[10px] font-black text-electric-mint mb-4 block uppercase tracking-[0.4em]">ARTHNEETI ACADEMY</span>
-              <h2 className="text-4xl md:text-6xl text-white leading-tight italic font-sans tracking-tight font-semibold">Curriculum Roadmap</h2>
+              <h2 className="text-[72px] text-coral-flame leading-[0.9] tracking-[0.03em] font-display font-medium">Curriculum<br/>Roadmap</h2>
             </div>
-            <p className="text-text-muted max-w-sm text-sm leading-relaxed">
+            <p className="text-brandwood/70 max-w-sm text-base leading-relaxed font-sans">
               Explore the educational path designed to empower students with structural economic knowledge and real market insights.
             </p>
           </div>
@@ -480,23 +450,23 @@ export default function LandingPage() {
                 <button
                   key={pillar.title}
                   onClick={() => setActivePillarIndex(activePillarIndex === i ? null : i)}
-                  className={`w-full text-left p-6 rounded-lg-2xl border transition-all duration-300 flex items-start gap-4 ${
+                  className={`w-full text-left p-6 rounded-3xl border-2 transition-all duration-300 flex items-start gap-4 ${
                     activePillarIndex === i 
-                      ? 'bg-[#161F30] border-club-green shadow-lg' 
-                      : 'bg-transparent border-[#1F2A3F] hover:border-text-muted/40 hover:bg-[#161F30]/30'
+                      ? 'bg-white border-coral-flame shadow-warm-lift' 
+                      : 'bg-transparent border-blush-mist hover:border-coral-flame hover:bg-sunset-fade'
                   }`}
                 >
-                  <span className="text-2xl font-sans tracking-tight font-semibold text-club-green/40 font-bold">{pillar.num}</span>
+                  <span className="text-2xl font-sans tracking-tight text-coral-flame/40 font-bold">{pillar.num}</span>
                   <div>
-                    <h3 className="text-lg font-bold text-white mb-2">{pillar.title}</h3>
-                    <p className="text-xs text-text-muted leading-relaxed">{pillar.desc}</p>
+                    <h3 className="text-xl font-bold text-brandwood mb-2 font-display">{pillar.title}</h3>
+                    <p className="text-sm text-text-muted leading-relaxed font-sans">{pillar.desc}</p>
                   </div>
                 </button>
               ))}
             </div>
 
             {/* Right Side: Accordion Details */}
-            <div className="lg:col-span-7 bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl p-8 flex flex-col justify-between shadow-2xl">
+            <div className="lg:col-span-7 bg-sunset-fade border border-blush-mist rounded-3xl p-8 flex flex-col justify-between shadow-warm-lift">
               <AnimatePresence mode="wait">
                 {activePillarIndex !== null ? (
                   <motion.div
@@ -507,11 +477,11 @@ export default function LandingPage() {
                     className="flex-grow flex flex-col justify-between"
                   >
                     <div>
-                      <div className="flex justify-between items-center border-b border-[#1F2A3F] pb-4 mb-6">
-                        <h4 className="text-xs font-black uppercase tracking-widest text-text-muted">
+                      <div className="flex justify-between items-center border-b border-blush-mist pb-4 mb-6">
+                        <h4 className="text-sm font-bold uppercase tracking-widest text-brandwood/70">
                           Syllabus Modules ({pillarsSyllabus[activePillarIndex].title})
                         </h4>
-                        <span className="text-[10px] font-black text-club-green uppercase tracking-widest bg-club-green/10 border border-club-green/20 px-3 py-1 rounded-lg">
+                        <span className="text-[10px] font-bold text-mint-action uppercase tracking-widest bg-mint-action/10 border border-mint-action/20 px-3 py-1 rounded-xl">
                           {pillarsSyllabus[activePillarIndex].modules.length} Lessons
                         </span>
                       </div>
@@ -519,29 +489,28 @@ export default function LandingPage() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                         {pillarsSyllabus[activePillarIndex].modules.map((mod, idx) => (
                           <div key={idx} className="h-[280px]">
-                            <GradientCard 
-                              title={mod.title}
-                              description={`Master ${mod.title.toLowerCase()} in this comprehensive module.`}
-                              tag={`0${idx + 1}`}
-                            />
+                            <div className="h-full bg-white border border-blush-mist rounded-2xl p-6 shadow-warm-lift flex flex-col justify-between">
+                              <span className="text-[10px] font-bold text-coral-flame uppercase tracking-widest bg-coral-flame/10 w-fit px-2 py-1 rounded-lg">0{idx + 1}</span>
+                              <h3 className="text-lg font-bold text-brandwood mt-4 line-clamp-3">{mod.title}</h3>
+                              <p className="text-sm text-text-muted mt-2">Master {mod.title.toLowerCase()} in this module.</p>
+                            </div>
                           </div>
                         ))}
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between border-t border-[#1F2A3F] pt-6 mt-auto">
-                      <span className="text-[10px] text-text-muted italic">Ready to review? Jump into our market explorer.</span>
+                    <div className="flex items-center justify-between border-t border-blush-mist pt-6 mt-auto">
+                      <span className="text-sm text-text-muted font-sans">Ready to review? Jump into our market explorer.</span>
                       <Link 
                         to="/learn"
-                        className="bg-club-green text-white px-6 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-club-green transition-all flex items-center gap-1.5"
+                        className="outlined-cta"
                       >
                         Start Learning Modules
-                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
                       </Link>
                     </div>
                   </motion.div>
                 ) : (
-                  <div className="h-full flex items-center justify-center text-text-muted italic text-xs py-20 text-center">
+                  <div className="h-full flex items-center justify-center text-text-muted italic text-sm py-20 text-center">
                     Select a core pillar roadmap on the left to view lessons and module materials.
                   </div>
                 )}
@@ -552,18 +521,18 @@ export default function LandingPage() {
       </section>
 
       {/* Nepal Rastra Bank (NRB) Financial Resource Portal */}
-      <section className="py-24 px-6 bg-[#161F30] border-y border-[#1F2A3F]">
+      <section className="py-24 px-6 bg-sunset-fade border-y border-blush-mist">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-[10px] font-black text-electric-mint mb-2 block uppercase tracking-[0.4em]">NRB-INSPIRED PORTAL</span>
-            <h2 className="text-4xl md:text-5xl text-white font-sans tracking-tight font-semibold italic mb-6">Financial Resource Library</h2>
-            <p className="text-text-muted text-sm leading-relaxed">
+            <span className="text-[10px] font-black text-coral-flame mb-2 block uppercase tracking-[0.4em]">NRB-INSPIRED PORTAL</span>
+            <h2 className="text-[60px] text-brandwood font-display tracking-[0.03em] leading-[1.0] font-medium mb-6">Financial Resource Library</h2>
+            <p className="text-text-muted text-lg leading-relaxed font-sans">
               Explore media materials, Central Bank publications, downloadable infographics, and bilingual FAQs.
             </p>
           </div>
 
           {/* Interactive Navigation Tabs */}
-          <div className="flex justify-center border-b border-[#1F2A3F] pb-4 mb-10 gap-3">
+          <div className="flex justify-center border-b border-blush-mist pb-4 mb-10 gap-3">
             {[
               { key: 'videos', label: 'Video Lessons', icon: 'play_circle' },
               { key: 'pamphlets', label: 'Guidelines & PDFs', icon: 'article' },
@@ -575,13 +544,13 @@ export default function LandingPage() {
                   setActiveResourceTab(tab.key as any);
                   setActiveFaqIndex(null);
                 }}
-                className={`px-6 py-3 text-xs font-black uppercase tracking-wider rounded-lg transition-all flex items-center gap-2 ${
+                className={`px-6 py-3 text-sm font-bold uppercase tracking-wider rounded-2xl transition-all flex items-center gap-2 ${
                   activeResourceTab === tab.key 
-                    ? 'bg-club-green text-white shadow-xl' 
-                    : 'text-text-muted hover:text-white hover:bg-[#0B0F19]/60 border border-[#1F2A3F]'
+                    ? 'bg-coral-flame text-white shadow-warm-float' 
+                    : 'text-text-muted hover:text-brandwood hover:bg-white border border-blush-mist'
                 }`}
               >
-                <span className="material-symbols-outlined text-sm">{tab.icon}</span>
+                <span className="material-symbols-outlined text-lg">{tab.icon}</span>
                 {tab.label}
               </button>
             ))}
@@ -601,35 +570,35 @@ export default function LandingPage() {
                   {LESSONS.slice(0, 3).map((video, idx) => (
                     <div 
                       key={idx}
-                      className="bg-[#0B0F19] border border-[#1F2A3F] rounded-lg-2xl overflow-hidden group shadow-lg flex flex-col justify-between"
+                      className="bg-white border border-blush-mist rounded-3xl overflow-hidden group shadow-warm-lift flex flex-col justify-between"
                     >
-                      <div className="relative aspect-video overflow-hidden bg-black/40">
+                      <div className="relative aspect-video overflow-hidden bg-blush-mist">
                         <img 
                           src={video.thumbnail} 
                           alt={video.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
                         />
                         <button 
                           onClick={() => setSelectedVideoEmbed(video.videoUrl)}
-                          className="absolute inset-0 m-auto w-12 h-12 bg-club-green text-white rounded-lg flex items-center justify-center shadow-2xl hover:scale-110 transition-transform cursor-pointer"
+                          className="absolute inset-0 m-auto w-14 h-14 bg-white/90 text-coral-flame border-2 border-coral-flame rounded-full flex items-center justify-center shadow-warm-float hover:scale-110 transition-transform cursor-pointer"
                         >
-                          <span className="material-symbols-outlined text-2xl">play_arrow</span>
+                          <span className="material-symbols-outlined text-3xl">play_arrow</span>
                         </button>
-                        <span className="absolute bottom-3 right-3 bg-[#0B0F19] text-white text-[9px] font-bold font-mono px-2 py-0.5 rounded-lg border border-[#1F2A3F]">
+                        <span className="absolute bottom-3 right-3 bg-white text-brandwood text-[10px] font-bold font-mono px-3 py-1 rounded-xl shadow-sm">
                           {video.duration}
                         </span>
                       </div>
                       
                       <div className="p-6">
-                        <div className="flex flex-wrap items-center gap-2 mb-3">
-                          <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border inline-block ${LEVEL_COLORS[video.level]}`}>
+                        <div className="flex flex-wrap items-center gap-2 mb-4">
+                          <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-xl border border-blush-mist text-brandwood bg-sunset-fade">
                             {video.level}
                           </span>
                         </div>
-                        <h4 className="text-sm font-bold text-white group-hover:text-club-green transition-colors mb-3 leading-snug line-clamp-2">
+                        <h4 className="text-xl font-bold text-brandwood group-hover:text-coral-flame transition-colors mb-3 leading-snug line-clamp-2 font-display">
                           {video.title}
                         </h4>
-                        <p className="text-xs text-text-muted leading-relaxed line-clamp-3">
+                        <p className="text-sm text-text-muted leading-relaxed line-clamp-3 font-sans">
                           {video.desc}
                         </p>
                       </div>
@@ -649,17 +618,17 @@ export default function LandingPage() {
                   {mockPamphlets.map((pamphlet, idx) => (
                     <div 
                       key={idx}
-                      className="bg-[#0B0F19] border border-[#1F2A3F] p-6 rounded-lg-2xl flex flex-col justify-between shadow-lg hover:border-club-green/50 transition-all duration-300"
+                      className="bg-white border border-blush-mist p-6 rounded-3xl flex flex-col justify-between shadow-warm-lift hover:border-coral-flame hover:shadow-warm-float transition-all duration-300"
                     >
                       <div>
                         <div className="flex justify-between items-start mb-4">
-                          <span className="bg-[#161F30] text-text-muted text-[8px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border border-[#1F2A3F]">
+                          <span className="bg-sunset-fade text-brandwood text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-xl border border-blush-mist">
                             {pamphlet.category}
                           </span>
-                          <span className="text-[8px] font-bold font-mono text-text-muted">{pamphlet.size}</span>
+                          <span className="text-[10px] font-bold font-mono text-text-muted">{pamphlet.size}</span>
                         </div>
                         
-                        <h4 className="text-sm font-bold text-white mb-3 leading-snug">
+                        <h4 className="text-lg font-bold text-brandwood mb-3 leading-snug font-display">
                           {pamphlet.title}
                         </h4>
                         <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-6 block">
@@ -671,7 +640,7 @@ export default function LandingPage() {
                         href={pamphlet.downloadUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="w-full py-3 bg-[#161F30] hover:bg-club-green hover:text-white border border-[#1F2A3F] text-white text-[9px] font-black uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1.5"
+                        className="w-full py-3 bg-sunset-fade hover:bg-coral-flame hover:text-white border border-blush-mist hover:border-coral-flame text-brandwood text-[10px] font-bold uppercase tracking-widest rounded-2xl transition-all flex items-center justify-center gap-1.5 shadow-sm"
                       >
                         <span className="material-symbols-outlined text-sm">download</span>
                         Download PDF Guide
@@ -687,24 +656,24 @@ export default function LandingPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="max-w-3xl mx-auto bg-[#0B0F19] border border-[#1F2A3F] rounded-lg-2xl p-6 md:p-8 shadow-xl"
+                  className="max-w-3xl mx-auto bg-white border border-blush-mist rounded-3xl p-6 md:p-8 shadow-warm-lift"
                 >
                   {/* FAQ Header & Language Toggle */}
-                  <div className="flex justify-between items-center border-b border-[#1F2A3F] pb-4 mb-6">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-text-muted">Bilingual FAQ Accordion</span>
-                    <div className="flex gap-1.5 bg-[#161F30] border border-[#1F2A3F] p-1 rounded-lg">
+                  <div className="flex justify-between items-center border-b border-blush-mist pb-4 mb-6">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted">Bilingual FAQ Accordion</span>
+                    <div className="flex gap-1.5 bg-sunset-fade border border-blush-mist p-1 rounded-xl">
                       <button
                         onClick={() => { setFaqLanguage('en'); setActiveFaqIndex(null); }}
-                        className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg-md transition-all ${
-                          faqLanguage === 'en' ? 'bg-club-green text-white' : 'text-text-muted hover:text-white'
+                        className={`px-4 py-2 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all ${
+                          faqLanguage === 'en' ? 'bg-coral-flame text-white shadow-sm' : 'text-brandwood/70 hover:text-brandwood hover:bg-white'
                         }`}
                       >
                         English
                       </button>
                       <button
                         onClick={() => { setFaqLanguage('np'); setActiveFaqIndex(null); }}
-                        className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg-md transition-all ${
-                          faqLanguage === 'np' ? 'bg-club-green text-white' : 'text-text-muted hover:text-white'
+                        className={`px-4 py-2 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all ${
+                          faqLanguage === 'np' ? 'bg-coral-flame text-white shadow-sm' : 'text-brandwood/70 hover:text-brandwood hover:bg-white'
                         }`}
                       >
                         नेपाली
@@ -719,14 +688,14 @@ export default function LandingPage() {
                       return (
                         <div 
                           key={idx}
-                          className="border border-[#1F2A3F] rounded-lg overflow-hidden"
+                          className="border border-blush-mist rounded-2xl overflow-hidden shadow-sm"
                         >
                           <button
                             onClick={() => setActiveFaqIndex(isOpen ? null : idx)}
-                            className="w-full flex justify-between items-center p-4 bg-[#161F30] hover:bg-[#161F30]/80 transition-colors text-left text-xs font-bold text-white"
+                            className={`w-full flex justify-between items-center p-5 transition-colors text-left text-sm font-bold text-brandwood ${isOpen ? 'bg-sunset-fade' : 'bg-white hover:bg-sunset-fade/50'}`}
                           >
                             <span>{faq.q}</span>
-                            <span className="material-symbols-outlined text-text-muted transition-transform duration-300" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0)' }}>
+                            <span className={`material-symbols-outlined text-coral-flame transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
                               expand_more
                             </span>
                           </button>
@@ -737,9 +706,9 @@ export default function LandingPage() {
                                 initial={{ height: 0 }}
                                 animate={{ height: 'auto' }}
                                 exit={{ height: 0 }}
-                                className="overflow-hidden bg-[#0B0F19]/40 border-t border-[#1F2A3F]"
+                                className="overflow-hidden bg-white border-t border-blush-mist"
                               >
-                                <p className="p-4 text-xs text-text-muted leading-relaxed">
+                                <p className="p-5 text-sm text-text-muted leading-relaxed font-sans">
                                   {faq.a}
                                 </p>
                               </motion.div>
@@ -757,18 +726,18 @@ export default function LandingPage() {
       </section>
 
       {/* Dynamic Community Discussion Section */}
-      <section className="py-24 px-6 bg-[#0B0F19]">
+      <section className="py-24 px-6 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
             <div className="text-center md:text-left">
-              <span className="text-[10px] font-black text-electric-mint mb-2 block uppercase tracking-[0.4em]">LIVE DISCOURSE FEED</span>
-              <h2 className="text-4xl md:text-5xl text-white italic font-sans tracking-tight font-semibold">Latest Discussion Topics</h2>
+              <span className="text-[10px] font-bold text-mint-action mb-2 block uppercase tracking-[0.4em]">LIVE DISCOURSE FEED</span>
+              <h2 className="text-[48px] md:text-[60px] text-brandwood font-display tracking-[0.03em] leading-[1.0] font-medium">Latest Discussion Topics</h2>
             </div>
             <Link 
               to="/community" 
-              className="text-[10px] font-black text-club-green uppercase tracking-widest border border-club-green/30 px-8 py-4 rounded-lg hover:bg-club-green hover:text-white transition-all bg-[#161F30]/50"
+              className="outlined-cta"
             >
-              JOIN THE FORUM
+              Join the Forum
             </Link>
           </div>
 
@@ -780,24 +749,24 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group p-8 rounded-lg-2xl bg-[#161F30] border border-[#1F2A3F] hover:border-club-green/50 hover:bg-[#161F30]/80 transition-all duration-300"
+                className="group p-8 rounded-3xl bg-sunset-fade border border-blush-mist hover:border-coral-flame/50 hover:bg-white transition-all duration-300 shadow-warm-lift"
               >
                 <div className="flex justify-between items-start mb-6">
-                  <span className="px-3.5 py-1 bg-club-green/10 text-club-green text-[8px] font-black uppercase tracking-widest rounded-lg border border-club-green/20">
+                  <span className="px-3.5 py-1 bg-coral-flame/10 text-coral-flame text-[10px] font-bold uppercase tracking-widest rounded-xl border border-coral-flame/20">
                     {topic.category}
                   </span>
-                  <div className="flex items-center gap-1.5 text-electric-mint">
+                  <div className="flex items-center gap-1.5 text-mint-action">
                     <span className="material-symbols-outlined text-sm">favorite</span>
                     <span className="text-[10px] font-bold">{topic.likes}</span>
                   </div>
                 </div>
                 <Link to="/community" className="block">
-                  <h3 className="text-lg text-white font-sans tracking-tight font-semibold italic mb-4 leading-snug group-hover:text-club-green transition-colors line-clamp-2">
+                  <h3 className="text-xl text-brandwood font-display tracking-tight font-bold mb-4 leading-snug group-hover:text-coral-flame transition-colors line-clamp-2">
                     {topic.title || (topic as any).content?.replace(/<[^>]*>?/gm, '').substring(0, 60) + '...'}
                   </h3>
                 </Link>
-                <div className="flex items-center gap-3 mt-6 pt-6 border-t border-[#1F2A3F]">
-                  <div className="w-8 h-8 rounded-lg bg-club-green/10 border border-club-green/30 flex items-center justify-center text-[10px] font-bold text-club-green uppercase">
+                <div className="flex items-center gap-3 mt-6 pt-6 border-t border-blush-mist">
+                  <div className="w-8 h-8 rounded-xl bg-coral-flame/10 border border-coral-flame/20 flex items-center justify-center text-[10px] font-bold text-coral-flame uppercase">
                     {topic.author[0]}
                   </div>
                   <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">{topic.author}</span>
@@ -806,8 +775,8 @@ export default function LandingPage() {
             ))}
 
             {latestTopics.length === 0 && (
-              <div className="col-span-full py-20 text-center border-2 border-dashed border-[#1F2A3F] rounded-lg-2xl bg-[#161F30]/40">
-                <p className="text-text-muted italic text-xs">Connecting to community database server...</p>
+              <div className="col-span-full py-20 text-center border-2 border-dashed border-blush-mist rounded-3xl bg-sunset-fade/40">
+                <p className="text-text-muted italic text-sm font-sans">Connecting to community database server...</p>
               </div>
             )}
           </div>
@@ -815,18 +784,18 @@ export default function LandingPage() {
       </section>
 
       {/* Social Mission & Equity Support Section */}
-      <section className="bg-[#161F30] border-t border-[#1F2A3F] py-28 px-6 overflow-hidden">
+      <section className="bg-sunset-fade border-y border-blush-mist py-28 px-6 overflow-hidden">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-20">
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="lg:w-1/2 border-l-8 border-club-green pl-10"
+            className="lg:w-1/2 border-l-8 border-coral-flame pl-10"
           >
-            <h2 className="text-4xl md:text-5xl text-white leading-tight italic font-sans tracking-tight font-semibold mb-6">
+            <h2 className="text-5xl text-brandwood leading-[1.0] font-display tracking-[0.03em] font-medium mb-6">
               "We don't just teach finance — we use it to build a more equitable Nepal."
             </h2>
-            <p className="text-text-muted text-sm leading-relaxed max-w-lg">
+            <p className="text-text-muted text-lg leading-relaxed max-w-lg font-sans">
               Arthneeti allocates workshop support and targeted curricula specifically for disadvantaged youths, disabled students, and underprivileged municipal schools to narrow the financial intelligence gap.
             </p>
           </motion.div>
@@ -839,12 +808,12 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="flex flex-col items-center text-center p-6 bg-[#0B0F19] border border-[#1F2A3F] rounded-lg-2xl hover:border-club-green/50 transition-all duration-300"
+                className="flex flex-col items-center text-center p-8 bg-white border border-blush-mist rounded-3xl hover:border-coral-flame/50 hover:shadow-warm-float transition-all duration-300 shadow-warm-lift"
               >
-                <div className="w-16 h-16 rounded-lg bg-club-green/10 flex items-center justify-center text-club-green mb-4 border border-club-green/20">
+                <div className="w-16 h-16 rounded-2xl bg-coral-flame/10 flex items-center justify-center text-coral-flame mb-4 border border-coral-flame/20">
                   <span className="material-symbols-outlined text-3xl">{item.icon}</span>
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-white">{item.name}</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-brandwood">{item.name}</span>
               </motion.div>
             ))}
           </div>
@@ -852,12 +821,12 @@ export default function LandingPage() {
       </section>
 
       {/* Executive Board Section */}
-      <section className="py-24 px-6 bg-[#0B0F19] border-t border-[#1F2A3F]">
+      <section className="py-24 px-6 bg-white border-b border-blush-mist">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
-            <span className="text-[10px] font-black text-electric-mint mb-4 block uppercase tracking-[0.4em]">LEADERSHIP</span>
-            <h2 className="text-4xl md:text-5xl text-white italic mb-6 font-sans tracking-tight font-semibold">Executive Board</h2>
-            <p className="text-text-muted max-w-xl mx-auto italic font-sans text-sm">
+            <span className="text-[10px] font-bold text-coral-flame mb-4 block uppercase tracking-[0.4em]">LEADERSHIP</span>
+            <h2 className="text-[60px] text-brandwood mb-6 font-display tracking-[0.03em] font-medium leading-[1.0]">Executive Board</h2>
+            <p className="text-text-muted max-w-xl mx-auto font-sans text-lg">
               The founding team driving the movement for financial intelligence in Nepal.
             </p>
           </div>
@@ -891,19 +860,19 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-[#161F30] p-10 rounded-lg relative border-t-8 border-electric-mint border border-[#1F2A3F] shadow-2xl flex flex-col items-center text-center group hover:-translate-y-2 transition-all duration-500"
+                className="bg-white p-10 rounded-3xl relative border-t-8 border-t-coral-flame border border-blush-mist shadow-warm-lift flex flex-col items-center text-center group hover:-translate-y-2 hover:shadow-warm-float transition-all duration-500"
               >
-                <div className="w-20 h-20 rounded-lg border-4 border-white/10 flex items-center justify-center text-white font-sans tracking-tight font-semibold italic text-3xl mb-8 group-hover:border-electric-mint group-hover:text-electric-mint transition-all duration-500">
+                <div className="w-20 h-20 rounded-2xl bg-sunset-fade border border-blush-mist flex items-center justify-center text-brandwood font-display font-medium text-3xl mb-8 group-hover:border-coral-flame group-hover:text-coral-flame group-hover:bg-coral-flame/5 transition-all duration-500 shadow-sm">
                   {member.name.split(' ').map(n => n[0]).join('')}
                 </div>
-                <h3 className="text-xl text-white font-sans tracking-tight font-semibold italic mb-2">{member.name}</h3>
-                <p className="text-[10px] font-black uppercase tracking-widest text-electric-mint mb-6">{member.role}</p>
-                <p className="text-text-muted text-xs italic font-sans leading-relaxed mb-6">
+                <h3 className="text-2xl text-brandwood font-display tracking-tight font-bold mb-2">{member.name}</h3>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-mint-action mb-6">{member.role}</p>
+                <p className="text-text-muted text-sm font-sans leading-relaxed mb-6">
                   {member.bio}
                 </p>
                 <a 
                   href="mailto:learnarthneeti@gmail.com"
-                  className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-electric-mint transition-colors"
+                  className="text-[10px] font-bold uppercase tracking-widest text-brandwood/50 hover:text-coral-flame transition-colors mt-auto"
                 >
                   Get In Touch
                 </a>
@@ -917,14 +886,14 @@ export default function LandingPage() {
       <AnimatePresence>
         {selectedVideoEmbed && (
           <div 
-            className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-brandwood/80 backdrop-blur-sm flex items-center justify-center p-4"
             onClick={() => setSelectedVideoEmbed(null)}
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-[#161F30] border border-[#1F2A3F] rounded-lg-2xl overflow-hidden max-w-3xl w-full shadow-2xl relative"
+              className="bg-white border border-blush-mist rounded-3xl overflow-hidden max-w-3xl w-full shadow-warm-float relative"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="relative aspect-video">
@@ -937,11 +906,11 @@ export default function LandingPage() {
                   allowFullScreen
                 />
               </div>
-              <div className="p-4 flex justify-between items-center">
-                <span className="text-[10px] text-text-muted italic">Arthneeti Academy Resource System</span>
+              <div className="p-4 flex justify-between items-center bg-sunset-fade border-t border-blush-mist">
+                <span className="text-[10px] text-text-muted font-sans font-bold uppercase tracking-wider">Arthneeti Academy Resource System</span>
                 <button
                   onClick={() => setSelectedVideoEmbed(null)}
-                  className="bg-club-green text-white px-5 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-white hover:text-club-green transition-all cursor-pointer"
+                  className="bg-coral-flame text-white px-5 py-2 text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-coral-flame/90 transition-all cursor-pointer shadow-sm"
                 >
                   Close Player
                 </button>
