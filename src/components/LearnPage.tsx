@@ -2293,9 +2293,9 @@ export default function LearnPage() {
                       </button>
                     )}
                   </div>
-                </div>
+                </motion.div>
               )}
-            </div>
+            </motion.div>
 
             {/* Lesson Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2398,7 +2398,7 @@ export default function LearnPage() {
                       {/* Actions */}
                       <div className="flex flex-col gap-3 shrink-0">
                         
-                          <a href={guide.htmlUrl}
+                          <motion.a href={guide.htmlUrl}
                           target="_blank"
                           rel="noreferrer"
                           whileHover={{ scale: 1.05 }}
@@ -2406,9 +2406,9 @@ export default function LearnPage() {
                           className="flex items-center justify-center gap-2 px-5 py-3 bg-mint-action/10 text-mint-action border border-mint-action/30 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-mint-action hover:text-white transition-all shadow-sm"
                         >
                           <BookOpen size={14} /> Read Online
-                        </a>
+                        </motion.a>
                         
-                          <a href={guide.pdfUrl}
+                          <motion.a href={guide.pdfUrl}
                           target="_blank"
                           rel="noreferrer"
                           whileHover={{ scale: 1.05 }}
@@ -2416,10 +2416,10 @@ export default function LearnPage() {
                           className="flex items-center justify-center gap-2 px-5 py-3 bg-white text-text-muted border border-blush-mist rounded-xl text-[10px] font-bold uppercase tracking-widest hover:text-brandwood hover:border-coral-flame transition-all shadow-sm"
                         >
                           <Download size={14} /> Download PDF
-                        </a>
+                        </motion.a>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             )}
