@@ -135,6 +135,23 @@
   @apply bg-white border-2 border-coral-flame text-coral-flame rounded-2xl px-6 py-2.5 font-sans font-medium transition-transform active:scale-95 hover:shadow-warm-float;
 }
 
+/* Prodigy Inspired Layout & Animation Utilities */
+.glass-card {
+  @apply bg-white/80 backdrop-blur-md border border-blush-mist/50 shadow-sm transition-all duration-300;
+}
+
+.glass-card:hover {
+  @apply border-coral-flame/30 shadow-warm-lift scale-[1.02];
+}
+
+.prodigy-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10;
+}
+
+.hover-scale {
+  @apply transition-transform duration-300 hover:scale-[1.03];
+}
+
 /* Print styles preserved */
 @media print {
   body * {

@@ -31,18 +31,21 @@ export function Navigation() {
           </Link>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-2">
+          <nav className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 to={link.path}
-                className={`transition-all px-4 py-2 text-sm font-sans font-bold uppercase tracking-widest rounded-xl ${
+                className={`relative group px-4 py-2 text-sm font-sans font-bold uppercase tracking-widest rounded-xl transition-all duration-300 ${
                   location.pathname === link.path 
-                    ? 'bg-sunset-fade text-coral-flame border border-blush-mist shadow-sm' 
-                    : 'text-text-muted hover:text-brandwood hover:bg-sunset-fade/50'
+                    ? 'text-coral-flame bg-sunset-fade' 
+                    : 'text-text-muted hover:text-brandwood'
                 }`}
               >
                 {link.name}
+                <span className={`absolute bottom-1 left-4 right-4 h-0.5 rounded-full transition-all duration-300 ${
+                  location.pathname === link.path ? 'bg-coral-flame opacity-100' : 'bg-brandwood opacity-0 invisible group-hover:opacity-30 group-hover:visible group-hover:bottom-1.5'
+                }`} />
               </Link>
             ))}
           </nav>

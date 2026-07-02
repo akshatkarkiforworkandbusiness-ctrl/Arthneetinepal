@@ -280,66 +280,198 @@ export default function LandingPage() {
       className="flex flex-col bg-white"
     >
       {/* Hero Section */}
-      <section className="hero-gradient relative overflow-hidden pt-40 pb-32 px-6 min-h-[100vh] flex flex-col justify-center items-start text-left">
+      <section className="relative overflow-hidden pt-40 pb-32 px-6 min-h-[90vh] flex flex-col justify-center items-center text-center bg-sunset-fade">
+        {/* Background ambient shapes */}
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-coral-flame/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-mint-action/10 rounded-full blur-[120px] pointer-events-none" />
+        
         <motion.div
-          initial={{ y: 30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="relative z-10 max-w-7xl mx-auto w-full"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative z-10 max-w-5xl mx-auto w-full flex flex-col items-center"
         >
-          <h1 className="text-6xl md:text-[155px] text-white leading-[0.9] tracking-[0.03em] font-display font-medium mb-8">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="glass-card px-4 py-1.5 rounded-full text-xs font-bold text-coral-flame uppercase tracking-widest mb-8 border-coral-flame/20 inline-block"
+          >
+            Empowering Nepal's Youth
+          </motion.div>
+          
+          <h1 className="text-6xl md:text-[100px] text-brandwood leading-[0.95] tracking-tight font-display font-medium mb-8">
             Think Big.<br />
             Invest Smart.<br />
-            Lead Nepal.
+            <span className="text-coral-flame italic">Lead Nepal.</span>
           </h1>
-          <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-2xl font-sans">
-            Building the next generation of economically literate leaders and investors across Nepal.
+          <p className="text-lg md:text-2xl text-text-muted mb-12 max-w-2xl font-sans leading-relaxed">
+            Building the next generation of economically literate leaders and investors across Nepal through structural economic knowledge.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-6">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center w-full sm:w-auto">
             {!user ? (
               <button 
                 onClick={handleJoinAction}
-                className="outlined-cta"
+                className="bg-coral-flame text-white rounded-2xl px-8 py-4 font-sans font-bold hover-scale shadow-warm-float transition-all duration-300 text-lg"
               >
-                Sign up
+                Join the Movement
               </button>
             ) : (
               <Link 
                 to="/profile" 
-                className="outlined-cta"
+                className="bg-coral-flame text-white rounded-2xl px-8 py-4 font-sans font-bold hover-scale shadow-warm-float transition-all duration-300 text-lg"
               >
                 Go to Dashboard
-                <span className="text-base">→</span>
+                <span className="ml-2">→</span>
               </Link>
             )}
             <Link 
               to="/discover" 
-              className="bg-white/20 backdrop-blur-sm border border-white/40 text-white rounded-[16px] px-6 py-2.5 font-sans font-medium transition-transform active:scale-95 hover:bg-white hover:text-coral-flame text-center"
+              className="glass-card text-brandwood rounded-2xl px-8 py-4 font-sans font-bold hover:text-coral-flame transition-all duration-300 text-lg flex items-center justify-center gap-2"
             >
               Explore Markets
-              <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              <span className="material-symbols-outlined text-xl">arrow_forward</span>
             </Link>
           </div>
-
-          {/* Award Badges */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.8 }}
-            className="flex items-center justify-center gap-12 mt-20"
-          >
-            <div className="text-center">
-              <span className="text-[10px] font-bold uppercase tracking-[0.182em] text-[#9f9fa0]/60 block mb-1">Featured In</span>
-              <span className="text-sm font-light text-white/80">Student Leadership Forum</span>
-            </div>
-            <div className="w-px h-8 bg-white/10" />
-            <div className="text-center">
-              <span className="text-[10px] font-bold uppercase tracking-[0.182em] text-[#9f9fa0]/60 block mb-1">Recognition</span>
-              <span className="text-sm font-light text-white/80">Nepal Financial Education</span>
-            </div>
-          </motion.div>
         </motion.div>
+      </section>
+
+      {/* Bento-Box Features / Past Sessions */}
+      <section className="py-24 px-6 bg-white relative">
+        <div className="max-w-7xl mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <span className="text-[10px] font-black text-coral-flame mb-2 block uppercase tracking-widest">Our Impact</span>
+            <h2 className="text-4xl md:text-5xl text-brandwood font-display font-medium tracking-tight">Transforming Education in Action</h2>
+          </motion.div>
+
+          <div className="prodigy-grid">
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="glass-card rounded-[2rem] p-8 md:col-span-2 flex flex-col justify-between overflow-hidden relative min-h-[350px] group"
+            >
+              <div className="absolute inset-0 z-0">
+                <img src="/Pitcures for Arthneeti/Arthneeti Xavier A levels.jpg" alt="Xavier A Levels" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-brandwood/90 via-brandwood/40 to-transparent" />
+              </div>
+              <div className="relative z-10 flex flex-col h-full justify-end">
+                <div className="w-12 h-12 bg-coral-flame text-white rounded-2xl flex items-center justify-center mb-6 shadow-warm-float transition-transform group-hover:-translate-y-2">
+                  <span className="material-symbols-outlined">school</span>
+                </div>
+                <h3 className="text-3xl text-white font-display font-medium mb-3">Xavier A Levels</h3>
+                <p className="text-white/80 font-sans">Engaging high school students in advanced financial concepts and structural economic knowledge.</p>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="glass-card rounded-[2rem] p-8 flex flex-col justify-between overflow-hidden relative min-h-[350px] group"
+            >
+              <div className="absolute inset-0 z-0">
+                <img src="/Pitcures for Arthneeti/Arthneeti first session.jpg" alt="First Session" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-brandwood/90 via-brandwood/40 to-transparent" />
+              </div>
+              <div className="relative z-10 flex flex-col h-full justify-end">
+                <div className="w-12 h-12 bg-white text-coral-flame rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:-translate-y-2">
+                  <span className="material-symbols-outlined">flag</span>
+                </div>
+                <h3 className="text-2xl text-white font-display font-medium mb-3">Our Genesis</h3>
+                <p className="text-white/80 font-sans">Where it all started. Building the foundation of Arthneeti.</p>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="glass-card rounded-[2rem] p-8 flex flex-col justify-between overflow-hidden relative min-h-[350px] group"
+            >
+              <div className="absolute inset-0 z-0">
+                <img src="/Pitcures for Arthneeti/Arthneeti for Saint Lawernce.png" alt="St. Lawrence" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-brandwood/90 via-brandwood/40 to-transparent" />
+              </div>
+              <div className="relative z-10 flex flex-col h-full justify-end">
+                <div className="w-12 h-12 bg-mint-action text-white rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:-translate-y-2">
+                  <span className="material-symbols-outlined">group</span>
+                </div>
+                <h3 className="text-2xl text-white font-display font-medium mb-3">St. Lawrence</h3>
+                <p className="text-white/80 font-sans">Peer-to-peer learning with bright young minds.</p>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+              className="glass-card rounded-[2rem] p-8 md:col-span-2 flex flex-col justify-between overflow-hidden relative min-h-[350px] group"
+            >
+              <div className="absolute inset-0 z-0">
+                <img src="/Pitcures for Arthneeti/Arthneeti for Xavier Public School.png" alt="Xavier Public School" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-brandwood/90 via-brandwood/40 to-transparent" />
+              </div>
+              <div className="relative z-10 flex flex-col h-full justify-end">
+                <div className="w-12 h-12 bg-white text-coral-flame rounded-2xl flex items-center justify-center mb-6 shadow-sm transition-transform group-hover:-translate-y-2">
+                  <span className="material-symbols-outlined">menu_book</span>
+                </div>
+                <h3 className="text-3xl text-white font-display font-medium mb-3">Xavier Public School</h3>
+                <p className="text-white/80 font-sans">Bringing interactive economic literacy directly to the classroom.</p>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.5 }}
+              className="glass-card rounded-[2rem] p-8 md:col-span-2 flex flex-col justify-between overflow-hidden relative min-h-[350px] group border-coral-flame/30"
+            >
+              <div className="absolute inset-0 z-0">
+                <img src="/Pitcures for Arthneeti/Arthneeti for children -SOS.jpg" alt="SOS Children's Village" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-coral-flame/90 via-brandwood/60 to-transparent" />
+              </div>
+              <div className="relative z-10 flex flex-col h-full justify-end">
+                <div className="w-12 h-12 bg-white text-coral-flame rounded-2xl flex items-center justify-center mb-6 shadow-sm transition-transform group-hover:-translate-y-2">
+                  <span className="material-symbols-outlined">volunteer_activism</span>
+                </div>
+                <h3 className="text-3xl text-white font-display font-medium mb-3">Arthneeti for Children - SOS</h3>
+                <p className="text-white/90 font-sans font-medium">Empowering children at the SOS disability center with accessible, engaging financial education.</p>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.6 }}
+              className="glass-card rounded-[2rem] p-8 flex flex-col justify-between overflow-hidden relative min-h-[350px] group"
+            >
+              <div className="absolute inset-0 z-0">
+                <img src="/Pitcures for Arthneeti/ArthneetiSecond Session.jpg" alt="Second Session" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-brandwood/90 via-brandwood/40 to-transparent" />
+              </div>
+              <div className="relative z-10 flex flex-col h-full justify-end">
+                <div className="w-12 h-12 bg-white text-brandwood rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:-translate-y-2">
+                  <span className="material-symbols-outlined">trending_up</span>
+                </div>
+                <h3 className="text-2xl text-white font-display font-medium mb-3">Interactive Simulations</h3>
+                <p className="text-white/80 font-sans">Market simulation and practical workshops.</p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
       </section>
 
       {/* Market Ticker Sparkline Section */}
