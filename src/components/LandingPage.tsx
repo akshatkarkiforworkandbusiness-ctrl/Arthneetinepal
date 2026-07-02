@@ -292,7 +292,7 @@ export default function LandingPage() {
           </h1>
           <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-2xl font-sans">
             Building the next generation of economically literate leaders and investors across Nepal.
-          </motion.p>
+          </p>
           
           <div className="flex flex-col sm:flex-row gap-6">
             {!user ? (
@@ -318,7 +318,7 @@ export default function LandingPage() {
               Explore Markets
               <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </Link>
-          </motion.div>
+          </div>
 
           {/* Award Badges */}
           <motion.div
@@ -337,7 +337,7 @@ export default function LandingPage() {
               <span className="text-sm font-light text-white/80">Nepal Financial Education</span>
             </div>
           </motion.div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Market Ticker Sparkline Section */}
@@ -425,7 +425,7 @@ export default function LandingPage() {
                       />
                     </svg>
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
