@@ -304,259 +304,304 @@ const handleLike = async (postId: string) => {
     );
   });
 
+
   return (
     <motion.main 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="max-w-4xl mx-auto px-6 py-20"
+      className="max-w-7xl mx-auto px-4 md:px-8 pt-32 pb-24 min-h-screen bg-white"
     >
-      <header className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
-        <div>
-          <span className="text-[10px] font-black text-[#847dff] mb-4 block uppercase tracking-[0.4em]">COMMUNITY</span>
-          <h1 className="text-5xl md:text-7xl text-text-primary italic font-sans tracking-tight font-semibold">Intelligence Feed</h1>
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        {user && (
-          <button 
-            onClick={() => setShowCreateModal(true)}
-            className="bg-[#847dff] text-[#090a0b] px-8 py-4 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-[#847dff] transition-all shadow-xl flex items-center gap-3"
-          >
-            <Plus size={16} strokeWidth={3} />
-            {activeTab === 'questions' ? 'Ask Question' : activeTab === 'research' ? 'Submit Research' : 'Create Post'}
-          </button>
-        )}
-      </header>
-
-      {/* Sector Banner */}
-      {validSector && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-[#090a0b] border border-[#847dff]/30 rounded-2xl p-6 mb-8 flex items-center gap-4"
-        >
-          <div className="w-12 h-12 rounded-xl bg-[#847dff]/10 border border-[#847dff]/30 flex items-center justify-center shrink-0">
-            <span className="material-symbols-outlined text-2xl text-[#847dff]">{SECTOR_ICONS[validSector]}</span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <h2 className="text-lg font-bold text-white">{validSector} Sector</h2>
-            <p className="text-xs text-[#9f9fa0]">{SECTOR_DESCRIPTIONS[validSector]} — {filteredPosts.length} discussion{filteredPosts.length !== 1 ? 's' : ''}</p>
-          </div>
-          <button
-            onClick={() => setSearchParams({})}
-            className="shrink-0 px-4 py-2 bg-[#0f1011] border border-white/[0.06] text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:border-[#ef4444]/50 hover:text-[#ef4444] transition-all flex items-center gap-1.5"
-          >
-            <X size={14} /> Clear Filter
-          </button>
-        </motion.div>
-      )}
-
-      {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as typeof activeTab)} className="mb-16">
-        <TabsList className="flex gap-12 border-b border-white/[0.06] bg-transparent p-0 rounded-lg-none w-full justify-start h-auto">
-          {(['discussions', 'research', 'questions'] as const).map(tab => (
-            <TabsTrigger
-              key={tab}
-              value={tab}
-              className={`pb-6 text-xs font-black uppercase tracking-[0.2em] relative bg-transparent border-none rounded-lg-none whitespace-nowrap data-active:text-[#847dff] data-active:bg-transparent data-active:shadow-none text-text-muted hover:text-text-primary`}
-            >
-              {tab}
-              {activeTab === tab && (
-                <motion.div layoutId="tabLine" className="absolute bottom-[-1px] left-0 w-full h-1 bg-[#847dff] rounded-lg" />
-              )}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
-
-      {/* Feed */}
-      <div className="space-y-12">
-        {activeTab === 'questions' && user && (
-           <div className="bg-[#090a0b] p-8 rounded-lg-2xl border border-white/[0.06] shadow-sm mb-12">
-              <div className="flex gap-4">
-                 <div className="w-10 h-10 rounded-lg bg-[#847dff] flex items-center justify-center text-[#090a0b] font-black text-sm shrink-0 uppercase">
-                    {profile?.name?.[0] || user.displayName?.[0]}
-                 </div>
-                 <div className="flex-1 space-y-4">
-                    <textarea 
-                      placeholder="What's your question today?"
-                      className="w-full bg-[#0f1011] border-none outline-none text-text-primary placeholder:text-text-muted/50 resize-none font-medium h-24 p-2 rounded-lg"
-                      value={createData.content}
-                      onChange={e => setCreateData({...createData, content: e.target.value})}
-                    />
-                    <div className="flex justify-between items-center gap-4">
-                       <div className="flex gap-2">
-                          {['Finance', 'Economics', 'Business', 'Policy', 'Other'].map(cat => (
-                            <button
-                              key={cat}
-                              onClick={() => setCreateData({...createData, category: cat as any})}
-                              className={`px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all ${
-                                createData.category === cat ? 'bg-[#847dff] border-[#847dff] text-white' : 'border-white/[0.06] text-text-muted hover:border-[#847dff]/50'
-                              }`}
-                            >
-                              {cat}
-                            </button>
-                          ))}
-                       </div>
-                       <button 
-                        onClick={handleCreateSubmit}
-                        disabled={!createData.content.trim() || isUploading}
-                        className="bg-[#847dff] text-[#090a0b] px-8 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#847dff] transition-all disabled:opacity-20"
-                       >
-                         Post Question
-                       </button>
-                    </div>
-                 </div>
-              </div>
-           </div>
-        )}
-
-        {loading ? (
-          <div className="space-y-8">
-            <Skeleton className="h-64 w-full bg-white/5 border border-white/[0.06] rounded-lg-2xl" />
-            <Skeleton className="h-64 w-full bg-white/5 border border-white/[0.06] rounded-lg-2xl" />
-            <Skeleton className="h-64 w-full bg-white/5 border border-white/[0.06] rounded-lg-2xl" />
-          </div>
-        ) : (
-          <AnimatePresence mode="popLayout">
-            {filteredPosts.map((post) => (
-              <motion.div
-                key={post.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="mb-8"
+        {/* Left Sidebar - Navigation (Hidden on Mobile) */}
+        <aside className="hidden lg:block lg:col-span-3 space-y-8 sticky top-32 h-fit">
+          <div className="flex flex-col gap-2">
+            {[
+              { icon: 'home', label: 'Home', active: true },
+              { icon: 'explore', label: 'Explore' },
+              { icon: 'notifications', label: 'Notifications' },
+              { icon: 'bookmark', label: 'Bookmarks' },
+              { icon: 'person', label: 'Profile' },
+            ].map((item, idx) => (
+              <button 
+                key={idx}
+                className={`flex items-center gap-4 p-4 rounded-2xl transition-all ${item.active ? 'bg-sunset-fade text-coral-flame font-bold' : 'text-brandwood hover:bg-sunset-fade/50'}`}
               >
-                <GradientCard 
+                <span className="material-symbols-outlined text-2xl">{item.icon}</span>
+                <span className="text-lg tracking-tight">{item.label}</span>
+              </button>
+            ))}
+          </div>
+
+          {user && (
+            <button 
+              onClick={() => setShowCreateModal(true)}
+              className="w-full bg-coral-flame text-white py-4 rounded-2xl text-sm font-bold uppercase tracking-widest hover:bg-coral-flame/90 transition-all shadow-warm-float flex items-center justify-center gap-2"
+            >
+              <Plus size={20} strokeWidth={3} /> Post
+            </button>
+          )}
+        </aside>
+
+        {/* Middle Feed */}
+        <div className="col-span-1 lg:col-span-6 space-y-6">
+          <div className="bg-white/80 backdrop-blur-md sticky top-20 z-10 p-4 border-b border-blush-mist mb-6">
+            <h1 className="text-2xl font-display font-medium text-brandwood tracking-tight">Feed</h1>
+          </div>
+
+          {/* Tabs */}
+          <div className="flex gap-4 mb-6 px-4">
+            {(['discussions', 'research', 'questions'] as const).map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`pb-3 text-xs font-bold uppercase tracking-widest relative transition-colors ${activeTab === tab ? 'text-coral-flame' : 'text-text-muted hover:text-brandwood'}`}
+              >
+                {tab}
+                {activeTab === tab && (
+                  <motion.div layoutId="tabIndicator" className="absolute bottom-0 left-0 right-0 h-1 bg-coral-flame rounded-t-lg" />
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Quick Create Box (for Questions) */}
+          {activeTab === 'questions' && user && (
+             <div className="bg-white p-6 rounded-3xl border border-blush-mist shadow-warm-lift mb-8 flex gap-4">
+               <div className="w-12 h-12 rounded-full bg-sunset-fade flex items-center justify-center text-coral-flame font-black text-lg uppercase shrink-0">
+                  {profile?.name?.[0] || user.displayName?.[0] || 'U'}
+               </div>
+               <div className="flex-1 space-y-4">
+                  <textarea 
+                    placeholder="Ask the community..."
+                    className="w-full bg-transparent border-none outline-none text-brandwood placeholder:text-text-muted resize-none font-sans h-20 text-lg"
+                    value={createData.content}
+                    onChange={e => setCreateData({...createData, content: e.target.value})}
+                  />
+                  <div className="flex justify-between items-center border-t border-blush-mist pt-4">
+                    <select 
+                      value={createData.category}
+                      onChange={e => setCreateData({...createData, category: e.target.value as any})}
+                      className="bg-sunset-fade text-brandwood text-xs font-bold px-3 py-2 rounded-xl outline-none border border-blush-mist"
+                    >
+                      <option>Finance</option>
+                      <option>Economics</option>
+                      <option>Business</option>
+                      <option>Policy</option>
+                      <option>Other</option>
+                    </select>
+                    <button 
+                      onClick={handleCreateSubmit}
+                      disabled={!createData.content.trim() || isUploading}
+                      className="bg-coral-flame text-white px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-widest hover:shadow-warm-float transition-all disabled:opacity-50"
+                    >
+                      Post
+                    </button>
+                  </div>
+               </div>
+             </div>
+          )}
+
+          {/* Posts */}
+          {loading ? (
+            <div className="space-y-6">
+              <Skeleton className="h-40 w-full bg-sunset-fade border border-blush-mist rounded-3xl" />
+              <Skeleton className="h-40 w-full bg-sunset-fade border border-blush-mist rounded-3xl" />
+            </div>
+          ) : (
+            <AnimatePresence mode="popLayout">
+              {filteredPosts.map((post) => (
+                <motion.div
+                  key={post.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="bg-white border border-blush-mist p-6 rounded-3xl shadow-sm hover:shadow-warm-lift transition-all cursor-pointer mb-6"
                   onClick={() => navigate(`/post/${post.id}`)}
                 >
-                  <div className="flex justify-between items-start mb-8 w-full">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-[#847dff] flex items-center justify-center text-white font-black text-sm uppercase">
-                        {post.author?.[0]}
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-black text-white uppercase tracking-widest">{post.author}</h4>
-                        <div className="flex items-center gap-3 mt-1">
-                          <Badge variant="outline" className="text-[9px] font-black text-white border-white/20 uppercase tracking-widest bg-white/10 px-2 py-0.5 rounded-lg">
+                  <div className="flex gap-4">
+                    {/* Avatar */}
+                    <div className="w-12 h-12 rounded-full bg-sunset-fade border border-blush-mist flex items-center justify-center text-coral-flame font-black text-lg uppercase shrink-0">
+                      {post.author?.[0] || 'U'}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-bold text-brandwood">{post.author}</h4>
+                            <span className="text-sm text-text-muted">
+                              · {post.createdAt?.toDate ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(post.createdAt.toDate()) : 'Recent'}
+                            </span>
+                          </div>
+                          <span className="inline-block mt-1 text-[9px] font-bold text-mint-action uppercase tracking-widest bg-mint-action/10 px-2 py-0.5 rounded-lg">
                             {post.category}
-                          </Badge>
-                          <span className="text-[9px] font-medium text-gray-400 uppercase tracking-widest">
-                            {post.createdAt?.toDate ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(post.createdAt.toDate()) : '...'}
                           </span>
                         </div>
+                        <button className="text-text-muted hover:text-coral-flame transition-colors p-2"><MoreVertical size={16} /></button>
+                      </div>
+
+                      {post.type === 'discussion' && (
+                        <>
+                          <h3 className="text-xl font-display font-medium text-brandwood mb-3 leading-snug">
+                            {post.title}
+                          </h3>
+                          <div className="text-text-muted text-sm leading-relaxed mb-4 line-clamp-4">
+                            <div dangerouslySetInnerHTML={{ __html: post.content }} />
+                          </div>
+                          {post.imageUrl && (
+                            <div className="rounded-2xl overflow-hidden mb-4 border border-blush-mist max-h-80">
+                              <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                            </div>
+                          )}
+                        </>
+                      )}
+
+                      {post.type === 'research' && (
+                        <div className="bg-sunset-fade p-6 rounded-2xl border border-blush-mist mb-4">
+                          <h3 className="text-lg font-bold text-brandwood mb-2">{post.title}</h3>
+                          <p className="text-sm text-text-muted italic mb-4 line-clamp-3">"{post.abstract}"</p>
+                          <a 
+                            href={post.pdfUrl} 
+                            target="_blank" 
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-2 bg-white text-coral-flame px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest border border-blush-mist hover:border-coral-flame transition-colors"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Download size={14} /> Download PDF
+                          </a>
+                        </div>
+                      )}
+
+                      {post.type === 'question' && (
+                        <p className="text-lg text-brandwood font-medium italic mb-4">"{post.content}"</p>
+                      )}
+
+                      {/* Interactions */}
+                      <div className="flex items-center gap-8 mt-4 pt-4 border-t border-blush-mist" onClick={(e) => e.stopPropagation()}>
+                        <button 
+                          onClick={() => handleLike(post.id)}
+                          className="flex items-center gap-2 text-text-muted hover:text-coral-flame transition-colors group"
+                        >
+                          <div className="p-2 rounded-full group-hover:bg-coral-flame/10 transition-colors">
+                            <Heart size={18} />
+                          </div>
+                          <span className="text-xs font-medium">{post.likes}</span>
+                        </button>
+                        <button 
+                          onClick={() => navigate(`/post/${post.id}#comments`)}
+                          className="flex items-center gap-2 text-text-muted hover:text-mint-action transition-colors group"
+                        >
+                          <div className="p-2 rounded-full group-hover:bg-mint-action/10 transition-colors">
+                            <MessageSquare size={18} />
+                          </div>
+                          <span className="text-xs font-medium">{post.commentCount}</span>
+                        </button>
+                        <button 
+                          onClick={() => handleShare(post.id)}
+                          className="text-text-muted hover:text-[#847dff] transition-colors group ml-auto"
+                        >
+                          <div className="p-2 rounded-full group-hover:bg-[#847dff]/10 transition-colors">
+                            <Share2 size={18} />
+                          </div>
+                        </button>
                       </div>
                     </div>
-                    <button className="text-gray-400 hover:text-white transition-colors"><MoreVertical size={16} /></button>
                   </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          )}
+        </div>
 
-                {post.type === 'discussion' && (
-                  <>
-                    <h3 className="text-2xl md:text-3xl text-white font-bold mb-6 leading-tight hover:text-[#847dff] transition-colors">
-                      {post.title}
-                    </h3>
-                    {post.imageUrl && (
-                      <div className="aspect-video rounded-lg overflow-hidden mb-6 border border-white/10 shadow-lg">
-                        <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                      </div>
-                    )}
-                    <div className="text-gray-300 leading-relaxed font-sans mb-6 line-clamp-3">
-                      <div dangerouslySetInnerHTML={{ __html: post.content }} />
+        {/* Right Sidebar - Trending & Suggestions */}
+        <aside className="hidden xl:block xl:col-span-3 space-y-8 sticky top-32 h-fit">
+          {/* Trending Sectors */}
+          <div className="bg-sunset-fade border border-blush-mist rounded-3xl p-6">
+            <h3 className="text-lg font-display font-bold text-brandwood mb-4">Trending Sectors</h3>
+            <div className="space-y-4">
+              {TRENDING_SECTORS.map(sector => (
+                <button
+                  key={sector}
+                  onClick={() => setSearchParams({ sector })}
+                  className={`w-full text-left p-3 rounded-2xl transition-all flex items-center gap-3 ${validSector === sector ? 'bg-white shadow-sm border-coral-flame border' : 'hover:bg-white border border-transparent'}`}
+                >
+                  <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm text-brandwood">
+                    <span className="material-symbols-outlined">{SECTOR_ICONS[sector as Sector]}</span>
+                  </div>
+                  <div>
+                    <span className="font-bold text-sm block text-brandwood">{sector}</span>
+                    <span className="text-[10px] text-text-muted uppercase tracking-wider">Top Discussions</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+            {validSector && (
+              <button
+                onClick={() => setSearchParams({})}
+                className="w-full mt-4 py-2 border border-blush-mist rounded-xl text-xs font-bold text-coral-flame uppercase tracking-widest hover:bg-white transition-colors"
+              >
+                Clear Filter
+              </button>
+            )}
+          </div>
+
+          {/* Suggested To Follow */}
+          <div className="bg-sunset-fade border border-blush-mist rounded-3xl p-6">
+            <h3 className="text-lg font-display font-bold text-brandwood mb-4">Suggested Academics</h3>
+            <div className="space-y-4">
+              {['Akshat Karki', 'Manash Koirala', 'Ujjwal Dhungana'].map((name, i) => (
+                <div key={i} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-white border border-blush-mist flex items-center justify-center text-brandwood font-bold">
+                      {name[0]}
                     </div>
-                    {post.content.length > 200 && (
-                      <button
-                        onClick={(e) => { e.stopPropagation(); navigate(`/post/${post.id}`); }}
-                        className="text-[#847dff] text-[10px] font-black uppercase tracking-widest hover:text-white transition-colors mb-6 block"
-                      >
-                        Read more →
-                      </button>
-                    )}
-                  </>
-                )}
-
-                {post.type === 'research' && (
-                  <div className="bg-[#090a0b]/80 p-8 rounded-lg border border-white/10 flex flex-col items-center text-center">
-                    <div className="w-16 h-16 bg-white/5 rounded-lg flex items-center justify-center text-[#847dff] mb-6 shadow-sm border border-white/10">
-                      <FileText size={32} />
+                    <div>
+                      <span className="font-bold text-sm block text-brandwood">{name}</span>
+                      <span className="text-xs text-text-muted">@{(name.split(' ')[0]).toLowerCase()}</span>
                     </div>
-                    <h3 className="text-2xl text-white font-bold mb-4">{post.title}</h3>
-                    <p className="text-gray-400 text-sm italic font-sans max-w-lg mb-8">"{post.abstract}"</p>
-                    <a 
-                      href={post.pdfUrl} 
-                      target="_blank" 
-                      rel="noreferrer"
-                      className="flex items-center gap-3 bg-[#847dff]/20 text-[#847dff] px-8 py-3 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-[#847dff] hover:text-white border border-[#847dff]/30 transition-all"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Download size={14} /> Download PDF
-                    </a>
                   </div>
-                )}
-
-                {post.type === 'question' && (
-                  <div className="space-y-6">
-                    <p className="text-xl text-white leading-relaxed font-bold italic">"{post.content}"</p>
-                  </div>
-                )}
-
-                <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/10 w-full" onClick={(e) => e.stopPropagation()}>
-                  <div className="flex gap-8">
-                    <button 
-                      onClick={() => handleLike(post.id)}
-                      className="flex items-center gap-2 group"
-                    >
-                      <Heart size={18} className="text-gray-400 group-hover:text-[#847dff] transition-colors" />
-                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{post.likes}</span>
-                    </button>
-                    <button 
-                      onClick={() => navigate(`/post/${post.id}#comments`)}
-                      className="flex items-center gap-2 group text-gray-400 hover:text-[#847dff] transition-colors"
-                    >
-                      <MessageSquare size={18} />
-                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest group-hover:text-[#847dff]">{post.commentCount}</span>
-                    </button>
-                    <button 
-                      onClick={() => handleShare(post.id)}
-                      className="text-gray-400 hover:text-white transition-colors"
-                    >
-                      <Share2 size={18} />
-                    </button>
-                  </div>
+                  <button className="px-4 py-1.5 bg-brandwood text-white text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-brandwood/90 transition-colors">
+                    Follow
+                  </button>
                 </div>
-                </GradientCard>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        )}
+              ))}
+            </div>
+          </div>
+        </aside>
+
       </div>
 
       {/* Create Modal */}
       <AnimatePresence>
         {showCreateModal && (
-          <div className="fixed inset-0 z-[100] bg-[#0f1011]/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[100] bg-brandwood/40 backdrop-blur-sm flex items-center justify-center p-4">
             <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="bg-[#090a0b] p-8 md:p-12 rounded-lg-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl"
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              className="bg-white p-8 md:p-12 rounded-[2rem] max-w-2xl w-full max-h-[90vh] overflow-y-auto relative shadow-warm-float border border-blush-mist"
             >
               <button 
                 onClick={() => setShowCreateModal(false)}
-                className="absolute top-8 right-8 text-text-muted hover:text-text-primary transition-colors"
+                className="absolute top-8 right-8 w-10 h-10 bg-sunset-fade rounded-full flex items-center justify-center text-text-muted hover:text-coral-flame transition-colors"
               >
-                <X size={24} />
+                <X size={20} />
               </button>
 
-              <h2 className="font-sans tracking-tight font-semibold text-4xl text-text-primary italic mb-10">
+              <h2 className="font-display tracking-tight font-medium text-3xl text-brandwood mb-8">
                 {activeTab === 'research' ? 'Submit Research' : 'Create New Post'}
               </h2>
 
               <form onSubmit={handleCreateSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                    <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-2 block">Category</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-2 block">Category</label>
                     <select 
                       value={createData.category}
                       onChange={e => setCreateData({...createData, category: e.target.value as any})}
-                      className="w-full bg-[#0f1011] border-2 border-white/[0.06] rounded-lg p-4 outline-none focus:border-electric-mint transition-all font-bold text-text-primary"
+                      className="w-full bg-sunset-fade border border-blush-mist rounded-xl p-4 outline-none focus:border-coral-flame transition-all font-bold text-brandwood"
                     >
                       <option>Finance</option>
                       <option>Economics</option>
@@ -566,71 +611,71 @@ const handleLike = async (postId: string) => {
                     </select>
                   </div>
                   <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-2 block">Your Name</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-2 block">Your Name</label>
                     <input 
                       type="text"
                       value={createData.authorName}
                       onChange={e => setCreateData({...createData, authorName: e.target.value})}
-                      className="w-full bg-[#0f1011] border-2 border-white/[0.06] rounded-lg p-4 outline-none focus:border-electric-mint transition-all font-bold text-text-primary"
+                      className="w-full bg-sunset-fade border border-blush-mist rounded-xl p-4 outline-none focus:border-coral-flame transition-all font-bold text-brandwood"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-2 block">Title</label>
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-2 block">Title</label>
                   <input 
                     required
                     type="text"
                     value={createData.title}
                     onChange={e => setCreateData({...createData, title: e.target.value})}
-                    className="w-full bg-[#0f1011] border-2 border-white/[0.06] rounded-lg p-4 outline-none focus:border-electric-mint transition-all font-bold text-text-primary"
-                    placeholder="Expert analysis of..."
+                    className="w-full bg-sunset-fade border border-blush-mist rounded-xl p-4 outline-none focus:border-coral-flame transition-all font-bold text-brandwood"
+                    placeholder="E.g., My thoughts on the new NRB policy..."
                   />
                 </div>
 
                 {activeTab === 'research' && (
                   <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-2 block">Abstract / Summary</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-2 block">Abstract / Summary</label>
                     <textarea 
                       required
                       value={createData.abstract}
                       onChange={e => setCreateData({...createData, abstract: e.target.value})}
-                      className="w-full bg-[#0f1011] border-2 border-white/[0.06] rounded-lg p-4 outline-none focus:border-electric-mint transition-all font-bold text-text-primary resize-none h-24"
+                      className="w-full bg-sunset-fade border border-blush-mist rounded-xl p-4 outline-none focus:border-coral-flame transition-all font-sans text-brandwood resize-none h-24"
                     />
                   </div>
                 )}
 
                 <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-2 block">Content</label>
-                  <div className="bg-[#0f1011] rounded-lg border-2 border-white/[0.06] focus-within:border-[#847dff] transition-all overflow-hidden font-sans">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-2 block">Content</label>
+                  <div className="bg-white rounded-xl border border-blush-mist focus-within:border-coral-flame transition-all overflow-hidden font-sans">
                     <ReactQuill 
                       theme="snow"
                       value={createData.content}
                       onChange={val => setCreateData({...createData, content: val})}
-                      className="bg-[#0f1011] min-h-[200px]"
+                      className="bg-white min-h-[200px]"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-2 block">Attached Image</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-2 block">Attached Image</label>
                     <input 
                       type="file"
                       accept="image/*"
                       onChange={e => setCreateData({...createData, image: e.target.files?.[0] || null})}
-                      className="w-full text-xs text-text-muted"
+                      className="w-full text-xs text-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-sunset-fade file:text-coral-flame hover:file:bg-blush-mist transition-all"
                     />
                   </div>
                   {activeTab === 'research' && (
                     <div>
-                      <label className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-2 block">Research PDF (Required)</label>
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-2 block">Research PDF (Required)</label>
                       <input 
                         required
                         type="file"
                         accept=".pdf"
                         onChange={e => setCreateData({...createData, pdf: e.target.files?.[0] || null})}
-                        className="w-full text-xs text-text-muted"
+                        className="w-full text-xs text-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-sunset-fade file:text-coral-flame hover:file:bg-blush-mist transition-all"
                       />
                     </div>
                   )}
@@ -639,9 +684,9 @@ const handleLike = async (postId: string) => {
                 <button 
                   type="submit"
                   disabled={isUploading}
-                  className="w-full bg-[#847dff] text-[#090a0b] py-5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#847dff] transition-all shadow-xl disabled:opacity-30"
+                  className="w-full bg-coral-flame text-white py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-coral-flame/90 transition-all shadow-warm-float disabled:opacity-30 mt-4"
                 >
-                  {isUploading ? 'UPLOADING...' : 'SUBMIT CONTRIBUTION'}
+                  {isUploading ? 'UPLOADING...' : 'SUBMIT POST'}
                 </button>
               </form>
             </motion.div>

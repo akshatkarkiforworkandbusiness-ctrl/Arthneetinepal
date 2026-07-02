@@ -1,4 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react';
+import { Canvas } from '@react-three/fiber';
+import { Float, OrbitControls, Environment, Sphere, Box, Torus, Octahedron, Icosahedron } from '@react-three/drei';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { db } from '../lib/firebase';
@@ -433,28 +435,48 @@ export default function LandingPage() {
       </section>
 
       {/* Learning Academy Curriculum Roadmap Section */}
-      <section className="py-24 px-6 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+      <section className="py-24 px-6 bg-white overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-full h-full pointer-events-none opacity-20">
+          <Canvas camera={{ position: [0, 0, 10] }}>
+            <Environment preset="city" />
+            <Float speed={2} rotationIntensity={1} floatIntensity={2}>
+              <Torus args={[3, 0.4, 16, 100]} position={[4, 2, -2]} material-color="#ef4444" material-wireframe />
+            </Float>
+            <Float speed={1.5} rotationIntensity={2} floatIntensity={1}>
+              <Icosahedron args={[2, 1]} position={[-5, -2, -5]} material-color="#847dff" material-wireframe />
+            </Float>
+          </Canvas>
+        </div>
+        <div className="max-w-7xl mx-auto relative z-10">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8"
+          >
             <div>
-              <h2 className="text-[72px] text-coral-flame leading-[0.9] tracking-[0.03em] font-display font-medium">Curriculum<br/>Roadmap</h2>
+              <span className="text-[10px] font-black text-coral-flame mb-2 block uppercase tracking-[0.4em]">EDUCATION JOURNEY</span>
+              <h2 className="text-[60px] md:text-[72px] text-brandwood leading-[0.9] tracking-[0.03em] font-display font-medium">Curriculum<br/>Roadmap</h2>
             </div>
             <p className="text-brandwood/70 max-w-sm text-base leading-relaxed font-sans">
-              Explore the educational path designed to empower students with structural economic knowledge and real market insights.
+              Explore the interactive educational path designed to empower students with structural economic knowledge and real market insights.
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Left: Accordion Headers */}
-            <div className="lg:col-span-5 flex flex-col gap-3">
+            <div className="lg:col-span-5 flex flex-col gap-4">
               {pillarsSyllabus.map((pillar, i) => (
-                <button
+                <motion.button
                   key={pillar.title}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
                   onClick={() => setActivePillarIndex(activePillarIndex === i ? null : i)}
                   className={`w-full text-left p-6 rounded-3xl border-2 transition-all duration-300 flex items-start gap-4 ${
                     activePillarIndex === i 
-                      ? 'bg-white border-coral-flame shadow-warm-lift' 
-                      : 'bg-transparent border-blush-mist hover:border-coral-flame hover:bg-sunset-fade'
+                      ? 'bg-white border-coral-flame shadow-warm-lift scale-[1.02]' 
+                      : 'bg-sunset-fade/50 border-blush-mist hover:border-coral-flame hover:bg-sunset-fade'
                   }`}
                   style={{ borderRadius: '16px' }}
                 >
@@ -463,57 +485,76 @@ export default function LandingPage() {
                     <h3 className="text-xl font-bold text-brandwood mb-2 font-display">{pillar.title}</h3>
                     <p className="text-sm text-text-muted leading-relaxed font-sans">{pillar.desc}</p>
                   </div>
-                </button>
+                </motion.button>
               ))}
             </div>
 
-            {/* Right Side: Accordion Details */}
-            <div className="lg:col-span-7 bg-sunset-fade border border-blush-mist rounded-3xl p-8 flex flex-col justify-between shadow-warm-lift">
+            <div className="lg:col-span-7 bg-white border border-blush-mist rounded-3xl p-8 flex flex-col justify-between shadow-warm-lift relative overflow-hidden">
+              {/* Subtle 3D background for the active card */}
+              <div className="absolute -bottom-20 -right-20 w-64 h-64 pointer-events-none opacity-30">
+                 <Canvas>
+                   <ambientLight intensity={1} />
+                   <directionalLight position={[10, 10, 10]} intensity={2} />
+                   <Float speed={3} rotationIntensity={2} floatIntensity={1}>
+                     <Box args={[2, 2, 2]} rotation={[0.5, 0.5, 0]}>
+                       <meshStandardMaterial color={activePillarIndex !== null ? '#ef4444' : '#847dff'} />
+                     </Box>
+                   </Float>
+                 </Canvas>
+              </div>
+
               <AnimatePresence mode="wait">
                 {activePillarIndex !== null ? (
                   <motion.div
                     key={activePillarIndex}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -15 }}
-                    className="flex-grow flex flex-col justify-between"
+                    initial={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
+                    animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
+                    transition={{ duration: 0.3 }}
+                    className="flex-grow flex flex-col justify-between relative z-10"
                   >
                     <div>
                       <div className="flex justify-between items-center border-b border-blush-mist pb-4 mb-6">
                         <h4 className="text-sm font-bold uppercase tracking-widest text-brandwood/70">
-                          Syllabus Modules ({pillarsSyllabus[activePillarIndex].title})
+                          {pillarsSyllabus[activePillarIndex].title} Modules
                         </h4>
-                        <span className="text-[10px] font-bold text-mint-action uppercase tracking-widest bg-mint-action/10 border border-mint-action/20 px-3 py-1 rounded-xl">
+                        <span className="text-[10px] font-bold text-coral-flame uppercase tracking-widest bg-coral-flame/10 border border-coral-flame/20 px-3 py-1 rounded-xl">
                           {pillarsSyllabus[activePillarIndex].modules.length} Lessons
                         </span>
                       </div>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                         {pillarsSyllabus[activePillarIndex].modules.map((mod, idx) => (
-                          <div key={idx} className="h-[280px]">
-                            <div className="h-full bg-white border border-blush-mist rounded-2xl p-6 shadow-warm-lift flex flex-col justify-between">
-                              <span className="text-[10px] font-bold text-coral-flame uppercase tracking-widest bg-coral-flame/10 w-fit px-2 py-1 rounded-lg">0{idx + 1}</span>
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: idx * 0.1 }}
+                            key={idx} 
+                            className="h-[240px]"
+                          >
+                            <div className="h-full bg-sunset-fade border border-blush-mist rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:border-coral-flame/50 hover:shadow-warm-float transition-all group">
+                              <span className="text-[10px] font-bold text-coral-flame uppercase tracking-widest bg-white/80 w-fit px-2 py-1 rounded-lg group-hover:bg-coral-flame group-hover:text-white transition-colors">0{idx + 1}</span>
                               <h3 className="text-lg font-bold text-brandwood mt-4 line-clamp-3">{mod.title}</h3>
-                              <p className="text-sm text-text-muted mt-2">Master {mod.title.toLowerCase()} in this module.</p>
                             </div>
-                          </div>
+                          </motion.div>
                         ))}
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between border-t border-blush-mist pt-6 mt-auto">
-                      <span className="text-sm text-text-muted font-sans">Ready to review? Jump into our market explorer.</span>
+                      <span className="text-sm text-text-muted font-sans">Ready to review?</span>
                       <Link 
                         to="/learn"
                         className="outlined-cta"
                       >
-                        Start Learning Modules
+                        Start Learning
                       </Link>
                     </div>
                   </motion.div>
                 ) : (
-                  <div className="h-full flex items-center justify-center text-text-muted italic text-sm py-20 text-center">
-                    Select a core pillar roadmap on the left to view lessons and module materials.
+                  <div className="h-full flex flex-col items-center justify-center text-text-muted italic text-sm py-20 text-center relative z-10">
+                    <span className="material-symbols-outlined text-4xl text-blush-mist mb-4">touch_app</span>
+                    Select a core pillar roadmap on the left to view interactive modules.
                   </div>
                 )}
               </AnimatePresence>
@@ -521,8 +562,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
-      {/* Nepal Rastra Bank (NRB) Financial Resource Portal */}
       <section className="py-24 px-6 bg-sunset-fade border-y border-blush-mist">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
@@ -789,41 +828,59 @@ export default function LandingPage() {
       </section>
 
       {/* Social Mission & Equity Support Section */}
-      <section className="bg-sunset-fade border-y border-blush-mist py-28 px-6 overflow-hidden">
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-20">
+      <section className="bg-brandwood border-y border-brandwood/20 py-28 px-6 overflow-hidden relative">
+        {/* Full background 3D Scene */}
+        <div className="absolute inset-0 pointer-events-none opacity-20">
+          <Canvas camera={{ position: [0, 0, 15] }}>
+             <ambientLight intensity={0.5} />
+             <directionalLight position={[10, 10, 10]} intensity={1} />
+             <Float speed={1} rotationIntensity={1} floatIntensity={2}>
+               <Icosahedron args={[4, 0]} position={[8, 0, -5]}>
+                 <meshStandardMaterial color="#ef4444" wireframe />
+               </Icosahedron>
+             </Float>
+             <Float speed={1.5} rotationIntensity={2} floatIntensity={1}>
+               <Torus args={[5, 0.2, 16, 100]} position={[-8, 2, -10]}>
+                 <meshStandardMaterial color="#847dff" wireframe />
+               </Torus>
+             </Float>
+          </Canvas>
+        </div>
+
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-20 relative z-10">
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             className="lg:w-1/2 border-l-8 border-coral-flame pl-10"
           >
-            <h2 className="text-5xl text-brandwood leading-[1.0] font-display tracking-[0.03em] font-medium mb-6">
+            <h2 className="text-5xl text-white leading-[1.0] font-display tracking-[0.03em] font-medium mb-6">
               "We don't just teach finance — we use it to build a more equitable Nepal."
             </h2>
-            <p className="text-text-muted text-lg leading-relaxed max-w-lg font-sans">
+            <p className="text-white/70 text-lg leading-relaxed max-w-lg font-sans">
               Arthneeti allocates workshop support and targeted curricula specifically for disadvantaged youths, disabled students, and underprivileged municipal schools to narrow the financial intelligence gap.
             </p>
           </motion.div>
           
           <div className="lg:w-1/2 grid grid-cols-2 gap-6">
             {[
-              { name: 'Women & Girls', icon: 'woman' },
-              { name: "Children's Welfare", icon: 'child_care' },
-              { name: 'Disability Inclusion', icon: 'accessible' },
-              { name: 'Underprivileged Communities', icon: 'groups' }
+              { name: 'Women & Girls', icon: 'woman', delay: 0 },
+              { name: "Children's Welfare", icon: 'child_care', delay: 0.1 },
+              { name: 'Disability Inclusion', icon: 'accessible', delay: 0.2 },
+              { name: 'Underprivileged', icon: 'groups', delay: 0.3 }
             ].map((item, i) => (
               <motion.div 
                 key={item.name} 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="flex flex-col items-center text-center p-8 bg-white border border-blush-mist rounded-3xl hover:border-coral-flame/50 hover:shadow-warm-float transition-all duration-300 shadow-warm-lift"
+                transition={{ delay: item.delay, type: 'spring', stiffness: 100 }}
+                className="flex flex-col items-center text-center p-8 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl hover:border-coral-flame/50 hover:bg-white/10 transition-all duration-300 shadow-xl group"
               >
-                <div className="w-16 h-16 rounded-2xl bg-coral-flame/10 flex items-center justify-center text-coral-flame mb-4 border border-coral-flame/20">
+                <div className="w-16 h-16 rounded-2xl bg-coral-flame flex items-center justify-center text-white mb-4 shadow-[0_0_20px_rgba(247,59,32,0.3)] group-hover:scale-110 transition-transform">
                   <span className="material-symbols-outlined text-3xl">{item.icon}</span>
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-brandwood">{item.name}</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-white/90">{item.name}</span>
               </motion.div>
             ))}
           </div>

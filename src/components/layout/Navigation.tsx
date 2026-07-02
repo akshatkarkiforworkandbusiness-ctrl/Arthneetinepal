@@ -7,9 +7,11 @@ import { OnboardingModal } from './OnboardingModal';
 import { AuthModal } from './AuthModal';
 
 const navLinks = [
+  { name: 'Home', path: '/' },
   { name: 'Discover', path: '/discover' },
   { name: 'Learn', path: '/learn' },
   { name: 'Community', path: '/community' },
+  { name: 'Event', path: '/events' },
 ];
 
 export function Navigation() {
@@ -24,8 +26,8 @@ export function Navigation() {
         <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
           {/* Brand Logo */}
           <Link to="/" className="flex flex-col items-start leading-none group">
-            <span className="text-2xl font-black text-brandwood tracking-[0.03em] transition-colors group-hover:text-coral-flame">ARTHNEETI</span>
-            <span className="text-sm font-medium text-coral-flame ml-0.5">अर्थनीति</span>
+            <span className="text-xl md:text-2xl font-black text-brandwood tracking-[0.03em] transition-colors group-hover:text-coral-flame">ARTHNEETI</span>
+            <span className="text-xs md:text-sm font-medium text-coral-flame ml-0.5">अर्थनीति</span>
           </Link>
 
           {/* Desktop Nav Links */}
