@@ -484,7 +484,7 @@ export default function ExplorePage() {
                     className="w-12 h-12 rounded-2xl bg-sunset-fade border border-blush-mist flex items-center justify-center text-mint-action group-hover:bg-mint-action/10 group-hover:border-mint-action/30 transition-all shrink-0 cursor-default"
                   >
                     <span className="material-symbols-outlined text-2xl">{SECTOR_ICONS[sector]}</span>
-                  </div>
+                  </motion.div>
                   <div className="min-w-0">
                     <h3 className="font-display font-bold text-xl text-brandwood group-hover:text-coral-flame transition-colors leading-tight">
                       {sector}
