@@ -324,10 +324,10 @@ export default function ExplorePage() {
                     />
                   )}
                   {tf}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+                </button>
+              );
+            })}
+          </div>
 
           {/* Chart */}
           <div className="relative w-full h-[300px] bg-sunset-fade/50 rounded-2xl border border-blush-mist p-4">
