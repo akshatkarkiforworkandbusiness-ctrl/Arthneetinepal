@@ -8,6 +8,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import LessonCommentSection from './LessonCommentSection';
 import LessonQuiz from './LessonQuiz';
+import AILessonAssistant from './AILessonAssistant';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -1943,6 +1944,7 @@ export default function LearnPage() {
   const [expandedFaq, setExpandedFaq]   = useState<number | null>(null);
   const [expandedLessonFaq, setExpandedLessonFaq] = useState<number | null>(null);
   const [searchQuery, setSearchQuery]   = useState('');
+  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const playerRef = useRef<HTMLDivElement>(null);
 
   // ── Load completed lessons from Firestore ──────────────────────────────────
@@ -2053,6 +2055,7 @@ export default function LearnPage() {
     setActiveLesson(lesson);
     setIsPlaying(true);
     setExpandedLessonFaq(null);
+    setIsAssistantOpen(false); // Close AI assistant when switching lessons
     navigate(`/learn/${lesson.id}`, { replace: true });
     setTimeout(() => {
       playerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -2129,19 +2132,28 @@ export default function LearnPage() {
                 <p className="text-text-muted font-sans mt-2 max-w-2xl">{activeLesson.desc}</p>
               </div>
 
-              {/* Mark Complete */}
-              {user && (!activeLesson.quiz || activeLesson.quiz.length === 0) && (
+              {/* Actions: Mark Complete & Ask AI */}
+              <div className="flex items-center gap-3 shrink-0">
                 <button
-                  onClick={() => markComplete(activeLesson.id)}
-                  className={`flex items-center gap-3 px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all shrink-0 ${
-                    completed.has(activeLesson.id)
-                      ? 'bg-mint-action/10 text-mint-action border border-mint-action/30'
-                      : 'bg-white text-text-muted border border-blush-mist hover:border-mint-action/30 hover:text-mint-action'
-                  }`}
+                  onClick={() => setIsAssistantOpen(true)}
+                  className="flex items-center gap-2 px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all bg-gradient-to-r from-coral-flame to-brandwood text-white shadow-warm-float hover:opacity-90"
                 >
-                  {completed.has(activeLesson.id) ? '✓ Completed' : 'Mark Complete'}
+                  <span className="material-symbols-outlined text-[16px]">psychology</span>
+                  Ask AI Tutor
                 </button>
-              )}
+                {user && (!activeLesson.quiz || activeLesson.quiz.length === 0) && (
+                  <button
+                    onClick={() => markComplete(activeLesson.id)}
+                    className={`flex items-center gap-3 px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all shrink-0 ${
+                      completed.has(activeLesson.id)
+                        ? 'bg-mint-action/10 text-mint-action border border-mint-action/30'
+                        : 'bg-white text-text-muted border border-blush-mist hover:border-mint-action/30 hover:text-mint-action'
+                    }`}
+                  >
+                    {completed.has(activeLesson.id) ? '✓ Completed' : 'Mark Complete'}
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Chapters */}
@@ -2428,11 +2440,20 @@ export default function LearnPage() {
       })}
     </div>
 
-    {/* Modals */}
+    {/* Modals & Assistants */}
     <CertificateModal 
       isOpen={!!certificateModule} 
       onClose={() => setCertificateModule(null)} 
       moduleTitle={certificateModule || ''} 
+    />
+    
+    <AILessonAssistant 
+      isOpen={isAssistantOpen}
+      onClose={() => setIsAssistantOpen(false)}
+      lessonTitle={activeLesson.title}
+      lessonSummary={activeLesson.desc + " " + activeLesson.chapters.join(", ")}
+      lessonFaqs={activeLesson.faqs}
+      lessonQuizzes={activeLesson.quiz}
     />
   </main>
 );

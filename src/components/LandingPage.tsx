@@ -6,6 +6,8 @@ import { useState, useEffect } from 'react';
 import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import { OnboardingModal } from './layout/OnboardingModal';
+import Hero3DVisuals from './Hero3DVisuals';
 import { LESSONS, LEVEL_COLORS } from './LearnPage';
 
 interface Topic {
@@ -281,7 +283,9 @@ export default function LandingPage() {
     >
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-40 pb-32 px-6 min-h-[90vh] flex flex-col justify-center items-center text-center bg-sunset-fade">
-        {/* Background ambient shapes */}
+        <Hero3DVisuals />
+        
+        {/* Background ambient shapes (can stay as a soft glowing backdrop behind the 3D canvas) */}
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-coral-flame/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-mint-action/10 rounded-full blur-[120px] pointer-events-none" />
         
@@ -297,7 +301,7 @@ export default function LandingPage() {
             transition={{ delay: 0.2, duration: 0.5 }}
             className="glass-card px-4 py-1.5 rounded-full text-xs font-bold text-coral-flame uppercase tracking-widest mb-8 border-coral-flame/20 inline-block"
           >
-            Empowering Nepal's Youth
+            Arthneeti
           </motion.div>
           
           <h1 className="text-6xl md:text-[100px] text-brandwood leading-[0.95] tracking-tight font-display font-medium mb-8">
@@ -943,8 +947,8 @@ export default function LandingPage() {
       <section className="bg-brandwood border-y border-brandwood/20 py-28 px-6 overflow-hidden relative">
         {/* Full background SOS Image */}
         <div className="absolute inset-0 pointer-events-none z-0">
-          <img src="/Pitcures for Arthneeti/Image 2 — SOS Disability Center.jpg" alt="Arthneeti for Children - SOS" className="w-full h-full object-cover opacity-30 mix-blend-luminosity" />
-          <div className="absolute inset-0 bg-gradient-to-t from-brandwood via-brandwood/80 to-transparent" />
+          <img src="/Pitcures for Arthneeti/Image 2 — SOS Disability Center.jpg" alt="Arthneeti for Children - SOS" className="w-full h-full object-cover opacity-50" />
+          <div className="absolute inset-0 bg-gradient-to-r from-brandwood/95 via-brandwood/80 to-brandwood/40" />
         </div>
 
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-20 relative z-10">
