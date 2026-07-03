@@ -3,9 +3,13 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from '../contexts/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import ReactApexChart from 'react-apexcharts';
+import { Brand3DText } from './Brand3DText';
+import AIMarketAssistant from './AIMarketAssistant';
+
 import {
   fetchStocks,
   fetchIndices,
@@ -276,7 +280,11 @@ export default function ExplorePage() {
             </span>
           )}
         </div>
-        <h1 className="font-display font-medium tracking-[0.03em] leading-[0.90] text-5xl md:text-[80px] text-brandwood mb-8">Discover</h1>
+        
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+          <h1 className="font-display font-medium tracking-[0.03em] leading-[0.90] text-5xl md:text-[80px] text-brandwood">Discover</h1>
+          <Brand3DText className="md:ml-auto" />
+        </div>
 
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
           <div className="relative flex-1 max-w-2xl">
@@ -700,6 +708,14 @@ export default function ExplorePage() {
           </div>
         </aside>
       </div>
+
+      {/* AI Market Assistant Floating Widget */}
+      <AIMarketAssistant 
+        summary={summary}
+        topStocks={topStocks}
+        indices={indices}
+        marketOpen={marketOpen}
+      />
     </motion.main>
   );
 }

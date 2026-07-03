@@ -8,8 +8,9 @@ import {
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../contexts/AuthContext';
-import { Calendar, Plus, X, ImagePlus, Loader2 } from 'lucide-react';
+import { Calendar, Plus, X, ImagePlus, Loader2, MapPin, Clock, Download, Edit2, CheckCircle2, ChevronRight, Share2, Trash2 } from 'lucide-react';
 import AnimatedEventCard from './AnimatedEventCard';
+import { Brand3DText } from './Brand3DText';
 
 const EventScene = lazy(() => import('./EventScene'));
 
@@ -236,6 +237,9 @@ export default function EventsPage() {
             >
               CALENDAR
             </motion.span>
+            
+            <Brand3DText className="justify-start ml-[-8px] mb-4" light={true} />
+
             <motion.h1
               className="text-6xl md:text-8xl text-white italic font-sans tracking-tight font-semibold"
               initial={{ opacity: 0, y: 20 }}
