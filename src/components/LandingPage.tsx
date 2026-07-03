@@ -435,28 +435,8 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.5 }}
-              className="glass-card rounded-[2rem] p-8 md:col-span-2 flex flex-col justify-between overflow-hidden relative min-h-[350px] group border-coral-flame/30"
-            >
-              <div className="absolute inset-0 z-0">
-                <img src="/Pitcures for Arthneeti/Arthneeti for children -SOS.jpg" alt="SOS Children's Village" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-coral-flame/90 via-brandwood/60 to-transparent" />
-              </div>
-              <div className="relative z-10 flex flex-col h-full justify-end">
-                <div className="w-12 h-12 bg-white text-coral-flame rounded-2xl flex items-center justify-center mb-6 shadow-sm transition-transform group-hover:-translate-y-2">
-                  <span className="material-symbols-outlined">volunteer_activism</span>
-                </div>
-                <h3 className="text-3xl text-white font-display font-medium mb-3">Arthneeti for Children - SOS</h3>
-                <p className="text-white/90 font-sans font-medium">Empowering children at the SOS disability center with accessible, engaging financial education.</p>
-              </div>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
               transition={{ delay: 0.6 }}
-              className="glass-card rounded-[2rem] p-8 flex flex-col justify-between overflow-hidden relative min-h-[350px] group"
+              className="glass-card rounded-[2rem] p-8 md:col-span-3 flex flex-col justify-between overflow-hidden relative min-h-[350px] group"
             >
               <div className="absolute inset-0 z-0">
                 <img src="/Pitcures for Arthneeti/ArthneetiSecond Session.jpg" alt="Second Session" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
@@ -961,22 +941,10 @@ export default function LandingPage() {
 
       {/* Social Mission & Equity Support Section */}
       <section className="bg-brandwood border-y border-brandwood/20 py-28 px-6 overflow-hidden relative">
-        {/* Full background 3D Scene */}
-        <div className="absolute inset-0 pointer-events-none opacity-20">
-          <Canvas camera={{ position: [0, 0, 15] }}>
-             <ambientLight intensity={0.5} />
-             <directionalLight position={[10, 10, 10]} intensity={1} />
-             <Float speed={1} rotationIntensity={1} floatIntensity={2}>
-               <Icosahedron args={[4, 0]} position={[8, 0, -5]}>
-                 <meshStandardMaterial color="#ef4444" wireframe />
-               </Icosahedron>
-             </Float>
-             <Float speed={1.5} rotationIntensity={2} floatIntensity={1}>
-               <Torus args={[5, 0.2, 16, 100]} position={[-8, 2, -10]}>
-                 <meshStandardMaterial color="#847dff" wireframe />
-               </Torus>
-             </Float>
-          </Canvas>
+        {/* Full background SOS Image */}
+        <div className="absolute inset-0 pointer-events-none z-0">
+          <img src="/Pitcures for Arthneeti/Arthneeti for children -SOS.jpg" alt="Arthneeti for Children - SOS" className="w-full h-full object-cover opacity-30 mix-blend-luminosity" />
+          <div className="absolute inset-0 bg-gradient-to-t from-brandwood via-brandwood/80 to-transparent" />
         </div>
 
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-20 relative z-10">
