@@ -25,9 +25,9 @@ export function Navigation() {
       <header className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-blush-mist transition-all duration-300">
         <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
           {/* Brand Logo */}
-          <Link to="/" className="flex flex-col items-start leading-none group">
-            <span className="text-xl md:text-2xl font-black text-brandwood tracking-[0.03em] transition-colors group-hover:text-coral-flame">ARTHNEETI</span>
-            <span className="text-xs md:text-sm font-medium text-coral-flame ml-0.5">अर्थनीति</span>
+          <Link to="/" className="flex flex-col items-start leading-tight group gap-0.5">
+            <span className="text-xl md:text-2xl font-black text-brandwood tracking-[0.03em] transition-colors group-hover:text-coral-flame mt-1">ARTHNEETI</span>
+            <span className="text-xs md:text-sm font-medium text-coral-flame ml-0.5 tracking-wider">अर्थनीति</span>
           </Link>
 
           {/* Desktop Nav Links */}

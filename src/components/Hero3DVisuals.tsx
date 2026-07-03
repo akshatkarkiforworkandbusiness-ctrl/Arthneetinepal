@@ -25,9 +25,9 @@ function Mountain() {
         <mesh position={[0, 2, 0]} rotation={[0, Math.PI / 4, 0]}>
           <coneGeometry args={[6, 12, 4]} />
           <meshStandardMaterial 
-            color="#090a0b" 
-            emissive="#ef4444"
-            emissiveIntensity={0.1}
+            color="#0f172a" 
+            emissive="#dc143c"
+            emissiveIntensity={0.15}
             wireframe={true} 
             transparent
             opacity={0.3}
@@ -36,7 +36,7 @@ function Mountain() {
         {/* Solid core to give the mountain depth */}
         <mesh position={[0, 2, 0]} rotation={[0, Math.PI / 4, 0]}>
           <coneGeometry args={[5.8, 11.5, 4]} />
-          <meshStandardMaterial color="#0B0F19" />
+          <meshStandardMaterial color="#0f172a" />
         </mesh>
       </Float>
 
@@ -44,11 +44,11 @@ function Mountain() {
       <Float speed={1.2} rotationIntensity={0.1} floatIntensity={0.3}>
         <mesh position={[6, 0, -3]} rotation={[0, -Math.PI / 6, 0]}>
           <coneGeometry args={[4, 8, 4]} />
-          <meshStandardMaterial color="#ef4444" wireframe={true} transparent opacity={0.15} />
+          <meshStandardMaterial color="#dc143c" wireframe={true} transparent opacity={0.2} />
         </mesh>
         <mesh position={[6, 0, -3]} rotation={[0, -Math.PI / 6, 0]}>
           <coneGeometry args={[3.8, 7.5, 4]} />
-          <meshStandardMaterial color="#0B0F19" />
+          <meshStandardMaterial color="#0f172a" />
         </mesh>
       </Float>
       
@@ -56,11 +56,11 @@ function Mountain() {
       <Float speed={0.8} rotationIntensity={0.3} floatIntensity={0.4}>
         <mesh position={[-7, -1, -5]} rotation={[0, Math.PI / 3, 0]}>
           <coneGeometry args={[5, 10, 4]} />
-          <meshStandardMaterial color="#847dff" wireframe={true} transparent opacity={0.15} />
+          <meshStandardMaterial color="#003893" wireframe={true} transparent opacity={0.2} />
         </mesh>
         <mesh position={[-7, -1, -5]} rotation={[0, Math.PI / 3, 0]}>
           <coneGeometry args={[4.8, 9.5, 4]} />
-          <meshStandardMaterial color="#0B0F19" />
+          <meshStandardMaterial color="#0f172a" />
         </mesh>
       </Float>
     </group>
@@ -104,8 +104,8 @@ function DataNodes() {
           <mesh position={node.position} scale={node.scale}>
             <icosahedronGeometry args={[1, 1]} />
             <meshStandardMaterial 
-              color={i % 3 === 0 ? "#ef4444" : "#847dff"} 
-              emissive={i % 3 === 0 ? "#ef4444" : "#847dff"}
+              color={i % 3 === 0 ? "#dc143c" : "#003893"} 
+              emissive={i % 3 === 0 ? "#dc143c" : "#003893"}
               emissiveIntensity={0.8}
               wireframe={i % 2 === 0}
             />
@@ -114,7 +114,7 @@ function DataNodes() {
       ))}
       
       {/* Floating dust/particles to represent data flow */}
-      <Sparkles count={150} scale={30} size={2} speed={0.4} opacity={0.3} color="#fca5a5" />
+      <Sparkles count={150} scale={30} size={2} speed={0.4} opacity={0.3} color="#dc143c" />
     </group>
   );
 }

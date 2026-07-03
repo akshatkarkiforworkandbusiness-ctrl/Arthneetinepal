@@ -5,6 +5,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import ReactApexChart from 'react-apexcharts';
 import {
   fetchStocks,
   fetchIndices,
@@ -67,6 +68,50 @@ function buildChartData(stock: StockRow | undefined, tf: Timeframe): ChartPoint[
   return pts;
 }
 
+function buildCandlestickData(stock: StockRow | undefined, tf: Timeframe) {
+  const pts = [];
+  if (!stock) return pts;
+  const now = new Date();
+  const ptsCount = tf === '1D' ? 12 : tf === '1W' ? 7 : tf === '1M' ? 4 : tf === '1Y' ? 12 : 8;
+
+  let lastClose = stock.ltp * (1 + (Math.random() - 0.5) * 0.1); 
+
+  for (let i = ptsCount - 1; i > 0; i--) {
+    const d = new Date(now);
+    if (tf === '1D') d.setHours(d.getHours() - (ptsCount - 1 - i));
+    else if (tf === '1W') d.setDate(d.getDate() - i);
+    else if (tf === '1M') d.setDate(d.getDate() - i * 7);
+    else if (tf === '1Y') d.setMonth(d.getMonth() - i);
+    else d.setFullYear(d.getFullYear() - (ptsCount - 1 - i));
+
+    const open = lastClose;
+    const change = open * (Math.random() - 0.5) * 0.04;
+    const close = open + change;
+    const high = Math.max(open, close) + Math.random() * open * 0.02;
+    const low = Math.min(open, close) - Math.random() * open * 0.02;
+    
+    lastClose = close;
+
+    pts.push({
+      x: d.getTime(),
+      y: [parseFloat(open.toFixed(2)), parseFloat(high.toFixed(2)), parseFloat(low.toFixed(2)), parseFloat(close.toFixed(2))]
+    });
+  }
+
+  // The final candle MUST be the real live data from the API
+  pts.push({
+    x: now.getTime(),
+    y: [
+      stock.open || stock.ltp, 
+      stock.high || stock.ltp, 
+      stock.low || stock.ltp, 
+      stock.close || stock.ltp
+    ]
+  });
+
+  return pts;
+}
+
 function formatNumber(n: number): string {
   if (n >= 1e9) return (n / 1e9).toFixed(2) + 'B';
   if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M';
@@ -89,6 +134,7 @@ export default function ExplorePage() {
   const navigate = useNavigate();
   const [selectedSymbol, setSelectedSymbol] = useState<string>('NEPSE');
   const [timeframe, setTimeframe] = useState<Timeframe>('1D');
+  const [chartType, setChartType] = useState<'area' | 'candlestick'>('area');
   const [searchQuery, setSearchQuery] = useState('');
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -136,6 +182,11 @@ export default function ExplorePage() {
   const chartData = useMemo(() => {
     if (!activeStock) return [];
     return buildChartData(activeStock, timeframe);
+  }, [activeStock, timeframe]);
+
+  const candlestickData = useMemo(() => {
+    if (!activeStock) return [];
+    return buildCandlestickData(activeStock, timeframe);
   }, [activeStock, timeframe]);
 
   const filteredStocks = useMemo(() => {
@@ -304,8 +355,9 @@ export default function ExplorePage() {
             </div>
           </div>
 
-          {/* Timeframe Tabs */}
-          <div className="flex border-b border-blush-mist pb-3 gap-2 w-full justify-start mb-4">
+          {/* Timeframe & Chart Type Tabs */}
+          <div className="flex justify-between border-b border-blush-mist pb-3 mb-4 flex-wrap gap-4">
+            <div className="flex gap-2 w-full sm:w-auto justify-start">
             {TIMEFRAMES.map((tf) => {
               const isActive = timeframe === tf;
               return (
@@ -327,36 +379,93 @@ export default function ExplorePage() {
                 </button>
               );
             })}
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setChartType('area')}
+                className={`px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors duration-300 ${
+                  chartType === 'area' ? 'bg-mint-action text-white' : 'text-text-muted hover:text-brandwood hover:bg-sunset-fade'
+                }`}
+              >
+                Line
+              </button>
+              <button
+                onClick={() => setChartType('candlestick')}
+                className={`px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors duration-300 ${
+                  chartType === 'candlestick' ? 'bg-mint-action text-white' : 'text-text-muted hover:text-brandwood hover:bg-sunset-fade'
+                }`}
+              >
+                Candle
+              </button>
+            </div>
           </div>
 
           {/* Chart */}
           <div className="relative w-full h-[300px] bg-sunset-fade/50 rounded-2xl border border-blush-mist p-4">
             {chartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
-                  data={chartData}
-                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-                  onMouseMove={(state) => {
-                    if (state?.activeTooltipIndex != null) setHoverIndex(Number(state.activeTooltipIndex));
+              chartType === 'area' ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart
+                    data={chartData}
+                    margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                    onMouseMove={(state) => {
+                      if (state?.activeTooltipIndex != null) setHoverIndex(Number(state.activeTooltipIndex));
+                    }}
+                    onMouseLeave={() => setHoverIndex(null)}
+                  >
+                    <defs>
+                      <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={themeColor === '#00f59b' ? '#34c771' : '#f73b20'} stopOpacity={0.15} />
+                        <stop offset="95%" stopColor={themeColor === '#00f59b' ? '#34c771' : '#f73b20'} stopOpacity={0.01} />
+                      </linearGradient>
+                    </defs>
+                    <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: '#64748b', fontSize: 11, fontFamily: 'Inter, sans-serif' }} />
+                    <YAxis domain={['auto', 'auto']} tickLine={false} axisLine={false} tick={{ fill: '#64748b', fontSize: 11, fontFamily: 'Inter, sans-serif' }} />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '12px', color: '#160805', fontSize: '13px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}
+                      itemStyle={{ color: themeColor === '#00f59b' ? '#34c771' : '#f73b20', fontWeight: 'bold' }}
+                      labelStyle={{ color: '#64748b', fontWeight: 'bold' }}
+                    />
+                    <Area type="monotone" dataKey="value" stroke={themeColor === '#00f59b' ? '#34c771' : '#f73b20'} strokeWidth={3} fill="url(#chartGrad)" dot={false} activeDot={{ r: 6, fill: '#FFFFFF', stroke: themeColor === '#00f59b' ? '#34c771' : '#f73b20', strokeWidth: 2 }} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              ) : (
+              <div className="w-full h-full -ml-2 -mt-4">
+                <ReactApexChart 
+                  options={{
+                    chart: {
+                      type: 'candlestick',
+                      toolbar: { show: false },
+                      background: 'transparent',
+                      animations: { enabled: false },
+                    },
+                    grid: { show: false },
+                    xaxis: {
+                      type: 'datetime',
+                      labels: { style: { colors: '#64748b', fontSize: '11px', fontFamily: 'Inter' } },
+                      axisBorder: { show: false },
+                      axisTicks: { show: false }
+                    },
+                    yaxis: {
+                      labels: { style: { colors: '#64748b', fontSize: '11px', fontFamily: 'Inter' } },
+                      tooltip: { enabled: true }
+                    },
+                    plotOptions: {
+                      candlestick: {
+                        colors: {
+                          upward: '#34c771',
+                          downward: '#f73b20'
+                        }
+                      }
+                    },
+                    tooltip: { theme: 'light' }
                   }}
-                  onMouseLeave={() => setHoverIndex(null)}
-                >
-                  <defs>
-                    <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={themeColor === '#00f59b' ? '#34c771' : '#f73b20'} stopOpacity={0.15} />
-                      <stop offset="95%" stopColor={themeColor === '#00f59b' ? '#34c771' : '#f73b20'} stopOpacity={0.01} />
-                    </linearGradient>
-                  </defs>
-                  <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: '#64748b', fontSize: 11, fontFamily: 'Inter, sans-serif' }} />
-                  <YAxis domain={['auto', 'auto']} tickLine={false} axisLine={false} tick={{ fill: '#64748b', fontSize: 11, fontFamily: 'Inter, sans-serif' }} />
-                  <Tooltip
-                    contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '12px', color: '#160805', fontSize: '13px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}
-                    itemStyle={{ color: themeColor === '#00f59b' ? '#34c771' : '#f73b20', fontWeight: 'bold' }}
-                    labelStyle={{ color: '#64748b', fontWeight: 'bold' }}
-                  />
-                  <Area type="monotone" dataKey="value" stroke={themeColor === '#00f59b' ? '#34c771' : '#f73b20'} strokeWidth={3} fill="url(#chartGrad)" dot={false} activeDot={{ r: 6, fill: '#FFFFFF', stroke: themeColor === '#00f59b' ? '#34c771' : '#f73b20', strokeWidth: 2 }} />
-                </AreaChart>
-              </ResponsiveContainer>
+                  series={[{ name: 'candle', data: candlestickData }]}
+                  type="candlestick"
+                  height={300}
+                />
+              </div>
+              )
             ) : (
               <div className="text-text-muted italic text-sm flex items-center justify-center h-full font-sans">No data available</div>
             )}

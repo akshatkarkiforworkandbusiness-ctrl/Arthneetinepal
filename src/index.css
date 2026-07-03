@@ -6,13 +6,13 @@
 @import "@fontsource-variable/geist";
 
 @theme {
-  /* Core Brand Colors */
-  --color-coral-flame: #f73b20;
-  --color-brandwood: #360802;
-  --color-sunset-fade: #fef5f3;
-  --color-blush-mist: #fbdfd9;
+  /* Core Brand Colors - Nepali Cultural Theme */
+  --color-coral-flame: #dc143c; /* Crimson Red */
+  --color-brandwood: #003893; /* Deep Blue (replacing brown) */
+  --color-sunset-fade: #f4f6fa;
+  --color-blush-mist: #e2e8f0;
   --color-pure-white: #ffffff;
-  --color-carbon: #000000;
+  --color-carbon: #0f172a;
   --color-mint-action: #34c771;
   --color-cobalt-pulse: #477ee9;
   --color-magenta-spark: #fb2d54;
