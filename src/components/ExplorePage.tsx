@@ -363,6 +363,32 @@ export default function ExplorePage() {
             </div>
           </div>
 
+          {/* OHLC Data Strip */}
+          {activeStock && (
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6 p-4 bg-sunset-fade/30 rounded-2xl border border-blush-mist">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Open</span>
+                <span className="text-sm font-sans font-bold text-brandwood">Rs. {activeStock.open?.toLocaleString('en-US', { minimumFractionDigits: 2 }) || '—'}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">High</span>
+                <span className="text-sm font-sans font-bold text-[#34c771]">Rs. {activeStock.high?.toLocaleString('en-US', { minimumFractionDigits: 2 }) || '—'}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Low</span>
+                <span className="text-sm font-sans font-bold text-[#f73b20]">Rs. {activeStock.low?.toLocaleString('en-US', { minimumFractionDigits: 2 }) || '—'}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Prev. Close</span>
+                <span className="text-sm font-sans font-bold text-brandwood">Rs. {activeStock.close?.toLocaleString('en-US', { minimumFractionDigits: 2 }) || '—'}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Volume</span>
+                <span className="text-sm font-sans font-bold text-brandwood">{activeStock.volume ? formatNumber(activeStock.volume) : '—'}</span>
+              </div>
+            </div>
+          )}
+
           {/* Timeframe & Chart Type Tabs */}
           <div className="flex justify-between border-b border-blush-mist pb-3 mb-4 flex-wrap gap-4">
             <div className="flex gap-2 w-full sm:w-auto justify-start">
