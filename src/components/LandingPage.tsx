@@ -359,7 +359,7 @@ export default function LandingPage() {
               className="glass-card rounded-[2rem] p-8 md:col-span-2 flex flex-col justify-between overflow-hidden relative min-h-[350px] group"
             >
               <div className="absolute inset-0 z-0">
-                <img src="/Pitcures for Arthneeti/Arthneeti Xavier A levels.jpg" alt="Xavier A Levels" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
+                <img src="/Pitcures for Arthneeti/Image 5 — Problem solving session.jpg" alt="Xavier A Levels" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-brandwood/90 via-brandwood/40 to-transparent" />
               </div>
               <div className="relative z-10 flex flex-col h-full justify-end">
@@ -379,7 +379,7 @@ export default function LandingPage() {
               className="glass-card rounded-[2rem] p-8 flex flex-col justify-between overflow-hidden relative min-h-[350px] group"
             >
               <div className="absolute inset-0 z-0">
-                <img src="/Pitcures for Arthneeti/Arthneeti first session.jpg" alt="First Session" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
+                <img src="/Pitcures for Arthneeti/Image 1 — Inaugural session (503020 Rule).jpg" alt="First Session" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-brandwood/90 via-brandwood/40 to-transparent" />
               </div>
               <div className="relative z-10 flex flex-col h-full justify-end">
@@ -399,7 +399,7 @@ export default function LandingPage() {
               className="glass-card rounded-[2rem] p-8 flex flex-col justify-between overflow-hidden relative min-h-[350px] group"
             >
               <div className="absolute inset-0 z-0">
-                <img src="/Pitcures for Arthneeti/Arthneeti for Saint Lawernce.png" alt="St. Lawrence" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
+                <img src="/Pitcures for Arthneeti/Image 3 — St. Lawrence School.png" alt="St. Lawrence" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-brandwood/90 via-brandwood/40 to-transparent" />
               </div>
               <div className="relative z-10 flex flex-col h-full justify-end">
@@ -419,7 +419,7 @@ export default function LandingPage() {
               className="glass-card rounded-[2rem] p-8 md:col-span-2 flex flex-col justify-between overflow-hidden relative min-h-[350px] group"
             >
               <div className="absolute inset-0 z-0">
-                <img src="/Pitcures for Arthneeti/Arthneeti for Xavier Public School.png" alt="Xavier Public School" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
+                <img src="/Pitcures for Arthneeti/Image 4 — Kathmandu Valley Public School.png" alt="Xavier Public School" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-brandwood/90 via-brandwood/40 to-transparent" />
               </div>
               <div className="relative z-10 flex flex-col h-full justify-end">
@@ -439,7 +439,7 @@ export default function LandingPage() {
               className="glass-card rounded-[2rem] p-8 md:col-span-3 flex flex-col justify-between overflow-hidden relative min-h-[350px] group"
             >
               <div className="absolute inset-0 z-0">
-                <img src="/Pitcures for Arthneeti/ArthneetiSecond Session.jpg" alt="Second Session" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
+                <img src="/Pitcures for Arthneeti/Image 6 — Think Big. Invest Smart. Lead Nepal..jpg" alt="Second Session" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-brandwood/90 via-brandwood/40 to-transparent" />
               </div>
               <div className="relative z-10 flex flex-col h-full justify-end">
@@ -943,7 +943,7 @@ export default function LandingPage() {
       <section className="bg-brandwood border-y border-brandwood/20 py-28 px-6 overflow-hidden relative">
         {/* Full background SOS Image */}
         <div className="absolute inset-0 pointer-events-none z-0">
-          <img src="/Pitcures for Arthneeti/Arthneeti for children -SOS.jpg" alt="Arthneeti for Children - SOS" className="w-full h-full object-cover opacity-30 mix-blend-luminosity" />
+          <img src="/Pitcures for Arthneeti/Image 2 — SOS Disability Center.jpg" alt="Arthneeti for Children - SOS" className="w-full h-full object-cover opacity-30 mix-blend-luminosity" />
           <div className="absolute inset-0 bg-gradient-to-t from-brandwood via-brandwood/80 to-transparent" />
         </div>
 
