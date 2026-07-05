@@ -18,11 +18,11 @@ export async function onRequestOptions() {
   return new Response(null, { status: 204, headers: CORS_HEADERS });
 }
 
-export async function onRequestGet({ request, env }: { request: Request, env: Env }) {
-  return onRequestPost({ request, env });
+export async function onRequestGet(context: { request: Request; env: Env }) {
+  return onRequestPost(context);
 }
 
-export async function onRequestPost({ request, env }: { request: Request, env: Env }) {
+export async function onRequestPost({ request, env }: { request: Request; env: Env }) {
   try {
     const body = await request.json() as { sector: string };
     const sector = body.sector;

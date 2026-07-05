@@ -22,7 +22,7 @@
     "@types/three": "^0.185.0",
     "@vitejs/plugin-react": "^5.0.4",
     "animejs": "^4.5.0",
-    "apexcharts": "^5.15.2",
+    "apexcharts": "^5.16.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.3",
