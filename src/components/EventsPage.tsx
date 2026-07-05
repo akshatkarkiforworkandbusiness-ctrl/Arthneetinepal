@@ -86,24 +86,48 @@ export default function EventsPage() {
   };
 
   useEffect(() => {
-    const seed = async () => {
+    const seedAndApplyImages = async () => {
+      if (!isAdmin) return;
       try {
         const snap = await getDocs(collection(db, 'events'));
-        if (snap.empty && isAdmin) {
+        const images = [
+          '/Pitcures for Arthneeti/Image 1 — Inaugural session (503020 Rule).jpg',
+          '/Pitcures for Arthneeti/Image 2 — SOS Disability Center.jpg',
+          '/Pitcures for Arthneeti/Image 3 — St. Lawrence School.png',
+          '/Pitcures for Arthneeti/Image 4 — Kathmandu Valley Public School.png',
+          '/Pitcures for Arthneeti/Image 5 — Problem solving session.jpg',
+          '/Pitcures for Arthneeti/Image 6 — Think Big. Invest Smart. Lead Nepal..jpg',
+        ];
+
+        let imgIdx = 0;
+        
+        // 1. Update existing events if they don't have images
+        for (const docSnap of snap.docs) {
+          const data = docSnap.data();
+          if (!data.imageUrl && imgIdx < images.length) {
+            await updateDoc(docSnap.ref, { imageUrl: images[imgIdx] });
+          }
+          imgIdx++;
+        }
+
+        // 2. If there are fewer events than images, create the remaining events
+        while (imgIdx < images.length) {
           await addDoc(collection(db, 'events'), {
-            title: "Arthneeti Orientation Session",
-            description: "Open to all interested high schools in Kathmandu. Learn about our vision and modules.",
-            location: "TBD (Kathmandu schools)",
+            title: `Arthneeti Session ${imgIdx + 1}`,
+            description: "Financial literacy and investing session for students.",
+            location: "Kathmandu Valley",
             category: "Session",
-            dateTime: Timestamp.fromDate(new Date('2025-06-15T10:00:00')),
-            createdAt: serverTimestamp()
+            dateTime: Timestamp.fromDate(new Date(`2025-06-${15 + imgIdx}T10:00:00`)),
+            createdAt: serverTimestamp(),
+            imageUrl: images[imgIdx]
           });
+          imgIdx++;
         }
       } catch (err) {
         console.warn("Seeding events skipped or failed", err);
       }
     };
-    seed();
+    seedAndApplyImages();
   }, [isAdmin]);
 
   /* ── Image ── */
