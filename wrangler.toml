@@ -4,3 +4,5 @@ pages_build_output_dir = "./dist"
 
 # Required environment variables (set in Cloudflare Pages dashboard):
 # NVIDIA_API_KEY - Your NVIDIA NIM API key for AI-powered sector news research
+# Get your API key from: https://build.nvidia.com/
+# Set this in: Cloudflare Pages > Settings > Environment variables
