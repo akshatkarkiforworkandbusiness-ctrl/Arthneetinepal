@@ -124,7 +124,16 @@ export default function AIMarketAssistant({
       if (!isOpen) setHasNewMessage(true);
     } catch (err) {
       console.error("AI Assistant Error:", err);
-      setMessages(prev => [...prev, { role: 'model', content: "I'm sorry, I encountered an error connecting to the API. Please try again later." }]);
+      const msg = err instanceof Error ? err.message : String(err);
+      let userMsg = "I encountered an error. Please try again later.";
+      if (msg.includes('API key') || msg.includes('403') || msg.includes('401')) {
+        userMsg = "Invalid or missing API key. Please ensure VITE_GEMINI_API_KEY is set correctly in your Vercel environment variables and redeploy.";
+      } else if (msg.includes('429') || msg.includes('quota') || msg.includes('rate')) {
+        userMsg = "Rate limit exceeded. Please wait a moment and try again.";
+      } else if (msg.includes('fetch') || msg.includes('network') || msg.includes('Failed')) {
+        userMsg = "Network error — unable to reach the Gemini API. Check your internet connection.";
+      }
+      setMessages(prev => [...prev, { role: 'model', content: `⚠️ ${userMsg}` }]);
     } finally {
       setIsTyping(false);
     }
