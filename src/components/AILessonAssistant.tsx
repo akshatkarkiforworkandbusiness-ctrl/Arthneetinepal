@@ -39,10 +39,11 @@ export default function AILessonAssistant({
   // Initialize Gemini
   useEffect(() => {
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-    if (apiKey) {
+    if (apiKey && apiKey.length > 10) {
       genAI.current = new GoogleGenerativeAI(apiKey);
     } else {
-      setError("Please ask the platform administrator to add the VITE_GEMINI_API_KEY in the environment settings to enable the AI Tutor.");
+      const length = apiKey ? apiKey.length : 0;
+      setError(`VITE_GEMINI_API_KEY is ${length === 0 ? 'missing' : `too short (${length} chars)`}. Set it in Vercel > Settings > Environment Variables, then redeploy.`);
     }
   }, []);
 
@@ -108,16 +109,8 @@ export default function AILessonAssistant({
       setMessages(prev => [...prev, { role: 'model', content: responseText }]);
     } catch (err) {
       console.error("AI Assistant Error:", err);
-      const msg = err instanceof Error ? err.message : String(err);
-      let userMsg = "I encountered an error. Please try again later.";
-      if (msg.includes('API key') || msg.includes('403') || msg.includes('401')) {
-        userMsg = "Invalid or missing API key. Please ensure VITE_GEMINI_API_KEY is set correctly in your Vercel environment variables and redeploy.";
-      } else if (msg.includes('429') || msg.includes('quota') || msg.includes('rate')) {
-        userMsg = "Rate limit exceeded. Please wait a moment and try again.";
-      } else if (msg.includes('fetch') || msg.includes('network') || msg.includes('Failed')) {
-        userMsg = "Network error — unable to reach the Gemini API. Check your internet connection.";
-      }
-      setMessages(prev => [...prev, { role: 'model', content: `⚠️ ${userMsg}` }]);
+      const raw = err instanceof Error ? err.message : String(err);
+      setMessages(prev => [...prev, { role: 'model', content: `⚠️ Error: ${raw}` }]);
     } finally {
       setIsTyping(false);
     }
