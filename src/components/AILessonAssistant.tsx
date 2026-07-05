@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Link } from 'react-router-dom';
 
 interface AILessonAssistantProps {
@@ -33,16 +32,16 @@ export default function AILessonAssistant({
   const [error, setError] = useState<string | null>(null);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const genAI = useRef<GoogleGenerativeAI | null>(null);
+  const apiKeyRef = useRef<string | null>(null);
 
-  // Initialize Gemini
+  // Initialize Groq
   useEffect(() => {
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    const apiKey = import.meta.env.VITE_GROQ_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
     if (apiKey && apiKey.length > 10) {
-      genAI.current = new GoogleGenerativeAI(apiKey);
+      apiKeyRef.current = apiKey;
     } else {
       const length = apiKey ? apiKey.length : 0;
-      setError(`VITE_GEMINI_API_KEY is ${length === 0 ? 'missing' : `too short (${length} chars)`}. Set it in Vercel > Settings > Environment Variables, then redeploy.`);
+      setError(`VITE_GROQ_API_KEY is ${length === 0 ? 'missing' : `too short (${length} chars)`}. Set it in Vercel > Settings > Environment Variables, then redeploy.`);
     }
   }, []);
 
@@ -82,7 +81,7 @@ export default function AILessonAssistant({
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || !genAI.current) return;
+    if (!input.trim() || !apiKeyRef.current) return;
 
     const userMsg = input.trim();
     setInput('');
@@ -90,20 +89,37 @@ export default function AILessonAssistant({
     setIsTyping(true);
 
     try {
-      const model = genAI.current.getGenerativeModel({ 
-        model: "gemini-2.0-flash",
-        systemInstruction: buildSystemPrompt(),
-      });
-
-      // Convert our message history into the format Gemini expects
+      const systemPrompt = buildSystemPrompt();
+      
       const history = messages.map(msg => ({
-        role: msg.role === 'model' ? 'model' : 'user',
-        parts: [{ text: msg.content }]
+        role: msg.role === 'model' ? 'assistant' : 'user',
+        content: msg.content
       }));
 
-      const chat = model.startChat({ history });
-      const result = await chat.sendMessage(userMsg);
-      const responseText = result.response.text();
+      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKeyRef.current}`
+        },
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          messages: [
+            { role: "system", content: systemPrompt },
+            ...history,
+            { role: "user", content: userMsg }
+          ],
+          temperature: 0.2
+        })
+      });
+
+      if (!res.ok) {
+        const errData = await res.json() as any;
+        throw new Error(errData.error?.message || "Failed to fetch response from Groq.");
+      }
+
+      const data = await res.json() as any;
+      const responseText = data.choices[0].message.content;
 
       setMessages(prev => [...prev, { role: 'model', content: responseText }]);
     } catch (err) {
@@ -209,11 +225,11 @@ export default function AILessonAssistant({
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask about this lesson..." 
             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-12 text-white font-sans text-sm focus:outline-none focus:border-brandwood transition-colors placeholder:text-white/30"
-            disabled={!genAI.current || isTyping}
+            disabled={!apiKeyRef.current || isTyping}
           />
           <button 
             type="submit"
-            disabled={!input.trim() || !genAI.current || isTyping}
+            disabled={!input.trim() || !apiKeyRef.current || isTyping}
             className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-brandwood text-white flex items-center justify-center hover:bg-brandwood/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span className="material-symbols-outlined text-[18px]">send</span>
