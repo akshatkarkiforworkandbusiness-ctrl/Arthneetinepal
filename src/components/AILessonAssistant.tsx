@@ -23,12 +23,8 @@ export default function AILessonAssistant({
   isOpen,
   onClose
 }: AILessonAssistantProps) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: 'model',
-      content: `Hi! I'm your AI Tutor for the lesson **"${lessonTitle}"**. I have read the summary, FAQs, and quizzes for this lesson. What would you like to know or discuss?`
-    }
-  ]);
+  const GREETING = `Hi! I'm your AI Tutor for the lesson **"${lessonTitle}"**. I have read the summary, FAQs, and quizzes for this lesson. What would you like to know or discuss?`;
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -145,6 +141,16 @@ export default function AILessonAssistant({
 
       {/* Chat Area */}
       <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6 custom-scrollbar">
+        {/* Greeting */}
+        <div className="flex justify-start">
+          <div className="max-w-[85%] rounded-2xl p-4 font-sans text-sm bg-white/5 text-white/90 rounded-bl-sm border border-white/10">
+            <div className="flex items-center gap-2 mb-2 text-brandwood">
+              <span className="material-symbols-outlined text-[14px]">auto_awesome</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest">AI Tutor</span>
+            </div>
+            <div dangerouslySetInnerHTML={{ __html: GREETING.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>') }} />
+          </div>
+        </div>
         {messages.map((msg, idx) => (
           <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div className={`max-w-[85%] rounded-2xl p-4 font-sans text-sm ${

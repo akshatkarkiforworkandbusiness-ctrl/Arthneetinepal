@@ -21,13 +21,9 @@ export default function AIMarketAssistant({
   indices,
   marketOpen
 }: AIMarketAssistantProps) {
+  const GREETING = `Hi! I'm Arthneeti AI, your market intelligence assistant. \n\n**Disclaimer**: I am an AI, and my responses are for educational purposes only. I do not provide financial advice, and you should not make buy or sell decisions based solely on my analysis. \n\nHow can I help you analyze the market today?`;
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: 'model',
-      content: `Hi! I'm Arthneeti AI, your market intelligence assistant. \n\n**Disclaimer**: I am an AI, and my responses are for educational purposes only. I do not provide financial advice, and you should not make buy or sell decisions based solely on my analysis. \n\nHow can I help you analyze the market today?`
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -169,6 +165,12 @@ export default function AIMarketAssistant({
 
               {/* Chat Area */}
               <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
+                {/* Greeting */}
+                <div className="flex justify-start">
+                  <div className="max-w-[85%] rounded-2xl p-3 font-sans text-[13px] leading-relaxed shadow-sm bg-sunset-fade/30 text-brandwood rounded-bl-sm border border-blush-mist">
+                    <div dangerouslySetInnerHTML={{ __html: GREETING.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>') }} />
+                  </div>
+                </div>
                 {messages.map((msg, idx) => (
                   <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                     <div className={`max-w-[85%] rounded-2xl p-3 font-sans text-[13px] leading-relaxed shadow-sm ${
