@@ -16,7 +16,7 @@ export default function App() {
     <AuthProvider>
       <Toaster />
       <Router>
-        <div className="min-h-screen bg-[#0f1011] text-white relative flex flex-col overflow-x-hidden">
+        <div className="min-h-screen bg-background text-text-primary relative flex flex-col overflow-x-hidden">
           <div className="relative z-10 w-full">
             <Navigation />
           </div>

@@ -7,10 +7,11 @@ import { OnboardingModal } from './OnboardingModal';
 import { AuthModal } from './AuthModal';
 
 const navLinks = [
+  { name: 'Home', path: '/' },
   { name: 'Discover', path: '/discover' },
-  { name: 'Community', path: '/community' },
   { name: 'Learn', path: '/learn' },
-  { name: 'Events', path: '/events' },
+  { name: 'Community', path: '/community' },
+  { name: 'Event', path: '/events' },
 ];
 
 export function Navigation() {
@@ -19,127 +20,115 @@ export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-[#0f1011]/90 backdrop-blur-xl sticky top-0 z-50 border-b border-white/[0.06]">
-      <div className="max-w-[1200px] mx-auto flex justify-between items-center px-6 md:px-8 w-full h-16">
-        {/* Logo */}
-        <Link to="/" className="flex flex-col items-start leading-none group">
-          <span className="text-base font-bold text-white tracking-[0.15em] group-hover:text-white transition-colors">ARTHNEETI</span>
-          <span className="text-[9px] font-medium text-[#9f9fa0] ml-0.5 mt-0.5">अर्थनीति</span>
-        </Link>
-        
-        {/* Center Nav Links */}
-        <div className="hidden lg:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              to={link.path}
-              className={`tracked-label transition-all duration-300 ${
-                location.pathname === link.path ? 'text-white' : 'text-[#9f9fa0] hover:text-white'
-              }`}
-            >
-              {link.name}
-            </Link>
-          ))}
-        </div>
+    <>
+      {/* Top Header - White Frosted Nav */}
+      <header className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-blush-mist transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+          
+          {/* Desktop Nav Links */}
+          <nav className="hidden md:flex items-center gap-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                to={link.path}
+                className={`relative group px-4 py-2 text-sm font-sans font-bold uppercase tracking-widest rounded-xl transition-all duration-300 ${
+                  location.pathname === link.path 
+                    ? 'text-coral-flame bg-sunset-fade' 
+                    : 'text-text-muted hover:text-brandwood'
+                }`}
+              >
+                {link.name}
+                <span className={`absolute bottom-1 left-4 right-4 h-0.5 rounded-full transition-all duration-300 ${
+                  location.pathname === link.path ? 'bg-coral-flame opacity-100' : 'bg-brandwood opacity-0 invisible group-hover:opacity-30 group-hover:visible group-hover:bottom-1.5'
+                }`} />
+              </Link>
+            ))}
+          </nav>
 
-        {/* Right Side Actions */}
-        <div className="hidden lg:flex items-center gap-3">
-          {user ? (
-            <ProfileDropdown />
-          ) : (
-            <>
+          {/* Desktop Right Side (Auth/Profile) */}
+          <div className="hidden md:flex items-center gap-4">
+            {user ? (
+              <ProfileDropdown />
+            ) : (
               <button 
                 onClick={handleJoinAction}
-                className="btn-ghost text-[11px]"
+                className="px-6 py-2.5 bg-coral-flame text-white text-[10px] font-bold uppercase tracking-widest rounded-xl shadow-[0_4px_15px_rgba(247,59,32,0.3)] hover:opacity-90 transition-all flex items-center gap-2"
               >
-                Log In
+                Sign up
               </button>
-              <button 
-                onClick={handleJoinAction}
-                className="btn-primary-pill text-[11px] py-2.5 px-5"
-              >
-                Join
-                <span className="text-sm">→</span>
-              </button>
-            </>
-          )}
-        </div>
+            )}
+          </div>
 
-        {/* Mobile Menu Toggle */}
-        <button 
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="lg:hidden text-white p-2"
-        >
-          <span className="material-symbols-outlined text-2xl">
-            {isMobileMenuOpen ? 'close' : 'menu'}
-          </span>
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="lg:hidden border-t border-white/[0.06] bg-[#0f1011] overflow-hidden"
+          {/* Mobile Menu Toggle */}
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden text-brandwood p-2 rounded-xl hover:bg-sunset-fade transition-colors"
           >
-            <div className="flex flex-col p-8 gap-6">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`tracked-label transition-all duration-300 ${
-                    location.pathname === link.path ? 'text-white' : 'text-[#9f9fa0] hover:text-white'
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              ))}
-              
-              {!user ? (
-                <div className="flex flex-col gap-3 pt-4 border-t border-white/[0.06]">
-                  <button 
-                    onClick={() => { handleJoinAction(); setIsMobileMenuOpen(false); }}
-                    className="btn-ghost justify-center text-[11px]"
-                  >
-                    Log In
-                  </button>
-                  <button 
-                    onClick={() => { handleJoinAction(); setIsMobileMenuOpen(false); }}
-                    className="btn-primary-pill justify-center text-[11px]"
-                  >
-                    Join
-                    <span className="text-sm">→</span>
-                  </button>
-                </div>
-              ) : (
-                <div className="flex flex-col gap-4 pt-4 border-t border-white/[0.06]">
-                   <Link 
-                    to="/profile" 
+            <span className="material-symbols-outlined text-2xl">
+              {isMobileMenuOpen ? 'close' : 'menu'}
+            </span>
+          </button>
+        </div>
+
+        {/* Mobile Dropdown Menu */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: 'auto' }}
+              exit={{ opacity: 0, y: -10, height: 0 }}
+              className="md:hidden bg-white border-b border-blush-mist overflow-hidden"
+            >
+              <div className="flex flex-col p-4 gap-2">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.name}
+                    to={link.path}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="tracked-label text-white/60 hover:text-white transition-colors"
+                    className={`px-4 py-3 text-sm font-sans font-bold uppercase tracking-widest rounded-xl ${
+                      location.pathname === link.path 
+                        ? 'bg-sunset-fade text-coral-flame border border-blush-mist' 
+                        : 'text-brandwood hover:bg-sunset-fade'
+                    }`}
                   >
-                    My Profile
+                    {link.name}
                   </Link>
-                  <button 
-                    onClick={() => { logout(); setIsMobileMenuOpen(false); }}
-                    className="tracked-label text-left text-[#ef4444] hover:text-[#ef4444]/80 transition-colors"
-                  >
-                    Sign Out
-                  </button>
+                ))}
+                
+                <div className="pt-4 border-t border-blush-mist mt-2 flex flex-col gap-2">
+                  {user ? (
+                    <>
+                      <Link 
+                        to="/profile" 
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="px-4 py-3 text-sm font-sans font-bold uppercase tracking-widest text-mint-action hover:bg-mint-action/10 rounded-xl"
+                      >
+                        My Profile
+                      </Link>
+                      <button 
+                        onClick={() => { logout(); setIsMobileMenuOpen(false); }}
+                        className="text-left px-4 py-3 text-sm font-sans font-bold uppercase tracking-widest text-coral-flame hover:bg-sunset-fade rounded-xl"
+                      >
+                        Sign Out
+                      </button>
+                    </>
+                  ) : (
+                    <button 
+                      onClick={() => { handleJoinAction(); setIsMobileMenuOpen(false); }}
+                      className="px-4 py-3 bg-coral-flame text-white text-[10px] font-bold uppercase tracking-widest rounded-xl text-center"
+                    >
+                      Sign up
+                    </button>
+                  )}
                 </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </header>
 
       <OnboardingModal />
       <AuthModal />
-    </nav>
+    </>
   );
 }

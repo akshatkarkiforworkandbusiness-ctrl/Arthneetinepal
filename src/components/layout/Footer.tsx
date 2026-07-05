@@ -38,11 +38,14 @@ export function Footer() {
           <div>
             <h4 className="tracked-label text-[#847dff] mb-6">Connect</h4>
             <div className="flex flex-col gap-4">
-              <a href="mailto:learnarthneeti@gmail.com" className="tracked-label text-[#9f9fa0] hover:text-white transition-all">
-                Email Us
+              <a href="mailto:learnarthneeti@gmail.com" className="tracked-label text-[#9f9fa0] hover:text-white transition-all normal-case tracking-normal">
+                learnarthneeti@gmail.com
               </a>
               <a href="tel:9866898759" className="tracked-label text-[#9f9fa0] hover:text-white transition-all">
                 Call Us
+              </a>
+              <a href="https://instagram.com/arthn.eeti" target="_blank" rel="noopener noreferrer" className="tracked-label text-[#9f9fa0] hover:text-white transition-all normal-case tracking-normal flex items-center gap-2">
+                @arthn.eeti
               </a>
             </div>
           </div>
