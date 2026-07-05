@@ -1931,6 +1931,7 @@ export default function LearnPage() {
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
   const [certificateModule, setCertificateModule] = useState<string | null>(null);
+  const [certificateModuleId, setCertificateModuleId] = useState<string | null>(null);
   const [masterExamModule, setMasterExamModule] = useState<string | null>(null);
   const [activeLesson, setActiveLesson] = useState<Lesson>(
     LESSONS.find(l => l.id === lessonId) ?? LESSONS[0]
@@ -2025,10 +2026,26 @@ export default function LearnPage() {
           badges: Array.from(newBadges),
           updatedAt: serverTimestamp()
         }, { merge: true });
+
+        // Save public certificate doc for shareable link
+        const mod = MODULES.find(m => m.id === moduleId);
+        const modTitle = mod ? mod.title : moduleId;
+        await setDoc(doc(db, 'certificates', `${user.uid}_${moduleId}`), {
+          uid: user.uid,
+          name: profile?.name || user.displayName || 'Arthneeti Scholar',
+          moduleId,
+          moduleTitle: modTitle,
+          score: scorePercent,
+          completedAt: serverTimestamp(),
+          topPerformer: false
+        });
       }
       
       const mod = MODULES.find(m => m.id === moduleId);
-      if (mod) setCertificateModule(mod.title);
+      if (mod) {
+        setCertificateModule(mod.title);
+        setCertificateModuleId(mod.id);
+      }
     }
   };
 
@@ -2441,10 +2458,14 @@ export default function LearnPage() {
     </div>
 
     {/* Modals & Assistants */}
-    <CertificateModal 
+     <CertificateModal 
       isOpen={!!certificateModule} 
-      onClose={() => setCertificateModule(null)} 
+      onClose={() => {
+        setCertificateModule(null);
+        setCertificateModuleId(null);
+      }} 
       moduleTitle={certificateModule || ''} 
+      moduleId={certificateModuleId || ''}
     />
     
     <AILessonAssistant 
@@ -2454,6 +2475,7 @@ export default function LearnPage() {
       lessonSummary={activeLesson.desc + " " + activeLesson.chapters.join(", ")}
       lessonFaqs={activeLesson.faqs}
       lessonQuizzes={activeLesson.quiz}
+      lessonTag={activeLesson.tag}
     />
   </main>
 );

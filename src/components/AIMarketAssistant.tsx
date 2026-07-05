@@ -2,12 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { motion, AnimatePresence } from 'motion/react';
 import { MarketSummary, TopStocks, MarketIndex } from '../lib/nepseApi';
+import { Portfolio } from '../lib/tradingApi';
 
 interface AIMarketAssistantProps {
   summary: MarketSummary | null;
   topStocks: TopStocks | null;
   indices: MarketIndex[];
   marketOpen: boolean | null;
+  portfolio?: Portfolio | null;
 }
 
 interface Message {
@@ -19,7 +21,8 @@ export default function AIMarketAssistant({
   summary,
   topStocks,
   indices,
-  marketOpen
+  marketOpen,
+  portfolio
 }: AIMarketAssistantProps) {
   const GREETING = `Hi! I'm Arthneeti AI, your market intelligence assistant. \n\n**Disclaimer**: I am an AI, and my responses are for educational purposes only. I do not provide financial advice, and you should not make buy or sell decisions based solely on my analysis. \n\nHow can I help you analyze the market today?`;
   const [isOpen, setIsOpen] = useState(false);
@@ -58,6 +61,22 @@ export default function AIMarketAssistant({
     prompt += `- NEVER provide direct financial advice to buy or sell a specific stock.\n`;
     prompt += `- ALWAYS remind the user that you are an AI and they should do their own research if they ask for investment recommendations.\n`;
     prompt += `- Answer concisely. Format your answers clearly using markdown.\n\n`;
+
+    if (portfolio) {
+      prompt += `USER PORTFOLIO (Virtual Trading League):\n`;
+      prompt += `- Cash Balance: Rs. ${portfolio.cash.toLocaleString()}\n`;
+      prompt += `- Starting Capital: Rs. ${portfolio.startingCapital.toLocaleString()}\n`;
+      prompt += `- Current Holdings:\n`;
+      const holdingsEntries = Object.entries(portfolio.holdings);
+      if (holdingsEntries.length === 0) {
+        prompt += `  * No active holdings yet.\n`;
+      } else {
+        holdingsEntries.forEach(([sym, pos]) => {
+          prompt += `  * ${sym}: ${pos.qty} shares (Avg Cost: Rs. ${pos.avgCost.toFixed(2)})\n`;
+        });
+      }
+      prompt += `Note: reference their holdings and stats if they ask questions about what stocks they own or how their portfolio is doing.\n\n`;
+    }
 
     prompt += `CURRENT LIVE MARKET CONTEXT:\n`;
     prompt += `Market Status: ${marketOpen ? 'OPEN' : 'CLOSED'}\n`;

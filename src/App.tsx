@@ -8,6 +8,9 @@ import LearnPage from './components/LearnPage';
 import EventsPage from './components/EventsPage';
 import ProfilePage from './components/ProfilePage';
 import PostDetailPage from './components/PostDetailPage';
+import TradingPage from './components/TradingPage';
+import LeaderboardPage from './components/LeaderboardPage';
+import PublicCertificatePage from './components/PublicCertificatePage';
 import { AuthProvider } from './contexts/AuthContext';
 import { Toaster } from '@/components/ui/sonner';
 
@@ -32,6 +35,9 @@ export default function App() {
               <Route path="/events" element={<EventsPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/profile/:userId" element={<ProfilePage />} />
+              <Route path="/trade" element={<TradingPage />} />
+              <Route path="/leaderboard" element={<LeaderboardPage />} />
+              <Route path="/certificate/:uid/:moduleId" element={<PublicCertificatePage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>

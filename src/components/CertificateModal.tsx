@@ -1,16 +1,19 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Download } from 'lucide-react';
+import { X, Download, Share2, Check } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useState } from 'react';
 
 interface CertificateModalProps {
   isOpen: boolean;
   onClose: () => void;
   moduleTitle: string;
+  moduleId: string;
 }
 
-export default function CertificateModal({ isOpen, onClose, moduleTitle }: CertificateModalProps) {
+export default function CertificateModal({ isOpen, onClose, moduleTitle, moduleId }: CertificateModalProps) {
   const { user } = useAuth();
-  
+  const [isCopied, setIsCopied] = useState(false);
+
   if (!isOpen) return null;
 
   const dateStr = new Date().toLocaleDateString('en-US', {
@@ -21,6 +24,18 @@ export default function CertificateModal({ isOpen, onClose, moduleTitle }: Certi
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleCopyLink = async () => {
+    if (!user) return;
+    try {
+      const shareUrl = `${window.location.origin}/certificate/${user.uid}/${moduleId}`;
+      await navigator.clipboard.writeText(shareUrl);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy link:', err);
+    }
   };
 
   return (
@@ -44,6 +59,13 @@ export default function CertificateModal({ isOpen, onClose, moduleTitle }: Certi
         >
           {/* Controls - hide when printing */}
           <div className="flex justify-end gap-4 mb-4 print:hidden">
+            <button 
+              onClick={handleCopyLink}
+              className="flex items-center gap-2 px-4 py-2 bg-[#003893] text-white text-xs font-black uppercase tracking-widest rounded hover:bg-[#002f80] transition-colors"
+            >
+              {isCopied ? <Check size={16} className="text-green-500" /> : <Share2 size={16} />}
+              {isCopied ? "Copied!" : "Copy Share Link"}
+            </button>
             <button 
               onClick={handlePrint}
               className="flex items-center gap-2 px-4 py-2 bg-royal text-white text-xs font-black uppercase tracking-widest rounded hover:bg-royal-light transition-colors"

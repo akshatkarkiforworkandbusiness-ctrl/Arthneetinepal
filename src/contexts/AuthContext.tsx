@@ -19,6 +19,8 @@ interface UserProfile {
   role: "member" | "admin";
   topics: string[];
   joinedAt: any;
+  schoolId?: string;
+  publicPortfolio?: boolean;
 }
 
 interface AuthContextType {
@@ -33,7 +35,7 @@ interface AuthContextType {
   signIn: () => Promise<void>;
   logout: () => Promise<void>;
   handleJoinAction: () => Promise<void>;
-  updateProfile: (data: { name: string; topics: string[]; email?: string }) => Promise<void>;
+  updateProfile: (data: { name: string; topics: string[]; email?: string; schoolId?: string; publicPortfolio?: boolean }) => Promise<void>;
   signUpWithEmail: (email: string, password: string, name: string, topics: string[]) => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -109,7 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updateProfile = async (data: { name: string; topics: string[]; email?: string }) => {
+  const updateProfile = async (data: { name: string; topics: string[]; email?: string; schoolId?: string; publicPortfolio?: boolean }) => {
     if (!user) return;
     const path = `users/${user.uid}`;
     try {
@@ -123,8 +125,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email: data.email || user.email || '',
         topics: data.topics,
         role: existingProfile?.role || 'member',
-        joinedAt: existingProfile?.joinedAt || serverTimestamp()
+        joinedAt: existingProfile?.joinedAt || serverTimestamp(),
+        schoolId: data.schoolId !== undefined ? data.schoolId : existingProfile?.schoolId,
+        publicPortfolio: data.publicPortfolio !== undefined ? data.publicPortfolio : existingProfile?.publicPortfolio
       };
+      
+      // Clean undefined keys
+      if (profileData.schoolId === undefined) delete profileData.schoolId;
+      if (profileData.publicPortfolio === undefined) delete profileData.publicPortfolio;
       
       await setDoc(docRef, profileData, { merge: true });
       setProfile(profileData);
