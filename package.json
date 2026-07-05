@@ -8,8 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",
-    "lint": "tsc --noEmit",
-    "deploy": "npx wrangler pages deploy dist --branch=main"
+    "lint": "tsc --noEmit"
   },
   "dependencies": {
     "@firebase/app-check": "^0.11.4",
