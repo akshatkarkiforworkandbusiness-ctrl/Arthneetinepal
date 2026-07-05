@@ -176,6 +176,10 @@ export default function ExplorePage() {
     }
   }, [selectedSector]);
 
+  const handleLatestNewsClick = useCallback((sector: Sector) => {
+    navigate(`/community?sector=${encodeURIComponent(sector)}&tab=news&date=${new Date().toISOString().split('T')[0]}`);
+  }, [navigate]);
+
   /* ── Loading skeleton ── */
   if (loading) {
     return (
@@ -474,7 +478,7 @@ export default function ExplorePage() {
                     Discuss
                   </button>
                   <button
-                    onClick={() => handleSectorClick(sector)}
+                    onClick={() => handleLatestNewsClick(sector)}
                     disabled={newsLoading && selectedSector === sector}
                     className="flex items-center gap-1.5 px-4 py-2 bg-[#0f1011] border border-white/[0.06] text-white rounded-lg text-[9px] font-black uppercase tracking-widest hover:border-[#847dff]/50 transition-all disabled:opacity-40"
                   >

@@ -8,6 +8,20 @@ const MODELS = [
   'meta/llama-3.3-70b-instruct',
 ];
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
+export async function onRequestOptions() {
+  return new Response(null, { status: 204, headers: CORS_HEADERS });
+}
+
+export async function onRequestGet({ request, env }: { request: Request, env: Env }) {
+  return onRequestPost({ request, env });
+}
+
 export async function onRequestPost({ request, env }: { request: Request, env: Env }) {
   try {
     const body = await request.json() as { sector: string };
@@ -16,7 +30,7 @@ export async function onRequestPost({ request, env }: { request: Request, env: E
     if (!sector) {
       return new Response(JSON.stringify({ error: "Sector is required" }), { 
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
       });
     }
 
@@ -26,7 +40,7 @@ export async function onRequestPost({ request, env }: { request: Request, env: E
         error: "NVIDIA API key not configured. Please set NVIDIA_API_KEY in Cloudflare Pages > Settings > Environment variables." 
       }), { 
         status: 500,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
       });
     }
 
@@ -73,7 +87,7 @@ Example:
           const data = await response.json();
           return new Response(JSON.stringify(data), {
             status: 200,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
           });
         }
 
@@ -90,12 +104,12 @@ Example:
       error: lastError?.message || 'All NVIDIA models failed. Please check your API key and try again later.' 
     }), { 
       status: 502,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
     });
   } catch (error) {
     return new Response(JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown backend error' }), { 
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
     });
   }
 }

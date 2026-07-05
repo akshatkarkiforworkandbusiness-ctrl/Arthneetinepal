@@ -36,6 +36,16 @@ export interface SectorNewsResult {
   generatedAt: string;
 }
 
+export interface NewsPostResult {
+  postId: string;
+  isNew: boolean;
+  sector: Sector;
+}
+
+function getTodayDate(): string {
+  return new Date().toISOString().split('T')[0];
+}
+
 export async function researchSectorNews(sector: Sector): Promise<SectorNewsResult> {
   const response = await fetch('/api/news', {
     method: 'POST',

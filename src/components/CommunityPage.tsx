@@ -12,7 +12,7 @@ import {
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../contexts/AuthContext';
-import { Heart, MessageSquare, Share2, Download, Plus, FileText, HelpCircle, MoreVertical, X } from 'lucide-react';
+import { Heart, MessageSquare, Share2, Download, Plus, FileText, HelpCircle, MoreVertical, X, RefreshCw } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { GradientCard } from './GradientCard';
@@ -20,6 +20,7 @@ import {
   TRENDING_SECTORS,
   SECTOR_ICONS,
   SECTOR_DESCRIPTIONS,
+  researchSectorNews,
   type Sector,
 } from '../lib/newsService';
 import type { Post } from '../types/post';
@@ -30,10 +31,16 @@ export default function CommunityPage() {
   const { user, profile } = useAuth();
   const sectorParam = searchParams.get('sector') as Sector | null;
   const validSector = sectorParam && TRENDING_SECTORS.includes(sectorParam as Sector) ? sectorParam as Sector : null;
+  const tabParam = searchParams.get('tab');
+  const dateParam = searchParams.get('date');
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'discussions' | 'research' | 'questions'>('discussions');
+  const [activeTab, setActiveTab] = useState<'discussions' | 'research' | 'questions' | 'news'>(
+    tabParam === 'news' ? 'news' : 'discussions'
+  );
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [newsLoading, setNewsLoading] = useState(false);
+  const [newsError, setNewsError] = useState<string | null>(null);
   
   // Create Post State
   const [isUploading, setIsUploading] = useState(false);
@@ -204,6 +211,78 @@ useEffect(() => {
   return () => unsubscribe();
 }, []);
 
+// Handle News Workflow
+useEffect(() => {
+  if (!validSector || tabParam !== 'news' || !dateParam) return;
+  
+  const handleNewsWorkflow = async () => {
+    setNewsLoading(true);
+    setNewsError(null);
+    
+    try {
+      // Check for existing news article for this sector today
+      const today = new Date().toISOString().split('T')[0];
+      const postsRef = collection(db, 'posts');
+      const existingQuery = query(
+        postsRef,
+        where('sector', '==', validSector),
+        where('newsDate', '==', today),
+        where('type', '==', 'news')
+      );
+      const existingSnap = await getDocs(existingQuery);
+      
+      if (!existingSnap.empty) {
+        // Article exists, check if it's reliable (has views > 0 or was created by AI)
+        const existingPost = existingSnap.docs[0].data() as Post;
+        const postId = existingSnap.docs[0].id;
+        
+        // Navigate to the existing post
+        toast.success(`Found existing ${validSector} news for today`);
+        navigate(`/post/${postId}`);
+        setNewsLoading(false);
+        return;
+      }
+      
+      // No existing article, research and create one
+      const result = await researchSectorNews(validSector);
+      
+      if (result.articles.length > 0) {
+        // Create a news post from the first article
+        const article = result.articles[0];
+        const postData = {
+          type: 'news' as const,
+          title: article.title,
+          author: 'Arthneeti AI',
+          authorId: 'system',
+          category: 'Finance' as const,
+          content: `<p>${article.summary}</p>`,
+          sector: validSector,
+          newsDate: today,
+          source: article.source || 'NVIDIA AI',
+          views: 0,
+          isDailyNews: true,
+          likes: 0,
+          commentCount: 0,
+          createdAt: serverTimestamp(),
+        };
+        
+        const docRef = await addDoc(postsRef, postData);
+        toast.success(`Created new ${validSector} news article`);
+        navigate(`/post/${docRef.id}`);
+      } else {
+        setNewsError('No news articles available for this sector today.');
+      }
+    } catch (error) {
+      console.error('News workflow error:', error);
+      setNewsError(error instanceof Error ? error.message : 'Failed to fetch news');
+    } finally {
+      setNewsLoading(false);
+    }
+  };
+  
+  handleNewsWorkflow();
+}, [validSector, tabParam, dateParam, navigate]);
+
 const handleLike = async (postId: string) => {
   if (!user) return;
   const postRef = doc(db, 'posts', postId);
@@ -293,6 +372,7 @@ const handleLike = async (postId: string) => {
     if (activeTab === 'discussions') return p.type === 'discussion';
     if (activeTab === 'research') return p.type === 'research';
     if (activeTab === 'questions') return p.type === 'question';
+    if (activeTab === 'news') return p.type === 'news';
     return true;
   }).filter(p => {
     if (!validSector) return true;
@@ -300,7 +380,8 @@ const handleLike = async (postId: string) => {
     return (
       (p.title && p.title.toLowerCase().includes(sector)) ||
       p.category.toLowerCase().includes(sector) ||
-      p.content.toLowerCase().includes(sector)
+      p.content.toLowerCase().includes(sector) ||
+      (p.sector && p.sector.toLowerCase().includes(sector))
     );
   });
 
@@ -353,7 +434,7 @@ const handleLike = async (postId: string) => {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as typeof activeTab)} className="mb-16">
         <TabsList className="flex gap-12 border-b border-white/[0.06] bg-transparent p-0 rounded-lg-none w-full justify-start h-auto">
-          {(['discussions', 'research', 'questions'] as const).map(tab => (
+          {(['discussions', 'research', 'questions', 'news'] as const).map(tab => (
             <TabsTrigger
               key={tab}
               value={tab}
@@ -408,6 +489,22 @@ const handleLike = async (postId: string) => {
                  </div>
               </div>
            </div>
+        )}
+
+        {activeTab === 'news' && newsLoading && (
+          <div className="text-center py-12 bg-[#090a0b] border border-white/[0.06] rounded-2xl">
+            <RefreshCw className="animate-spin mx-auto mb-4 text-[#847dff]" size={32} />
+            <p className="text-sm font-bold text-white mb-2">Researching {validSector} News</p>
+            <p className="text-xs text-[#9f9fa0]">AI is gathering the latest information...</p>
+          </div>
+        )}
+
+        {activeTab === 'news' && newsError && (
+          <div className="text-center py-12 bg-red-500/10 border border-red-500/20 rounded-2xl">
+            <span className="material-symbols-outlined text-red-400 text-3xl mb-4 block">error</span>
+            <p className="text-sm font-bold text-white mb-2">Failed to Load News</p>
+            <p className="text-xs text-[#9f9fa0] px-4">{newsError}</p>
+          </div>
         )}
 
         {loading ? (
@@ -495,6 +592,36 @@ const handleLike = async (postId: string) => {
                 {post.type === 'question' && (
                   <div className="space-y-6">
                     <p className="text-xl text-white leading-relaxed font-bold italic">"{post.content}"</p>
+                  </div>
+                )}
+
+                {post.type === 'news' && (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Badge variant="outline" className="text-[10px] font-black text-[#847dff] border-[#847dff]/30 uppercase tracking-widest bg-[#847dff]/10 px-3 py-1 rounded-lg">
+                        {post.sector}
+                      </Badge>
+                      <span className="text-[9px] font-medium text-gray-400 uppercase tracking-widest">
+                        {post.newsDate}
+                      </span>
+                      {post.source && (
+                        <span className="text-[9px] font-medium text-gray-400 uppercase tracking-widest">
+                          Source: {post.source}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-2xl md:text-3xl text-white font-bold mb-6 leading-tight hover:text-[#847dff] transition-colors">
+                      {post.title}
+                    </h3>
+                    <div className="text-gray-300 leading-relaxed font-sans mb-6">
+                      <div dangerouslySetInnerHTML={{ __html: post.content }} />
+                    </div>
+                    <div className="flex items-center gap-4 text-[10px] text-gray-400">
+                      <span className="flex items-center gap-1">
+                        <RefreshCw size={12} /> Updated today
+                      </span>
+                      <span>{post.views || 0} views</span>
+                    </div>
                   </div>
                 )}
 

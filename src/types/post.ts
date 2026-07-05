@@ -1,6 +1,6 @@
 export interface Post {
   id: string;
-  type: 'discussion' | 'research' | 'question';
+  type: 'discussion' | 'research' | 'question' | 'news';
   title?: string;
   author: string;
   authorId: string;
@@ -14,6 +14,12 @@ export interface Post {
   createdAt: any;
   updatedAt?: any;
   seeded?: boolean;
+  // News-specific fields
+  sector?: string;
+  newsDate?: string;
+  source?: string;
+  views?: number;
+  isDailyNews?: boolean;
 }
 
 export interface Comment {
