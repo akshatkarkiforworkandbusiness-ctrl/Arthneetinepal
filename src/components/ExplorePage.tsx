@@ -9,6 +9,8 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 import ReactApexChart from 'react-apexcharts';
 import { Brand3DText } from './Brand3DText';
 import AIMarketAssistant from './AIMarketAssistant';
+import { db } from '../lib/firebase';
+import { doc, onSnapshot } from 'firebase/firestore';
 
 import {
   fetchStocks,
@@ -126,6 +128,9 @@ function formatNumber(n: number): string {
 /* ── Component ───────────────────────────────────────────────────── */
 
 export default function ExplorePage() {
+  const { user } = useAuth();
+  const [portfolio, setPortfolio] = useState<any>(null);
+
   /* ── Market data ── */
   const [stocks, setStocks] = useState<StockRow[]>([]);
   const [indices, setIndices] = useState<MarketIndex[]>([]);
@@ -133,6 +138,21 @@ export default function ExplorePage() {
   const [summary, setSummary] = useState<MarketSummary | null>(null);
   const [marketOpen, setMarketOpen] = useState<boolean | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+
+  useEffect(() => {
+    if (!user) {
+      setPortfolio(null);
+      return;
+    }
+    const unsubscribe = onSnapshot(doc(db, 'portfolios', user.uid), (snap) => {
+      if (snap.exists()) {
+        setPortfolio(snap.data());
+      } else {
+        setPortfolio(null);
+      }
+    });
+    return () => unsubscribe();
+  }, [user]);
 
   /* ── UI state ── */
   const navigate = useNavigate();
@@ -745,6 +765,7 @@ export default function ExplorePage() {
         topStocks={topStocks}
         indices={indices}
         marketOpen={marketOpen}
+        portfolio={portfolio}
       />
     </motion.main>
   );

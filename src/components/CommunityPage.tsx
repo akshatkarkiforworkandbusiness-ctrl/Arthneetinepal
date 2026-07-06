@@ -16,6 +16,7 @@ import { Heart, MessageSquare, Share2, Download, Plus, FileText, HelpCircle, Mor
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { GradientCard } from './GradientCard';
+import LeaderboardPage from './LeaderboardPage';
 import {
   TRENDING_SECTORS,
   SECTOR_ICONS,
@@ -35,7 +36,7 @@ export default function CommunityPage() {
   const dateParam = searchParams.get('date');
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'discussions' | 'research' | 'questions' | 'news'>(
+  const [activeTab, setActiveTab] = useState<'discussions' | 'research' | 'questions' | 'news' | 'leaderboard'>(
     tabParam === 'news' ? 'news' : 'discussions'
   );
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -369,7 +370,7 @@ const handleLike = async (postId: string) => {
   };
 
   const filteredPosts = posts.filter(p => {
-    if (activeTab === 'discussions') return p.type === 'discussion';
+    if (activeTab === 'discussions') return p.type === 'discussion' || p.type === 'trade-recap';
     if (activeTab === 'research') return p.type === 'research';
     if (activeTab === 'questions') return p.type === 'question';
     if (activeTab === 'news') return p.type === 'news';
@@ -432,7 +433,7 @@ const handleLike = async (postId: string) => {
 
           {/* Tabs */}
           <div className="flex gap-4 mb-6 px-4">
-            {(['discussions', 'research', 'questions', 'news'] as const).map(tab => (
+            {(['discussions', 'research', 'questions', 'news', 'leaderboard'] as const).map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -500,7 +501,9 @@ const handleLike = async (postId: string) => {
             </div>
           )}
 
-          {loading ? (
+          {activeTab === 'leaderboard' ? (
+            <LeaderboardPage isEmbedded={true} />
+          ) : loading ? (
             <div className="space-y-6">
               <Skeleton className="h-40 w-full bg-sunset-fade border border-blush-mist rounded-3xl" />
               <Skeleton className="h-40 w-full bg-sunset-fade border border-blush-mist rounded-3xl" />
@@ -568,6 +571,17 @@ const handleLike = async (postId: string) => {
                           >
                             <Download size={14} /> Download PDF
                           </a>
+                        </div>
+                      )}
+
+                      {post.type === 'trade-recap' && (
+                        <div className="bg-[#003893]/5 border border-[#003893]/10 p-6 rounded-2xl mb-4 relative overflow-hidden">
+                          <div className="absolute top-0 right-0 w-20 h-20 bg-[#003893]/10 rounded-bl-full flex items-center justify-center text-[#003893] pointer-events-none">
+                            <span className="material-symbols-outlined text-2xl font-bold">trending_up</span>
+                          </div>
+                          <span className="inline-block mb-2 text-[9px] font-black uppercase tracking-widest text-[#003893] bg-[#003893]/10 px-2 py-0.5 rounded">Shared Trade Recap</span>
+                          <h3 className="text-lg font-bold text-brandwood mb-3 leading-snug">{post.title}</h3>
+                          <div className="text-text-muted text-sm leading-relaxed mb-2 font-mono" dangerouslySetInnerHTML={{ __html: post.content }} />
                         </div>
                       )}
 

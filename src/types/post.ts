@@ -1,6 +1,6 @@
 export interface Post {
   id: string;
-  type: 'discussion' | 'research' | 'question' | 'news';
+  type: 'discussion' | 'research' | 'question' | 'news' | 'trade-recap';
   title?: string;
   author: string;
   authorId: string;

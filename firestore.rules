@@ -34,19 +34,31 @@ service cloud.firestore {
 
     function isValidUser(data) {
       return data.keys().hasAll(['uid', 'name', 'email', 'role', 'topics', 'joinedAt'])
-        && data.keys().size() == 6
+        && data.keys().hasOnly(['uid', 'name', 'email', 'role', 'topics', 'joinedAt', 'schoolId', 'publicPortfolio'])
         && data.uid == request.auth.uid
         && data.email == request.auth.token.email
         && data.role == 'member'
         && data.topics is list
         && data.name is string && data.name.size() <= 100
-        && data.joinedAt == request.time;
+        && data.joinedAt == request.time
+        && (!('schoolId' in data) || (data.schoolId is string && data.schoolId.size() <= 100))
+        && (!('publicPortfolio' in data) || data.publicPortfolio is bool);
+    }
+
+    function isValidProgress(data) {
+      return data.keys().hasOnly(['completed', 'quizScores', 'masterExamScores', 'badges', 'updatedAt'])
+        && (!('completed' in data) || (data.completed is list && data.completed.size() <= 200))
+        && (!('badges' in data) || (data.badges is list && data.badges.size() <= 50
+             && data.badges.hasOnly(['First Steps', 'Quiz Whiz', 'Financial Literacy Master', 'Market Maestro'])))
+        && (!('quizScores' in data) || data.quizScores is map)
+        && (!('masterExamScores' in data) || data.masterExamScores is map)
+        && data.updatedAt == request.time;
     }
 
     function isValidPost(data) {
       return data.keys().hasAll(['type', 'author', 'authorId', 'category', 'content', 'likes', 'commentCount', 'createdAt'])
         && data.authorId == request.auth.uid
-        && data.type in ['discussion', 'research', 'question']
+        && data.type in ['discussion', 'research', 'question', 'trade-recap']
         && data.category in ['Finance', 'Economics', 'Business', 'Policy', 'Other']
         && data.likes is int && data.likes >= 0
         && data.commentCount is int && data.commentCount >= 0
@@ -86,6 +98,17 @@ service cloud.firestore {
         && data.createdAt == request.time;
     }
 
+    function isValidCertificate(data) {
+      return data.keys().hasOnly(['uid', 'name', 'moduleId', 'moduleTitle', 'score', 'completedAt', 'topPerformer'])
+        && data.uid == request.auth.uid
+        && data.name is string && data.name.size() <= 100
+        && data.moduleId is string && data.moduleId.size() <= 100
+        && data.moduleTitle is string && data.moduleTitle.size() <= 200
+        && data.score is number && data.score >= 0 && data.score <= 100
+        && data.completedAt == request.time
+        && (!('topPerformer' in data) || data.topPerformer is bool);
+    }
+
     // -------------------------------------------------------------------------
     // RULES
     // -------------------------------------------------------------------------
@@ -112,7 +135,8 @@ service cloud.firestore {
 
       // Learning progress subcollection
       match /progress/{docId} {
-        allow read, write: if isOwner(userId);
+        allow read: if isSignedIn();
+        allow write: if isOwner(userId) && isValidProgress(incoming());
       }
     }
 
@@ -181,6 +205,36 @@ service cloud.firestore {
     match /meta/{docId} {
       allow read: if true;
       allow write: if isAdmin() || (isSignedIn() && docId == 'seeded');
+    }
+
+    // Portfolios
+    match /portfolios/{userId} {
+      allow read: if isOwner(userId) || (isSignedIn() && get(/databases/$(database)/documents/users/$(userId)).data.publicPortfolio == true);
+      allow write: if false;
+
+      match /trades/{tradeId} {
+        allow read: if isOwner(userId);
+        allow write: if false;
+      }
+    }
+
+    // Leaderboards
+    match /leaderboards/{snapshotId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Schools
+    match /schools/{schoolId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Certificates
+    match /certificates/{certId} {
+      allow read: if true;
+      allow create, update: if isSignedIn() && request.auth.uid == certId.split('_')[0] && isValidCertificate(incoming());
+      allow delete: if isAdmin();
     }
 
   }

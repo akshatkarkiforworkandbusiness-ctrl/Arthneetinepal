@@ -4,15 +4,28 @@ import { useAuth } from '../../contexts/AuthContext';
 
 const interestOptions = ['Finance', 'Economics', 'Business', 'Policy', 'Corporate Law', 'Entrepreneurship', 'Other'];
 
+const schoolOptions = [
+  { id: 'st-lawrence', name: 'St. Lawrence School' },
+  { id: 'kathmandu-valley', name: 'Kathmandu Valley Public School' },
+  { id: 'sos-disability', name: 'SOS Disability Center' },
+  { id: 'other', name: 'Other School' },
+  { id: 'none', name: 'Not a Student / None' }
+];
+
 export function OnboardingModal() {
   const { user, profile, showOnboarding, updateProfile } = useAuth();
-  const [setupForm, setSetupForm] = useState({ name: '', email: '', interests: [] as string[] });
+  const [setupForm, setSetupForm] = useState({ name: '', email: '', interests: [] as string[], schoolId: '' });
 
   useEffect(() => {
     if (profile) {
-      setSetupForm({ name: profile.name, email: profile.email || user?.email || '', interests: profile.topics || [] });
+      setSetupForm({ 
+        name: profile.name, 
+        email: profile.email || user?.email || '', 
+        interests: profile.topics || [],
+        schoolId: profile.schoolId || ''
+      });
     } else if (user) {
-      setSetupForm({ name: user.displayName || '', email: user.email || '', interests: [] });
+      setSetupForm({ name: user.displayName || '', email: user.email || '', interests: [], schoolId: '' });
     }
   }, [profile, user]);
 
@@ -53,6 +66,20 @@ export function OnboardingModal() {
               </div>
               
               <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-base/40 mb-2 block">Your Institution / School</label>
+                <select
+                  value={setupForm.schoolId}
+                  onChange={e => setSetupForm({...setupForm, schoolId: e.target.value})}
+                  className="w-full bg-slate-raised border-2 border-slate-base/5 rounded-lg p-4 outline-none focus:border-electric-mint transition-all font-bold text-slate-base"
+                >
+                  <option value="">Select your school (Optional)</option>
+                  {schoolOptions.map(school => (
+                    <option key={school.id} value={school.id}>{school.name}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-base/40 mb-4 block">Fields of Interest</label>
                 <div className="flex flex-wrap gap-3">
                   {interestOptions.map(option => (
@@ -82,6 +109,8 @@ export function OnboardingModal() {
                     name: setupForm.name, 
                     email: setupForm.email,
                     topics: setupForm.interests,
+                    schoolId: setupForm.schoolId || undefined,
+                    publicPortfolio: false
                   });
                 }}
                 disabled={!setupForm.name || setupForm.interests.length === 0}
