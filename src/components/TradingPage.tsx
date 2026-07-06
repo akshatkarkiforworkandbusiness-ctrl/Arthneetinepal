@@ -14,7 +14,7 @@ import { unlockPortfolio, executeTrade, Portfolio, Trade } from '../lib/tradingA
 
 export default function TradingPage() {
   const navigate = useNavigate();
-  const { user, profile, updateProfile } = useAuth();
+  const { user, profile, updateProfile, loading: authLoading, handleJoinAction } = useAuth();
   
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
   const [trades, setTrades] = useState<Trade[]>([]);
@@ -193,11 +193,37 @@ export default function TradingPage() {
     ? stocks.slice(0, 10)
     : stocks.filter(s => s.symbol.includes(searchQuery.toUpperCase()) || s.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 8);
 
-  if (loading || !progressLoaded) {
+  if (authLoading || (user && !progressLoaded)) {
     return (
       <div className="min-h-screen bg-[#090a0b] flex items-center justify-center text-white">
         <RefreshCw className="animate-spin text-[#dc143c] mr-3" size={32} />
         <span className="font-bold tracking-widest text-sm uppercase">Loading Virtual Account...</span>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-[#090a0b] flex items-center justify-center p-6 text-white">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-md w-full bg-white/[0.02] border border-white/[0.06] rounded-3xl p-10 backdrop-blur-md shadow-2xl text-center"
+        >
+          <div className="w-20 h-20 bg-[#003893]/10 border border-[#003893]/20 text-[#3b82f6] rounded-full flex items-center justify-center mx-auto mb-8">
+            <Lock size={40} />
+          </div>
+          <h2 className="text-3xl font-display font-medium text-white tracking-tight mb-4">Trading is for members.</h2>
+          <p className="text-[#9f9fa0] text-sm leading-relaxed mb-8">
+            Join the Arthneeti Virtual Trading League to learn stock analysis, build portfolios, and earn certifications.
+          </p>
+          <button 
+            onClick={handleJoinAction}
+            className="w-full py-4 bg-[#dc143c] hover:bg-[#b01030] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-colors shadow-lg shadow-[#dc143c]/20 flex justify-center items-center gap-2"
+          >
+            Sign Up / Log In
+          </button>
+        </motion.div>
       </div>
     );
   }
