@@ -608,8 +608,8 @@ export default function ExplorePage() {
         <section className="lg:col-span-8 space-y-8">
           <div className="flex justify-between items-end border-b border-blush-mist pb-4">
             <h2 className="font-display font-medium text-4xl text-brandwood tracking-[0.03em]">Trending Sectors</h2>
-            <Link to="/community" className="text-[10px] font-bold text-mint-action uppercase tracking-widest hover:text-coral-flame transition-colors">
-              EXPLORE ALL DISCUSSIONS
+            <Link to="/news-feed" className="text-[10px] font-bold text-mint-action uppercase tracking-widest hover:text-coral-flame transition-colors">
+              LIVE NEWS FEED
             </Link>
           </div>
 
@@ -649,7 +649,7 @@ export default function ExplorePage() {
                     Discuss
                   </button>
                   <button
-                    onClick={() => handleLatestNewsClick(sector)}
+                    onClick={() => navigate(`/news-feed?sector=${encodeURIComponent(sector)}`)}
                     disabled={newsLoading && selectedSector === sector}
                     className="flex items-center gap-1.5 px-4 py-2 bg-white border border-blush-mist text-brandwood rounded-xl text-[10px] font-bold uppercase tracking-widest hover:border-coral-flame/50 hover:bg-sunset-fade transition-all shadow-sm disabled:opacity-40"
                   >

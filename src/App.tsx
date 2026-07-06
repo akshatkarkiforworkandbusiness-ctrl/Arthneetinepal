@@ -8,6 +8,7 @@ import LearnPage from './components/LearnPage';
 import EventsPage from './components/EventsPage';
 import ProfilePage from './components/ProfilePage';
 import PostDetailPage from './components/PostDetailPage';
+import NewsFeedPage from './components/NewsFeedPage';
 import { AuthProvider } from './contexts/AuthContext';
 import { Toaster } from '@/components/ui/sonner';
 
@@ -24,6 +25,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/community" element={<CommunityPage />} />
+              <Route path="/news-feed" element={<NewsFeedPage />} />
               <Route path="/post/:postId" element={<PostDetailPage />} />
               <Route path="/discover" element={<ExplorePage />} />
               <Route path="/about-us" element={<AboutUsPage />} />

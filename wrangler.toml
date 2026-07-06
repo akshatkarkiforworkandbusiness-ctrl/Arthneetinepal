@@ -6,3 +6,35 @@ pages_build_output_dir = "./dist"
 # NVIDIA_API_KEY - Your NVIDIA NIM API key for AI-powered sector news research
 # Get your API key from: https://build.nvidia.com/
 # Set this in: Cloudflare Pages > Settings > Environment variables
+
+# ============================================================================
+# CRON / SCHEDULING SETUP (Research Assistant)
+# ============================================================================
+# The Research Assistant posts hourly news articles for 7 sectors from
+# 9:00 AM to 5:00 PM Nepali Time (UTC+5:45), then generates a Daily Digest.
+#
+# OPTION 1: Client-Side Auto-Post (Recommended for simplicity)
+# The NewsFeedPage component automatically researches and posts articles
+# every hour when a user has the page open during posting hours.
+# No additional cron setup needed - just visit /news-feed.
+#
+# OPTION 2: External Cron Service (For fully automated posting)
+# Use a free cron service like https://cron-job.org to hit these endpoints:
+#
+# Hourly News (9AM-5PM NPT = 3:15AM-11:15AM UTC):
+#   POST https://YOUR_DOMAIN/api/ai-news
+#   Body: {"allSectors": true}
+#   Schedule: Every hour from 3:15 to 11:15 UTC (Mon-Fri)
+#
+# Daily Digest (5PM NPT = 11:15AM UTC):
+#   POST https://YOUR_DOMAIN/api/ai-digest
+#   Body: {"date": "YYYY-MM-DD", "articles": []}
+#   Schedule: Daily at 11:15 UTC (Mon-Fri)
+#   Note: Pass articles from today's hourly posts, or let the frontend
+#         handle digest generation via the "Generate Digest" button.
+#
+# OPTION 3: Cloudflare Workers Cron (Advanced)
+# Deploy a separate Worker with Cron Triggers:
+#   [triggers]
+#   crons = ["15 3-11 * * 1-5"]
+# ============================================================================

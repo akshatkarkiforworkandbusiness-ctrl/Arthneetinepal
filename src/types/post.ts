@@ -20,6 +20,13 @@ export interface Post {
   source?: string;
   views?: number;
   isDailyNews?: boolean;
+  // Research Assistant fields
+  hourlyPost?: boolean;
+  hourPublished?: number;
+  isDailyDigest?: boolean;
+  digestDate?: string;
+  engagementScore?: number;
+  isMostEngaged?: boolean;
 }
 
 export interface Comment {
