@@ -1,17 +1,16 @@
 import { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float, Text, OrbitControls, Environment, Sparkles } from '@react-three/drei';
+import { Float, Text, OrbitControls, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'motion/react';
 
 // --- BRAND COLORS ---
 const BRAND_GREEN = '#1D9E75';
 const BRAND_TEAL = '#5DCAA5';
-const BRAND_DARK = '#0f2a20';
 const BRAND_GOLD = '#BA7517';
 
 // --- FLOATING PARTICLES ---
-function FloatingParticles({ count = 200 }) {
+function FloatingParticles({ count = 100 }) {
   const mesh = useRef<THREE.InstancedMesh>(null);
   
   const particles = useMemo(() => {
@@ -19,12 +18,12 @@ function FloatingParticles({ count = 200 }) {
     for (let i = 0; i < count; i++) {
       temp.push({
         position: [
-          (Math.random() - 0.5) * 20,
-          (Math.random() - 0.5) * 15,
-          (Math.random() - 0.5) * 10 - 5
+          (Math.random() - 0.5) * 16,
+          (Math.random() - 0.5) * 10,
+          (Math.random() - 0.5) * 8 - 4
         ] as [number, number, number],
-        scale: Math.random() * 0.03 + 0.01,
-        speed: Math.random() * 0.5 + 0.2,
+        scale: Math.random() * 0.04 + 0.02,
+        speed: Math.random() * 0.3 + 0.1,
         offset: Math.random() * Math.PI * 2
       });
     }
@@ -41,12 +40,12 @@ function FloatingParticles({ count = 200 }) {
       const { position, scale, speed, offset } = particle;
       
       dummy.position.set(
-        position[0] + Math.sin(time * speed + offset) * 0.5,
-        position[1] + Math.cos(time * speed * 0.8 + offset) * 0.3,
+        position[0] + Math.sin(time * speed + offset) * 0.3,
+        position[1] + Math.cos(time * speed * 0.7 + offset) * 0.2,
         position[2]
       );
       
-      dummy.scale.setScalar(scale * (1 + Math.sin(time * 2 + offset) * 0.3));
+      dummy.scale.setScalar(scale * (1 + Math.sin(time * 1.5 + offset) * 0.2));
       dummy.updateMatrix();
       mesh.current!.setMatrixAt(i, dummy.matrix);
     });
@@ -55,33 +54,30 @@ function FloatingParticles({ count = 200 }) {
 
   return (
     <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
-      <sphereGeometry args={[1, 8, 8]} />
+      <sphereGeometry args={[1, 6, 6]} />
       <meshStandardMaterial
         color={BRAND_TEAL}
         emissive={BRAND_GREEN}
-        emissiveIntensity={0.5}
+        emissiveIntensity={0.8}
         transparent
-        opacity={0.6}
+        opacity={0.7}
       />
     </instancedMesh>
   );
 }
 
-// --- 3D TEXT WORD ---
+// --- 3D TEXT WORD (Fixed - no custom font) ---
 function AnimatedWord3D({ 
   text, 
   position, 
   delay, 
-  color = '#ffffff',
-  isActive 
+  color = '#ffffff'
 }: { 
   text: string; 
   position: [number, number, number]; 
   delay: number;
   color?: string;
-  isActive: boolean;
 }) {
-  const meshRef = useRef<THREE.Mesh>(null);
   const [visible, setVisible] = useState(false);
   
   useEffect(() => {
@@ -89,37 +85,24 @@ function AnimatedWord3D({
     return () => clearTimeout(timer);
   }, [delay]);
 
-  useFrame((state) => {
-    if (!meshRef.current || !visible) return;
-    const time = state.clock.elapsedTime;
-    
-    // Floating animation
-    meshRef.current.position.y = position[1] + Math.sin(time * 1.5 + delay * 0.001) * 0.1;
-    
-    // Subtle rotation
-    meshRef.current.rotation.y = Math.sin(time * 0.5 + delay * 0.001) * 0.05;
-  });
-
   if (!visible) return null;
 
   return (
-    <Float speed={2} rotationIntensity={0.3} floatIntensity={0.5}>
+    <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.3}>
       <Text
-        ref={meshRef}
         position={position}
-        fontSize={1.2}
-        font="/fonts/DM-Sans-Bold.ttf"
+        fontSize={0.8}
         color={color}
         anchorX="center"
         anchorY="middle"
-        outlineWidth={0.02}
-        outlineColor={BRAND_GREEN}
+        outlineWidth={0.015}
+        outlineColor="#000000"
       >
         {text}
         <meshStandardMaterial
           color={color}
           emissive={color}
-          emissiveIntensity={0.3}
+          emissiveIntensity={0.4}
           toneMapped={false}
         />
       </Text>
@@ -127,81 +110,68 @@ function AnimatedWord3D({
   );
 }
 
-// --- GROWING CHART LINE ---
-function GrowingChart() {
-  const progress = useRef(0);
-  const meshRef = useRef<THREE.Mesh>(null);
-  
-  const geometry = useMemo(() => {
-    const curve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(-6, -1, -3),
-      new THREE.Vector3(-4, -0.5, -3),
-      new THREE.Vector3(-2, 0, -3),
-      new THREE.Vector3(0, 0.5, -3),
-      new THREE.Vector3(2, 1, -3),
-      new THREE.Vector3(4, 1.5, -3),
-      new THREE.Vector3(6, 2.5, -3),
-    ]);
-    
-    const points = curve.getPoints(50);
-    return new THREE.BufferGeometry().setFromPoints(points);
-  }, []);
+// --- ORBITING RINGS ---
+function OrbitingRings() {
+  const ring1Ref = useRef<THREE.Mesh>(null);
+  const ring2Ref = useRef<THREE.Mesh>(null);
+  const ring3Ref = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
-    if (!meshRef.current) return;
+    const time = state.clock.elapsedTime;
     
-    // Animate draw progress
-    progress.current = Math.min(1, progress.current + 0.008);
-    
-    const drawRange = Math.floor(50 * progress.current);
-    meshRef.current.geometry.setDrawRange(0, drawRange);
+    if (ring1Ref.current) {
+      ring1Ref.current.rotation.x = time * 0.3;
+      ring1Ref.current.rotation.y = time * 0.2;
+    }
+    if (ring2Ref.current) {
+      ring2Ref.current.rotation.x = -time * 0.2;
+      ring2Ref.current.rotation.z = time * 0.3;
+    }
+    if (ring3Ref.current) {
+      ring3Ref.current.rotation.y = time * 0.4;
+      ring3Ref.current.rotation.z = -time * 0.2;
+    }
   });
 
   return (
-    <mesh ref={meshRef} geometry={geometry}>
-      <lineBasicMaterial color={BRAND_TEAL} linewidth={2} transparent opacity={0.6} />
-    </mesh>
+    <group position={[0, 0, -3]}>
+      <mesh ref={ring1Ref}>
+        <torusGeometry args={[2.5, 0.02, 16, 100]} />
+        <meshStandardMaterial color={BRAND_TEAL} emissive={BRAND_TEAL} emissiveIntensity={1} toneMapped={false} />
+      </mesh>
+      <mesh ref={ring2Ref}>
+        <torusGeometry args={[3, 0.015, 16, 100]} />
+        <meshStandardMaterial color={BRAND_GREEN} emissive={BRAND_GREEN} emissiveIntensity={0.8} toneMapped={false} />
+      </mesh>
+      <mesh ref={ring3Ref}>
+        <torusGeometry args={[3.5, 0.01, 16, 100]} />
+        <meshStandardMaterial color={BRAND_GOLD} emissive={BRAND_GOLD} emissiveIntensity={0.6} toneMapped={false} />
+      </mesh>
+    </group>
   );
 }
 
-// --- INTERACTIVE ORB ---
-function InteractiveOrb() {
+// --- CENTRAL GLOW ---
+function CentralGlow() {
   const meshRef = useRef<THREE.Mesh>(null);
-  const { viewport } = useThree();
-  const mouse = useRef({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      mouse.current.x = (e.clientX / window.innerWidth) * 2 - 1;
-      mouse.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
 
   useFrame((state) => {
     if (!meshRef.current) return;
     const time = state.clock.elapsedTime;
-    
-    // Follow mouse with delay
-    meshRef.current.position.x += (mouse.current.x * 2 - meshRef.current.position.x) * 0.02;
-    meshRef.current.position.y += (mouse.current.y * 1.5 - meshRef.current.position.y) * 0.02;
-    
-    // Pulse
-    const scale = 1 + Math.sin(time * 2) * 0.1;
+    const scale = 1 + Math.sin(time * 2) * 0.15;
     meshRef.current.scale.setScalar(scale);
   });
 
   return (
     <mesh ref={meshRef} position={[0, 0, -2]}>
-      <sphereGeometry args={[0.8, 64, 64]} />
+      <sphereGeometry args={[0.5, 32, 32]} />
       <meshStandardMaterial
         color={BRAND_GREEN}
         emissive={BRAND_GREEN}
-        emissiveIntensity={0.8}
+        emissiveIntensity={2}
         transparent
-        opacity={0.15}
-        wireframe
+        opacity={0.3}
+        toneMapped={false}
       />
     </mesh>
   );
@@ -212,54 +182,51 @@ function TaglineScene({ activePhase }: { activePhase: number }) {
   return (
     <>
       {/* Lighting */}
-      <ambientLight intensity={0.4} />
-      <directionalLight position={[5, 5, 5]} intensity={1} color="#ffffff" />
-      <pointLight position={[-5, 3, 2]} intensity={0.8} color={BRAND_GREEN} />
-      <pointLight position={[5, -3, 2]} intensity={0.6} color={BRAND_TEAL} />
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[5, 5, 5]} intensity={1.5} color="#ffffff" />
+      <pointLight position={[-5, 3, 3]} intensity={1} color={BRAND_GREEN} />
+      <pointLight position={[5, -3, 3]} intensity={0.8} color={BRAND_TEAL} />
 
       {/* Background Elements */}
-      <FloatingParticles count={150} />
-      <GrowingChart />
-      <InteractiveOrb />
+      <FloatingParticles count={80} />
+      <OrbitingRings />
+      <CentralGlow />
 
       {/* Sparkles Effect */}
       <Sparkles
-        count={100}
-        scale={15}
-        size={2}
-        speed={0.4}
-        opacity={0.4}
+        count={60}
+        scale={12}
+        size={3}
+        speed={0.3}
+        opacity={0.5}
         color={BRAND_TEAL}
       />
 
-      {/* 3D Text Animation */}
+      {/* 3D Text Animation - Phase by Phase */}
       {activePhase >= 1 && (
         <AnimatedWord3D
           text="THINK BIG."
-          position={[0, 1.5, 0]}
+          position={[0, 1.2, 0]}
           delay={0}
           color="#ffffff"
-          isActive={activePhase >= 1}
         />
       )}
       
       {activePhase >= 2 && (
         <AnimatedWord3D
           text="INVEST SMART."
-          position={[0, 0.2, 0]}
-          delay={300}
+          position={[0, 0, 0]}
+          delay={200}
           color={BRAND_TEAL}
-          isActive={activePhase >= 2}
         />
       )}
       
       {activePhase >= 3 && (
         <AnimatedWord3D
           text="LEAD NEPAL."
-          position={[0, -1.1, 0]}
-          delay={600}
+          position={[0, -1.2, 0]}
+          delay={400}
           color={BRAND_GOLD}
-          isActive={activePhase >= 3}
         />
       )}
 
@@ -268,9 +235,9 @@ function TaglineScene({ activePhase }: { activePhase: number }) {
         enableZoom={false}
         enablePan={false}
         autoRotate
-        autoRotateSpeed={0.3}
+        autoRotateSpeed={0.5}
         minPolarAngle={Math.PI / 3}
-        maxPolarAngle={Math.PI / 2.2}
+        maxPolarAngle={Math.PI / 2}
       />
     </>
   );
@@ -279,14 +246,12 @@ function TaglineScene({ activePhase }: { activePhase: number }) {
 // --- MAIN COMPONENT ---
 export default function Tagline3D() {
   const [activePhase, setActivePhase] = useState(0);
-  const [showSkip, setShowSkip] = useState(true);
 
   useEffect(() => {
     const timers = [
       setTimeout(() => setActivePhase(1), 500),
       setTimeout(() => setActivePhase(2), 1800),
       setTimeout(() => setActivePhase(3), 3100),
-      setTimeout(() => setShowSkip(false), 4000),
     ];
     return () => timers.forEach(clearTimeout);
   }, []);
@@ -295,15 +260,15 @@ export default function Tagline3D() {
     <div className="relative w-full h-screen min-h-[600px] bg-[#0f2a20] overflow-hidden">
       {/* 3D Canvas */}
       <div className="absolute inset-0">
-        <Canvas camera={{ position: [0, 0, 6], fov: 60 }}>
+        <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
           <color attach="background" args={['#0f2a20']} />
+          <fog attach="fog" args={['#0f2a20', 5, 15]} />
           <TaglineScene activePhase={activePhase} />
         </Canvas>
       </div>
 
       {/* Gradient Overlays for Depth */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0f2a20] via-transparent to-[#0f2a20]/50 pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0f2a20]/30 via-transparent to-[#0f2a20]/30 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0f2a20] via-transparent to-[#0f2a20]/30 pointer-events-none" />
 
       {/* 2D Overlay - Brand Mark */}
       <div className="absolute top-8 left-8 z-10">
@@ -340,7 +305,7 @@ export default function Tagline3D() {
             transition={{ delay: 1, duration: 1 }}
             className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 text-center"
           >
-            <p className="text-white/30 text-sm tracking-[0.2em]">
+            <p className="text-white/40 text-sm tracking-[0.2em]">
               ठूलो सोच · स्मार्ट लगानी · नेपाल नेतृत्व
             </p>
           </motion.div>
@@ -351,7 +316,7 @@ export default function Tagline3D() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: activePhase >= 3 ? 1 : 0 }}
-        transition={{ delay: 1, duration: 1 }}
+        transition={{ delay: 1.5, duration: 1 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
       >
         <span className="text-white/40 text-[10px] uppercase tracking-widest">Scroll to explore</span>
@@ -362,22 +327,19 @@ export default function Tagline3D() {
         />
       </motion.div>
 
-      {/* Interactive Hint */}
-      {showSkip && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="absolute bottom-8 right-8 z-10"
-        >
-          <div className="bg-white/5 backdrop-blur border border-white/10 px-4 py-2 rounded-full inline-flex items-center gap-2">
-            <span className="material-symbols-outlined text-sm text-white/40">mouse</span>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
-              Drag to interact
-            </span>
-          </div>
-        </motion.div>
-      )}
+      {/* Interaction Hint */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2, duration: 1 }}
+        className="absolute bottom-8 right-8 z-10"
+      >
+        <div className="bg-white/5 backdrop-blur border border-white/10 px-4 py-2 rounded-full inline-flex items-center gap-2">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
+            Drag to interact
+          </span>
+        </div>
+      </motion.div>
     </div>
   );
 }
