@@ -4,6 +4,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { Link } from 'react-router-dom';
 import { Mail, Phone, Instagram, BookOpen, TrendingUp, BarChart3, ChevronRight, Lightbulb, Zap, Globe, ArrowUpRight, Users, ShieldCheck } from 'lucide-react';
+import Tagline3D from './Tagline3D';
 
 // --- SHADER FOR 3D GRADIENT ---
 const vertexShader = `
@@ -201,51 +202,8 @@ export default function MissionPage() {
       exit={{ opacity: 0 }}
       className="flex flex-col bg-[#f8f9fa] text-slate-900 font-sans min-h-screen"
     >
-      {/* --- HERO SECTION (3D GRADIENT) --- */}
-      <section className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0 bg-slate-900">
-          <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-            <GradientBackground />
-          </Canvas>
-          {/* Overlay to ensure text readability */}
-          <div className="absolute inset-0 bg-black/30 z-10 pointer-events-none" />
-        </div>
-        
-        <div className="relative z-20 max-w-5xl mx-auto px-6 text-center text-white">
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="font-bold tracking-tight mb-4"
-            style={{ fontSize: 'clamp(3rem, 10vw, 7rem)', lineHeight: 1 }}
-          >
-            ARTHNEETI
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-3xl font-light tracking-wide text-white/90"
-          >
-            Think Big. Invest Smart. Lead Nepal.
-          </motion.p>
-        </div>
-        
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 1 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2"
-        >
-          <span className="text-white/60 text-sm uppercase tracking-widest">Discover</span>
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-            className="w-px h-12 bg-gradient-to-b from-white/60 to-transparent"
-          />
-        </motion.div>
-      </section>
+      {/* --- HERO SECTION (3D TAGLINE) --- */}
+      <Tagline3D />
 
       {/* --- MISSION & VISION --- */}
       <section className="py-24 px-6 relative bg-white">
