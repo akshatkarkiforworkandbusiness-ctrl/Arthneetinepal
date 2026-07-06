@@ -2,12 +2,13 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Canvas } from '@react-three/fiber';
 import { Float, OrbitControls, Environment, Sphere, Box, Torus, Octahedron, Icosahedron } from '@react-three/drei';
 import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { OnboardingModal } from './layout/OnboardingModal';
 import Hero3DVisuals from './Hero3DVisuals';
+import CinematicIntro from './CinematicIntro';
 import { LESSONS, LEVEL_COLORS } from './LearnPage';
 
 interface Topic {
@@ -160,6 +161,17 @@ export default function LandingPage() {
   const [faqLanguage, setFaqLanguage] = useState<'en' | 'np'>('en');
   const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(null);
 
+  // Cinematic Intro State
+  const [showIntro, setShowIntro] = useState(() => {
+    const hasSeenIntro = localStorage.getItem('arthneeti-intro-seen');
+    return !hasSeenIntro;
+  });
+
+  const handleIntroComplete = useCallback(() => {
+    setShowIntro(false);
+    localStorage.setItem('arthneeti-intro-seen', 'true');
+  }, []);
+
   useEffect(() => {
     const qLatest = query(collection(db, 'posts'), orderBy('createdAt', 'desc'), limit(6));
     const unsubscribeLatest = onSnapshot(qLatest, (snapshot) => {
@@ -281,6 +293,9 @@ export default function LandingPage() {
       animate={{ opacity: 1 }}
       className="flex flex-col bg-white"
     >
+      {/* Cinematic Intro */}
+      {showIntro && <CinematicIntro onComplete={handleIntroComplete} />}
+
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-40 pb-32 px-6 min-h-[90vh] flex flex-col justify-center items-center text-center bg-sunset-fade">
         <Hero3DVisuals />

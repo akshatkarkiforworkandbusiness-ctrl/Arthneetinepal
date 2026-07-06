@@ -3,7 +3,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, Environment, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 
-// 1. Abstract Mountain Mesh
+// 1. Abstract Mountain Mesh - Brand Aligned (Green/Teal)
 function Mountain() {
   const meshRef = useRef<THREE.Group>(null);
 
@@ -25,18 +25,18 @@ function Mountain() {
         <mesh position={[0, 2, 0]} rotation={[0, Math.PI / 4, 0]}>
           <coneGeometry args={[6, 12, 4]} />
           <meshStandardMaterial 
-            color="#0f172a" 
-            emissive="#dc143c"
-            emissiveIntensity={0.15}
+            color="#0f2a20" 
+            emissive="#1D9E75"
+            emissiveIntensity={0.2}
             wireframe={true} 
             transparent
-            opacity={0.3}
+            opacity={0.35}
           />
         </mesh>
         {/* Solid core to give the mountain depth */}
         <mesh position={[0, 2, 0]} rotation={[0, Math.PI / 4, 0]}>
           <coneGeometry args={[5.8, 11.5, 4]} />
-          <meshStandardMaterial color="#0f172a" />
+          <meshStandardMaterial color="#0f2a20" />
         </mesh>
       </Float>
 
@@ -44,11 +44,11 @@ function Mountain() {
       <Float speed={1.2} rotationIntensity={0.1} floatIntensity={0.3}>
         <mesh position={[6, 0, -3]} rotation={[0, -Math.PI / 6, 0]}>
           <coneGeometry args={[4, 8, 4]} />
-          <meshStandardMaterial color="#dc143c" wireframe={true} transparent opacity={0.2} />
+          <meshStandardMaterial color="#1D9E75" wireframe={true} transparent opacity={0.25} />
         </mesh>
         <mesh position={[6, 0, -3]} rotation={[0, -Math.PI / 6, 0]}>
           <coneGeometry args={[3.8, 7.5, 4]} />
-          <meshStandardMaterial color="#0f172a" />
+          <meshStandardMaterial color="#0f2a20" />
         </mesh>
       </Float>
       
@@ -56,18 +56,18 @@ function Mountain() {
       <Float speed={0.8} rotationIntensity={0.3} floatIntensity={0.4}>
         <mesh position={[-7, -1, -5]} rotation={[0, Math.PI / 3, 0]}>
           <coneGeometry args={[5, 10, 4]} />
-          <meshStandardMaterial color="#003893" wireframe={true} transparent opacity={0.2} />
+          <meshStandardMaterial color="#0F6E56" wireframe={true} transparent opacity={0.2} />
         </mesh>
         <mesh position={[-7, -1, -5]} rotation={[0, Math.PI / 3, 0]}>
           <coneGeometry args={[4.8, 9.5, 4]} />
-          <meshStandardMaterial color="#0f172a" />
+          <meshStandardMaterial color="#0f2a20" />
         </mesh>
       </Float>
     </group>
   );
 }
 
-// 2. Economic Constellation (Data Nodes)
+// 2. Economic Constellation (Data Nodes) - Brand Aligned
 function DataNodes() {
   const groupRef = useRef<THREE.Group>(null);
 
@@ -104,8 +104,8 @@ function DataNodes() {
           <mesh position={node.position} scale={node.scale}>
             <icosahedronGeometry args={[1, 1]} />
             <meshStandardMaterial 
-              color={i % 3 === 0 ? "#dc143c" : "#003893"} 
-              emissive={i % 3 === 0 ? "#dc143c" : "#003893"}
+              color={i % 3 === 0 ? "#1D9E75" : "#0F6E56"} 
+              emissive={i % 3 === 0 ? "#1D9E75" : "#0F6E56"}
               emissiveIntensity={0.8}
               wireframe={i % 2 === 0}
             />
@@ -114,7 +114,7 @@ function DataNodes() {
       ))}
       
       {/* Floating dust/particles to represent data flow */}
-      <Sparkles count={150} scale={30} size={2} speed={0.4} opacity={0.3} color="#dc143c" />
+      <Sparkles count={150} scale={30} size={2} speed={0.4} opacity={0.3} color="#1D9E75" />
     </group>
   );
 }
@@ -123,10 +123,10 @@ export default function Hero3DVisuals() {
   return (
     <div className="absolute inset-0 z-0 pointer-events-auto">
       <Canvas camera={{ position: [0, 0, 15], fov: 45 }}>
-        {/* Warm Sunrise Lighting */}
+        {/* Brand-aligned Lighting - Cool Teal tones */}
         <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 5, -5]} intensity={2} color="#fef08a" />
-        <pointLight position={[-10, 10, 10]} intensity={1} color="#ef4444" />
+        <directionalLight position={[10, 5, -5]} intensity={2} color="#5DCAA5" />
+        <pointLight position={[-10, 10, 10]} intensity={1} color="#1D9E75" />
         
         <Environment preset="city" />
         

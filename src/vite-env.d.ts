@@ -2,6 +2,9 @@
 
 interface ImportMetaEnv {
   readonly VITE_GEMINI_API_KEY: string;
+  readonly VITE_GROQ_API_KEY: string;
+  readonly VITE_CEREBRAS_API_KEY: string;
+  readonly VITE_NVIDIA_API_KEY: string;
   readonly VITE_FIREBASE_API_KEY: string;
   readonly VITE_FIREBASE_APP_ID: string;
   readonly VITE_FIREBASE_PROJECT_ID: string;

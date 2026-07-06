@@ -6,16 +6,16 @@
 @import "@fontsource-variable/geist";
 
 @theme {
-  /* Core Brand Colors - Nepali Cultural Theme */
-  --color-coral-flame: #dc143c; /* Crimson Red */
-  --color-brandwood: #003893; /* Deep Blue (replacing brown) */
-  --color-sunset-fade: #f4f6fa;
-  --color-blush-mist: #e2e8f0;
+  /* Core Brand Colors - Arthneeti Brand Kit */
+  --color-coral-flame: #1D9E75; /* Growth Green (primary brand) */
+  --color-brandwood: #0f2a20; /* Himalayan Night (dark) */
+  --color-sunset-fade: #f8faf9;
+  --color-blush-mist: #E1F5EE; /* Mint Mist */
   --color-pure-white: #ffffff;
-  --color-carbon: #0f172a;
-  --color-mint-action: #34c771;
-  --color-cobalt-pulse: #477ee9;
-  --color-magenta-spark: #fb2d54;
+  --color-carbon: #0f2a20;
+  --color-mint-action: #5DCAA5; /* Light teal accent */
+  --color-cobalt-pulse: #0F6E56; /* Deep Forest */
+  --color-magenta-spark: #BA7517; /* Rupee Gold */
 
   /* Typography */
   --font-display: "DM Sans", sans-serif;
@@ -81,23 +81,23 @@
 
 :root {
   --background: oklch(1 0 0); /* White */
-  --foreground: oklch(0.25 0.05 20); /* Dark brown approximation */
-  --card: oklch(0.97 0.01 20); /* Warm tint approx */
-  --card-foreground: oklch(0.25 0.05 20);
+  --foreground: oklch(0.2 0.05 160); /* Dark green approximation */
+  --card: oklch(0.98 0.01 160); /* Mint tint */
+  --card-foreground: oklch(0.2 0.05 160);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.25 0.05 20);
-  --primary: oklch(0.6 0.2 30); /* Coral Flame approx */
+  --popover-foreground: oklch(0.2 0.05 160);
+  --primary: oklch(0.55 0.15 160); /* Growth Green approx */
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.97 0.01 20);
-  --secondary-foreground: oklch(0.25 0.05 20);
-  --muted: oklch(0.95 0.02 20);
-  --muted-foreground: oklch(0.5 0.02 20);
-  --accent: oklch(0.97 0.01 20);
-  --accent-foreground: oklch(0.25 0.05 20);
+  --secondary: oklch(0.98 0.01 160);
+  --secondary-foreground: oklch(0.2 0.05 160);
+  --muted: oklch(0.95 0.02 160);
+  --muted-foreground: oklch(0.5 0.02 160);
+  --accent: oklch(0.98 0.01 160);
+  --accent-foreground: oklch(0.2 0.05 160);
   --destructive: oklch(0.6 0.2 30);
-  --border: oklch(0.95 0.02 20);
-  --input: oklch(0.95 0.02 20);
-  --ring: oklch(0.6 0.2 30);
+  --border: oklch(0.95 0.02 160);
+  --input: oklch(0.95 0.02 160);
+  --ring: oklch(0.55 0.15 160);
   --radius: 16px;
 }
 
@@ -113,8 +113,8 @@
 ::-webkit-scrollbar-thumb:hover { background: #f8a4a4; }
 
 ::selection {
-  background-color: #fbdfd9;
-  color: #360802;
+  background-color: #E1F5EE;
+  color: #0f2a20;
 }
 
 /* Marquee animation */
@@ -126,9 +126,9 @@
   animation: marquee 30s linear infinite;
 }
 
-/* Utility classes for Jeton layout elements */
+/* Utility classes for Arthneeti layout elements */
 .hero-gradient {
-  background: linear-gradient(135deg, #f8a4a4 0%, #f73b20 100%);
+  background: linear-gradient(135deg, #5DCAA5 0%, #1D9E75 100%);
 }
 
 .outlined-cta {

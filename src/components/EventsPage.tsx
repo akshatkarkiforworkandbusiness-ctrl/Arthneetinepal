@@ -99,9 +99,8 @@ export default function EventsPage() {
           '/Pitcures for Arthneeti/Image 6 — Think Big. Invest Smart. Lead Nepal..jpg',
         ];
 
+        // 1. Update existing events that don't have images
         let imgIdx = 0;
-        
-        // 1. Update existing events if they don't have images
         for (const docSnap of snap.docs) {
           const data = docSnap.data();
           if (!data.imageUrl && imgIdx < images.length) {
@@ -111,17 +110,19 @@ export default function EventsPage() {
         }
 
         // 2. If there are fewer events than images, create the remaining events
-        while (imgIdx < images.length) {
+        const eventsWithoutImages = snap.docs.filter(d => !d.data().imageUrl).length;
+        let createIdx = Math.max(imgIdx, 0);
+        while (createIdx < images.length) {
           await addDoc(collection(db, 'events'), {
-            title: `Arthneeti Session ${imgIdx + 1}`,
+            title: `Arthneeti Session ${createIdx + 1}`,
             description: "Financial literacy and investing session for students.",
             location: "Kathmandu Valley",
             category: "Session",
-            dateTime: Timestamp.fromDate(new Date(`2025-06-${15 + imgIdx}T10:00:00`)),
+            dateTime: Timestamp.fromDate(new Date(`2025-06-${15 + createIdx}T10:00:00`)),
             createdAt: serverTimestamp(),
-            imageUrl: images[imgIdx]
+            imageUrl: images[createIdx]
           });
-          imgIdx++;
+          createIdx++;
         }
       } catch (err) {
         console.warn("Seeding events skipped or failed", err);

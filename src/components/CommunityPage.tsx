@@ -12,11 +12,12 @@ import {
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../contexts/AuthContext';
-import { Heart, MessageSquare, Share2, Download, Plus, FileText, HelpCircle, MoreVertical, X, RefreshCw } from 'lucide-react';
+import { Heart, MessageSquare, Share2, Download, Plus, FileText, HelpCircle, MoreVertical, X, RefreshCw, Users } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { GradientCard } from './GradientCard';
 import LeaderboardPage from './LeaderboardPage';
+import CommunityAssistant from './CommunityAssistant';
 import {
   TRENDING_SECTORS,
   SECTOR_ICONS,
@@ -40,6 +41,7 @@ export default function CommunityPage() {
     tabParam === 'news' ? 'news' : 'discussions'
   );
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showCommunityAssistant, setShowCommunityAssistant] = useState(false);
   const [newsLoading, setNewsLoading] = useState(false);
   const [newsError, setNewsError] = useState<string | null>(null);
   
@@ -834,6 +836,26 @@ const handleLike = async (postId: string) => {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Community Assistant Trigger */}
+      <div className="fixed bottom-6 right-6 z-[90]">
+        <button
+          onClick={() => setShowCommunityAssistant(true)}
+          className="group bg-white border border-blush-mist px-6 py-3 rounded-full shadow-lg hover:shadow-xl hover:border-[#1D9E75]/30 transition-all duration-300 flex items-center gap-2"
+        >
+          <Users className="text-[#1D9E75] group-hover:rotate-12 transition-transform" size={20} />
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-sm font-black text-brandwood tracking-widest transition-colors group-hover:text-[#1D9E75]">COMMUNITY</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#1D9E75] bg-[#1D9E75]/10 px-2 py-0.5 rounded-full">AI</span>
+          </div>
+        </button>
+      </div>
+
+      {/* Community Assistant Modal */}
+      <CommunityAssistant 
+        isOpen={showCommunityAssistant} 
+        onClose={() => setShowCommunityAssistant(false)} 
+      />
     </motion.main>
   );
 }

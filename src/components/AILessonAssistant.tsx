@@ -33,15 +33,26 @@ export default function AILessonAssistant({
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const apiKeyRef = useRef<string | null>(null);
+  const fallbackKeyRef = useRef<string | null>(null);
+  const activeProviderRef = useRef<'gemini' | 'nvidia'>('gemini');
 
-  // Initialize Groq
+  // Initialize Google AI Studio (Gemini) with NVIDIA fallback
   useEffect(() => {
-    const apiKey = import.meta.env.VITE_GROQ_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
-    if (apiKey && apiKey.length > 10) {
-      apiKeyRef.current = apiKey;
+    const geminiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    const nvidiaKey = import.meta.env.VITE_NVIDIA_API_KEY;
+    
+    if (geminiKey && geminiKey.length > 10) {
+      apiKeyRef.current = geminiKey;
+      activeProviderRef.current = 'gemini';
+    } else if (nvidiaKey && nvidiaKey.length > 10) {
+      // Fallback to NVIDIA NIM
+      apiKeyRef.current = nvidiaKey;
+      fallbackKeyRef.current = nvidiaKey;
+      activeProviderRef.current = 'nvidia';
+      setError(null);
     } else {
-      const length = apiKey ? apiKey.length : 0;
-      setError(`VITE_GROQ_API_KEY is ${length === 0 ? 'missing' : `too short (${length} chars)`}. Set it in Vercel > Settings > Environment Variables, then redeploy.`);
+      const geminiLength = geminiKey ? geminiKey.length : 0;
+      setError(`No API key available. Set VITE_GEMINI_API_KEY or VITE_NVIDIA_API_KEY in Vercel > Settings > Environment Variables.`);
     }
   }, []);
 
@@ -88,38 +99,83 @@ export default function AILessonAssistant({
     setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
     setIsTyping(true);
 
-    try {
-      const systemPrompt = buildSystemPrompt();
+    const systemPrompt = buildSystemPrompt();
+    
+    const history = messages.map(msg => ({
+      role: msg.role === 'model' ? 'model' : 'user',
+      parts: [{ text: msg.content }]
+    }));
+
+    const tryGemini = async (): Promise<string> => {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKeyRef.current}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          contents: [...history, { role: "user", parts: [{ text: userMsg }] }],
+          generationConfig: { temperature: 0.2, maxOutputTokens: 2048 }
+        })
+      });
+      if (!res.ok) {
+        const errData = await res.json() as any;
+        throw new Error(errData.error?.message || "Gemini failed");
+      }
+      const data = await res.json() as any;
+      return data.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated.";
+    };
+
+    const tryNvidia = async (): Promise<string> => {
+      const nvidiaKey = fallbackKeyRef.current || import.meta.env.VITE_NVIDIA_API_KEY;
+      if (!nvidiaKey) throw new Error("No NVIDIA API key available");
       
-      const history = messages.map(msg => ({
+      const historyOpenAI = messages.map(msg => ({
         role: msg.role === 'model' ? 'assistant' : 'user',
         content: msg.content
       }));
 
-      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      const res = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKeyRef.current}`
+          "Authorization": `Bearer ${nvidiaKey}`
         },
         body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",
+          model: "nvidia/llama-3.3-nemotron-super-49b-v1",
           messages: [
             { role: "system", content: systemPrompt },
-            ...history,
+            ...historyOpenAI,
             { role: "user", content: userMsg }
           ],
-          temperature: 0.2
+          temperature: 0.2,
+          max_tokens: 1024
         })
       });
-
       if (!res.ok) {
         const errData = await res.json() as any;
-        throw new Error(errData.error?.message || "Failed to fetch response from Groq.");
+        throw new Error(errData.error?.message || "NVIDIA failed");
       }
-
       const data = await res.json() as any;
-      const responseText = data.choices[0].message.content;
+      return data.choices[0].message.content;
+    };
+
+    try {
+      let responseText: string;
+      
+      if (activeProviderRef.current === 'gemini') {
+        try {
+          responseText = await tryGemini();
+        } catch (geminiErr) {
+          console.warn("Gemini failed, trying NVIDIA fallback:", geminiErr);
+          responseText = await tryNvidia();
+        }
+      } else {
+        try {
+          responseText = await tryNvidia();
+        } catch (nvidiaErr) {
+          console.warn("NVIDIA failed, trying Gemini fallback:", nvidiaErr);
+          responseText = await tryGemini();
+        }
+      }
 
       setMessages(prev => [...prev, { role: 'model', content: responseText }]);
     } catch (err) {
@@ -143,7 +199,7 @@ export default function AILessonAssistant({
           </div>
           <div>
             <h3 className="text-white font-display font-medium">Arthneeti AI Tutor</h3>
-            <p className="text-xs text-brandwood">Powered by Gemini</p>
+            <p className="text-xs text-[#5DCAA5]">Powered by Google Gemini</p>
           </div>
         </div>
         <button onClick={onClose} className="text-text-muted hover:text-white transition-colors">

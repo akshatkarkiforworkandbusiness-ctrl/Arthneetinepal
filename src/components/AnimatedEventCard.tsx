@@ -138,6 +138,7 @@ export default function AnimatedEventCard({
 }: Props) {
   const date = event.dateTime?.toDate();
   const catColor = CATEGORY_COLORS[event.category] ?? CATEGORY_COLORS.Other;
+  const hasImage = !!event.imageUrl;
 
   return (
     <motion.div
@@ -154,27 +155,33 @@ export default function AnimatedEventCard({
     >
       <TiltCard className="h-full">
         <div
-          className="relative bg-[#090a0b] border border-white/[0.06] rounded-2xl overflow-hidden group h-full flex flex-col"
-          style={{ boxShadow: `0 0 40px ${catColor}08, 0 25px 50px rgba(0,0,0,0.4)` }}
+          className={`relative border border-white/[0.06] rounded-2xl overflow-hidden group h-full flex flex-col ${hasImage ? 'min-h-[420px]' : ''}`}
+          style={{
+            boxShadow: `0 0 40px ${catColor}08, 0 25px 50px rgba(0,0,0,0.4)`,
+            background: hasImage ? 'transparent' : '#090a0b'
+          }}
         >
           {/* Glowing top border */}
           <div className="absolute top-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20" style={{ background: `linear-gradient(90deg, transparent, ${catColor}, transparent)` }} />
 
-          {/* Background Image OR 3D Header */}
-          {event.imageUrl ? (
-            <div className="absolute inset-0 z-0 pointer-events-none">
+          {/* Background Image */}
+          {hasImage && (
+            <div className="absolute inset-0 z-0">
               <motion.img
                 src={event.imageUrl}
                 alt={event.title}
-                className="w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity duration-700"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 initial={{ scale: 1.1 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 8, ease: 'easeOut' }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#090a0b] via-[#090a0b]/80 to-[#090a0b]/20" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#090a0b] via-[#090a0b]/70 to-[#090a0b]/30" />
+              <div className="absolute inset-0 bg-[#090a0b]/40 group-hover:bg-[#090a0b]/20 transition-colors duration-500" />
             </div>
-          ) : (
-            /* ── 3D Object Header ── */
+          )}
+
+          {/* 3D Header (only when no image) */}
+          {!hasImage && (
             <div className="relative h-56 overflow-hidden shrink-0">
               <Suspense fallback={
                 <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, #0f1011 0%, #090a0b 50%, ${catColor}08 100%)` }} />
@@ -188,7 +195,7 @@ export default function AnimatedEventCard({
           {/* Floating Badges */}
           <div className="absolute top-4 left-4 right-4 flex justify-between z-20 pointer-events-none">
             <motion.div
-              className="bg-[#0f1011]/90 backdrop-blur-md border border-white/[0.06] rounded-xl px-4 py-2.5 text-center pointer-events-auto"
+              className="bg-[#0f1011]/90 backdrop-blur-md border border-white/[0.06] rounded-xl px-4 py-2.5 text-center pointer-events-auto shadow-lg"
               initial={{ x: -30, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: index * 0.1 + 0.3, duration: 0.5 }}
@@ -202,48 +209,46 @@ export default function AnimatedEventCard({
             </motion.div>
 
             <motion.div
-              className="pointer-events-auto"
+              className="pointer-events-auto flex items-start gap-2"
               initial={{ x: 30, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: index * 0.1 + 0.4 }}
             >
-              <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest border-transparent px-3 py-1 rounded-lg backdrop-blur-sm" style={{ background: `${catColor}20`, color: catColor }}>
+              <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest border-transparent px-3 py-1 rounded-lg backdrop-blur-sm shadow-lg" style={{ background: `${catColor}20`, color: catColor }}>
                 {event.category}
               </Badge>
+              {isAdmin && (
+                <div className="flex gap-1 bg-[#0f1011]/90 backdrop-blur-md border border-white/[0.06] rounded-lg px-2 py-1.5 pointer-events-auto shadow-lg">
+                  {!event.completed && (
+                    <button onClick={() => onMarkDone(event.id)} className="text-[#9f9fa0]/60 hover:text-[#10b981] transition-colors p-1" title="Mark Done">
+                      <CheckCircle size={14} />
+                    </button>
+                  )}
+                  <button onClick={() => onEdit(event)} className="text-[#9f9fa0]/60 hover:text-white transition-colors p-1"><Edit2 size={14} /></button>
+                  <button onClick={() => onDelete(event.id)} className="text-[#9f9fa0]/60 hover:text-[#ef4444] transition-colors p-1"><Trash2 size={14} /></button>
+                </div>
+              )}
             </motion.div>
           </div>
 
           {/* Content */}
-          <div className="p-8 flex flex-col flex-1 relative z-10">
-            {/* Status + Admin actions */}
-            <div className="flex justify-between items-start mb-4">
-              <div className="flex items-center gap-3">
-                {event.completed && (
-                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', damping: 12 }}>
-                    <Badge className="text-[9px] font-black uppercase tracking-widest bg-[#10b981]/10 text-[#10b981] border-transparent px-2 py-0.5 rounded-lg">
-                      <CheckCircle size={10} className="mr-1" /> Done
-                    </Badge>
-                  </motion.div>
-                )}
-                {event.completed && event.studentsReached !== undefined && (
+          <div className={`p-8 flex flex-col flex-1 relative z-10 ${hasImage ? 'mt-auto' : ''}`}>
+            {/* Status */}
+            {event.completed && (
+              <div className="flex items-center gap-3 mb-4">
+                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', damping: 12 }}>
+                  <Badge className="text-[9px] font-black uppercase tracking-widest bg-[#10b981]/10 text-[#10b981] border-transparent px-2 py-0.5 rounded-lg">
+                    <CheckCircle size={10} className="mr-1" /> Done
+                  </Badge>
+                </motion.div>
+                {event.studentsReached !== undefined && (
                   <span className="text-[9px] font-bold text-[#9f9fa0]">{event.studentsReached} students</span>
                 )}
               </div>
-              {isAdmin && (
-                <div className="flex gap-3">
-                  {!event.completed && (
-                    <button onClick={() => onMarkDone(event.id)} className="text-[#9f9fa0]/30 hover:text-[#10b981] transition-colors" title="Mark Done">
-                      <CheckCircle size={15} />
-                    </button>
-                  )}
-                  <button onClick={() => onEdit(event)} className="text-[#9f9fa0]/30 hover:text-white transition-colors"><Edit2 size={15} /></button>
-                  <button onClick={() => onDelete(event.id)} className="text-[#9f9fa0]/30 hover:text-[#ef4444] transition-colors"><Trash2 size={15} /></button>
-                </div>
-              )}
-            </div>
+            )}
 
             {/* Title with text reveal */}
-            <h3 className="text-2xl text-white font-sans font-semibold mb-4 leading-tight">
+            <h3 className={`text-white font-sans font-semibold mb-4 leading-tight ${hasImage ? 'text-2xl' : 'text-2xl'}`}>
               <AnimatedText text={event.title} delay={index * 0.1 + 0.3} />
             </h3>
 
@@ -289,7 +294,7 @@ export default function AnimatedEventCard({
             {/* ICS download */}
             <motion.button
               onClick={() => onDownloadICS(event)}
-              className="flex items-center gap-2 text-[#9f9fa0]/30 hover:text-[#00f59b] transition-all group/btn mt-auto"
+              className="flex items-center gap-2 text-[#9f9fa0]/40 hover:text-[#00f59b] transition-all group/btn mt-auto"
               whileHover={{ x: 4 }}
             >
               <Calendar size={14} />
