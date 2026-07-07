@@ -4,10 +4,10 @@ import { Float, Text, OrbitControls, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'motion/react';
 
-// --- BRAND COLORS ---
-const BRAND_GREEN = '#1D9E75';
-const BRAND_TEAL = '#5DCAA5';
-const BRAND_GOLD = '#BA7517';
+// --- BRAND COLORS (Lighter Palette) ---
+const BRAND_GREEN = '#34D399';
+const BRAND_TEAL = '#6EE7B7';
+const BRAND_GOLD = '#A7F3D0';
 
 // --- FLOATING PARTICLES ---
 function FloatingParticles({ count = 100 }) {
@@ -257,18 +257,18 @@ export default function Tagline3D() {
   }, []);
 
   return (
-    <div className="relative w-full h-screen min-h-[600px] bg-[#0f2a20] overflow-hidden">
+    <div className="relative w-full h-screen min-h-[600px] bg-gradient-to-b from-[#F0FDF4] to-white overflow-hidden">
       {/* 3D Canvas */}
       <div className="absolute inset-0">
         <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
-          <color attach="background" args={['#0f2a20']} />
-          <fog attach="fog" args={['#0f2a20', 5, 15]} />
+          <color attach="background" args={['#F0FDF4']} />
+          <fog attach="fog" args={['#F0FDF4', 5, 15]} />
           <TaglineScene activePhase={activePhase} />
         </Canvas>
       </div>
 
       {/* Gradient Overlays for Depth */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0f2a20] via-transparent to-[#0f2a20]/30 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-[#F0FDF4]/30 pointer-events-none" />
 
       {/* 2D Overlay - Brand Mark */}
       <div className="absolute top-8 left-8 z-10">
@@ -290,7 +290,7 @@ export default function Tagline3D() {
             />
             <circle cx="50" cy="18" r="3" fill="#5DCAA5" />
           </svg>
-          <span className="text-white/50 text-sm font-medium tracking-[0.3em] uppercase">
+          <span className="text-gray-600 text-sm font-medium tracking-[0.3em] uppercase">
             Arthneeti
           </span>
         </motion.div>
@@ -305,7 +305,7 @@ export default function Tagline3D() {
             transition={{ delay: 1, duration: 1 }}
             className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 text-center"
           >
-            <p className="text-white/40 text-sm tracking-[0.2em]">
+            <p className="text-gray-500 text-sm tracking-[0.2em]">
               ठूलो सोच · स्मार्ट लगानी · नेपाल नेतृत्व
             </p>
           </motion.div>
@@ -319,11 +319,11 @@ export default function Tagline3D() {
         transition={{ delay: 1.5, duration: 1 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
       >
-        <span className="text-white/40 text-[10px] uppercase tracking-widest">Scroll to explore</span>
+        <span className="text-gray-400 text-[10px] uppercase tracking-widest">Scroll to explore</span>
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-          className="w-px h-8 bg-gradient-to-b from-[#5DCAA5]/60 to-transparent"
+          className="w-px h-8 bg-gradient-to-b from-[#34D399]/60 to-transparent"
         />
       </motion.div>
 
@@ -334,8 +334,8 @@ export default function Tagline3D() {
         transition={{ delay: 2, duration: 1 }}
         className="absolute bottom-8 right-8 z-10"
       >
-        <div className="bg-white/5 backdrop-blur border border-white/10 px-4 py-2 rounded-full inline-flex items-center gap-2">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
+        <div className="bg-white/80 backdrop-blur border border-gray-200 px-4 py-2 rounded-full inline-flex items-center gap-2">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
             Drag to interact
           </span>
         </div>

@@ -6,16 +6,16 @@
 @import "@fontsource-variable/geist";
 
 @theme {
-  /* Core Brand Colors - Arthneeti Brand Kit */
-  --color-coral-flame: #1D9E75; /* Growth Green (primary brand) */
-  --color-brandwood: #0f2a20; /* Himalayan Night (dark) */
+  /* Core Brand Colors - Arthneeti Brand Kit (Lighter Palette) */
+  --color-coral-flame: #6EE7B7; /* Light Emerald (primary brand) */
+  --color-brandwood: #ffffff; /* White (light theme) */
   --color-sunset-fade: #f8faf9;
-  --color-blush-mist: #E1F5EE; /* Mint Mist */
+  --color-blush-mist: #D1FAE5; /* Mint Mist (lighter) */
   --color-pure-white: #ffffff;
-  --color-carbon: #0f2a20;
-  --color-mint-action: #5DCAA5; /* Light teal accent */
-  --color-cobalt-pulse: #0F6E56; /* Deep Forest */
-  --color-magenta-spark: #BA7517; /* Rupee Gold */
+  --color-carbon: #ffffff;
+  --color-mint-action: #A7F3D0; /* Light mint accent */
+  --color-cobalt-pulse: #34D399; /* Soft green */
+  --color-magenta-spark: #6EE7B7; /* Matching light emerald */
 
   /* Typography */
   --font-display: "DM Sans", sans-serif;
@@ -25,20 +25,20 @@
   /* Legacy mappings to preserve existing components before refactoring */
   --color-background: #ffffff;
   --color-surface-base: #ffffff;
-  --color-surface-raised: #fef5f3;
-  --color-surface-high: #fbdfd9;
-  --color-text-primary: #360802;
-  --color-text-muted: #8b7977;
+  --color-surface-raised: #F0FDF4;
+  --color-surface-high: #DCFCE7;
+  --color-text-primary: #1a1a2e;
+  --color-text-muted: #6b7280;
   --color-slate-base: #ffffff;
-  --color-slate-raised: #fef5f3;
-  --color-club-green: #34c771;
-  --color-electric-mint: #34c771;
-  --color-navy: #fef5f3;
+  --color-slate-raised: #F0FDF4;
+  --color-club-green: #34D399;
+  --color-electric-mint: #6EE7B7;
+  --color-navy: #F0FDF4;
 
   /* Chart / market */
-  --color-gainer: #34c771;
+  --color-gainer: #34D399;
   --color-loser: #f73b20;
-  --color-chart-grid: #fbdfd9;
+  --color-chart-grid: #DCFCE7;
 
   /* Spacing */
   --spacing-4: 4px;
@@ -86,7 +86,7 @@
   --card-foreground: oklch(0.2 0.05 160);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.2 0.05 160);
-  --primary: oklch(0.55 0.15 160); /* Growth Green approx */
+  --primary: oklch(0.75 0.15 160); /* Light Emerald approx */
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.98 0.01 160);
   --secondary-foreground: oklch(0.2 0.05 160);
@@ -97,7 +97,7 @@
   --destructive: oklch(0.6 0.2 30);
   --border: oklch(0.95 0.02 160);
   --input: oklch(0.95 0.02 160);
-  --ring: oklch(0.55 0.15 160);
+  --ring: oklch(0.75 0.15 160);
   --radius: 16px;
 }
 
@@ -106,15 +106,15 @@
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
-/* Custom Scrollbar - Warm Sunrise theme */
+/* Custom Scrollbar - Light Green theme */
 ::-webkit-scrollbar       { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: #ffffff; }
-::-webkit-scrollbar-thumb { background: #fbdfd9; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #f8a4a4; }
+::-webkit-scrollbar-thumb { background: #D1FAE5; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #A7F3D0; }
 
 ::selection {
-  background-color: #E1F5EE;
-  color: #0f2a20;
+  background-color: #D1FAE5;
+  color: #1a1a2e;
 }
 
 /* Marquee animation */
@@ -128,7 +128,7 @@
 
 /* Utility classes for Arthneeti layout elements */
 .hero-gradient {
-  background: linear-gradient(135deg, #5DCAA5 0%, #1D9E75 100%);
+  background: linear-gradient(135deg, #A7F3D0 0%, #6EE7B7 100%);
 }
 
 .outlined-cta {
@@ -137,11 +137,24 @@
 
 /* Prodigy Inspired Layout & Animation Utilities */
 .glass-card {
-  @apply bg-white/80 backdrop-blur-md border border-blush-mist/50 shadow-sm transition-all duration-300;
+  @apply bg-white/90 backdrop-blur-md border border-blush-mist/60 shadow-sm transition-all duration-300;
 }
 
 .glass-card:hover {
-  @apply border-coral-flame/30 shadow-warm-lift scale-[1.02];
+  @apply border-coral-flame/40 shadow-warm-lift scale-[1.02];
+}
+
+/* Interactive element animations */
+.interactive-card {
+  @apply transition-all duration-300 cursor-pointer;
+}
+
+.interactive-card:hover {
+  @apply -translate-y-2 shadow-lg;
+}
+
+.interactive-card:active {
+  @apply scale-[0.98];
 }
 
 .prodigy-grid {
@@ -172,4 +185,39 @@
     size: A4 landscape;
     margin: 0;
   }
+}
+
+/* Nepal Map Interactive Styles */
+.nepal-region {
+  transition: all 0.3s ease;
+}
+
+.nepal-region:hover {
+  filter: brightness(1.1);
+}
+
+/* Pulse animation for interactive elements */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* Slide up animation */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s ease-out forwards;
 }
