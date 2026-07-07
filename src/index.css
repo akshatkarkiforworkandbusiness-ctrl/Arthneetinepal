@@ -6,16 +6,16 @@
 @import "@fontsource-variable/geist";
 
 @theme {
-  /* Core Brand Colors - Arthneeti Brand Kit (Lighter Palette) */
-  --color-coral-flame: #6EE7B7; /* Light Emerald (primary brand) */
-  --color-brandwood: #ffffff; /* White (light theme) */
-  --color-sunset-fade: #f8faf9;
-  --color-blush-mist: #D1FAE5; /* Mint Mist (lighter) */
+  /* Core Brand Colors - Arthneeti Brand Kit (Balanced Palette) */
+  --color-coral-flame: #059669; /* Emerald (primary brand) */
+  --color-brandwood: #0f172a; /* Dark navy (text) */
+  --color-sunset-fade: #f8fafc;
+  --color-blush-mist: #d1fae5; /* Mint Mist */
   --color-pure-white: #ffffff;
-  --color-carbon: #ffffff;
-  --color-mint-action: #A7F3D0; /* Light mint accent */
-  --color-cobalt-pulse: #34D399; /* Soft green */
-  --color-magenta-spark: #6EE7B7; /* Matching light emerald */
+  --color-carbon: #0f172a;
+  --color-mint-action: #10b981; /* Emerald accent */
+  --color-cobalt-pulse: #047857; /* Deep emerald */
+  --color-magenta-spark: #059669; /* Matching emerald */
 
   /* Typography */
   --font-display: "DM Sans", sans-serif;
@@ -25,20 +25,20 @@
   /* Legacy mappings to preserve existing components before refactoring */
   --color-background: #ffffff;
   --color-surface-base: #ffffff;
-  --color-surface-raised: #F0FDF4;
-  --color-surface-high: #DCFCE7;
-  --color-text-primary: #1a1a2e;
-  --color-text-muted: #6b7280;
+  --color-surface-raised: #ecfdf5;
+  --color-surface-high: #d1fae5;
+  --color-text-primary: #0f172a;
+  --color-text-muted: #475569;
   --color-slate-base: #ffffff;
-  --color-slate-raised: #F0FDF4;
-  --color-club-green: #34D399;
-  --color-electric-mint: #6EE7B7;
-  --color-navy: #F0FDF4;
+  --color-slate-raised: #ecfdf5;
+  --color-club-green: #10b981;
+  --color-electric-mint: #059669;
+  --color-navy: #ecfdf5;
 
   /* Chart / market */
-  --color-gainer: #34D399;
-  --color-loser: #f73b20;
-  --color-chart-grid: #DCFCE7;
+  --color-gainer: #10b981;
+  --color-loser: #ef4444;
+  --color-chart-grid: #d1fae5;
 
   /* Spacing */
   --spacing-4: 4px;
@@ -81,23 +81,23 @@
 
 :root {
   --background: oklch(1 0 0); /* White */
-  --foreground: oklch(0.2 0.05 160); /* Dark green approximation */
-  --card: oklch(0.98 0.01 160); /* Mint tint */
-  --card-foreground: oklch(0.2 0.05 160);
+  --foreground: oklch(0.15 0.02 260); /* Dark navy */
+  --card: oklch(0.97 0.02 160); /* Light mint */
+  --card-foreground: oklch(0.15 0.02 260);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.05 160);
-  --primary: oklch(0.75 0.15 160); /* Light Emerald approx */
+  --popover-foreground: oklch(0.15 0.02 260);
+  --primary: oklch(0.6 0.15 160); /* Emerald */
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.98 0.01 160);
-  --secondary-foreground: oklch(0.2 0.05 160);
+  --secondary: oklch(0.97 0.02 160);
+  --secondary-foreground: oklch(0.15 0.02 260);
   --muted: oklch(0.95 0.02 160);
-  --muted-foreground: oklch(0.5 0.02 160);
-  --accent: oklch(0.98 0.01 160);
-  --accent-foreground: oklch(0.2 0.05 160);
-  --destructive: oklch(0.6 0.2 30);
-  --border: oklch(0.95 0.02 160);
-  --input: oklch(0.95 0.02 160);
-  --ring: oklch(0.75 0.15 160);
+  --muted-foreground: oklch(0.4 0.02 260);
+  --accent: oklch(0.97 0.02 160);
+  --accent-foreground: oklch(0.15 0.02 260);
+  --destructive: oklch(0.6 0.2 25);
+  --border: oklch(0.92 0.02 160);
+  --input: oklch(0.92 0.02 160);
+  --ring: oklch(0.6 0.15 160);
   --radius: 16px;
 }
 
@@ -106,15 +106,15 @@
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
-/* Custom Scrollbar - Light Green theme */
+/* Custom Scrollbar - Emerald theme */
 ::-webkit-scrollbar       { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: #ffffff; }
-::-webkit-scrollbar-thumb { background: #D1FAE5; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #A7F3D0; }
+::-webkit-scrollbar-thumb { background: #d1fae5; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #10b981; }
 
 ::selection {
-  background-color: #D1FAE5;
-  color: #1a1a2e;
+  background-color: #d1fae5;
+  color: #0f172a;
 }
 
 /* Marquee animation */
@@ -128,7 +128,7 @@
 
 /* Utility classes for Arthneeti layout elements */
 .hero-gradient {
-  background: linear-gradient(135deg, #A7F3D0 0%, #6EE7B7 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
 }
 
 .outlined-cta {
@@ -137,7 +137,7 @@
 
 /* Prodigy Inspired Layout & Animation Utilities */
 .glass-card {
-  @apply bg-white/90 backdrop-blur-md border border-blush-mist/60 shadow-sm transition-all duration-300;
+  @apply bg-white/90 backdrop-blur-md border border-gray-200 shadow-sm transition-all duration-300;
 }
 
 .glass-card:hover {
