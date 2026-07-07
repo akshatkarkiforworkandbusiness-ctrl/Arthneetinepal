@@ -7,14 +7,13 @@ import { OnboardingModal } from './OnboardingModal';
 import { AuthModal } from './AuthModal';
 
 const navLinks = [
-  { name: 'Home', path: '/' },
   { name: 'Discover', path: '/discover' },
   { name: 'News Feed', path: '/news-feed' },
   { name: 'Learn', path: '/learn' },
   { name: 'Trade', path: '/trade' },
   { name: 'Leaderboard', path: '/leaderboard' },
   { name: 'Community', path: '/community' },
-  { name: 'Event', path: '/events' },
+  { name: 'Events', path: '/events' },
 ];
 
 export function Navigation() {

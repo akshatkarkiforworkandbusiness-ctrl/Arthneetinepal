@@ -26,29 +26,57 @@ What would you like to discuss today?`;
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showKeyInput, setShowKeyInput] = useState(false);
+  const [manualKey, setManualKey] = useState('');
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const apiKeyRef = useRef<string | null>(null);
   const fallbackKeyRef = useRef<string | null>(null);
   const activeProviderRef = useRef<'cerebras' | 'nvidia'>('cerebras');
 
-  // Initialize Cerebras with NVIDIA fallback
+  // Initialize API keys with fallback logic
   useEffect(() => {
     const cerebrasKey = import.meta.env.VITE_CEREBRAS_API_KEY;
     const nvidiaKey = import.meta.env.VITE_NVIDIA_API_KEY;
     
-    if (cerebrasKey && cerebrasKey.length > 10) {
+    const hasCerebras = cerebrasKey && cerebrasKey.length > 10;
+    const hasNvidia = nvidiaKey && nvidiaKey.length > 10;
+    
+    if (hasCerebras && hasNvidia) {
+      // Both available - prefer Cerebras, NVIDIA as fallback
+      apiKeyRef.current = cerebrasKey;
+      fallbackKeyRef.current = nvidiaKey;
+      activeProviderRef.current = 'cerebras';
+      setError(null);
+    } else if (hasCerebras) {
+      // Only Cerebras available
       apiKeyRef.current = cerebrasKey;
       activeProviderRef.current = 'cerebras';
-    } else if (nvidiaKey && nvidiaKey.length > 10) {
+      setError(null);
+    } else if (hasNvidia) {
+      // Only NVIDIA available
       apiKeyRef.current = nvidiaKey;
-      fallbackKeyRef.current = nvidiaKey;
       activeProviderRef.current = 'nvidia';
       setError(null);
     } else {
-      setError(`No API key available. Set VITE_CEREBRAS_API_KEY or VITE_NVIDIA_API_KEY in Vercel > Settings > Environment Variables.`);
+      // No keys available
+      setError('No API key available. Add VITE_CEREBRAS_API_KEY or VITE_NVIDIA_API_KEY to your .env file.');
     }
   }, []);
+
+  const handleManualKeySubmit = () => {
+    if (manualKey.trim().length > 10) {
+      apiKeyRef.current = manualKey.trim();
+      setError(null);
+      setShowKeyInput(false);
+      // Detect if it's Cerebras or NVIDIA based on prefix
+      if (manualKey.startsWith('csk-')) {
+        activeProviderRef.current = 'cerebras';
+      } else {
+        activeProviderRef.current = 'nvidia';
+      }
+    }
+  };
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -118,8 +146,8 @@ Arthneeti is a student-led initiative building financial literacy among Nepal's 
     };
 
     const tryNvidia = async (): Promise<string> => {
-      const nvidiaKey = fallbackKeyRef.current || import.meta.env.VITE_NVIDIA_API_KEY;
-      if (!nvidiaKey) throw new Error("No NVIDIA API key available");
+      const nvidiaKey = fallbackKeyRef.current;
+      if (!nvidiaKey) throw new Error("No NVIDIA API key available as fallback");
       
       const res = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
         method: "POST",
@@ -193,7 +221,9 @@ Arthneeti is a student-led initiative building financial literacy among Nepal's 
             </div>
             <div>
               <h3 className="font-bold text-brandwood font-sans">Community Assistant</h3>
-              <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest">Powered by Cerebras</p>
+              <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest">
+                {activeProviderRef.current === 'cerebras' ? 'Powered by Cerebras' : 'Powered by NVIDIA'}
+              </p>
             </div>
           </div>
           <button onClick={onClose} className="text-text-muted hover:text-coral-flame transition-colors p-2">
@@ -202,8 +232,41 @@ Arthneeti is a student-led initiative building financial literacy among Nepal's 
         </div>
 
         {error && (
-          <div className="bg-red-50 text-coral-flame p-3 text-xs font-sans border-b border-red-100">
-            {error}
+          <div className="bg-amber-50 text-amber-800 p-3 text-xs font-sans border-b border-amber-200">
+            <div className="flex items-start gap-2">
+              <span className="text-amber-600 mt-0.5">⚠️</span>
+              <div className="flex-1">
+                <p className="font-semibold mb-1">API Key Required</p>
+                <p className="text-amber-700">{error}</p>
+                {!showKeyInput ? (
+                  <button 
+                    onClick={() => setShowKeyInput(true)}
+                    className="mt-2 text-amber-900 underline hover:text-amber-950 font-medium"
+                  >
+                    Enter API key manually
+                  </button>
+                ) : (
+                  <div className="mt-2 flex gap-2">
+                    <input
+                      type="password"
+                      value={manualKey}
+                      onChange={(e) => setManualKey(e.target.value)}
+                      placeholder="Paste your API key (csk-... or nvapi-...)"
+                      className="flex-1 px-2 py-1 border border-amber-300 rounded text-amber-900 text-xs"
+                    />
+                    <button 
+                      onClick={handleManualKeySubmit}
+                      className="px-2 py-1 bg-amber-600 text-white rounded text-xs hover:bg-amber-700"
+                    >
+                      Use
+                    </button>
+                  </div>
+                )}
+                <p className="mt-2 text-amber-600">
+                  Or get a free key from: <a href="https://cloud.cerebras.ai" target="_blank" rel="noopener noreferrer" className="underline hover:text-amber-900">cloud.cerebras.ai</a>
+                </p>
+              </div>
+            </div>
           </div>
         )}
 

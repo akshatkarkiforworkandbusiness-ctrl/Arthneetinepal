@@ -12,6 +12,8 @@ import NewsFeedPage from './components/NewsFeedPage';
 import TradingPage from './components/TradingPage';
 import LeaderboardPage from './components/LeaderboardPage';
 import PublicCertificatePage from './components/PublicCertificatePage';
+import BookmarksPage from './components/BookmarksPage';
+import NotificationsPage from './components/NotificationsPage';
 import { AuthProvider } from './contexts/AuthContext';
 import { Toaster } from '@/components/ui/sonner';
 
@@ -39,6 +41,8 @@ export default function App() {
               <Route path="/profile/:userId" element={<ProfilePage />} />
               <Route path="/trade" element={<TradingPage />} />
               <Route path="/leaderboard" element={<LeaderboardPage />} />
+              <Route path="/bookmarks" element={<BookmarksPage />} />
+              <Route path="/notifications" element={<NotificationsPage />} />
               <Route path="/certificate/:uid/:moduleId" element={<PublicCertificatePage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

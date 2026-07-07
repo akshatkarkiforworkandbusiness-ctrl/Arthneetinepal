@@ -11,6 +11,7 @@ import {
 } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import { Heart, MessageSquare, Share2, Clock, RefreshCw, TrendingUp, Newspaper, Zap, ChevronDown } from 'lucide-react';
+import PostActions from './PostActions';
 import {
   TRENDING_SECTORS,
   SECTOR_ICONS,
@@ -102,10 +103,10 @@ export default function NewsFeedPage() {
     return () => unsubscribe();
   }, []);
 
-  // Derive today's posts and sector feeds
+  // Derive today's posts and sector feeds - show all posts from today
   const todayPosts = useMemo(() => {
     const today = getNepalDate();
-    return posts.filter(p => p.newsDate === today || (p.createdAt?.toDate && p.createdAt.toDate().toISOString().split('T')[0] === today));
+    return posts.filter(p => p.newsDate === today);
   }, [posts]);
 
   const sectorFeeds = useMemo(() => {
@@ -312,14 +313,10 @@ export default function NewsFeedPage() {
 
   // Clean up old hourly posts - keep only most engaged from previous day
   const cleanupOldPosts = useCallback(async () => {
-    const yesterday = new Date(getNepalTime());
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toISOString().split('T')[0];
-
     try {
-      // Get all hourly posts from day before yesterday
-      const twoDaysAgo = new Date(yesterday);
-      twoDaysAgo.setDate(twoDaysAgo.getDate() - 1);
+      // Get all hourly posts from 2 days ago (preserve yesterday's posts for reference)
+      const twoDaysAgo = new Date(getNepalTime());
+      twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
       const twoDaysAgoStr = twoDaysAgo.toISOString().split('T')[0];
 
       const oldPostsQuery = query(
@@ -357,38 +354,27 @@ export default function NewsFeedPage() {
     };
   }, [isPostingHours, researchAllSectors]);
 
-  const handleLike = async (postId: string) => {
-    if (!user) return;
-    const postRef = doc(db, 'posts', postId);
-    const likePath = `posts/${postId}/likes/${user.uid}`;
-    const likeRef = doc(db, likePath);
+  // Auto-trigger daily digest at 5:30 PM and cleanup at 9 AM
+  useEffect(() => {
+    const checkScheduledTasks = () => {
+      const nepal = getNepalTime();
+      const hour = nepal.getHours();
+      const min = nepal.getMinutes();
 
-    try {
-      const { getDoc, setDoc, deleteDoc } = await import('firebase/firestore');
-      const likeSnap = await getDoc(likeRef);
-      if (likeSnap.exists()) {
-        await deleteDoc(likeRef);
-        await updateDoc(postRef, {
-          likes: increment(-1),
-          engagementScore: increment(-1)
-        });
-      } else {
-        await setDoc(likeRef, { likedAt: serverTimestamp() });
-        await updateDoc(postRef, {
-          likes: increment(1),
-          engagementScore: increment(1)
-        });
+      // Auto-generate digest at 5:30 PM (17:30)
+      if (hour === 17 && min === 30 && !dailyDigest) {
+        generateDailyDigest();
       }
-    } catch (error) {
-      console.error('Like error:', error);
-    }
-  };
 
-  const handleShare = (postId: string) => {
-    const url = `${window.location.origin}/post/${postId}`;
-    navigator.clipboard.writeText(url);
-    toast.success('Link copied!');
-  };
+      // Auto-cleanup at 9:00 AM
+      if (hour === 9 && min === 0) {
+        cleanupOldPosts();
+      }
+    };
+
+    const taskInterval = setInterval(checkScheduledTasks, 60000); // Check every minute
+    return () => clearInterval(taskInterval);
+  }, [dailyDigest, generateDailyDigest, cleanupOldPosts]);
 
   const toggleSector = (sector: Sector) => {
     setExpandedSectors(prev => {
@@ -441,7 +427,12 @@ export default function NewsFeedPage() {
             </h1>
             <p className="text-text-muted text-sm">
               Latest news for each sector, posted hourly from 9:00 AM to 5:00 PM Nepali time.
-              {nextPostIn && (
+              {!isPostingHours && (
+                <span className="ml-2 text-mint-action font-bold">
+                  Articles persist until tomorrow's updates.
+                </span>
+              )}
+              {nextPostIn && isPostingHours && (
                 <span className="ml-2 text-mint-action font-bold">
                   Next update in {nextPostIn}
                 </span>
@@ -718,16 +709,12 @@ export default function NewsFeedPage() {
                     {post.content?.replace(/<[^>]+>/g, '').substring(0, 120)}...
                   </p>
                   <div className="flex items-center gap-4 mt-2 text-[10px] text-text-muted">
-                    <span className="flex items-center gap-1" onClick={(e) => { e.stopPropagation(); handleLike(post.id); }}>
-                      <Heart size={12} /> {post.likes}
-                    </span>
-                    <span className="flex items-center gap-1"><MessageSquare size={12} /> {post.commentCount}</span>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); handleShare(post.id); }}
-                      className="flex items-center gap-1 hover:text-coral-flame transition-colors"
-                    >
-                      <Share2 size={12} /> Share
-                    </button>
+                    <PostActions
+                      postId={post.id}
+                      likes={post.likes}
+                      commentCount={post.commentCount}
+                      compact={true}
+                    />
                   </div>
                 </div>
               </div>

@@ -18,6 +18,7 @@ import 'react-quill-new/dist/quill.snow.css';
 import { GradientCard } from './GradientCard';
 import LeaderboardPage from './LeaderboardPage';
 import CommunityAssistant from './CommunityAssistant';
+import PostActions from './PostActions';
 import {
   TRENDING_SECTORS,
   SECTOR_ICONS,
@@ -401,15 +402,15 @@ const handleLike = async (postId: string) => {
         <aside className="hidden lg:block lg:col-span-3 space-y-8 sticky top-32 h-fit">
           <div className="flex flex-col gap-2">
             {[
-              { icon: 'home', label: 'Home', active: true },
-              { icon: 'explore', label: 'Explore' },
-              { icon: 'notifications', label: 'Notifications' },
-              { icon: 'bookmark', label: 'Bookmarks' },
-              { icon: 'person', label: 'Profile' },
+              { icon: 'explore', label: 'Explore', path: '/discover' },
+              { icon: 'notifications', label: 'Notifications', path: '/notifications' },
+              { icon: 'bookmark', label: 'Bookmarks', path: '/bookmarks' },
+              { icon: 'person', label: 'Profile', path: '/profile' },
             ].map((item, idx) => (
               <button 
                 key={idx}
-                className={`flex items-center gap-4 p-4 rounded-2xl transition-all ${item.active ? 'bg-sunset-fade text-coral-flame font-bold' : 'text-brandwood hover:bg-sunset-fade/50'}`}
+                onClick={() => navigate(item.path)}
+                className="flex items-center gap-4 p-4 rounded-2xl transition-all text-brandwood hover:bg-sunset-fade/50 hover:text-coral-flame"
               >
                 <span className="material-symbols-outlined text-2xl">{item.icon}</span>
                 <span className="text-lg tracking-tight">{item.label}</span>
@@ -434,15 +435,24 @@ const handleLike = async (postId: string) => {
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-4 mb-6 px-4">
-            {(['discussions', 'research', 'questions', 'news', 'leaderboard'] as const).map(tab => (
+          <div className="flex gap-4 mb-6 px-4 overflow-x-auto">
+            {([
+              { key: 'discussions', label: 'Discussion', icon: <MessageSquare size={14} /> },
+              { key: 'research', label: 'Research', icon: <FileText size={14} /> },
+              { key: 'news', label: 'News', icon: <RefreshCw size={14} /> },
+              { key: 'questions', label: 'Questions', icon: <HelpCircle size={14} /> },
+              { key: 'leaderboard', label: 'Leaderboard', icon: <Users size={14} /> },
+            ] as const).map(tab => (
               <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`pb-3 text-xs font-bold uppercase tracking-widest relative transition-colors ${activeTab === tab ? 'text-coral-flame' : 'text-text-muted hover:text-brandwood'}`}
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`flex items-center gap-2 pb-3 text-xs font-bold uppercase tracking-widest relative transition-colors whitespace-nowrap ${
+                  activeTab === tab.key ? 'text-coral-flame' : 'text-text-muted hover:text-brandwood'
+                }`}
               >
-                {tab}
-                {activeTab === tab && (
+                {tab.icon}
+                {tab.label}
+                {activeTab === tab.key && (
                   <motion.div layoutId="tabIndicator" className="absolute bottom-0 left-0 right-0 h-1 bg-coral-flame rounded-t-lg" />
                 )}
               </button>
@@ -622,33 +632,14 @@ const handleLike = async (postId: string) => {
                       )}
 
                       {/* Interactions */}
-                      <div className="flex items-center gap-8 mt-4 pt-4 border-t border-blush-mist" onClick={(e) => e.stopPropagation()}>
-                        <button 
-                          onClick={() => handleLike(post.id)}
-                          className="flex items-center gap-2 text-text-muted hover:text-coral-flame transition-colors group"
-                        >
-                          <div className="p-2 rounded-full group-hover:bg-coral-flame/10 transition-colors">
-                            <Heart size={18} />
-                          </div>
-                          <span className="text-xs font-medium">{post.likes}</span>
-                        </button>
-                        <button 
-                          onClick={() => navigate(`/post/${post.id}#comments`)}
-                          className="flex items-center gap-2 text-text-muted hover:text-mint-action transition-colors group"
-                        >
-                          <div className="p-2 rounded-full group-hover:bg-mint-action/10 transition-colors">
-                            <MessageSquare size={18} />
-                          </div>
-                          <span className="text-xs font-medium">{post.commentCount}</span>
-                        </button>
-                        <button 
-                          onClick={() => handleShare(post.id)}
-                          className="text-text-muted hover:text-[#847dff] transition-colors group ml-auto"
-                        >
-                          <div className="p-2 rounded-full group-hover:bg-[#847dff]/10 transition-colors">
-                            <Share2 size={18} />
-                          </div>
-                        </button>
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <PostActions
+                          postId={post.id}
+                          likes={post.likes}
+                          commentCount={post.commentCount}
+                          compact={true}
+                          onCommentClick={() => navigate(`/post/${post.id}#comments`)}
+                        />
                       </div>
                     </div>
                   </div>
