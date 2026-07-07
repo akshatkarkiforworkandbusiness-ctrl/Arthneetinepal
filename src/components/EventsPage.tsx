@@ -11,6 +11,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Calendar, Plus, X, ImagePlus, Loader2, MapPin, Clock, Download, Edit2, CheckCircle2, ChevronRight, Share2, Trash2 } from 'lucide-react';
 import AnimatedEventCard from './AnimatedEventCard';
 import { Brand3DText } from './Brand3DText';
+import AdminSetup from './AdminSetup';
 
 const EventScene = lazy(() => import('./EventScene'));
 
@@ -463,6 +464,9 @@ export default function EventsPage() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Admin Setup Button (temporary - remove after setting up admin) */}
+      {!isAdmin && <AdminSetup />}
     </main>
   );
 }
