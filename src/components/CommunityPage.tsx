@@ -19,6 +19,7 @@ import { GradientCard } from './GradientCard';
 import LeaderboardPage from './LeaderboardPage';
 import CommunityAssistant from './CommunityAssistant';
 import PostActions from './PostActions';
+import SeedButton from './SeedButton';
 import {
   TRENDING_SECTORS,
   SECTOR_ICONS,
@@ -847,6 +848,9 @@ const handleLike = async (postId: string) => {
         isOpen={showCommunityAssistant} 
         onClose={() => setShowCommunityAssistant(false)} 
       />
+
+      {/* Seed Button (temporary - remove after seeding) */}
+      <SeedButton />
     </motion.main>
   );
 }
