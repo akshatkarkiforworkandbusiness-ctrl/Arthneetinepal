@@ -10,6 +10,7 @@ import ProfilePage from './components/ProfilePage';
 import PostDetailPage from './components/PostDetailPage';
 import NewsFeedPage from './components/NewsFeedPage';
 import TradingPage from './components/TradingPage';
+import TradingGamePage from './components/TradingGamePage';
 import LeaderboardPage from './components/LeaderboardPage';
 import PublicCertificatePage from './components/PublicCertificatePage';
 import BookmarksPage from './components/BookmarksPage';
@@ -40,6 +41,7 @@ export default function App() {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/profile/:userId" element={<ProfilePage />} />
               <Route path="/trade" element={<TradingPage />} />
+              <Route path="/trade-game" element={<TradingGamePage />} />
               <Route path="/leaderboard" element={<LeaderboardPage />} />
               <Route path="/bookmarks" element={<BookmarksPage />} />
               <Route path="/notifications" element={<NotificationsPage />} />

@@ -11,6 +11,7 @@ const navLinks = [
   { name: 'News Feed', path: '/news-feed' },
   { name: 'Learn', path: '/learn' },
   { name: 'Trade', path: '/trade' },
+  { name: 'Game', path: '/trade-game' },
   { name: 'Leaderboard', path: '/leaderboard' },
   { name: 'Community', path: '/community' },
   { name: 'Events', path: '/events' },
