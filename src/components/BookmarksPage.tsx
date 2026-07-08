@@ -6,6 +6,7 @@ import { collection, query, orderBy, onSnapshot, doc, deleteDoc } from 'firebase
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
 import type { Post } from '../types/post';
 
 interface BookmarkData {
@@ -72,6 +73,7 @@ export default function BookmarksPage() {
       setLoading(false);
     } catch (error) {
       console.error('Error fetching posts:', error);
+      toast.error('Failed to load bookmarked posts');
       setLoading(false);
     }
   };

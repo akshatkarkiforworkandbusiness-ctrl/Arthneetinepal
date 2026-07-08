@@ -41,8 +41,14 @@ export async function unlockPortfolio(): Promise<{ portfolio: Portfolio }> {
     headers,
   });
   if (!res.ok) {
-    const errorData = await res.json() as any;
-    throw new Error(errorData.error || 'Failed to unlock trading portfolio');
+    let errorMessage = 'Failed to unlock trading portfolio';
+    try {
+      const errorData = await res.json() as any;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // Response body is not JSON
+    }
+    throw new Error(errorMessage);
   }
   return res.json();
 }
@@ -55,8 +61,14 @@ export async function executeTrade(symbol: string, side: 'buy' | 'sell', qty: nu
     body: JSON.stringify({ symbol, side, qty }),
   });
   if (!res.ok) {
-    const errorData = await res.json() as any;
-    throw new Error(errorData.error || 'Failed to execute trade');
+    let errorMessage = 'Failed to execute trade';
+    try {
+      const errorData = await res.json() as any;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // Response body is not JSON
+    }
+    throw new Error(errorMessage);
   }
   return res.json();
 }

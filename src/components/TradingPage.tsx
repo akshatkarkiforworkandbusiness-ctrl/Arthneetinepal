@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { 
   TrendingUp, TrendingDown, DollarSign, Briefcase, History, 
@@ -13,7 +12,6 @@ import { fetchStocks, StockRow } from '../lib/nepseApi';
 import { unlockPortfolio, executeTrade, Portfolio, Trade } from '../lib/tradingApi';
 
 export default function TradingPage() {
-  const navigate = useNavigate();
   const { user, profile, updateProfile, loading: authLoading, handleJoinAction } = useAuth();
   
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
@@ -22,8 +20,6 @@ export default function TradingPage() {
   const [loading, setLoading] = useState(true);
   const [tradingLoading, setTradingLoading] = useState(false);
   const [loadingStocks, setLoadingStocks] = useState(true);
-  const [progressLoaded, setProgressLoaded] = useState(false);
-  const [hasUnlockedModule, setHasUnlockedModule] = useState(false);
   
   // Order ticket state
   const [orderSide, setOrderSide] = useState<'buy' | 'sell'>('buy');
@@ -33,31 +29,10 @@ export default function TradingPage() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // 1. Fetch user progress to check if module is completed
+  // 1. Fetch/listen to user portfolio & trades
   useEffect(() => {
-    if (!user) return;
-    const progressRef = doc(db, 'users', user.uid, 'progress', 'lessons');
-    const unsubscribe = onSnapshot(progressRef, (snap) => {
-      if (snap.exists()) {
-        const data = snap.data();
-        const score = data.masterExamScores?.['investing-markets'] || 0;
-        setHasUnlockedModule(score >= 80);
-      } else {
-        setHasUnlockedModule(false);
-      }
-      setProgressLoaded(true);
-    }, (error) => {
-      console.error("Error loading progress:", error);
-      setProgressLoaded(true);
-    });
-
-    return () => unsubscribe();
-  }, [user]);
-
-  // 2. Fetch/listen to user portfolio & trades
-  useEffect(() => {
-    if (!user || !hasUnlockedModule) {
-      if (progressLoaded) setLoading(false);
+    if (!user) {
+      setLoading(false);
       return;
     }
 
@@ -89,9 +64,9 @@ export default function TradingPage() {
       unsubPortfolio();
       unsubTrades();
     };
-  }, [user, hasUnlockedModule, progressLoaded]);
+  }, [user]);
 
-  // 3. Fetch live stock list
+  // 2. Fetch live stock list
   const getStocks = async () => {
     setIsRefreshing(true);
     setLoadingStocks(true);
@@ -188,108 +163,83 @@ export default function TradingPage() {
   const hasAppliedFL = portfolio?.appliedBonuses?.includes('financial-literacy');
   const hasAppliedER = portfolio?.appliedBonuses?.includes('economics-research');
 
+  const upperSymbol = selectedSymbol.toUpperCase();
+
   // Filter stocks for dropdown
   const filteredStocks = searchQuery.trim() === ''
     ? stocks.slice(0, 10)
     : stocks.filter(s => s.symbol.includes(searchQuery.toUpperCase()) || s.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 8);
 
-  if (authLoading || (user && !progressLoaded)) {
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-[#090a0b] flex items-center justify-center text-white">
         <RefreshCw className="animate-spin text-[#dc143c] mr-3" size={32} />
-        <span className="font-bold tracking-widest text-sm uppercase">Loading Virtual Account...</span>
+        <span className="font-bold tracking-widest text-sm uppercase">Loading...</span>
       </div>
     );
   }
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-[#090a0b] flex items-center justify-center p-6 text-white">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="max-w-md w-full bg-white/[0.02] border border-white/[0.06] rounded-3xl p-10 backdrop-blur-md shadow-2xl text-center"
-        >
-          <div className="w-20 h-20 bg-[#003893]/10 border border-[#003893]/20 text-[#3b82f6] rounded-full flex items-center justify-center mx-auto mb-8">
-            <Lock size={40} />
-          </div>
-          <h2 className="text-3xl font-display font-medium text-white tracking-tight mb-4">Trading is for members.</h2>
-          <p className="text-[#9f9fa0] text-sm leading-relaxed mb-8">
-            Join the Arthneeti Virtual Trading League to learn stock analysis, build portfolios, and earn certifications.
-          </p>
-          <button 
-            onClick={handleJoinAction}
-            className="w-full py-4 bg-[#dc143c] hover:bg-[#b01030] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-colors shadow-lg shadow-[#dc143c]/20 flex justify-center items-center gap-2"
-          >
-            Sign Up / Log In
-          </button>
-        </motion.div>
-      </div>
-    );
-  }
-
-  // LOCKED STATE: User has not finished the required module
-  if (!hasUnlockedModule) {
-    return (
-      <div className="min-h-screen bg-[#090a0b] flex items-center justify-center p-6 text-white">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="max-w-md w-full bg-white/[0.02] border border-white/[0.06] rounded-3xl p-10 backdrop-blur-md shadow-2xl text-center"
-        >
-          <div className="w-20 h-20 bg-[#dc143c]/10 border border-[#dc143c]/20 text-[#dc143c] rounded-full flex items-center justify-center mx-auto mb-8 animate-pulse">
-            <Lock size={40} />
-          </div>
-          <h2 className="text-3xl font-display font-medium text-white tracking-tight mb-4">Lock in knowledge first.</h2>
-          <p className="text-[#9f9fa0] text-sm leading-relaxed mb-8">
-            To prevent trading blindly, we require you to complete the **Investing & Markets** module exam (with a score of 80% or higher) before unlocking your virtual stock portfolio.
-          </p>
-          <Link 
-            to="/learn/investing-markets" 
-            className="inline-flex w-full py-4 bg-[#dc143c] hover:bg-[#b01030] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-colors shadow-lg shadow-[#dc143c]/20 justify-center items-center gap-2"
-          >
-            Start Learning Module
-          </Link>
-        </motion.div>
-      </div>
-    );
-  }
-
-  // NOT INITIALIZED STATE: Finished module but hasn't clicked "Unlock"
-  if (!portfolio) {
-    return (
-      <div className="min-h-screen bg-[#090a0b] flex items-center justify-center p-6 text-white">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="max-w-md w-full bg-white/[0.02] border border-white/[0.06] rounded-3xl p-10 backdrop-blur-md shadow-2xl text-center"
-        >
-          <div className="w-20 h-20 bg-green-500/10 border border-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-8">
-            <CheckCircle2 size={40} />
-          </div>
-          <h2 className="text-3xl font-display font-medium text-white tracking-tight mb-4">Course Completed!</h2>
-          <p className="text-[#9f9fa0] text-sm leading-relaxed mb-8">
-            Fantastic job! You passed the Investing & Markets exam. You are now ready to unlock your paper trading account. 
-            {"\n\n"}
-            Your starting capital will be **NPR 1,000,000**.
-          </p>
-          <button 
-            onClick={handleUnlock}
-            disabled={tradingLoading}
-            className="w-full py-4 bg-green-500 hover:bg-green-600 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-colors shadow-lg shadow-green-500/20 flex justify-center items-center gap-2"
-          >
-            {tradingLoading ? <RefreshCw className="animate-spin" size={16} /> : "Initialize Virtual Portfolio"}
-          </button>
-        </motion.div>
-      </div>
-    );
-  }
-
-  // DASHBOARD STATE
+  // DASHBOARD STATE - Always show the page
   return (
     <div className="min-h-screen bg-[#090a0b] py-24 px-6 md:px-12 text-white">
       <div className="max-w-7xl mx-auto space-y-8">
         
+        {/* Auth Banner - Show if not logged in */}
+        {!user && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-[#003893]/20 border border-[#003893]/40 rounded-3xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4"
+          >
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-[#003893]/30 rounded-2xl text-[#3b82f6] shrink-0">
+                <Info size={24} />
+              </div>
+              <div>
+                <h3 className="font-bold text-white text-lg">Sign in to start trading!</h3>
+                <p className="text-[#9f9fa0] text-sm mt-0.5">
+                  Create a free account to get NPR 1,000,000 virtual capital and trade live NEPSE stocks risk-free.
+                </p>
+              </div>
+            </div>
+            <button 
+              onClick={handleJoinAction}
+              className="px-6 py-3 bg-[#dc143c] hover:bg-[#b01030] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shrink-0"
+            >
+              Sign Up Free
+            </button>
+          </motion.div>
+        )}
+
+        {/* Portfolio Init Banner - Show if logged in but no portfolio */}
+        {user && !portfolio && !loading && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-green-500/10 border border-green-500/30 rounded-3xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4"
+          >
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-green-500/20 rounded-2xl text-green-500 shrink-0">
+                <CheckCircle2 size={24} />
+              </div>
+              <div>
+                <h3 className="font-bold text-white text-lg">Ready to trade!</h3>
+                <p className="text-[#9f9fa0] text-sm mt-0.5">
+                  Initialize your virtual portfolio with <strong className="text-white">NPR 1,000,000</strong> starting capital.
+                </p>
+              </div>
+            </div>
+            <button 
+              onClick={handleUnlock}
+              disabled={tradingLoading}
+              className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-green-500/20 flex items-center gap-2 shrink-0 disabled:opacity-50"
+            >
+              {tradingLoading ? <RefreshCw className="animate-spin" size={14} /> : null}
+              {tradingLoading ? 'Initializing...' : 'Start Trading'}
+            </button>
+          </motion.div>
+        )}
+
         {/* Header Summary */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div>
@@ -332,20 +282,21 @@ export default function TradingPage() {
             </div>
             <div className="flex gap-3">
               {!hasAppliedFL && (
-                <Link to="/learn/financial-literacy" className="px-5 py-3 bg-[#003893] hover:bg-[#002f80] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all">
+                <a href="/learn/financial-literacy" className="px-5 py-3 bg-[#003893] hover:bg-[#002f80] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all">
                   FL Exam (+10%)
-                </Link>
+                </a>
               )}
               {!hasAppliedER && (
-                <Link to="/learn/economics-research" className="px-5 py-3 bg-[#003893] hover:bg-[#002f80] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all">
+                <a href="/learn/economics-research" className="px-5 py-3 bg-[#003893] hover:bg-[#002f80] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all">
                   ER Exam (+10%)
-                </Link>
+                </a>
               )}
             </div>
           </div>
         )}
 
-        {/* Stats Grid */}
+        {/* Stats Grid - Only show when portfolio exists */}
+        {portfolio && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           
           {/* Total Value */}
@@ -392,12 +343,15 @@ export default function TradingPage() {
             </div>
           </div>
         </div>
+        )}
 
         {/* Main Content Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* Left Column: Holdings */}
           <div className="lg:col-span-8 space-y-8">
+            {portfolio ? (
+            <>
             <div className="bg-white/[0.02] border border-white/[0.06] rounded-3xl overflow-hidden shadow-xl">
               <div className="p-8 border-b border-white/[0.06] flex justify-between items-center">
                 <div className="flex items-center gap-3">
@@ -543,6 +497,17 @@ export default function TradingPage() {
                 </div>
               )}
             </div>
+            </>
+            ) : (
+              /* No portfolio placeholder */
+              <div className="bg-white/[0.02] border border-white/[0.06] rounded-3xl p-12 text-center">
+                <Briefcase className="mx-auto mb-4 text-[#9f9fa0]/20" size={48} />
+                <h3 className="text-lg font-bold text-white mb-2">Your Portfolio</h3>
+                <p className="text-sm text-[#9f9fa0]">
+                  {user ? 'Initialize your portfolio to start trading virtual stocks.' : 'Sign in to start trading virtual stocks.'}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Right Column: Order Ticket */}
@@ -555,7 +520,35 @@ export default function TradingPage() {
                 Order Ticket
               </h2>
 
-              <form onSubmit={handleOrderSubmit} className="space-y-6">
+              {!user ? (
+                /* Not logged in prompt */
+                <div className="text-center py-6">
+                  <Lock className="mx-auto mb-4 text-[#9f9fa0]/40" size={32} />
+                  <p className="text-sm text-[#9f9fa0] mb-4">Sign in to start trading</p>
+                  <button 
+                    onClick={handleJoinAction}
+                    className="w-full py-3 bg-[#dc143c] hover:bg-[#b01030] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-colors"
+                  >
+                    Sign Up Free
+                  </button>
+                </div>
+              ) : !portfolio ? (
+                /* No portfolio prompt */
+                <div className="text-center py-6">
+                  <CheckCircle2 className="mx-auto mb-4 text-green-500/40" size={32} />
+                  <p className="text-sm text-[#9f9fa0] mb-4">Initialize your portfolio to start trading</p>
+                  <button 
+                    onClick={handleUnlock}
+                    disabled={tradingLoading}
+                    className="w-full py-3 bg-green-500 hover:bg-green-600 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {tradingLoading ? <RefreshCw className="animate-spin" size={14} /> : null}
+                    {tradingLoading ? 'Initializing...' : 'Start Trading'}
+                  </button>
+                </div>
+              ) : (
+                /* Full order form */
+                <form onSubmit={handleOrderSubmit} className="space-y-6">
                 
                 {/* Buy/Sell selector */}
                 <div className="flex bg-white/5 p-1 rounded-xl border border-white/10">
@@ -724,6 +717,7 @@ export default function TradingPage() {
                   {tradingLoading ? <RefreshCw className="animate-spin" size={16} /> : `Execute ${orderSide.toUpperCase()} Order`}
                 </button>
               </form>
+              )}
             </div>
             
             {/* Rules Quick Info */}

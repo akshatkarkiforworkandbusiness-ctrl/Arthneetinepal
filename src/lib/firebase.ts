@@ -17,10 +17,10 @@ const missingVars = requiredEnvVars.filter(
 );
 
 if (missingVars.length > 0) {
-  console.error(
-    `Missing required Firebase environment variables: ${missingVars.join(', ')}. ` +
-    'Please create a .env file with these variables set. See .env.example for reference.'
-  );
+  const errorMsg = `Missing required Firebase environment variables: ${missingVars.join(', ')}. ` +
+    'Please create a .env file with these variables set. See .env.example for reference.';
+  console.error(errorMsg);
+  throw new Error(errorMsg);
 }
 
 const firebaseConfig = {

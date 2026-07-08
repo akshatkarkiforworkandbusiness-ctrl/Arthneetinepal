@@ -1927,7 +1927,7 @@ const TAG_COLORS: Record<string, string> = {
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function LearnPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
   const [certificateModule, setCertificateModule] = useState<string | null>(null);
@@ -1951,17 +1951,21 @@ export default function LearnPage() {
   // ── Load completed lessons from Firestore ──────────────────────────────────
   useEffect(() => {
     if (!user) return;
-    const fetch = async () => {
-      const snap = await getDoc(doc(db, 'users', user.uid, 'progress', 'lessons'));
-      if (snap.exists()) {
-        const data = snap.data();
-        setCompleted(new Set(data.completed || []));
-        setQuizScores(data.quizScores || {});
-        setMasterExamScores(data.masterExamScores || {});
-        setBadges(new Set(data.badges || []));
+    const fetchProgress = async () => {
+      try {
+        const snap = await getDoc(doc(db, 'users', user.uid, 'progress', 'lessons'));
+        if (snap.exists()) {
+          const data = snap.data();
+          setCompleted(new Set(data.completed || []));
+          setQuizScores(data.quizScores || {});
+          setMasterExamScores(data.masterExamScores || {});
+          setBadges(new Set(data.badges || []));
+        }
+      } catch (err) {
+        console.error('Failed to load progress:', err);
       }
     };
-    fetch();
+    fetchProgress();
   }, [user]);
 
   const submitQuiz = async (lessonId: string, scorePercent: number) => {

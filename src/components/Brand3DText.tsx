@@ -56,12 +56,17 @@ export function Brand3DText({ className = '', light = false }: { className?: str
     
     ambientRef.current = ambient;
 
-    el.addEventListener('mouseenter', () => ambient.pause());
-    el.addEventListener('mouseleave', () => ambient.play());
+    const handleMouseEnter = () => ambient.pause();
+    const handleMouseLeaveAmbient = () => ambient.play();
+    
+    el.addEventListener('mouseenter', handleMouseEnter);
+    el.addEventListener('mouseleave', handleMouseLeaveAmbient);
 
     return () => {
       el.removeEventListener('mousemove', handleMouseMove);
       el.removeEventListener('mouseleave', handleMouseLeave);
+      el.removeEventListener('mouseenter', handleMouseEnter);
+      el.removeEventListener('mouseleave', handleMouseLeaveAmbient);
       ambient.pause();
     };
   }, []);

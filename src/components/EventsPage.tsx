@@ -79,11 +79,15 @@ export default function EventsPage() {
 
   const loadMore = async () => {
     if (!lastDoc || !hasMore) return;
-    const q = query(collection(db, 'events'), orderBy('dateTime', 'asc'), startAfter(lastDoc), limit(PAGE_SIZE));
-    const snapshot = await getDocs(q);
-    setEvents(prev => [...prev, ...snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Event))]);
-    setLastDoc(snapshot.docs[snapshot.docs.length - 1] ?? null);
-    setHasMore(snapshot.docs.length === PAGE_SIZE);
+    try {
+      const q = query(collection(db, 'events'), orderBy('dateTime', 'asc'), startAfter(lastDoc), limit(PAGE_SIZE));
+      const snapshot = await getDocs(q);
+      setEvents(prev => [...prev, ...snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Event))]);
+      setLastDoc(snapshot.docs[snapshot.docs.length - 1] ?? null);
+      setHasMore(snapshot.docs.length === PAGE_SIZE);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.LIST, 'events');
+    }
   };
 
   useEffect(() => {

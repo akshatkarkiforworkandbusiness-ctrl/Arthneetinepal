@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { Printer, Share2, Award, RefreshCw, ChevronLeft, Check } from 'lucide-react';
 import { db } from '../lib/firebase';
 import { doc, getDoc, collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
+import { fetchStocks } from '../lib/nepseApi';
 
 interface CertificateData {
   uid: string;
@@ -52,43 +53,40 @@ export default function PublicCertificatePage() {
                 const portfolio = portfolioSnap.data();
                 
                 // Fetch stocks to compute live MTM returns
-                const stocksRes = await fetch("https://shubhamnpk.github.io/yonepse/data/nepse_data.json");
-                if (stocksRes.ok) {
-                  const stocksData = await stocksRes.json() as any[];
-                  let holdingsValue = 0;
-                  for (const [sym, pos] of Object.entries(portfolio.holdings as Record<string, { qty: number; avgCost: number }>)) {
-                    const stock = stocksData.find(s => s.symbol === sym);
-                    const ltp = stock ? Number(stock.ltp) : pos.avgCost;
-                    holdingsValue += pos.qty * ltp;
-                  }
-                  const totalValue = portfolio.cash + holdingsValue;
-                  const returnPercent = ((totalValue - portfolio.startingCapital) / portfolio.startingCapital) * 100;
+                const stocksData = await fetchStocks();
+                let holdingsValue = 0;
+                for (const [sym, pos] of Object.entries(portfolio.holdings as Record<string, { qty: number; avgCost: number }>)) {
+                  const stock = stocksData.find(s => s.symbol === sym);
+                  const ltp = stock ? stock.ltp : pos.avgCost;
+                  holdingsValue += pos.qty * ltp;
+                }
+                const totalValue = portfolio.cash + holdingsValue;
+                const returnPercent = ((totalValue - portfolio.startingCapital) / portfolio.startingCapital) * 100;
 
-                  // 4. Fetch latest season leaderboard to compare
-                  const now = new Date();
-                  const seasonId = `${now.getFullYear()}-Q${Math.floor(now.getMonth() / 3) + 1}`;
-                  const q = query(
-                    collection(db, 'leaderboards'),
-                    where('scope', '==', 'national'),
-                    where('period', '==', 'season'),
-                    orderBy('computedAt', 'desc'),
-                    limit(1)
-                  );
-                  const leaderboardsSnap = await getDocs(q);
-                  if (!leaderboardsSnap.empty) {
-                    const entries = leaderboardsSnap.docs[0].data().entries as any[];
-                    if (entries.length > 0) {
-                      // Calculate median return percent
-                      const sortedReturns = entries.map(e => e.returnPercent).sort((a, b) => a - b);
-                      const mid = Math.floor(sortedReturns.length / 2);
-                      const medianReturn = sortedReturns.length % 2 !== 0 
-                        ? sortedReturns[mid] 
-                        : (sortedReturns[mid - 1] + sortedReturns[mid]) / 2;
+                // 4. Fetch latest season leaderboard to compare
+                const now = new Date();
+                const seasonId = `${now.getFullYear()}-Q${Math.floor(now.getMonth() / 3) + 1}`;
+                const q = query(
+                  collection(db, 'leaderboards'),
+                  where('scope', '==', 'national'),
+                  where('period', '==', 'season'),
+                  orderBy('computedAt', 'desc'),
+                  limit(1)
+                );
+                const leaderboardsSnap = await getDocs(q);
+                if (!leaderboardsSnap.empty) {
+                  const entries = leaderboardsSnap.docs[0].data().entries as any[];
+                  if (entries.length > 0) {
+                    // Calculate median return percent
+                    const sortedReturns = entries.map(e => e.returnPercent).sort((a, b) => a - b);
+                    const mid = Math.floor(sortedReturns.length / 2);
+                    const medianReturn = sortedReturns.length % 2 !== 0 
+                      ? sortedReturns[mid] 
+                      : (sortedReturns[mid - 1] + sortedReturns[mid]) / 2;
 
-                      // Check if user beat the median return
-                      if (returnPercent > medianReturn) {
-                        setIsTopPerformer(true);
-                      }
+                    // Check if user beat the median return
+                    if (returnPercent > medianReturn) {
+                      setIsTopPerformer(true);
                     }
                   }
                 }

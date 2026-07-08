@@ -554,26 +554,6 @@ export default function TradingGamePage() {
     );
   }
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-[#090a0b] flex items-center justify-center p-6 text-white">
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-          className="max-w-md w-full bg-white/[0.02] border border-white/[0.06] rounded-3xl p-10 backdrop-blur-md shadow-2xl text-center">
-          <div className="w-20 h-20 bg-[#003893]/10 border border-[#003893]/20 text-[#3b82f6] rounded-full flex items-center justify-center mx-auto mb-8">
-            <Lock size={40} />
-          </div>
-          <h2 className="text-3xl font-display font-medium text-white tracking-tight mb-4">Trading Game</h2>
-          <p className="text-[#9f9fa0] text-sm leading-relaxed mb-8">
-            Sign in to play the Arthneeti Trading Simulator and test your financial knowledge.
-          </p>
-          <Link to="/" className="inline-flex w-full py-4 bg-[#dc143c] hover:bg-[#b01030] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-colors justify-center items-center gap-2">
-            Go to Home
-          </Link>
-        </motion.div>
-      </div>
-    );
-  }
-
   if (!gameStarted) {
     return (
       <div className="min-h-screen bg-[#090a0b] flex items-center justify-center p-6 text-white">
@@ -634,6 +614,24 @@ export default function TradingGamePage() {
   return (
     <div className="min-h-screen bg-[#090a0b] py-24 px-6 md:px-12 text-white">
       <div className="max-w-7xl mx-auto space-y-8">
+
+        {/* Sign-in banner */}
+        {!user && (
+          <div className="bg-amber-400/10 border border-amber-400/20 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-amber-400/20 rounded-full flex items-center justify-center">
+                <Lock size={20} className="text-amber-400" />
+              </div>
+              <div>
+                <p className="text-amber-200 font-bold text-sm">Playing as Guest</p>
+                <p className="text-amber-200/60 text-xs">Sign in to save your progress and compete on the leaderboard</p>
+              </div>
+            </div>
+            <Link to="/" className="px-4 py-2 bg-amber-400 hover:bg-amber-300 text-black font-bold text-[10px] uppercase tracking-widest rounded-xl transition-colors">
+              Sign In
+            </Link>
+          </div>
+        )}
 
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">

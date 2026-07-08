@@ -8,6 +8,7 @@ import { collection, query, where, orderBy, onSnapshot, doc, getDoc } from 'fire
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
 
 interface UserPost {
   id: string;
@@ -111,6 +112,7 @@ export default function ProfilePage() {
         }
       } catch (err) {
         console.error("Failed to load progress", err);
+        toast.error('Failed to load learning progress');
       } finally {
         setLoadingProgress(false);
       }
@@ -162,6 +164,7 @@ export default function ProfilePage() {
       setShowEditModal(false);
     } catch (err) {
       console.error('Failed to save profile:', err);
+      toast.error('Failed to save profile');
     } finally {
       setSaving(false);
     }

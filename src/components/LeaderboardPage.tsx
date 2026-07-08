@@ -72,7 +72,10 @@ export default function LeaderboardPage({ isEmbedded = false }: { isEmbedded?: b
   const forceSnapshot = async () => {
     setTriggeringSnapshot(true);
     try {
-      const userToken = await user?.getIdToken();
+      if (!user) {
+        throw new Error("You must be logged in to refresh rankings.");
+      }
+      const userToken = await user.getIdToken();
       const res = await fetch('/api/leaderboard/snapshot', {
         method: 'POST',
         headers: {
