@@ -115,9 +115,9 @@ export default function MissionPage() {
           {/* Region Labels */}
           <div className="grid grid-cols-3 gap-4 max-w-4xl mx-auto">
             {[
-              { name: 'Terai', nameNp: 'तराई', desc: 'Southern Plains', color: '#10b981' },
-              { name: 'Hilly', nameNp: 'पहाडी', desc: 'Central Midlands', color: '#059669' },
-              { name: 'Himalayan', nameNp: 'हिमाली', desc: 'Northern Peaks', color: '#047857' },
+              { name: 'Terai', nameNp: 'तराई', desc: 'Southern Plains', color: '#847dff' },
+              { name: 'Hilly', nameNp: 'पहाडी', desc: 'Central Midlands', color: '#3b82f6' },
+              { name: 'Himalayan', nameNp: 'हिमाली', desc: 'Northern Peaks', color: '#003893' },
             ].map((region, idx) => (
               <motion.div
                 key={region.name}
@@ -153,7 +153,7 @@ export default function MissionPage() {
             whileHover={cardHover}
             whileTap={cardTap}
             onClick={() => setExpandedMission(!expandedMission)}
-            className="bg-gradient-to-br from-emerald-50 to-white p-8 rounded-3xl border border-emerald-200 cursor-pointer group"
+            className="bg-gradient-to-br from-blue-50 to-white p-8 rounded-3xl border border-blue-200 cursor-pointer group"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900">{MISSION_VISION.mission.title}</h2>
@@ -161,7 +161,7 @@ export default function MissionPage() {
                 animate={{ rotate: expandedMission ? 180 : 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <ChevronRight className="w-6 h-6 text-emerald-600" />
+                <ChevronRight className="w-6 h-6 text-blue-600" />
               </motion.div>
             </div>
             
@@ -177,14 +177,14 @@ export default function MissionPage() {
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.4 }}
                 >
-                  <p className="text-gray-600 leading-relaxed mt-4 pt-4 border-t border-emerald-200">
+                  <p className="text-gray-600 leading-relaxed mt-4 pt-4 border-t border-blue-200">
                     {MISSION_VISION.mission.description}
                   </p>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <div className="mt-6 flex items-center gap-2 text-sm text-emerald-600 font-semibold group-hover:gap-3 transition-all">
+            <div className="mt-6 flex items-center gap-2 text-sm text-blue-600 font-semibold group-hover:gap-3 transition-all">
               {expandedMission ? 'Show less' : 'Read more'} <ArrowUpRight className="w-4 h-4" />
             </div>
           </motion.div>
@@ -198,7 +198,7 @@ export default function MissionPage() {
             whileHover={cardHover}
             whileTap={cardTap}
             onClick={() => setExpandedVision(!expandedVision)}
-            className="bg-gradient-to-br from-emerald-50 to-white p-8 rounded-3xl border border-emerald-200 cursor-pointer group"
+            className="bg-gradient-to-br from-blue-50 to-white p-8 rounded-3xl border border-blue-200 cursor-pointer group"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900">{MISSION_VISION.vision.title}</h2>
@@ -206,7 +206,7 @@ export default function MissionPage() {
                 animate={{ rotate: expandedVision ? 180 : 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <ChevronRight className="w-6 h-6 text-emerald-600" />
+                <ChevronRight className="w-6 h-6 text-blue-600" />
               </motion.div>
             </div>
             
@@ -222,14 +222,14 @@ export default function MissionPage() {
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.4 }}
                 >
-                  <p className="text-gray-600 leading-relaxed mt-4 pt-4 border-t border-emerald-200">
+                  <p className="text-gray-600 leading-relaxed mt-4 pt-4 border-t border-blue-200">
                     {MISSION_VISION.vision.description}
                   </p>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <div className="mt-6 flex items-center gap-2 text-sm text-emerald-600 font-semibold group-hover:gap-3 transition-all">
+            <div className="mt-6 flex items-center gap-2 text-sm text-blue-600 font-semibold group-hover:gap-3 transition-all">
               {expandedVision ? 'Show less' : 'Read more'} <ArrowUpRight className="w-4 h-4" />
             </div>
           </motion.div>
@@ -269,14 +269,14 @@ export default function MissionPage() {
                 className="bg-white p-6 rounded-2xl border border-gray-200 cursor-pointer group relative overflow-hidden shadow-sm"
               >
                 {/* Hover gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 
                 <div className="relative z-10">
                   <div className="flex items-center gap-4 mb-4">
                     <span className="text-3xl">{value.icon}</span>
                     <div>
                       <h3 className="text-xl font-bold text-gray-900">{value.title}</h3>
-                      <p className="text-sm text-emerald-600 font-medium">{value.titleEnglish}</p>
+                      <p className="text-sm text-blue-600 font-medium">{value.titleEnglish}</p>
                     </div>
                   </div>
 
@@ -334,8 +334,8 @@ export default function MissionPage() {
                 onClick={() => setSelectedTeaching(selectedTeaching === teaching.id ? null : teaching.id)}
                 className={`bg-white p-8 rounded-3xl border-2 cursor-pointer transition-colors duration-300 ${
                   selectedTeaching === teaching.id 
-                    ? 'border-emerald-500 shadow-lg shadow-emerald-500/10' 
-                    : 'border-gray-200 hover:border-emerald-300'
+                    ? 'border-blue-500 shadow-lg shadow-blue-500/10' 
+                    : 'border-gray-200 hover:border-blue-300'
                 }`}
               >
                 <span className="text-4xl mb-4 block">{teaching.icon}</span>
@@ -361,7 +361,7 @@ export default function MissionPage() {
                               transition={{ delay: detailIdx * 0.1 }}
                               className="flex items-center gap-2 text-sm text-gray-600"
                             >
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                              <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                               {detail}
                             </motion.li>
                           ))}
@@ -371,7 +371,7 @@ export default function MissionPage() {
                   )}
                 </AnimatePresence>
 
-                <div className="mt-6 flex items-center gap-2 text-sm font-semibold text-emerald-600 group-hover:gap-3 transition-all">
+                <div className="mt-6 flex items-center gap-2 text-sm font-semibold text-blue-600 group-hover:gap-3 transition-all">
                   {selectedTeaching === teaching.id ? 'Show less' : 'Learn more'} <ChevronRight className="w-4 h-4" />
                 </div>
               </motion.div>
@@ -388,7 +388,7 @@ export default function MissionPage() {
           >
             <Link
               to="/learn"
-              className="inline-flex items-center gap-2 bg-emerald-600 text-white px-8 py-4 rounded-full font-semibold hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/30"
+              className="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-full font-semibold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/30"
             >
               Start Learning <ChevronRight className="w-5 h-5" />
             </Link>
@@ -430,7 +430,7 @@ export default function MissionPage() {
                   />
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 mb-1">{member.name}</h3>
-                <p className="text-emerald-600 font-medium text-sm tracking-wide uppercase mb-2">{member.role}</p>
+                <p className="text-blue-600 font-medium text-sm tracking-wide uppercase mb-2">{member.role}</p>
                 <p className="text-xs text-gray-500 leading-relaxed">{member.bio}</p>
               </motion.div>
             ))}
@@ -460,7 +460,7 @@ export default function MissionPage() {
                 whileTap={{ scale: 0.95 }}
                 className="flex items-center gap-3 bg-white px-6 py-4 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
               >
-                <Mail className="w-5 h-5 text-emerald-600" />
+                <Mail className="w-5 h-5 text-blue-600" />
                 <span className="text-gray-700">contact@arthneeti.com</span>
               </motion.a>
 
@@ -470,7 +470,7 @@ export default function MissionPage() {
                 whileTap={{ scale: 0.95 }}
                 className="flex items-center gap-3 bg-white px-6 py-4 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
               >
-                <Instagram className="w-5 h-5 text-emerald-600" />
+                <Instagram className="w-5 h-5 text-blue-600" />
                 <span className="text-gray-700">@arthneeti</span>
               </motion.a>
 
@@ -480,7 +480,7 @@ export default function MissionPage() {
                 whileTap={{ scale: 0.95 }}
                 className="flex items-center gap-3 bg-white px-6 py-4 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
               >
-                <Phone className="w-5 h-5 text-emerald-600" />
+                <Phone className="w-5 h-5 text-blue-600" />
                 <span className="text-gray-700">+977-XXXXXXXXX</span>
               </motion.a>
             </div>
