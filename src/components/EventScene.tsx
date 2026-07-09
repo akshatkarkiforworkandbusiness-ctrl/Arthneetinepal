@@ -4,7 +4,7 @@ import * as THREE from 'three';
 
 /* ── Floating Particles Background ───────────────────────────────── */
 
-function Particles({ count = 80, color = '#00f59b' }: { count?: number; color?: string }) {
+function Particles({ count = 80, color = '#059669' }: { count?: number; color?: string }) {
   const mesh = useRef<THREE.Points>(null!);
   const light = useRef<THREE.PointLight>(null!);
 
@@ -67,7 +67,7 @@ function FloatingRing({ position, scale = 1, speed = 1 }: { position: [number, n
   return (
     <mesh ref={ref} position={position} scale={scale}>
       <torusGeometry args={[1, 0.03, 16, 64]} />
-      <meshStandardMaterial color="#00875a" transparent opacity={0.25} />
+      <meshStandardMaterial color="#047857" transparent opacity={0.25} />
     </mesh>
   );
 }
@@ -79,8 +79,8 @@ export default function EventScene({ className = '' }: { className?: string }) {
     <div className={`absolute inset-0 pointer-events-none ${className}`} style={{ zIndex: 0 }}>
       <Canvas camera={{ position: [0, 0, 6], fov: 50 }} gl={{ alpha: true, antialias: false }} dpr={[1, 1.5]}>
         <ambientLight intensity={0.1} />
-        <Particles count={60} color="#00f59b" />
-        <Particles count={30} color="#00875a" />
+        <Particles count={60} color="#059669" />
+        <Particles count={30} color="#047857" />
         <FloatingRing position={[-4, 2, -3]} scale={0.8} speed={0.6} />
         <FloatingRing position={[5, -1, -4]} scale={1.2} speed={0.4} />
         <FloatingRing position={[0, 3, -5]} scale={0.6} speed={0.8} />

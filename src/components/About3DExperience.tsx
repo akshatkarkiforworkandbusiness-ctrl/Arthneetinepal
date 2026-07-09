@@ -9,7 +9,7 @@ const CONTENT_NODES = [
   {
     id: 'mission',
     title: 'Our Mission',
-    color: '#93c5fd', // light blue
+    color: '#059669',
     position: [0, 1.5, 2.5] as [number, number, number],
     rotation: [0, 0, 0] as [number, number, number],
     content: "Empowering Nepal's next generation with real financial intelligence. We travel across Nepal, bringing interactive workshops to every high school student.",
@@ -18,7 +18,7 @@ const CONTENT_NODES = [
   {
     id: 'work',
     title: 'Our Work',
-    color: '#c4b5fd', // light purple
+    color: '#10b981',
     position: [2.5, -0.5, 1.5] as [number, number, number],
     rotation: [0, Math.PI / 6, 0] as [number, number, number],
     content: "We provide full session curriculums, professional guest speakers, and simulated markets. Active in over 50 schools nationwide.",
@@ -27,7 +27,7 @@ const CONTENT_NODES = [
   {
     id: 'values',
     title: 'Core Values',
-    color: '#7eb8ff', // soft blue
+    color: '#047857',
     position: [-2.5, -0.5, 1.5] as [number, number, number],
     rotation: [0, -Math.PI / 6, 0] as [number, number, number],
     content: "Knowledge First. Prosperity for All. Grounded in Truth. We believe financial freedom is a skill, not a privilege.",
@@ -36,7 +36,7 @@ const CONTENT_NODES = [
   {
     id: 'features',
     title: 'The Platform',
-    color: '#fcd34d', // light amber
+    color: '#10b981',
     position: [0, -2, 2.5] as [number, number, number],
     rotation: [0, 0, 0] as [number, number, number],
     content: "Track live NEPSE data, take guided video courses, test your knowledge with quizzes, and earn printable certificates.",
@@ -138,37 +138,99 @@ function CardNode({ data, activeId, setActiveId }: { data: typeof CONTENT_NODES[
 import { AnimatePresence } from 'motion/react';
 
 function AbstractCore() {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const groupRef = useRef<THREE.Group>(null);
   
   useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = state.clock.elapsedTime * 0.2;
-      meshRef.current.rotation.x = state.clock.elapsedTime * 0.1;
+    if (groupRef.current) {
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.15;
+      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.1) * 0.1;
     }
   });
 
+  // Folded note geometry — warped plane like a banknote caught mid-fold
+  const noteGeo = useMemo(() => {
+    const geo = new THREE.PlaneGeometry(2.4, 1.6, 32, 32);
+    const pos = geo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i);
+      const y = pos.getY(i);
+      // Fold along the diagonal — creates a crease
+      const fold = Math.sin((x + y) * 1.2) * 0.15;
+      // Slight curl at edges
+      const edgeCurl = Math.cos(x * 1.5) * 0.08 + Math.sin(y * 1.8) * 0.06;
+      pos.setZ(i, fold + edgeCurl);
+    }
+    geo.computeVertexNormals();
+    return geo;
+  }, []);
+
+  // Guilloché-style wireframe overlay — concentric arcs like security-print linework
+  const guillocheCount = 6;
+  const guilloche = useMemo(() => {
+    const geos: THREE.BufferGeometry[] = [];
+    for (let i = 0; i < guillocheCount; i++) {
+      const r = 0.5 + i * 0.22;
+      const pts: THREE.Vector3[] = [];
+      const segs = 48;
+      for (let j = 0; j <= segs; j++) {
+        const a = (j / segs) * Math.PI * 2;
+        const wobble = Math.sin(a * 8 + i * 1.3) * 0.04;
+        pts.push(new THREE.Vector3(
+          Math.cos(a) * (r + wobble),
+          Math.sin(a) * (r + wobble) * 0.7,
+          0.02 + i * 0.005
+        ));
+      }
+      const curve = new THREE.CatmullRomCurve3(pts, true);
+      const tubeGeo = new THREE.TubeGeometry(curve, 64, 0.006, 4, true);
+      geos.push(tubeGeo);
+    }
+    return geos;
+  }, []);
+
   return (
-    <Float speed={2} rotationIntensity={1} floatIntensity={1}>
-      <mesh ref={meshRef}>
-        <icosahedronGeometry args={[1, 1]} />
-        <meshStandardMaterial 
-          color="#0B0F19" 
-          emissive="#0f172a"
-          wireframe 
-          transparent
-          opacity={0.3}
-        />
-      </mesh>
-      {/* Inner glowing core */}
-      <mesh>
-        <sphereGeometry args={[0.5, 32, 32]} />
-        <meshStandardMaterial 
-          color="#93c5fd" 
-          emissive="#6366f1" 
-          emissiveIntensity={1.5} 
-          toneMapped={false} 
-        />
-      </mesh>
+    <Float speed={1.5} rotationIntensity={0.4} floatIntensity={0.8}>
+      <group ref={groupRef}>
+        {/* Folded banknote plane — solid base */}
+        <mesh geometry={noteGeo}>
+          <meshStandardMaterial
+            color="#059669"
+            emissive="#047857"
+            emissiveIntensity={0.2}
+            transparent
+            opacity={0.45}
+            roughness={0.4}
+            metalness={0.3}
+            side={THREE.DoubleSide}
+          />
+        </mesh>
+
+        {/* Wireframe overlay — guilloché security pattern */}
+        {guilloche.map((geo, i) => (
+          <mesh key={i} geometry={geo}>
+            <meshStandardMaterial
+              color="#ffffff"
+              transparent
+              opacity={0.12 + i * 0.02}
+              emissive="#10b981"
+              emissiveIntensity={0.15}
+            />
+          </mesh>
+        ))}
+
+        {/* Central watermark region — subtle luminous rectangle */}
+        <mesh position={[0, 0, 0.04]}>
+          <planeGeometry args={[0.8, 0.5]} />
+          <meshStandardMaterial
+            color="#ffffff"
+            transparent
+            opacity={0.06}
+            emissive="#10b981"
+            emissiveIntensity={0.4}
+            side={THREE.DoubleSide}
+          />
+        </mesh>
+      </group>
     </Float>
   );
 }

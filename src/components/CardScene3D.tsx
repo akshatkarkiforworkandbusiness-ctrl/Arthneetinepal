@@ -7,7 +7,7 @@ import * as THREE from 'three';
 const CATEGORY_SHAPES: Record<string, string> = {
   Workshop: 'barchart',
   Session: 'candlestick',
-  Conference: 'globe',
+  Conference: 'seal',
   Meetup: 'piechart',
   Webinar: 'trendarrow',
   Other: 'coin',
@@ -97,49 +97,100 @@ function Candlestick({ color }: { color: string }) {
   );
 }
 
-/* ── Globe with network (Conference — global finance) ────────────── */
+/* ── Seal / Stamp Ring (Conference — official, verified) ─────────── */
 
 function Globe({ color }: { color: string }) {
-  const globeRef = useRef<THREE.Mesh>(null!);
-  const ringsRef = useRef<THREE.Group>(null!);
+  const groupRef = useRef<THREE.Group>(null!);
 
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
-    if (globeRef.current) {
-      globeRef.current.rotation.y = t * 0.3;
-      globeRef.current.rotation.x = Math.sin(t * 0.2) * 0.1;
-    }
-    if (ringsRef.current) {
-      ringsRef.current.rotation.z = t * 0.15;
+    if (groupRef.current) {
+      groupRef.current.rotation.y = t * 0.25;
+      groupRef.current.rotation.x = Math.sin(t * 0.15) * 0.08;
     }
   });
 
+  // Notched ring segments — official seal / security stamp pattern
+  const outerRing = useMemo(() => {
+    const segments: { angle: number; len: number }[] = [];
+    const count = 32;
+    for (let i = 0; i < count; i++) {
+      const angle = (i / count) * Math.PI * 2;
+      const notch = i % 4 === 0;
+      segments.push({ angle, len: notch ? 0.35 : 0.9 });
+    }
+    return segments;
+  }, []);
+
+  // Inner gear-like notched ring
+  const innerRing = useMemo(() => {
+    const segments: { angle: number; len: number }[] = [];
+    const count = 20;
+    for (let i = 0; i < count; i++) {
+      const angle = (i / count) * Math.PI * 2;
+      const notch = i % 3 === 0;
+      segments.push({ angle, len: notch ? 0.4 : 0.85 });
+    }
+    return segments;
+  }, []);
+
   return (
-    <group position={[0, 0.1, 0]}>
-      {/* Globe */}
-      <mesh ref={globeRef}>
-        <sphereGeometry args={[0.55, 32, 32]} />
-        <meshStandardMaterial color={color} transparent opacity={0.25} wireframe roughness={0.4} metalness={0.6} />
-      </mesh>
-      {/* Latitude rings */}
-      <group ref={ringsRef}>
-        {[0.4, 0.55, 0.7].map((r, i) => (
-          <mesh key={i} rotation={[Math.PI / 2, 0, i * 0.5]}>
-            <torusGeometry args={[r, 0.012, 8, 48]} />
-            <meshStandardMaterial color={color} transparent opacity={0.4} emissive={color} emissiveIntensity={0.2} />
-          </mesh>
-        ))}
-      </group>
-      {/* Nodes on surface */}
-      {[
-        [0.5, 0.2, 0.1], [-0.3, 0.4, 0.3], [0.1, -0.3, 0.5],
-        [-0.4, -0.1, -0.4], [0.3, 0.3, -0.3],
-      ].map((pos, i) => (
-        <mesh key={i} position={pos as [number, number, number]}>
-          <sphereGeometry args={[0.04, 8, 8]} />
-          <meshStandardMaterial color="#ffffff" emissive={color} emissiveIntensity={0.8} />
+    <group ref={groupRef} position={[0, 0.1, 0]}>
+      {/* Outer notched seal ring */}
+      {outerRing.map((seg, i) => (
+        <mesh key={`o${i}`} rotation={[Math.PI / 2, seg.angle, 0]}>
+          <torusGeometry args={[0.6, 0.025, 6, 12, seg.len * ((Math.PI * 2) / 32)]} />
+          <meshStandardMaterial
+            color={color}
+            transparent
+            opacity={seg.len < 1 ? 0.5 : 0.3}
+            emissive={color}
+            emissiveIntensity={0.3}
+            roughness={0.3}
+            metalness={0.7}
+          />
         </mesh>
       ))}
+
+      {/* Middle solid ring — certificate border */}
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.45, 0.015, 8, 48]} />
+        <meshStandardMaterial color="#ffffff" transparent opacity={0.35} emissive={color} emissiveIntensity={0.2} />
+      </mesh>
+
+      {/* Inner notched gear ring */}
+      {innerRing.map((seg, i) => (
+        <mesh key={`i${i}`} rotation={[Math.PI / 2, seg.angle, 0]}>
+          <torusGeometry args={[0.32, 0.018, 6, 10, seg.len * ((Math.PI * 2) / 20)]} />
+          <meshStandardMaterial
+            color="#ffffff"
+            transparent
+            opacity={seg.len < 1 ? 0.3 : 0.2}
+            emissive={color}
+            emissiveIntensity={0.15}
+          />
+        </mesh>
+      ))}
+
+      {/* Central emblem — simplified star/polygon */}
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.12, 0.12, 0.05, 6]} />
+        <meshStandardMaterial
+          color={color}
+          transparent
+          opacity={0.5}
+          emissive={color}
+          emissiveIntensity={0.4}
+          roughness={0.2}
+          metalness={0.8}
+        />
+      </mesh>
+
+      {/* Central dot */}
+      <mesh position={[0, 0.03, 0]}>
+        <sphereGeometry args={[0.04, 12, 12]} />
+        <meshStandardMaterial color="#ffffff" emissive={color} emissiveIntensity={0.6} />
+      </mesh>
     </group>
   );
 }
@@ -255,7 +306,7 @@ function TrendArrow({ color }: { color: string }) {
   );
 }
 
-/* ── Coin (Other — currency, money) ──────────────────────────────── */
+/* ── Embossed Medallion (Other — NPR currency motif) ─────────────── */
 
 function Coin({ color }: { color: string }) {
   const coinRef = useRef<THREE.Group>(null!);
@@ -268,51 +319,106 @@ function Coin({ color }: { color: string }) {
     coinRef.current.position.y = Math.sin(t * 1.2) * 0.08;
   });
 
-  // Dollar sign shape
-  const dollarShape = useMemo(() => {
+  // Radial petal / lotus geometry derived from lion-capital emblem
+  const petalGeo = useMemo(() => {
     const shape = new THREE.Shape();
-    // Vertical line of $
-    shape.moveTo(0, -0.25);
-    shape.lineTo(0, 0.25);
-    // Curves
-    const curve = new THREE.QuadraticBezierCurve3(
-      new THREE.Vector3(-0.15, 0.15, 0),
-      new THREE.Vector3(-0.15, 0.0, 0),
-      new THREE.Vector3(0, 0.05, 0)
-    );
-    const pts = curve.getPoints(12);
-    pts.forEach(p => shape.lineTo(p.x, p.y));
-    const curve2 = new THREE.QuadraticBezierCurve3(
-      new THREE.Vector3(0, 0.05, 0),
-      new THREE.Vector3(0.15, -0.05, 0),
-      new THREE.Vector3(0.15, -0.15, 0)
-    );
-    curve2.getPoints(12).forEach(p => shape.lineTo(p.x, p.y));
-    return shape;
+    shape.moveTo(0, 0);
+    shape.bezierCurveTo(0.08, 0.12, 0.15, 0.18, 0.06, 0.32);
+    shape.bezierCurveTo(0.02, 0.38, -0.02, 0.38, -0.06, 0.32);
+    shape.bezierCurveTo(-0.15, 0.18, -0.08, 0.12, 0, 0);
+    return new THREE.ExtrudeGeometry(shape, { depth: 0.035, bevelEnabled: true, bevelThickness: 0.01, bevelSize: 0.008, bevelSegments: 2 });
+  }, []);
+
+  // Concentric ring with notched segments (security-thread pattern)
+  const notchCount = 24;
+  const notchedRing = useMemo(() => {
+    const segments: THREE.Mesh[] = [];
+    const r = 0.38;
+    for (let i = 0; i < notchCount; i++) {
+      const angle = (i / notchCount) * Math.PI * 2;
+      const nextAngle = ((i + 1) / notchCount) * Math.PI * 2;
+      const gap = i % 3 === 0;
+      if (gap) continue;
+      const midAngle = (angle + nextAngle) / 2;
+      const arcLen = (nextAngle - angle) * 0.7;
+      const geo = new THREE.TorusGeometry(r, 0.008, 4, 8, arcLen);
+      return geo;
+    }
+    return segments;
   }, []);
 
   return (
     <group ref={coinRef} position={[0, 0.1, 0]}>
-      {/* Coin body */}
+      {/* Coin body — thicker cylinder */}
       <mesh>
-        <cylinderGeometry args={[0.5, 0.5, 0.08, 48]} />
-        <meshStandardMaterial color={color} transparent opacity={0.6} roughness={0.2} metalness={0.8} emissive={color} emissiveIntensity={0.3} />
+        <cylinderGeometry args={[0.5, 0.5, 0.1, 48]} />
+        <meshStandardMaterial color={color} transparent opacity={0.55} roughness={0.2} metalness={0.85} emissive={color} emissiveIntensity={0.3} />
       </mesh>
-      {/* Coin edge ring */}
+
+      {/* Outer rim */}
       <mesh>
-        <torusGeometry args={[0.5, 0.025, 8, 48]} />
+        <torusGeometry args={[0.5, 0.02, 8, 48]} />
+        <meshStandardMaterial color="#ffffff" transparent opacity={0.35} emissive={color} emissiveIntensity={0.2} />
+      </mesh>
+
+      {/* Inner rim */}
+      <mesh position={[0, 0.055, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.38, 0.012, 8, 48]} />
+        <meshStandardMaterial color="#ffffff" transparent opacity={0.2} />
+      </mesh>
+
+      {/* Radial petal relief — 8 petals in a rosette */}
+      {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
+        const angle = (i / 8) * Math.PI * 2;
+        return (
+          <mesh
+            key={i}
+            geometry={petalGeo}
+            position={[0, 0.055, 0]}
+            rotation={[Math.PI / 2, 0, angle]}
+          >
+            <meshStandardMaterial
+              color="#ffffff"
+              transparent
+              opacity={0.25}
+              emissive={color}
+              emissiveIntensity={0.15}
+              roughness={0.4}
+              metalness={0.6}
+            />
+          </mesh>
+        );
+      })}
+
+      {/* Central dot — lion-capital emblem center */}
+      <mesh position={[0, 0.06, 0]}>
+        <cylinderGeometry args={[0.06, 0.06, 0.04, 16]} />
         <meshStandardMaterial color="#ffffff" transparent opacity={0.4} emissive={color} emissiveIntensity={0.3} />
       </mesh>
-      {/* Inner ring */}
-      <mesh position={[0, 0.045, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[0.35, 0.015, 8, 48]} />
-        <meshStandardMaterial color="#ffffff" transparent opacity={0.25} />
-      </mesh>
-      {/* Dollar symbol (extruded) */}
-      <mesh position={[0, 0.05, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <extrudeGeometry args={[dollarShape, { depth: 0.03, bevelEnabled: false }]} />
-        <meshStandardMaterial color="#ffffff" transparent opacity={0.5} emissive={color} emissiveIntensity={0.4} />
-      </mesh>
+
+      {/* Security-thread notched ring */}
+      {Array.from({ length: notchCount }).map((_, i) => {
+        const angle = (i / notchCount) * Math.PI * 2;
+        const r = 0.38;
+        const gap = i % 4 === 0;
+        if (gap) return null;
+        return (
+          <mesh
+            key={i}
+            position={[Math.cos(angle) * r, 0.055, Math.sin(angle) * r]}
+            rotation={[Math.PI / 2, 0, angle]}
+          >
+            <torusGeometry args={[r, 0.008, 4, 6, (Math.PI * 2) / notchCount * 0.65]} />
+            <meshStandardMaterial
+              color="#ffffff"
+              transparent
+              opacity={0.2}
+              emissive={color}
+              emissiveIntensity={0.1}
+            />
+          </mesh>
+        );
+      })}
     </group>
   );
 }
@@ -358,7 +464,7 @@ export default function CardScene3D({ color, category }: { color: string; catego
     switch (shape) {
       case 'barchart': return BarChart;
       case 'candlestick': return Candlestick;
-      case 'globe': return Globe;
+      case 'seal': return Globe;
       case 'piechart': return PieChart;
       case 'trendarrow': return TrendArrow;
       case 'coin': return Coin;

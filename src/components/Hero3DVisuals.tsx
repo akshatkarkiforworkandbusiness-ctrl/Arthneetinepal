@@ -3,97 +3,104 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, Environment, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 
-// 1. Abstract Mountain Mesh - Brand Aligned (Green/Teal)
-function Mountain() {
-  const meshRef = useRef<THREE.Group>(null);
+// 1. Candlestick Skyline — NEPSE market data as terrain (not literal Himalaya)
+function CandlestickSkyline() {
+  const groupRef = useRef<THREE.Group>(null);
 
-  // Parallax effect based on mouse movement
+  // Simulated NEPSE-style candlestick data — each candle is a building/peak
+  const candles = useMemo(() => [
+    { x: -3.5, body: 1.8, wick: 2.6, green: true },
+    { x: -2.7, body: 2.4, wick: 3.2, green: true },
+    { x: -1.9, body: 1.2, wick: 2.0, green: false },
+    { x: -1.1, body: 2.8, wick: 3.6, green: true },
+    { x: -0.3, body: 1.6, wick: 2.4, green: false },
+    { x: 0.5, body: 3.2, wick: 4.0, green: true },
+    { x: 1.3, body: 2.0, wick: 2.8, green: true },
+    { x: 2.1, body: 1.4, wick: 2.2, green: false },
+    { x: 2.9, body: 2.6, wick: 3.4, green: true },
+    { x: 3.7, body: 2.2, wick: 3.0, green: true },
+  ], []);
+
   useFrame((state) => {
-    if (meshRef.current) {
+    if (groupRef.current) {
       const targetX = (state.pointer.x * 2);
       const targetY = (state.pointer.y * 1);
-      
-      meshRef.current.rotation.y += (targetX * 0.1 - meshRef.current.rotation.y) * 0.05;
-      meshRef.current.rotation.x += (-targetY * 0.1 - meshRef.current.rotation.x) * 0.05;
+      groupRef.current.rotation.y += (targetX * 0.08 - groupRef.current.rotation.y) * 0.04;
+      groupRef.current.rotation.x += (-targetY * 0.05 - groupRef.current.rotation.x) * 0.04;
     }
   });
 
   return (
-    <group ref={meshRef} position={[0, -6, -10]}>
-      {/* Main Peak */}
-      <Float speed={1} rotationIntensity={0.2} floatIntensity={0.5}>
-        <mesh position={[0, 2, 0]} rotation={[0, Math.PI / 4, 0]}>
-          <coneGeometry args={[6, 12, 4]} />
-          <meshStandardMaterial 
-            color="#0f2a20" 
-            emissive="#1D9E75"
-            emissiveIntensity={0.2}
-            wireframe={true} 
-            transparent
-            opacity={0.35}
-          />
-        </mesh>
-        {/* Solid core to give the mountain depth */}
-        <mesh position={[0, 2, 0]} rotation={[0, Math.PI / 4, 0]}>
-          <coneGeometry args={[5.8, 11.5, 4]} />
-          <meshStandardMaterial color="#0f2a20" />
-        </mesh>
-      </Float>
-
-      {/* Secondary Peak */}
-      <Float speed={1.2} rotationIntensity={0.1} floatIntensity={0.3}>
-        <mesh position={[6, 0, -3]} rotation={[0, -Math.PI / 6, 0]}>
-          <coneGeometry args={[4, 8, 4]} />
-          <meshStandardMaterial color="#1D9E75" wireframe={true} transparent opacity={0.25} />
-        </mesh>
-        <mesh position={[6, 0, -3]} rotation={[0, -Math.PI / 6, 0]}>
-          <coneGeometry args={[3.8, 7.5, 4]} />
-          <meshStandardMaterial color="#0f2a20" />
-        </mesh>
-      </Float>
-      
-      {/* Tertiary Peak */}
-      <Float speed={0.8} rotationIntensity={0.3} floatIntensity={0.4}>
-        <mesh position={[-7, -1, -5]} rotation={[0, Math.PI / 3, 0]}>
-          <coneGeometry args={[5, 10, 4]} />
-          <meshStandardMaterial color="#0F6E56" wireframe={true} transparent opacity={0.2} />
-        </mesh>
-        <mesh position={[-7, -1, -5]} rotation={[0, Math.PI / 3, 0]}>
-          <coneGeometry args={[4.8, 9.5, 4]} />
-          <meshStandardMaterial color="#0f2a20" />
-        </mesh>
-      </Float>
+    <group ref={groupRef} position={[0, -3, -8]}>
+      {candles.map((c, i) => (
+        <group key={i} position={[c.x, 0, 0]}>
+          {/* Wick — thin vertical line extending from body */}
+          <mesh position={[0, c.wick / 2 - 0.5, 0]}>
+            <boxGeometry args={[0.06, c.wick, 0.06]} />
+            <meshStandardMaterial
+              color={c.green ? '#10b981' : '#ef4444'}
+              transparent
+              opacity={0.3}
+            />
+          </mesh>
+          {/* Body — solid block */}
+          <mesh position={[0, c.green ? 0.3 : -0.3, 0]}>
+            <boxGeometry args={[0.5, c.body, 0.5]} />
+            <meshStandardMaterial
+              color={c.green ? '#059669' : '#dc2626'}
+              emissive={c.green ? '#059669' : '#dc2626'}
+              emissiveIntensity={0.3}
+              transparent
+              opacity={0.6}
+              roughness={0.3}
+              metalness={0.5}
+            />
+          </mesh>
+          {/* Wireframe outline */}
+          <mesh position={[0, c.green ? 0.3 : -0.3, 0]}>
+            <boxGeometry args={[0.52, c.body + 0.02, 0.52]} />
+            <meshStandardMaterial
+              color={c.green ? '#10b981' : '#ef4444'}
+              wireframe
+              transparent
+              opacity={0.15}
+            />
+          </mesh>
+        </group>
+      ))}
+      {/* Ground plane — base platform */}
+      <mesh position={[0, -0.8, 0]}>
+        <boxGeometry args={[10, 0.04, 2]} />
+        <meshStandardMaterial color="#059669" transparent opacity={0.15} />
+      </mesh>
     </group>
   );
 }
 
-// 2. Economic Constellation (Data Nodes) - Brand Aligned
+// 2. Economic Constellation (Data Nodes) — Medallion / seal motifs
 function DataNodes() {
   const groupRef = useRef<THREE.Group>(null);
 
-  // Generate random positions for data nodes
   const nodes = useMemo(() => {
-    return Array.from({ length: 15 }).map(() => ({
+    return Array.from({ length: 12 }).map(() => ({
       position: [
-        (Math.random() - 0.5) * 30, // x
-        (Math.random() - 0.5) * 15 + 5, // y (mostly above mountains)
-        (Math.random() - 0.5) * 20 - 10, // z
+        (Math.random() - 0.5) * 30,
+        (Math.random() - 0.5) * 12 + 6,
+        (Math.random() - 0.5) * 20 - 10,
       ] as [number, number, number],
-      scale: Math.random() * 0.3 + 0.1,
+      scale: Math.random() * 0.4 + 0.15,
       speed: Math.random() * 2 + 1,
+      ringCount: Math.floor(Math.random() * 2) + 1,
     }));
   }, []);
 
   useFrame((state) => {
     if (groupRef.current) {
-      // Slow majestic rotation of the entire constellation
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.05;
-      
-      // Add slight parallax to the constellation as well
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.04;
       const targetX = (state.pointer.x * 1);
       const targetY = (state.pointer.y * 0.5);
-      groupRef.current.position.x += (targetX - groupRef.current.position.x) * 0.02;
-      groupRef.current.position.y += (-targetY - groupRef.current.position.y) * 0.02;
+      groupRef.current.position.x += (targetX - groupRef.current.position.x) * 0.015;
+      groupRef.current.position.y += (-targetY - groupRef.current.position.y) * 0.015;
     }
   });
 
@@ -101,20 +108,42 @@ function DataNodes() {
     <group ref={groupRef}>
       {nodes.map((node, i) => (
         <Float key={i} speed={node.speed} rotationIntensity={2} floatIntensity={3}>
-          <mesh position={node.position} scale={node.scale}>
-            <icosahedronGeometry args={[1, 1]} />
-            <meshStandardMaterial 
-              color={i % 3 === 0 ? "#1D9E75" : "#0F6E56"} 
-              emissive={i % 3 === 0 ? "#1D9E75" : "#0F6E56"}
-              emissiveIntensity={0.8}
-              wireframe={i % 2 === 0}
-            />
-          </mesh>
+          <group position={node.position} scale={node.scale}>
+            {/* Medallion disc */}
+            <mesh>
+              <cylinderGeometry args={[1, 1, 0.15, 24]} />
+              <meshStandardMaterial
+                color={i % 3 === 0 ? '#059669' : '#047857'}
+                emissive={i % 3 === 0 ? '#059669' : '#047857'}
+                emissiveIntensity={0.6}
+                roughness={0.3}
+                metalness={0.7}
+              />
+            </mesh>
+            {/* Rim ring */}
+            <mesh rotation={[Math.PI / 2, 0, 0]}>
+              <torusGeometry args={[1.02, 0.04, 6, 24]} />
+              <meshStandardMaterial
+                color="#ffffff"
+                transparent
+                opacity={0.3}
+                emissive={i % 3 === 0 ? '#059669' : '#047857'}
+                emissiveIntensity={0.2}
+              />
+            </mesh>
+            {/* Optional inner ring */}
+            {node.ringCount > 1 && (
+              <mesh rotation={[Math.PI / 2, 0, 0]}>
+                <torusGeometry args={[0.65, 0.025, 6, 20]} />
+                <meshStandardMaterial color="#ffffff" transparent opacity={0.15} />
+              </mesh>
+            )}
+          </group>
         </Float>
       ))}
-      
-      {/* Floating dust/particles to represent data flow */}
-      <Sparkles count={150} scale={30} size={2} speed={0.4} opacity={0.3} color="#1D9E75" />
+
+      {/* Floating dust/particles — data flow */}
+      <Sparkles count={120} scale={30} size={2} speed={0.3} opacity={0.25} color="#059669" />
     </group>
   );
 }
@@ -123,14 +152,13 @@ export default function Hero3DVisuals() {
   return (
     <div className="absolute inset-0 z-0 pointer-events-auto">
       <Canvas camera={{ position: [0, 0, 15], fov: 45 }}>
-        {/* Brand-aligned Lighting - Cool Teal tones */}
         <ambientLight intensity={0.5} />
         <directionalLight position={[10, 5, -5]} intensity={2} color="#5DCAA5" />
-        <pointLight position={[-10, 10, 10]} intensity={1} color="#1D9E75" />
+        <pointLight position={[-10, 10, 10]} intensity={1} color="#059669" />
         
         <Environment preset="city" />
         
-        <Mountain />
+        <CandlestickSkyline />
         <DataNodes />
       </Canvas>
       
