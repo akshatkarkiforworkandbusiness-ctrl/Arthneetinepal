@@ -196,11 +196,11 @@ function AbstractCore() {
           <meshStandardMaterial
             color="#059669"
             emissive="#047857"
-            emissiveIntensity={0.2}
+            emissiveIntensity={0.5}
             transparent
-            opacity={0.45}
-            roughness={0.4}
-            metalness={0.3}
+            opacity={0.7}
+            roughness={0.3}
+            metalness={0.4}
             side={THREE.DoubleSide}
           />
         </mesh>
@@ -211,22 +211,22 @@ function AbstractCore() {
             <meshStandardMaterial
               color="#ffffff"
               transparent
-              opacity={0.12 + i * 0.02}
+              opacity={0.2 + i * 0.03}
               emissive="#10b981"
-              emissiveIntensity={0.15}
+              emissiveIntensity={0.3}
             />
           </mesh>
         ))}
 
-        {/* Central watermark region — subtle luminous rectangle */}
+        {/* Central watermark region — luminous rectangle */}
         <mesh position={[0, 0, 0.04]}>
           <planeGeometry args={[0.8, 0.5]} />
           <meshStandardMaterial
             color="#ffffff"
             transparent
-            opacity={0.06}
+            opacity={0.15}
             emissive="#10b981"
-            emissiveIntensity={0.4}
+            emissiveIntensity={0.6}
             side={THREE.DoubleSide}
           />
         </mesh>

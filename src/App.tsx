@@ -17,6 +17,7 @@ import BookmarksPage from './components/BookmarksPage';
 import NotificationsPage from './components/NotificationsPage';
 import { AuthProvider } from './contexts/AuthContext';
 import { Toaster } from '@/components/ui/sonner';
+import Lightfall from './components/Lightfall';
 
 export default function App() {
   return (
@@ -24,6 +25,25 @@ export default function App() {
       <Toaster />
       <Router>
         <div className="min-h-screen bg-background text-text-primary relative flex flex-col overflow-x-hidden">
+          {/* Global animated background — NPR/NEPSE branded Lightfall */}
+          <div className="fixed inset-0 z-0 pointer-events-none opacity-30">
+            <Lightfall
+              colors={['#059669', '#10b981', '#047857']}
+              backgroundColor="#0f172a"
+              speed={0.3}
+              streakCount={3}
+              streakWidth={0.8}
+              streakLength={0.7}
+              glow={0.6}
+              density={0.4}
+              twinkle={0.5}
+              zoom={3}
+              backgroundGlow={0.3}
+              opacity={0.5}
+              mouseInteraction={false}
+            />
+          </div>
+
           <div className="relative z-10 w-full">
             <Navigation />
           </div>

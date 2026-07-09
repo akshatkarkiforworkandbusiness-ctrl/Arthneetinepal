@@ -221,7 +221,7 @@ export default function LandingPage() {
       {showIntro && <CinematicIntro onComplete={handleIntroComplete} />}
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-40 pb-32 px-6 min-h-[90vh] flex flex-col justify-center items-center text-center bg-slate-50">
+      <section className="relative overflow-hidden pt-40 pb-32 px-6 min-h-[90vh] flex flex-col justify-center items-center text-center bg-white">
         <Hero3DVisuals />
         
         {/* Background ambient shapes */}
