@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
-import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
 import { toast } from 'sonner';
 import { db, storage, handleFirestoreError, OperationType } from '../lib/firebase';
 import {
@@ -51,6 +51,7 @@ export default function EventsPage() {
   const [markingDone, setMarkingDone] = useState<string | null>(null);
   const [studentCount, setStudentCount] = useState('');
   const [newEventIds, setNewEventIds] = useState<Set<string>>(new Set());
+  const eventsRef = useRef<Event[]>([]);
 
   /* ── Firestore ── */
   useEffect(() => {
@@ -59,18 +60,20 @@ export default function EventsPage() {
       (snapshot) => {
         const newIds = new Set<string>();
         snapshot.docs.forEach(d => {
-          const existing = events.find(e => e.id === d.id);
+          const existing = eventsRef.current.find(e => e.id === d.id);
           if (!existing) newIds.add(d.id);
         });
         if (newIds.size > 0) setNewEventIds(prev => new Set([...prev, ...newIds]));
 
-        setEvents(snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Event)));
+        const updated = snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Event));
+        eventsRef.current = updated;
+        setEvents(updated);
         setLastDoc(snapshot.docs[snapshot.docs.length - 1] ?? null);
         setHasMore(snapshot.docs.length === PAGE_SIZE);
         setEventsLoading(false);
       },
       (error) => {
-        handleFirestoreError(error, OperationType.LIST, 'events');
+        handleFirestoreError(error, OperationType.LIST, 'events', false);
         setEventsLoading(false);
       }
     );

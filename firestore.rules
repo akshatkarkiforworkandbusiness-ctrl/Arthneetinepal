@@ -121,6 +121,7 @@ service cloud.firestore {
     // Admins
     match /admins/{userId} {
       allow read: if isOwner(userId);
+      allow create: if isSignedIn();
     }
 
     // User Profiles
@@ -178,7 +179,10 @@ service cloud.firestore {
     match /events/{eventId} {
       allow read: if true;
       allow create: if isAdmin() && isValidEvent(incoming());
-      allow update: if isAdmin() && isValidEvent(incoming());
+      allow update: if isAdmin() && (
+        isValidEvent(incoming())
+        || incoming().diff(existing()).affectedKeys().hasOnly(['imageUrl', 'completed', 'studentsReached'])
+      );
       allow delete: if isAdmin();
     }
 
