@@ -73,8 +73,21 @@ export default function EventsPage() {
         setEventsLoading(false);
       },
       (error) => {
-        handleFirestoreError(error, OperationType.LIST, 'events', false);
-        setEventsLoading(false);
+        console.error('Events onSnapshot error:', error);
+        // Try fallback query without orderBy (in case index is missing)
+        const fallbackQ = query(collection(db, 'events'), limit(PAGE_SIZE));
+        onSnapshot(fallbackQ,
+          (snapshot) => {
+            const updated = snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Event));
+            eventsRef.current = updated;
+            setEvents(updated);
+            setEventsLoading(false);
+          },
+          (fallbackError) => {
+            console.error('Events fallback error:', fallbackError);
+            setEventsLoading(false);
+          }
+        );
       }
     );
     return () => unsubscribe();

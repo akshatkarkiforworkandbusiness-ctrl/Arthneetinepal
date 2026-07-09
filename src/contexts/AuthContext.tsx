@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
           setIsAdmin(adminSnap.exists());
         } catch (error) {
-          handleFirestoreError(error, OperationType.GET, `users/${user.uid}`);
+          handleFirestoreError(error, OperationType.GET, `users/${user.uid}`, false);
           setIsAdmin(false);
         }
       } else {
