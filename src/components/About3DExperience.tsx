@@ -9,7 +9,7 @@ const CONTENT_NODES = [
   {
     id: 'mission',
     title: 'Our Mission',
-    color: '#00f59b', // electric-mint
+    color: '#93c5fd', // light blue
     position: [0, 1.5, 2.5] as [number, number, number],
     rotation: [0, 0, 0] as [number, number, number],
     content: "Empowering Nepal's next generation with real financial intelligence. We travel across Nepal, bringing interactive workshops to every high school student.",
@@ -18,7 +18,7 @@ const CONTENT_NODES = [
   {
     id: 'work',
     title: 'Our Work',
-    color: '#00875a', // club-green
+    color: '#c4b5fd', // light purple
     position: [2.5, -0.5, 1.5] as [number, number, number],
     rotation: [0, Math.PI / 6, 0] as [number, number, number],
     content: "We provide full session curriculums, professional guest speakers, and simulated markets. Active in over 50 schools nationwide.",
@@ -27,7 +27,7 @@ const CONTENT_NODES = [
   {
     id: 'values',
     title: 'Core Values',
-    color: '#3b82f6', // blue
+    color: '#7eb8ff', // soft blue
     position: [-2.5, -0.5, 1.5] as [number, number, number],
     rotation: [0, -Math.PI / 6, 0] as [number, number, number],
     content: "Knowledge First. Prosperity for All. Grounded in Truth. We believe financial freedom is a skill, not a privilege.",
@@ -36,7 +36,7 @@ const CONTENT_NODES = [
   {
     id: 'features',
     title: 'The Platform',
-    color: '#f59e0b', // amber
+    color: '#fcd34d', // light amber
     position: [0, -2, 2.5] as [number, number, number],
     rotation: [0, 0, 0] as [number, number, number],
     content: "Track live NEPSE data, take guided video courses, test your knowledge with quizzes, and earn printable certificates.",
@@ -163,8 +163,8 @@ function AbstractCore() {
       <mesh>
         <sphereGeometry args={[0.5, 32, 32]} />
         <meshStandardMaterial 
-          color="#00f59b" 
-          emissive="#00875a" 
+          color="#93c5fd" 
+          emissive="#6366f1" 
           emissiveIntensity={1.5} 
           toneMapped={false} 
         />
