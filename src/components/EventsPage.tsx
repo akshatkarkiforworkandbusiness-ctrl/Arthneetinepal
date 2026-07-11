@@ -55,6 +55,8 @@ export default function EventsPage() {
 
   /* ── Firestore ── */
   useEffect(() => {
+    let fallbackUnsub: (() => void) | null = null;
+
     const q = query(collection(db, 'events'), orderBy('dateTime', 'asc'), limit(PAGE_SIZE));
     const unsubscribe = onSnapshot(q,
       (snapshot) => {
@@ -76,7 +78,7 @@ export default function EventsPage() {
         console.error('Events onSnapshot error:', error);
         // Try fallback query without orderBy (in case index is missing)
         const fallbackQ = query(collection(db, 'events'), limit(PAGE_SIZE));
-        onSnapshot(fallbackQ,
+        fallbackUnsub = onSnapshot(fallbackQ,
           (snapshot) => {
             const updated = snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Event));
             eventsRef.current = updated;
@@ -90,7 +92,10 @@ export default function EventsPage() {
         );
       }
     );
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      fallbackUnsub?.();
+    };
   }, []);
 
   const loadMore = async () => {
@@ -102,7 +107,7 @@ export default function EventsPage() {
       setLastDoc(snapshot.docs[snapshot.docs.length - 1] ?? null);
       setHasMore(snapshot.docs.length === PAGE_SIZE);
     } catch (error) {
-      handleFirestoreError(error, OperationType.LIST, 'events');
+      handleFirestoreError(error, OperationType.LIST, 'events', false);
     }
   };
 
@@ -200,7 +205,7 @@ export default function EventsPage() {
       }
       closeModal();
     } catch (err) {
-      handleFirestoreError(err, OperationType.WRITE, path);
+      handleFirestoreError(err, OperationType.WRITE, path, false);
       toast.error(editingEvent ? "Failed to update event." : "Failed to publish event.");
     } finally {
       setUploading(false);
@@ -218,7 +223,7 @@ export default function EventsPage() {
   const handleDelete = async (id: string) => {
     if (window.confirm('Delete this event?')) {
       try { await deleteDoc(doc(db, 'events', id)); toast.success("Event deleted!"); }
-      catch (err) { handleFirestoreError(err, OperationType.DELETE, `events/${id}`); toast.error("Failed to delete."); }
+      catch (err) { handleFirestoreError(err, OperationType.DELETE, `events/${id}`, false); toast.error("Failed to delete."); }
     }
   };
 
@@ -226,7 +231,7 @@ export default function EventsPage() {
     const count = parseInt(studentCount);
     if (isNaN(count) || count < 0) return;
     try { await updateDoc(doc(db, 'events', eventId), { completed: true, studentsReached: count }); setMarkingDone(null); setStudentCount(''); }
-    catch (error) { handleFirestoreError(error, OperationType.UPDATE, `events/${eventId}`); }
+    catch (error) { handleFirestoreError(error, OperationType.UPDATE, `events/${eventId}`, false); }
   };
 
   const downloadICS = (event: Event) => {
