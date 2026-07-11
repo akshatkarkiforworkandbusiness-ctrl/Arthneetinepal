@@ -35,14 +35,14 @@ export default function AIMarketAssistant({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const apiKeyRef = useRef<string | null>(null);
 
-  // Initialize OpenRouter
+  // Initialize Gemini API
   useEffect(() => {
-    const openrouterKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+    const geminiKey = import.meta.env.VITE_GEMINI_API_KEY;
     
-    if (openrouterKey && openrouterKey.length > 10) {
-      apiKeyRef.current = openrouterKey;
+    if (geminiKey && geminiKey.length > 10) {
+      apiKeyRef.current = geminiKey;
     } else {
-      setError(`No API key available. Set VITE_OPENROUTER_API_KEY in Vercel > Settings > Environment Variables.`);
+      setError(`No API key available. Set VITE_GEMINI_API_KEY in your .env file.`);
     }
   }, []);
 
@@ -129,36 +129,38 @@ export default function AIMarketAssistant({
       content: msg.content
     }));
 
-    const callOpenRouter = async (): Promise<string> => {
-      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKeyRef.current}`,
-          "HTTP-Referer": window.location.origin,
-          "X-Title": "Arthneeti"
-        },
-        body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
-          messages: [
-            { role: "system", content: systemPrompt },
-            ...history,
-            { role: "user", content: userMsg }
-          ],
-          temperature: 0.2,
-          max_tokens: 2048
-        })
-      });
+    const callGemini = async (): Promise<string> => {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKeyRef.current}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [
+              ...history.map(msg => ({
+                role: msg.role === 'user' ? 'user' : 'model',
+                parts: [{ text: msg.content }]
+              })),
+              { role: 'user', parts: [{ text: userMsg }] }
+            ],
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+            generationConfig: {
+              temperature: 0.2,
+              maxOutputTokens: 2048
+            }
+          })
+        }
+      );
       if (!res.ok) {
         const errData = await res.json() as any;
-        throw new Error(errData.error?.message || "OpenRouter failed");
+        throw new Error(errData.error?.message || "Gemini API failed");
       }
       const data = await res.json() as any;
-      return data.choices?.[0]?.message?.content || "No response generated.";
+      return data.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated.";
     };
 
     try {
-      const responseText = await callOpenRouter();
+      const responseText = await callGemini();
       setMessages(prev => [...prev, { role: 'model', content: responseText }]);
       if (!isOpen) setHasNewMessage(true);
     } catch (err) {
@@ -191,7 +193,7 @@ export default function AIMarketAssistant({
                   </div>
                   <div>
                     <h3 className="text-brandwood font-bold font-sans text-sm">Market Intelligence</h3>
-                    <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest">Powered by OpenRouter</p>
+                    <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest">Powered by Gemini AI</p>
                   </div>
                 </div>
                 <button onClick={() => setIsOpen(false)} className="text-text-muted hover:text-brand-emerald transition-colors">
