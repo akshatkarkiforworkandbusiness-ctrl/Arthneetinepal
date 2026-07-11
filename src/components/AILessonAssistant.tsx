@@ -41,7 +41,9 @@ export default function AILessonAssistant({
     
     if (openrouterKey && openrouterKey.length > 10) {
       apiKeyRef.current = openrouterKey;
+      console.log("[AI Tutor] OpenRouter key loaded, length:", openrouterKey.length);
     } else {
+      console.warn("[AI Tutor] No OpenRouter key found. VITE_OPENROUTER_API_KEY =", openrouterKey);
       setError(`No API key available. Set VITE_OPENROUTER_API_KEY in Vercel > Settings > Environment Variables.`);
     }
   }, []);
@@ -101,7 +103,9 @@ export default function AILessonAssistant({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKeyRef.current}`
+          "Authorization": `Bearer ${apiKeyRef.current}`,
+          "HTTP-Referer": window.location.origin,
+          "X-Title": "Arthneeti"
         },
         body: JSON.stringify({
           model: "google/gemini-2.5-flash",

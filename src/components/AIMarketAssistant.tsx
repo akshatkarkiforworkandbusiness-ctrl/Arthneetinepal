@@ -134,7 +134,9 @@ export default function AIMarketAssistant({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKeyRef.current}`
+          "Authorization": `Bearer ${apiKeyRef.current}`,
+          "HTTP-Referer": window.location.origin,
+          "X-Title": "Arthneeti"
         },
         body: JSON.stringify({
           model: "google/gemini-2.5-flash",
