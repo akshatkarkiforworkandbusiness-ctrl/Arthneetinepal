@@ -1,18 +1,23 @@
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { Canvas } from '@react-three/fiber';
 import { Float, OrbitControls, Environment, Torus, Icosahedron } from '@react-three/drei';
 import { Link } from 'react-router-dom';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import Hero3DVisuals from './Hero3DVisuals';
+import HeroTextReveal from './HeroTextReveal';
 import CinematicIntro from './CinematicIntro';
 import CurriculumRoadmap from './CurriculumRoadmap';
 import SessionPhotos from './SessionPhotos';
 import { LESSONS } from './LearnPage';
 import { FAQ_DATA, FAQ_CATEGORIES } from '../data/faqData';
 import { ArrowRight, ArrowUp, ArrowDown, Play, Download, Heart, ChevronDown, Users, PlayCircle, FileText, HelpCircle, Star, Shield } from 'lucide-react';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface Topic {
   id: string;
@@ -81,6 +86,7 @@ const mockPamphlets = [
 export default function LandingPage() {
   const { user, handleJoinAction } = useAuth();
   const [latestTopics, setLatestTopics] = useState<Topic[]>([]);
+  const reduce = useReducedMotion();
 
   const [marketIndices, setMarketIndices] = useState<Record<string, IndexState>>(initialIndices);
   const [activeResourceTab, setActiveResourceTab] = useState<'videos' | 'pamphlets' | 'faq'>('videos');
@@ -88,6 +94,75 @@ export default function LandingPage() {
   const [faqLanguage, setFaqLanguage] = useState<'en' | 'np'>('en');
   const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(null);
   const [faqCategory, setFaqCategory] = useState<string>('all');
+
+  // GSAP ScrollTrigger refs
+  const tickerRef = useRef<HTMLDivElement>(null);
+  const resourcesRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+
+  // GSAP ScrollTrigger animations
+  useEffect(() => {
+    if (reduce) return;
+
+    const ctx = gsap.context(() => {
+      // Market ticker parallax on scroll
+      if (tickerRef.current) {
+        gsap.fromTo(tickerRef.current,
+          { y: 40, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: tickerRef.current,
+              start: 'top 85%',
+              end: 'top 60%',
+              toggleActions: 'play none none reverse',
+            }
+          }
+        );
+      }
+
+      // Resources section reveal
+      if (resourcesRef.current) {
+        gsap.fromTo(resourcesRef.current,
+          { y: 60, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: resourcesRef.current,
+              start: 'top 80%',
+              toggleActions: 'play none none reverse',
+            }
+          }
+        );
+      }
+
+      // CTA section reveal
+      if (ctaRef.current) {
+        gsap.fromTo(ctaRef.current,
+          { y: 40, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: ctaRef.current,
+              start: 'top 85%',
+              toggleActions: 'play none none reverse',
+            }
+          }
+        );
+      }
+    });
+
+    return () => ctx.revert();
+  }, [reduce]);
 
   // Cinematic Intro State
   const [showIntro, setShowIntro] = useState(() => {
@@ -244,11 +319,13 @@ export default function LandingPage() {
             Arthneeti
           </motion.div>
           
-          <h1 className="text-6xl md:text-[90px] text-slate-900 leading-[1.1] tracking-tight font-display font-bold mb-10">
-            Think Big.<br />
-            Invest Smart.<br />
-            <span className="text-emerald-600 italic">Lead Nepal.</span>
-          </h1>
+          <HeroTextReveal delay={0.5}>
+            <h1 className="text-6xl md:text-[90px] text-slate-900 leading-[1.1] tracking-tight font-display font-bold mb-10">
+              Think Big.<br />
+              Invest Smart.<br />
+              <span className="text-emerald-600 italic">Lead Nepal.</span>
+            </h1>
+          </HeroTextReveal>
           <p className="text-lg md:text-2xl text-slate-600 mb-12 max-w-2xl font-sans leading-relaxed">
             Building the next generation of economically literate leaders and investors across Nepal through structural economic knowledge.
           </p>
@@ -287,7 +364,7 @@ export default function LandingPage() {
       <CurriculumRoadmap />
 
       {/* Market Ticker Sparkline Section */}
-      <section className="bg-white py-16 px-6">
+      <section ref={tickerRef} className="bg-white py-16 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
             <div className="flex items-center gap-2">
@@ -409,7 +486,7 @@ export default function LandingPage() {
       </section>
 
       {/* Resource Library Section */}
-      <section className="py-24 px-6 bg-slate-50 border-y border-slate-200">
+      <section ref={resourcesRef} className="py-24 px-6 bg-slate-50 border-y border-slate-200">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <span className="text-[10px] font-bold text-emerald-600 mb-2 block uppercase tracking-[0.4em]">Resources</span>
@@ -726,7 +803,7 @@ export default function LandingPage() {
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-24 px-6 bg-emerald-600 relative overflow-hidden">
+      <section ref={ctaRef} className="py-24 px-6 bg-emerald-600 relative overflow-hidden">
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-full h-full">
