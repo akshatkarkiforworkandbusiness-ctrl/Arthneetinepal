@@ -4,9 +4,9 @@ import { Mail, Phone, Instagram } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="bg-[#003893] text-white py-20 px-6 relative overflow-hidden mt-auto">
+    <footer className="bg-slate-900 text-white py-20 px-6 relative overflow-hidden mt-auto">
       {/* Subtle geometric pattern in footer */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+      <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
       
       <div className="max-w-6xl mx-auto relative z-10 grid grid-cols-1 md:grid-cols-3 gap-12 items-start">
         {/* Contact info */}
@@ -21,13 +21,13 @@ export function Footer() {
           </p>
           <div className="flex flex-col gap-4">
             <a href="mailto:learnarthneeti@gmail.com" className="flex items-center gap-3 text-white/90 hover:text-white transition-colors group">
-              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-[#dc143c] transition-colors">
+              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-emerald-600 transition-colors">
                 <Mail size={16} />
               </div>
               <span className="text-sm">learnarthneeti@gmail.com</span>
             </a>
             <a href="tel:9866898759" className="flex items-center gap-3 text-white/90 hover:text-white transition-colors group">
-              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-[#dc143c] transition-colors">
+              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-emerald-600 transition-colors">
                 <Phone size={16} />
               </div>
               <span className="text-sm">9866898759</span>
@@ -64,7 +64,7 @@ export function Footer() {
               href="https://instagram.com/ARTHN.EETI"
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 w-full py-3 px-6 bg-[#dc143c] hover:bg-[#b01030] text-white font-bold rounded-xl transition-colors shadow-lg shadow-[#dc143c]/30"
+              className="inline-flex items-center justify-center gap-2 w-full py-3 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-colors shadow-lg shadow-emerald-600/30"
             >
               <Instagram size={18} /> Follow @ARTHN.EETI
             </a>
