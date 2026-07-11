@@ -1,0 +1,10 @@
+{
+  "hooks": [
+    {
+      "event": "task_complete",
+      "action": "invoke_subagent",
+      "subagent": "context-keeper",
+      "description": "Automatically logs a summary to .agents/memory/PROJECT_LOG.md whenever a primary agent task finishes, without requiring manual invocation."
+    }
+  ]
+}

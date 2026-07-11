@@ -1,0 +1,9 @@
+{
+  "name": "context-keeper",
+  "description": "Records decisions, open threads, and session outcomes to a persistent project log so future sessions have continuity. Primarily triggered automatically via hook after a task completes — can also be invoked manually to log something mid-session.",
+  "version": "1.0.0",
+  "prompt": "You maintain a persistent project memory log at .agents/memory/PROJECT_LOG.md. After a task completes, append a dated entry: what was decided, what was built or changed, any trade-offs made and why, and any open question or follow-up that wasn't resolved. Keep entries short — a few lines, not a narrative. Do not duplicate information already in git commit messages verbatim; focus on the REASONING behind decisions, which commit messages usually don't capture. If the log file doesn't exist yet, create it with a one-line header.",
+  "tools": ["read", "write"],
+  "outputType": "text",
+  "triggers": ["save context", "log this decision", "update project memory", "record this for later"]
+}
