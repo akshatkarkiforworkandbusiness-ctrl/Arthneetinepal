@@ -34,24 +34,15 @@ export default function AIMarketAssistant({
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const apiKeyRef = useRef<string | null>(null);
-  const fallbackKeyRef = useRef<string | null>(null);
-  const activeProviderRef = useRef<'groq' | 'nvidia'>('groq');
 
-  // Initialize Groq - Fastest for real-time market data, NVIDIA as fallback
+  // Initialize OpenRouter
   useEffect(() => {
-    const groqKey = import.meta.env.VITE_GROQ_API_KEY;
-    const nvidiaKey = import.meta.env.VITE_NVIDIA_API_KEY;
+    const openrouterKey = import.meta.env.VITE_OPENROUTER_API_KEY;
     
-    if (groqKey && groqKey.length > 10) {
-      apiKeyRef.current = groqKey;
-      activeProviderRef.current = 'groq';
-    } else if (nvidiaKey && nvidiaKey.length > 10) {
-      apiKeyRef.current = nvidiaKey;
-      fallbackKeyRef.current = nvidiaKey;
-      activeProviderRef.current = 'nvidia';
-      setError(null);
+    if (openrouterKey && openrouterKey.length > 10) {
+      apiKeyRef.current = openrouterKey;
     } else {
-      setError(`No API key available. Set VITE_GROQ_API_KEY or VITE_NVIDIA_API_KEY in Vercel > Settings > Environment Variables.`);
+      setError(`No API key available. Set VITE_OPENROUTER_API_KEY in Vercel > Settings > Environment Variables.`);
     }
   }, []);
 
@@ -138,79 +129,34 @@ export default function AIMarketAssistant({
       content: msg.content
     }));
 
-    const tryGroq = async (): Promise<string> => {
-      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    const callOpenRouter = async (): Promise<string> => {
+      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${apiKeyRef.current}`
         },
         body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",
-          messages: [
-            { role: "system", content: systemPrompt },
-            ...history,
-            { role: "user", content: userMsg }
-          ],
-          temperature: 0.2
-        })
-      });
-      if (!res.ok) {
-        const errData = await res.json() as any;
-        throw new Error(errData.error?.message || "Groq failed");
-      }
-      const data = await res.json() as any;
-      return data.choices[0].message.content;
-    };
-
-    const tryNvidia = async (): Promise<string> => {
-      const nvidiaKey = fallbackKeyRef.current || import.meta.env.VITE_NVIDIA_API_KEY;
-      if (!nvidiaKey) throw new Error("No NVIDIA API key available");
-      
-      const res = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${nvidiaKey}`
-        },
-        body: JSON.stringify({
-          model: "nvidia/llama-3.3-nemotron-super-49b-v1",
+          model: "google/gemini-2.5-flash",
           messages: [
             { role: "system", content: systemPrompt },
             ...history,
             { role: "user", content: userMsg }
           ],
           temperature: 0.2,
-          max_tokens: 1024
+          max_tokens: 2048
         })
       });
       if (!res.ok) {
         const errData = await res.json() as any;
-        throw new Error(errData.error?.message || "NVIDIA failed");
+        throw new Error(errData.error?.message || "OpenRouter failed");
       }
       const data = await res.json() as any;
-      return data.choices[0].message.content;
+      return data.choices?.[0]?.message?.content || "No response generated.";
     };
 
     try {
-      let responseText: string;
-      
-      if (activeProviderRef.current === 'groq') {
-        try {
-          responseText = await tryGroq();
-        } catch (groqErr) {
-          console.warn("Groq failed, trying NVIDIA fallback:", groqErr);
-          responseText = await tryNvidia();
-        }
-      } else {
-        try {
-          responseText = await tryNvidia();
-        } catch (nvidiaErr) {
-          console.warn("NVIDIA failed, trying Groq fallback:", nvidiaErr);
-          responseText = await tryGroq();
-        }
-      }
-
+      const responseText = await callOpenRouter();
       setMessages(prev => [...prev, { role: 'model', content: responseText }]);
       if (!isOpen) setHasNewMessage(true);
     } catch (err) {
@@ -243,7 +189,7 @@ export default function AIMarketAssistant({
                   </div>
                   <div>
                     <h3 className="text-brandwood font-bold font-sans text-sm">Market Intelligence</h3>
-                    <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest">Powered by Groq</p>
+                    <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest">Powered by OpenRouter</p>
                   </div>
                 </div>
                 <button onClick={() => setIsOpen(false)} className="text-text-muted hover:text-brand-emerald transition-colors">

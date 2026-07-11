@@ -34,26 +34,15 @@ export default function AILessonAssistant({
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const apiKeyRef = useRef<string | null>(null);
-  const fallbackKeyRef = useRef<string | null>(null);
-  const activeProviderRef = useRef<'gemini' | 'nvidia'>('gemini');
 
-  // Initialize Google AI Studio (Gemini) with NVIDIA fallback
+  // Initialize OpenRouter
   useEffect(() => {
-    const geminiKey = import.meta.env.VITE_GEMINI_API_KEY;
-    const nvidiaKey = import.meta.env.VITE_NVIDIA_API_KEY;
+    const openrouterKey = import.meta.env.VITE_OPENROUTER_API_KEY;
     
-    if (geminiKey && geminiKey.length > 10) {
-      apiKeyRef.current = geminiKey;
-      activeProviderRef.current = 'gemini';
-    } else if (nvidiaKey && nvidiaKey.length > 10) {
-      // Fallback to NVIDIA NIM
-      apiKeyRef.current = nvidiaKey;
-      fallbackKeyRef.current = nvidiaKey;
-      activeProviderRef.current = 'nvidia';
-      setError(null);
+    if (openrouterKey && openrouterKey.length > 10) {
+      apiKeyRef.current = openrouterKey;
     } else {
-      const geminiLength = geminiKey ? geminiKey.length : 0;
-      setError(`No API key available. Set VITE_GEMINI_API_KEY or VITE_NVIDIA_API_KEY in Vercel > Settings > Environment Variables.`);
+      setError(`No API key available. Set VITE_OPENROUTER_API_KEY in Vercel > Settings > Environment Variables.`);
     }
   }, []);
 
@@ -102,82 +91,39 @@ export default function AILessonAssistant({
 
     const systemPrompt = buildSystemPrompt();
     
-    const history = messages.map(msg => ({
-      role: msg.role === 'model' ? 'model' : 'user',
-      parts: [{ text: msg.content }]
+    const historyOpenAI = messages.map(msg => ({
+      role: msg.role === 'model' ? 'assistant' : 'user',
+      content: msg.content
     }));
 
-    const tryGemini = async (): Promise<string> => {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKeyRef.current}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: systemPrompt }] },
-          contents: [...history, { role: "user", parts: [{ text: userMsg }] }],
-          generationConfig: { temperature: 0.2, maxOutputTokens: 2048 }
-        })
-      });
-      if (!res.ok) {
-        const errData = await res.json() as any;
-        throw new Error(errData.error?.message || "Gemini failed");
-      }
-      const data = await res.json() as any;
-      return data.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated.";
-    };
-
-    const tryNvidia = async (): Promise<string> => {
-      const nvidiaKey = fallbackKeyRef.current || import.meta.env.VITE_NVIDIA_API_KEY;
-      if (!nvidiaKey) throw new Error("No NVIDIA API key available");
-      
-      const historyOpenAI = messages.map(msg => ({
-        role: msg.role === 'model' ? 'assistant' : 'user',
-        content: msg.content
-      }));
-
-      const res = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
+    const callOpenRouter = async (): Promise<string> => {
+      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${nvidiaKey}`
+          "Authorization": `Bearer ${apiKeyRef.current}`
         },
         body: JSON.stringify({
-          model: "nvidia/llama-3.3-nemotron-super-49b-v1",
+          model: "google/gemini-2.5-flash",
           messages: [
             { role: "system", content: systemPrompt },
             ...historyOpenAI,
             { role: "user", content: userMsg }
           ],
           temperature: 0.2,
-          max_tokens: 1024
+          max_tokens: 2048
         })
       });
       if (!res.ok) {
         const errData = await res.json() as any;
-        throw new Error(errData.error?.message || "NVIDIA failed");
+        throw new Error(errData.error?.message || "OpenRouter failed");
       }
       const data = await res.json() as any;
-      return data.choices[0].message.content;
+      return data.choices?.[0]?.message?.content || "No response generated.";
     };
 
     try {
-      let responseText: string;
-      
-      if (activeProviderRef.current === 'gemini') {
-        try {
-          responseText = await tryGemini();
-        } catch (geminiErr) {
-          console.warn("Gemini failed, trying NVIDIA fallback:", geminiErr);
-          responseText = await tryNvidia();
-        }
-      } else {
-        try {
-          responseText = await tryNvidia();
-        } catch (nvidiaErr) {
-          console.warn("NVIDIA failed, trying Gemini fallback:", nvidiaErr);
-          responseText = await tryGemini();
-        }
-      }
-
+      const responseText = await callOpenRouter();
       setMessages(prev => [...prev, { role: 'model', content: responseText }]);
     } catch (err) {
       console.error("AI Assistant Error:", err);
