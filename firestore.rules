@@ -129,10 +129,11 @@ service cloud.firestore {
       allow read: if isSignedIn();
       allow create: if isOwner(userId) && isValidUser(incoming()) && isValidId(userId);
       allow update: if isOwner(userId)
-        && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'topics', 'joinedAt'])
+        && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'topics', 'joinedAt', 'publicPortfolio'])
         && (incoming().joinedAt == existing().joinedAt)
         && incoming().name is string && incoming().name.size() <= 100
-        && incoming().topics is list;
+        && incoming().topics is list
+        && (!('publicPortfolio' in incoming()) || incoming().publicPortfolio is bool);
 
       // Learning progress subcollection
       match /progress/{docId} {
@@ -214,11 +215,20 @@ service cloud.firestore {
     // Portfolios
     match /portfolios/{userId} {
       allow read: if isOwner(userId) || (isSignedIn() && get(/databases/$(database)/documents/users/$(userId)).data.publicPortfolio == true);
-      allow write: if false;
+      allow create: if isOwner(userId)
+        && request.resource.data.keys().hasOnly(['cashBalance', 'holdings', 'totalValue', 'updatedAt'])
+        && request.resource.data.cashBalance is number && request.resource.data.cashBalance >= 0;
+      allow update: if isOwner(userId)
+        && request.resource.data.keys().hasOnly(['cashBalance', 'holdings', 'totalValue', 'updatedAt'])
+        && request.resource.data.cashBalance is number && request.resource.data.cashBalance >= 0;
+      allow delete: if false;
 
       match /trades/{tradeId} {
         allow read: if isOwner(userId);
-        allow write: if false;
+        allow create: if isOwner(userId)
+          && request.resource.data.keys().hasAll(['symbol', 'side', 'quantity', 'price', 'total', 'timestamp'])
+          && request.resource.data.quantity is number && request.resource.data.quantity > 0;
+        allow update, delete: if false; // trade history is append-only
       }
     }
 

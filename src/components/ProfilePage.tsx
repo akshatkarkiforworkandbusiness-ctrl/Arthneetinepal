@@ -77,6 +77,7 @@ export default function ProfilePage() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editName, setEditName] = useState('');
   const [editTopics, setEditTopics] = useState<string[]>([]);
+  const [editPublicPortfolio, setEditPublicPortfolio] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -147,6 +148,7 @@ export default function ProfilePage() {
   const openEditModal = () => {
     setEditName(ownProfile?.name || user?.displayName || '');
     setEditTopics(ownProfile?.topics || []);
+    setEditPublicPortfolio(ownProfile?.publicPortfolio || false);
     setShowEditModal(true);
   };
 
@@ -160,7 +162,7 @@ export default function ProfilePage() {
     if (!editName.trim()) return;
     setSaving(true);
     try {
-      await updateProfile({ name: editName.trim(), topics: editTopics });
+      await updateProfile({ name: editName.trim(), topics: editTopics, publicPortfolio: editPublicPortfolio });
       setShowEditModal(false);
     } catch (err) {
       console.error('Failed to save profile:', err);
@@ -552,6 +554,31 @@ export default function ProfilePage() {
                         );
                       })}
                     </div>
+                  </div>
+
+                  {/* Public Portfolio Toggle */}
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">Leaderboard Visibility</label>
+                    <button
+                      type="button"
+                      onClick={() => setEditPublicPortfolio(!editPublicPortfolio)}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all cursor-pointer w-full ${
+                        editPublicPortfolio
+                          ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                          : 'bg-gray-50 border-gray-200 text-gray-500'
+                      }`}
+                    >
+                      <div className={`w-10 h-6 rounded-full relative transition-colors ${
+                        editPublicPortfolio ? 'bg-emerald-500' : 'bg-gray-300'
+                      }`}>
+                        <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                          editPublicPortfolio ? 'translate-x-4' : 'translate-x-0.5'
+                        }`} />
+                      </div>
+                      <span className="text-sm font-medium">
+                        {editPublicPortfolio ? 'Public — visible on leaderboard' : 'Private — hidden from leaderboard'}
+                      </span>
+                    </button>
                   </div>
                 </div>
 
