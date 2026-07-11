@@ -36,7 +36,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
   return (
     <div className="flex gap-4">
-      <div className="w-8 h-8 rounded-lg bg-electric-mint flex items-center justify-center text-slate-base font-black text-[10px] shrink-0">
+      <div className="w-8 h-8 rounded-lg bg-brand-emerald flex items-center justify-center text-white font-black text-[10px] shrink-0">
         {comment.authorName?.[0]}
       </div>
       <div className="flex-1">
@@ -52,9 +52,9 @@ const CommentItem: React.FC<CommentItemProps> = ({
         <div className="flex items-center gap-6 mt-2 ml-2">
           <button
             onClick={handleLike}
-            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-text-muted hover:text-electric-mint transition-colors"
+            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-text-muted hover:text-brand-emerald transition-colors"
           >
-            <Heart size={12} fill={comment.likes > 0 ? 'currentColor' : 'none'} className={comment.likes > 0 ? 'text-electric-mint' : ''} />
+            <Heart size={12} fill={comment.likes > 0 ? 'currentColor' : 'none'} className={comment.likes > 0 ? 'text-brand-emerald' : ''} />
             {comment.likes}
           </button>
           {!comment.parentId && (
@@ -126,7 +126,7 @@ export function CommentSection({ postId }: { postId: string }) {
   const getReplies = (parentId: string) => comments.filter(c => c.parentId === parentId);
 
   return (
-    <div id="comments" className="mt-8 pt-8 border-t border-slate-base/5 space-y-8">
+    <div id="comments" className="mt-8 pt-8 border-t border-white/5 space-y-8">
       <h3 className="text-xs font-black uppercase tracking-widest text-text-muted">
         {comments.length} {comments.length === 1 ? 'Comment' : 'Comments'}
       </h3>
@@ -134,8 +134,8 @@ export function CommentSection({ postId }: { postId: string }) {
       {user && (
         <form onSubmit={handleAddComment} className="relative mb-12">
           {replyTo && (
-            <div className="flex justify-between items-center bg-electric-mint/10 p-2 px-4 rounded-lg mb-2">
-              <span className="text-[10px] font-black text-electric-mint uppercase tracking-widest">Replying to {replyTo.name}</span>
+            <div className="flex justify-between items-center bg-brand-emerald/10 p-2 px-4 rounded-lg mb-2">
+              <span className="text-[10px] font-black text-brand-emerald uppercase tracking-widest">Replying to {replyTo.name}</span>
               <button onClick={() => setReplyTo(null)} className="text-text-muted hover:text-text-primary"><X size={14} /></button>
             </div>
           )}
@@ -143,12 +143,12 @@ export function CommentSection({ postId }: { postId: string }) {
             value={newComment}
             onChange={e => setNewComment(e.target.value)}
             placeholder="Share your thoughts..."
-            className="w-full bg-surface-base border border-surface-high rounded-lg p-5 text-sm text-text-primary outline-none focus:border-electric-mint transition-all resize-none h-24"
+            className="w-full bg-surface-base border border-surface-high rounded-lg p-5 text-sm text-text-primary outline-none focus:border-brand-emerald transition-all resize-none h-24"
           />
           <button
             type="submit"
             disabled={!newComment.trim()}
-            className="absolute bottom-4 right-4 bg-slate-base text-slate-base p-3 rounded-lg hover:bg-electric-mint transition-all disabled:opacity-20"
+            className="absolute bottom-4 right-4 bg-white text-white p-3 rounded-lg hover:bg-brand-emerald transition-all disabled:opacity-20"
           >
             <Send size={18} />
           </button>

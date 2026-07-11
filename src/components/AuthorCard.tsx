@@ -56,12 +56,12 @@ export function AuthorCard({ authorId, authorName }: AuthorCardProps) {
 
   return (
     <div className="bg-surface-raised border border-surface-high rounded-lg-2xl p-8 flex flex-col sm:flex-row sm:items-center gap-6">
-      <div className="w-16 h-16 rounded-lg bg-club-green flex items-center justify-center text-white font-black text-2xl uppercase shrink-0">
+      <div className="w-16 h-16 rounded-lg bg-brand-emerald-light flex items-center justify-center text-white font-black text-2xl uppercase shrink-0">
         {authorName?.[0] || '?'}
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="text-[10px] font-black text-electric-mint uppercase tracking-widest mb-1">Written by</p>
+        <p className="text-[10px] font-black text-brand-emerald uppercase tracking-widest mb-1">Written by</p>
         <h4 className="text-xl font-bold text-text-primary mb-3 truncate">{authorName}</h4>
 
         {loading ? (
@@ -90,7 +90,7 @@ export function AuthorCard({ authorId, authorName }: AuthorCardProps) {
       {authorId && (
         <Link
           to={`/profile/${authorId}`}
-          className="shrink-0 text-center bg-electric-mint/10 text-electric-mint border border-electric-mint/30 px-6 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-electric-mint hover:text-slate-base transition-all"
+          className="shrink-0 text-center bg-brand-emerald/10 text-brand-emerald border border-brand-emerald/30 px-6 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-brand-emerald hover:text-white transition-all"
         >
           View Profile
         </Link>

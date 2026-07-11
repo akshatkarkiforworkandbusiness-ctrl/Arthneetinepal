@@ -78,10 +78,10 @@ export function Brand3DText({ className = '', light = false }: { className?: str
       className={`flex items-baseline gap-3 group p-2 justify-center ${className}`}
       style={{ perspective: '800px' }}
     >
-      <span className={`text-3xl md:text-5xl font-black tracking-widest transition-colors origin-center inline-block ${light ? 'text-white' : 'text-brandwood group-hover:text-coral-flame'}`} style={{ transformStyle: 'preserve-3d' }}>
+      <span className={`text-3xl md:text-5xl font-black tracking-widest transition-colors origin-center inline-block ${light ? 'text-white' : 'text-brandwood group-hover:text-brand-emerald'}`} style={{ transformStyle: 'preserve-3d' }}>
         ARTHNEETI
       </span>
-      <span className="text-xl md:text-3xl font-medium text-coral-flame tracking-widest origin-center inline-block" style={{ transformStyle: 'preserve-3d' }}>
+      <span className="text-xl md:text-3xl font-medium text-brand-emerald tracking-widest origin-center inline-block" style={{ transformStyle: 'preserve-3d' }}>
         अर्थनीति
       </span>
     </Link>

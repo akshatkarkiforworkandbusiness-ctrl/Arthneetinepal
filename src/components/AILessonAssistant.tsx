@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { Brain, X, Sparkles, Loader2, Send } from 'lucide-react';
 
 interface AILessonAssistantProps {
   lessonTitle: string;
@@ -194,8 +195,8 @@ export default function AILessonAssistant({
       {/* Header */}
       <div className="p-6 border-b border-white/10 flex justify-between items-center bg-[#090a0b]">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-coral-flame to-brandwood flex items-center justify-center">
-            <span className="material-symbols-outlined text-white">psychology</span>
+          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-emerald to-brandwood flex items-center justify-center">
+            <Brain size={24} className="text-white" />
           </div>
           <div>
             <h3 className="text-white font-display font-medium">Arthneeti AI Tutor</h3>
@@ -203,7 +204,7 @@ export default function AILessonAssistant({
           </div>
         </div>
         <button onClick={onClose} className="text-text-muted hover:text-white transition-colors">
-          <span className="material-symbols-outlined">close</span>
+          <X size={24} />
         </button>
       </div>
 
@@ -220,7 +221,7 @@ export default function AILessonAssistant({
         <div className="flex justify-start">
           <div className="max-w-[85%] rounded-2xl p-4 font-sans text-sm bg-white/5 text-white/90 rounded-bl-sm border border-white/10">
             <div className="flex items-center gap-2 mb-2 text-brandwood">
-              <span className="material-symbols-outlined text-[14px]">auto_awesome</span>
+              <Sparkles size={14} className="text-brandwood" />
               <span className="text-[10px] font-bold uppercase tracking-widest">AI Tutor</span>
             </div>
             <div dangerouslySetInnerHTML={{ __html: GREETING.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>') }} />
@@ -235,7 +236,7 @@ export default function AILessonAssistant({
             }`}>
               {msg.role === 'model' && (
                 <div className="flex items-center gap-2 mb-2 text-brandwood">
-                  <span className="material-symbols-outlined text-[14px]">auto_awesome</span>
+                  <Sparkles size={14} className="text-brandwood" />
                   <span className="text-[10px] font-bold uppercase tracking-widest">AI Tutor</span>
                 </div>
               )}
@@ -247,7 +248,7 @@ export default function AILessonAssistant({
         {isTyping && (
           <div className="flex justify-start">
             <div className="bg-white/5 text-white/50 rounded-2xl p-4 rounded-bl-sm border border-white/10 text-xs flex items-center gap-2">
-              <span className="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>
+              <Loader2 size={14} className="animate-spin" />
               Analyzing lesson...
             </div>
           </div>
@@ -288,7 +289,7 @@ export default function AILessonAssistant({
             disabled={!input.trim() || !apiKeyRef.current || isTyping}
             className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-brandwood text-white flex items-center justify-center hover:bg-brandwood/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <span className="material-symbols-outlined text-[18px]">send</span>
+            <Send size={18} />
           </button>
         </div>
       </form>

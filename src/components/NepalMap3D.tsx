@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef } from 'react';
+import { Pointer } from 'lucide-react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
@@ -132,7 +133,7 @@ export default function NepalMap3D() {
       {/* 2D Overlay - Instructions */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 pointer-events-none text-center">
         <div className="bg-white/90 backdrop-blur-sm border border-gray-200 px-4 py-2 rounded-full inline-flex items-center gap-2 shadow-sm">
-          <span className="material-symbols-outlined text-sm text-gray-500">touch_app</span>
+          <Pointer size={16} className="text-gray-500" />
           <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-500">
             Click regions to explore • Drag to rotate
           </span>

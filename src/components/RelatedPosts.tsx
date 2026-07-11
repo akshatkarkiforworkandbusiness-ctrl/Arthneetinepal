@@ -83,9 +83,9 @@ export function RelatedPosts({ post }: RelatedPostsProps) {
         <Link
           key={item.id}
           to={`/post/${item.id}`}
-          className="bg-surface-raised border border-surface-high rounded-lg-2xl p-5 hover:border-electric-mint/40 transition-all flex flex-col"
+          className="bg-surface-raised border border-surface-high rounded-lg-2xl p-5 hover:border-brand-emerald/40 transition-all flex flex-col"
         >
-          <span className="text-[9px] font-black text-electric-mint uppercase tracking-widest mb-2">
+          <span className="text-[9px] font-black text-brand-emerald uppercase tracking-widest mb-2">
             {item.authorId === post.authorId ? 'More from this author' : item.category}
           </span>
           <h5 className="text-sm font-bold text-text-primary leading-snug line-clamp-2 mb-2">

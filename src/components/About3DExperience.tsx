@@ -1,4 +1,5 @@
 import { useState, useRef, useMemo } from 'react';
+import { Pointer, Rocket, Shield, Diamond, Monitor } from 'lucide-react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Float, Html, OrbitControls, Environment, ContactShadows, Text, Stars } from '@react-three/drei';
 import * as THREE from 'three';
@@ -13,7 +14,7 @@ const CONTENT_NODES = [
     position: [0, 1.5, 2.5] as [number, number, number],
     rotation: [0, 0, 0] as [number, number, number],
     content: "Empowering Nepal's next generation with real financial intelligence. We travel across Nepal, bringing interactive workshops to every high school student.",
-    icon: 'rocket_launch'
+    Icon: Rocket
   },
   {
     id: 'work',
@@ -22,7 +23,7 @@ const CONTENT_NODES = [
     position: [2.5, -0.5, 1.5] as [number, number, number],
     rotation: [0, Math.PI / 6, 0] as [number, number, number],
     content: "We provide full session curriculums, professional guest speakers, and simulated markets. Active in over 50 schools nationwide.",
-    icon: 'assured_workload'
+    Icon: Shield
   },
   {
     id: 'values',
@@ -31,7 +32,7 @@ const CONTENT_NODES = [
     position: [-2.5, -0.5, 1.5] as [number, number, number],
     rotation: [0, -Math.PI / 6, 0] as [number, number, number],
     content: "Knowledge First. Prosperity for All. Grounded in Truth. We believe financial freedom is a skill, not a privilege.",
-    icon: 'diamond'
+    Icon: Diamond
   },
   {
     id: 'features',
@@ -40,7 +41,7 @@ const CONTENT_NODES = [
     position: [0, -2, 2.5] as [number, number, number],
     rotation: [0, 0, 0] as [number, number, number],
     content: "Track live NEPSE data, take guided video courses, test your knowledge with quizzes, and earn printable certificates.",
-    icon: 'devices'
+    Icon: Monitor
   }
 ];
 
@@ -90,8 +91,8 @@ function CardNode({ data, activeId, setActiveId }: { data: typeof CONTENT_NODES[
                   className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-lg"
                   style={{ backgroundColor: `${data.color}20`, border: `1px solid ${data.color}50` }}
                 >
-                  <span className="material-symbols-outlined text-xl" style={{ color: data.color }}>
-                    {data.icon}
+                  <span className="text-xl" style={{ color: data.color }}>
+                    <data.Icon size={20} />
                   </span>
                 </div>
                 <h3 className={`font-display font-bold transition-all ${isActive ? 'text-2xl text-white' : 'text-lg text-white/90'}`}>
@@ -290,7 +291,7 @@ export default function About3DExperience() {
       {/* 2D Overlay Help Text */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 pointer-events-none text-center">
         <div className="bg-white/5 backdrop-blur border border-white/10 px-4 py-2 rounded-full inline-flex items-center gap-2">
-          <span className="material-symbols-outlined text-sm text-slate-400">touch_app</span>
+          <Pointer size={16} className="text-slate-400" />
           <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Click nodes to explore • Drag to rotate</span>
         </div>
       </div>

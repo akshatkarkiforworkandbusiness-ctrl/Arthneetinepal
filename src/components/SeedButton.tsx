@@ -26,7 +26,7 @@ export default function SeedButton() {
     <button
       onClick={handleSeed}
       disabled={seeding}
-      className="fixed bottom-4 right-4 bg-coral-flame text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg flex items-center gap-2 hover:bg-coral-flame/90 transition-colors disabled:opacity-50"
+      className="fixed bottom-4 right-4 bg-brand-emerald text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg flex items-center gap-2 hover:bg-brand-emerald/90 transition-colors disabled:opacity-50"
     >
       <Database size={16} />
       {seeding ? 'Seeding...' : 'Seed 10 Discussion Posts'}

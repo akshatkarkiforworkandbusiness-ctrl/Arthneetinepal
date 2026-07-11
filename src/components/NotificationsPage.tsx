@@ -91,8 +91,8 @@ export default function NotificationsPage() {
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'like': return <Heart size={16} className="text-coral-flame" />;
-      case 'comment': return <MessageSquare size={16} className="text-mint-action" />;
+      case 'like': return <Heart size={16} className="text-brand-emerald" />;
+      case 'comment': return <MessageSquare size={16} className="text-brand-emerald-light" />;
       case 'follow': return <UserPlus size={16} className="text-blue-500" />;
       default: return <Bell size={16} className="text-text-muted" />;
     }
@@ -135,7 +135,7 @@ export default function NotificationsPage() {
         {unreadCount > 0 && (
           <button
             onClick={markAllAsRead}
-            className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-mint-action hover:bg-mint-action/10 rounded-xl transition-colors"
+            className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-brand-emerald-light hover:bg-brand-emerald-light/10 rounded-xl transition-colors"
           >
             <Check size={14} />
             Mark all as read
@@ -146,7 +146,7 @@ export default function NotificationsPage() {
       {loading ? (
         <div className="space-y-4">
           {[1, 2, 3, 4].map(i => (
-            <Skeleton key={i} className="h-20 w-full bg-sunset-fade border border-blush-mist rounded-2xl" />
+            <Skeleton key={i} className="h-20 w-full bg-white border border-blush-mist rounded-2xl" />
           ))}
         </div>
       ) : notifications.length === 0 ? (
@@ -164,12 +164,12 @@ export default function NotificationsPage() {
               className={`p-4 rounded-2xl border transition-all cursor-pointer ${
                 notification.read
                   ? 'bg-white border-blush-mist hover:shadow-sm'
-                  : 'bg-mint-action/5 border-mint-action/20 hover:shadow-warm-lift'
+                  : 'bg-brand-emerald-light/5 border-brand-emerald-light/20 hover:shadow-card'
               }`}
               onClick={() => handleNotificationClick(notification)}
             >
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-sunset-fade flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0">
                   {getNotificationIcon(notification.type)}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -194,7 +194,7 @@ export default function NotificationsPage() {
                   </p>
                 </div>
                 {!notification.read && (
-                  <div className="w-2 h-2 rounded-full bg-mint-action shrink-0 mt-2" />
+                  <div className="w-2 h-2 rounded-full bg-brand-emerald-light shrink-0 mt-2" />
                 )}
               </div>
             </motion.div>

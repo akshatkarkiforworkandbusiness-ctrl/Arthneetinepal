@@ -9,6 +9,7 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 import ReactApexChart from 'react-apexcharts';
 import { Brand3DText } from './Brand3DText';
 import AIMarketAssistant from './AIMarketAssistant';
+import { CloudOff, Search, ArrowUp, ArrowDown, TrendingUp, MessageSquare, Compass, Scale, Newspaper, AlertCircle } from 'lucide-react';
 import { db } from '../lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 
@@ -279,7 +280,7 @@ export default function ExplorePage() {
     return (
       <motion.main initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-7xl mx-auto px-4 md:px-12 pt-32 pb-24 min-h-screen flex items-center justify-center">
         <div className="text-center bg-[#090a0b] border border-white/[0.06] rounded-2xl p-12 max-w-md">
-          <span className="material-symbols-outlined text-6xl text-[#ef4444] mb-4 block">cloud_off</span>
+          <CloudOff size={48} className="text-[#ef4444] mb-4 block" />
           <h2 className="text-xl font-bold text-white mb-2">Market Data Unavailable</h2>
           <p className="text-sm text-[#9f9fa0] mb-6">Unable to fetch live NEPSE data. The market data service may be temporarily down.</p>
           <button onClick={() => { setLoading(true); setError(false); loadMarketData(); }} className="px-6 py-3 bg-[#847dff] hover:bg-[#847dff] hover:text-[#090a0b] text-white text-xs font-black uppercase tracking-widest rounded-lg transition-all">
@@ -296,11 +297,11 @@ export default function ExplorePage() {
       {/* ─── Header ─── */}
       <header className="mb-10">
         <div className="flex items-center gap-3 mb-2">
-          <span className="text-[10px] font-bold text-mint-action uppercase tracking-[0.4em]">FINANCIAL INTELLIGENCE HUB</span>
+          <span className="text-[10px] font-bold text-brand-emerald-light uppercase tracking-[0.4em]">FINANCIAL INTELLIGENCE HUB</span>
           {marketOpen !== null && (
             <span className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider">
-              <span className={`w-2 h-2 rounded-full ${marketOpen ? 'bg-mint-action animate-pulse' : 'bg-text-muted'}`} />
-              <span className={marketOpen ? 'text-mint-action' : 'text-text-muted'}>{marketOpen ? 'Market Open' : 'Market Closed'}</span>
+              <span className={`w-2 h-2 rounded-full ${marketOpen ? 'bg-brand-emerald-light animate-pulse' : 'bg-text-muted'}`} />
+              <span className={marketOpen ? 'text-brand-emerald-light' : 'text-text-muted'}>{marketOpen ? 'Market Open' : 'Market Closed'}</span>
             </span>
           )}
         </div>
@@ -312,13 +313,13 @@ export default function ExplorePage() {
 
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
           <div className="relative flex-1 max-w-2xl">
-            <span className="absolute left-6 top-1/2 -translate-y-1/2 material-symbols-outlined text-text-muted">search</span>
+            <Search size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-text-muted" />
             <input
               type="text"
               placeholder="Search NEPSE counters..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white border border-blush-mist rounded-2xl px-16 py-4 text-sm focus:border-coral-flame outline-none shadow-warm-lift text-brandwood placeholder:text-text-muted/60 transition-all font-sans"
+              className="w-full bg-white border border-blush-mist rounded-2xl px-16 py-4 text-sm focus:border-brand-emerald outline-none shadow-card text-brandwood placeholder:text-text-muted/60 transition-all font-sans"
             />
           </div>
           {lastUpdated && (
@@ -344,7 +345,7 @@ export default function ExplorePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08, type: 'spring', stiffness: 100, damping: 15 }}
               whileHover={{ y: -5, scale: 1.02, transition: { type: 'spring', stiffness: 300, damping: 15 } }}
-              className="bg-white border border-blush-mist rounded-2xl p-5 hover:border-coral-flame/40 transition-colors shadow-warm-lift cursor-default"
+              className="bg-white border border-blush-mist rounded-2xl p-5 hover:border-brand-emerald/40 transition-colors shadow-card cursor-default"
             >
               <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1">{card.label}</p>
               <p className="text-2xl font-bold font-sans text-brandwood tracking-tight">{card.value}</p>
@@ -362,13 +363,13 @@ export default function ExplorePage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
 
         {/* Chart Widget */}
-        <section className="lg:col-span-8 bg-white border border-blush-mist rounded-3xl p-6 md:p-8 flex flex-col shadow-warm-lift">
+        <section className="lg:col-span-8 bg-white border border-blush-mist rounded-3xl p-6 md:p-8 flex flex-col shadow-card">
           {/* Stock Selector + Info */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
             <div>
               <div className="flex items-center gap-3 mb-1">
                 <span className="text-3xl font-bold text-brandwood font-sans tracking-tight">{activeStock?.symbol ?? selectedSymbol}</span>
-                <Badge variant="outline" className="text-[10px] font-bold text-brandwood uppercase bg-sunset-fade px-3 py-1 rounded-xl border border-blush-mist">
+                <Badge variant="outline" className="text-[10px] font-bold text-brandwood uppercase bg-white px-3 py-1 rounded-xl border border-blush-mist">
                   {activeStock?.name ?? 'Select a stock'}
                 </Badge>
               </div>
@@ -379,9 +380,7 @@ export default function ExplorePage() {
                 Rs. {displayedPrice?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? '—'}
               </div>
               <div className="text-sm font-bold font-sans inline-flex items-center gap-1 mt-1" style={{ color: pricePercentChange >= 0 ? '#34c771' : '#f73b20' }}>
-                <span className="material-symbols-outlined text-sm">
-                  {pricePercentChange >= 0 ? 'arrow_upward' : 'arrow_downward'}
-                </span>
+                {pricePercentChange >= 0 ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
                 <span>{pricePercentChange >= 0 ? '+' : ''}{pricePercentChange.toFixed(2)}%</span>
               </div>
             </div>
@@ -389,7 +388,7 @@ export default function ExplorePage() {
 
           {/* OHLC Data Strip */}
           {activeStock && (
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6 p-4 bg-sunset-fade/30 rounded-2xl border border-blush-mist">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6 p-4 bg-white/30 rounded-2xl border border-blush-mist">
               <div className="flex flex-col">
                 <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Open</span>
                 <span className="text-sm font-sans font-bold text-brandwood">Rs. {activeStock.open?.toLocaleString('en-US', { minimumFractionDigits: 2 }) || '—'}</span>
@@ -423,13 +422,13 @@ export default function ExplorePage() {
                   key={tf}
                   onClick={() => setTimeframe(tf)}
                   className={`relative px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors duration-300 z-10 ${
-                    isActive ? 'text-white' : 'text-text-muted hover:text-brandwood hover:bg-sunset-fade'
+                    isActive ? 'text-white' : 'text-text-muted hover:text-brandwood hover:bg-white'
                   }`}
                 >
                   {isActive && (
                     <motion.div
                       layoutId="activeTimeframe"
-                      className="absolute inset-0 bg-coral-flame rounded-xl -z-10"
+                      className="absolute inset-0 bg-brand-emerald rounded-xl -z-10"
                       transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                     />
                   )}
@@ -442,7 +441,7 @@ export default function ExplorePage() {
               <button
                 onClick={() => setChartType('area')}
                 className={`px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors duration-300 ${
-                  chartType === 'area' ? 'bg-mint-action text-white' : 'text-text-muted hover:text-brandwood hover:bg-sunset-fade'
+                  chartType === 'area' ? 'bg-brand-emerald-light text-white' : 'text-text-muted hover:text-brandwood hover:bg-white'
                 }`}
               >
                 Line
@@ -450,7 +449,7 @@ export default function ExplorePage() {
               <button
                 onClick={() => setChartType('candlestick')}
                 className={`px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors duration-300 ${
-                  chartType === 'candlestick' ? 'bg-mint-action text-white' : 'text-text-muted hover:text-brandwood hover:bg-sunset-fade'
+                  chartType === 'candlestick' ? 'bg-brand-emerald-light text-white' : 'text-text-muted hover:text-brandwood hover:bg-white'
                 }`}
               >
                 Candle
@@ -459,7 +458,7 @@ export default function ExplorePage() {
           </div>
 
           {/* Chart */}
-          <div className="relative w-full h-[300px] bg-sunset-fade/50 rounded-2xl border border-blush-mist p-4">
+          <div className="relative w-full h-[300px] bg-white/50 rounded-2xl border border-blush-mist p-4">
             {chartData.length > 0 ? (
               chartType === 'area' ? (
                 <ResponsiveContainer width="100%" height="100%">
@@ -540,7 +539,7 @@ export default function ExplorePage() {
         <aside className="lg:col-span-4 flex flex-col gap-6">
 
           {/* Stock Watchlist */}
-          <div className="bg-white border border-blush-mist rounded-3xl p-6 shadow-warm-lift max-h-[420px] flex flex-col">
+          <div className="bg-white border border-blush-mist rounded-3xl p-6 shadow-card max-h-[420px] flex flex-col">
             <h3 className="text-sm font-bold uppercase tracking-widest text-brandwood mb-4 flex items-center justify-between">
               <span>NEPSE Watchlist</span>
               <span className="text-[10px] font-normal normal-case tracking-normal text-text-muted">{filteredStocks.length} stocks</span>
@@ -558,14 +557,14 @@ export default function ExplorePage() {
                       onClick={() => { setSelectedSymbol(s.symbol); setHoverIndex(null); }}
                       className={`relative w-full text-left p-3 rounded-2xl border transition-colors duration-200 flex justify-between items-center overflow-hidden ${
                         active
-                          ? 'bg-sunset-fade border-coral-flame shadow-sm'
-                          : 'bg-white border-blush-mist hover:border-coral-flame/30 hover:bg-sunset-fade/40'
+                          ? 'bg-white border-brand-emerald shadow-sm'
+                          : 'bg-white border-blush-mist hover:border-brand-emerald/30 hover:bg-white/40'
                       }`}
                     >
                       {active && (
                         <motion.div
                           layoutId="activeStockGlow"
-                          className="absolute left-0 top-0 bottom-0 w-1 bg-coral-flame"
+                          className="absolute left-0 top-0 bottom-0 w-1 bg-brand-emerald"
                           transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                         />
                       )}
@@ -591,14 +590,14 @@ export default function ExplorePage() {
 
           {/* Top Movers */}
           {topStocks && (
-            <div className="bg-white border border-blush-mist rounded-3xl p-6 shadow-warm-lift">
+            <div className="bg-white border border-blush-mist rounded-3xl p-6 shadow-card">
               <h3 className="text-sm font-bold uppercase tracking-widest text-brandwood mb-4 flex items-center justify-between">
                 Top Movers
-                <span className="material-symbols-outlined text-coral-flame text-lg">trending_up</span>
+                <TrendingUp size={20} className="text-brand-emerald" />
               </h3>
               <div className="space-y-4">
                 {(topStocks.top_gainers ?? []).slice(0, 3).map((g) => (
-                  <div key={g.symbol} className="flex items-center justify-between p-2 rounded-xl hover:bg-sunset-fade transition-colors">
+                  <div key={g.symbol} className="flex items-center justify-between p-2 rounded-xl hover:bg-white transition-colors">
                     <div>
                       <span className="text-sm font-bold font-sans text-brandwood">{g.symbol}</span>
                       <span className="text-[10px] text-text-muted ml-2">Gainer</span>
@@ -607,7 +606,7 @@ export default function ExplorePage() {
                   </div>
                 ))}
                 {(topStocks.top_losers ?? []).slice(0, 3).map((l) => (
-                  <div key={l.symbol} className="flex items-center justify-between p-2 rounded-xl hover:bg-sunset-fade transition-colors">
+                  <div key={l.symbol} className="flex items-center justify-between p-2 rounded-xl hover:bg-white transition-colors">
                     <div>
                       <span className="text-sm font-bold font-sans text-brandwood">{l.symbol}</span>
                       <span className="text-[10px] text-text-muted ml-2">Loser</span>
@@ -628,7 +627,7 @@ export default function ExplorePage() {
         <section className="lg:col-span-8 space-y-8">
           <div className="flex justify-between items-end border-b border-blush-mist pb-4">
             <h2 className="font-display font-medium text-4xl text-brandwood tracking-[0.03em]">Trending Sectors</h2>
-            <Link to="/news-feed" className="text-[10px] font-bold text-mint-action uppercase tracking-widest hover:text-coral-flame transition-colors">
+            <Link to="/news-feed" className="text-[10px] font-bold text-brand-emerald-light uppercase tracking-widest hover:text-brand-emerald transition-colors">
               LIVE NEWS FEED
             </Link>
           </div>
@@ -642,18 +641,18 @@ export default function ExplorePage() {
                 viewport={{ once: true, margin: "-20px" }}
                 whileHover={{ y: -6, transition: { type: 'spring', stiffness: 300 } }}
                 transition={{ delay: i * 0.05, type: 'spring', damping: 20 }}
-                className="group bg-white border border-blush-mist rounded-3xl p-6 hover:border-coral-flame/50 transition-all duration-300 shadow-warm-lift hover:shadow-warm-float"
+                className="group bg-white border border-blush-mist rounded-3xl p-6 hover:border-brand-emerald/50 transition-all duration-300 shadow-card hover:shadow-elevated"
               >
                 <div className="flex items-start gap-4 mb-4">
                   <motion.div
                     whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
                     transition={{ duration: 0.5 }}
-                    className="w-12 h-12 rounded-2xl bg-sunset-fade border border-blush-mist flex items-center justify-center text-mint-action group-hover:bg-mint-action/10 group-hover:border-mint-action/30 transition-all shrink-0 cursor-default"
+                    className="w-12 h-12 rounded-2xl bg-white border border-blush-mist flex items-center justify-center text-brand-emerald-light group-hover:bg-brand-emerald-light/10 group-hover:border-brand-emerald-light/30 transition-all shrink-0 cursor-default"
                   >
-                    <span className="material-symbols-outlined text-2xl">{SECTOR_ICONS[sector]}</span>
+                    {(() => { const Icon = SECTOR_ICONS[sector]; return <Icon size={24} className="text-brand-emerald-light" />; })()}
                   </motion.div>
                   <div className="min-w-0">
-                    <h3 className="font-display font-bold text-xl text-brandwood group-hover:text-coral-flame transition-colors leading-tight">
+                    <h3 className="font-display font-bold text-xl text-brandwood group-hover:text-brand-emerald transition-colors leading-tight">
                       {sector}
                     </h3>
                     <p className="text-[10px] text-text-muted mt-1 leading-relaxed font-sans">{SECTOR_DESCRIPTIONS[sector]}</p>
@@ -663,17 +662,17 @@ export default function ExplorePage() {
                 <div className="flex flex-wrap gap-2 mt-auto">
                   <button
                     onClick={() => navigate(`/community?sector=${encodeURIComponent(sector)}`)}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-mint-action/10 border border-mint-action/30 text-mint-action rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-mint-action hover:text-white transition-all shadow-sm"
+                    className="flex items-center gap-1.5 px-4 py-2 bg-brand-emerald-light/10 border border-brand-emerald-light/30 text-brand-emerald-light rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-brand-emerald-light hover:text-white transition-all shadow-sm"
                   >
-                    <span className="material-symbols-outlined text-sm">forum</span>
+                    <MessageSquare size={16} />
                     Discuss
                   </button>
                   <button
                     onClick={() => navigate(`/news-feed?sector=${encodeURIComponent(sector)}`)}
                     disabled={newsLoading && selectedSector === sector}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-white border border-blush-mist text-brandwood rounded-xl text-[10px] font-bold uppercase tracking-widest hover:border-coral-flame/50 hover:bg-sunset-fade transition-all shadow-sm disabled:opacity-40"
+                    className="flex items-center gap-1.5 px-4 py-2 bg-white border border-blush-mist text-brandwood rounded-xl text-[10px] font-bold uppercase tracking-widest hover:border-brand-emerald/50 hover:bg-white transition-all shadow-sm disabled:opacity-40"
                   >
-                    <span className="material-symbols-outlined text-sm">travel_explore</span>
+                    <Compass size={16} />
                     {newsLoading && selectedSector === sector ? 'Researching...' : 'Latest News'}
                   </button>
                 </div>
@@ -685,28 +684,28 @@ export default function ExplorePage() {
         {/* Sidebar Panels */}
         <aside className="lg:col-span-4 space-y-8">
           {/* NRB Policy Center */}
-          <div className="bg-white border border-blush-mist rounded-3xl p-6 shadow-warm-lift">
+          <div className="bg-white border border-blush-mist rounded-3xl p-6 shadow-card">
             <h3 className="text-sm font-bold uppercase tracking-widest text-brandwood mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-mint-action text-xl">gavel</span>
+              <Scale size={20} className="text-brand-emerald-light" />
               NRB Policy Center
             </h3>
             <p className="text-xs text-text-muted leading-relaxed mb-5 font-sans">
               Review regulatory notifications, financial accessibility schemes, and capital market policies from Nepal Rastra Bank.
             </p>
             <div className="flex flex-col gap-3">
-              <a href="https://www.nrb.org.np/financial-literacy/" target="_blank" rel="noreferrer" className="w-full text-center py-3.5 bg-sunset-fade hover:bg-white border border-blush-mist hover:border-coral-flame text-brandwood text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all shadow-sm">
+              <a href="https://www.nrb.org.np/financial-literacy/" target="_blank" rel="noreferrer" className="w-full text-center py-3.5 bg-white hover:bg-white border border-blush-mist hover:border-brand-emerald text-brandwood text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all shadow-sm">
                 NRB Literacy Hub
               </a>
-              <a href="https://www.nrb.org.np/category/monetary-policy/" target="_blank" rel="noreferrer" className="w-full text-center py-3.5 bg-transparent border border-blush-mist hover:border-coral-flame text-brandwood text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all shadow-sm">
+              <a href="https://www.nrb.org.np/category/monetary-policy/" target="_blank" rel="noreferrer" className="w-full text-center py-3.5 bg-transparent border border-blush-mist hover:border-brand-emerald text-brandwood text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all shadow-sm">
                 Monetary Policy Reports
               </a>
             </div>
           </div>
 
           {/* Sector News Panel */}
-          <div className="bg-white border border-blush-mist rounded-3xl p-6 shadow-warm-lift">
+          <div className="bg-white border border-blush-mist rounded-3xl p-6 shadow-card">
             <h3 className="text-sm font-bold uppercase tracking-widest text-brandwood mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-coral-flame text-xl">newspaper</span>
+              <Newspaper size={20} className="text-brand-emerald" />
               {selectedSector ? `${selectedSector} News` : 'Sector News'}
             </h3>
             {newsLoading ? (
@@ -716,8 +715,8 @@ export default function ExplorePage() {
                 <Skeleton className="h-20 bg-blush-mist rounded-xl" />
               </div>
             ) : newsError ? (
-              <div className="text-center py-6 bg-coral-flame/5 border border-coral-flame/20 rounded-xl">
-                <span className="material-symbols-outlined text-coral-flame text-3xl mb-2 block">error</span>
+              <div className="text-center py-6 bg-brand-emerald/5 border border-brand-emerald/20 rounded-xl">
+                <AlertCircle size={30} className="text-brand-emerald mb-2 block" />
                 <p className="text-sm font-bold text-brandwood mb-1">Research Failed</p>
                 <p className="text-[10px] text-text-muted px-4 font-sans">
                   {newsError.includes('API key') || newsError.includes('400') || newsError.includes('401') ? 'Invalid NVIDIA API Key. Please update VITE_NVIDIA_API_KEY in your .env file.' : newsError}
@@ -726,10 +725,10 @@ export default function ExplorePage() {
             ) : sectorNews && sectorNews.articles.length > 0 ? (
               <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
                 {sectorNews.articles.slice(0, 5).map((article, i) => (
-                  <div key={i} className="bg-sunset-fade rounded-2xl p-4 border border-blush-mist hover:border-coral-flame/30 transition-all flex flex-col h-full shadow-sm">
+                  <div key={i} className="bg-white rounded-2xl p-4 border border-blush-mist hover:border-brand-emerald/30 transition-all flex flex-col h-full shadow-sm">
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <h4 className="text-sm font-bold text-brandwood leading-tight font-sans">{article.title}</h4>
-                      <span className="text-[10px] text-mint-action font-sans font-bold whitespace-nowrap shrink-0 bg-mint-action/10 px-2 py-0.5 rounded-md border border-mint-action/20">{article.date}</span>
+                      <span className="text-[10px] text-brand-emerald-light font-sans font-bold whitespace-nowrap shrink-0 bg-brand-emerald-light/10 px-2 py-0.5 rounded-md border border-brand-emerald-light/20">{article.date}</span>
                     </div>
                     <p className="text-xs text-text-muted leading-relaxed flex-grow font-sans">{article.summary}</p>
                     <div className="flex items-center justify-between mt-3 pt-3 border-t border-blush-mist">
@@ -738,9 +737,9 @@ export default function ExplorePage() {
                       ) : <span />}
                       <Link
                         to="/community"
-                        className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-mint-action hover:text-coral-flame transition-colors"
+                        className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-brand-emerald-light hover:text-brand-emerald transition-colors"
                       >
-                        <span className="material-symbols-outlined text-sm">forum</span>
+                        <MessageSquare size={16} />
                         Discuss
                       </Link>
                     </div>
@@ -749,9 +748,9 @@ export default function ExplorePage() {
               </div>
             ) : (
               <div className="text-center py-8">
-                <span className="material-symbols-outlined text-4xl text-blush-mist block mb-2">travel_explore</span>
+                <Compass size={36} className="text-blush-mist block mb-2" />
                 <p className="text-xs text-text-muted italic font-sans">
-                  Click <span className="text-coral-flame font-bold">Latest News</span> on any sector above to see real-time AI-researched updates.
+                  Click <span className="text-brand-emerald font-bold">Latest News</span> on any sector above to see real-time AI-researched updates.
                 </p>
               </div>
             )}

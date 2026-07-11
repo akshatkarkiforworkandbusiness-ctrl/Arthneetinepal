@@ -123,7 +123,7 @@ export default function PostActions({
         <button
           onClick={handleLike}
           className={`flex items-center gap-1 transition-colors ${
-            hasLiked ? 'text-coral-flame' : 'hover:text-coral-flame'
+            hasLiked ? 'text-brand-emerald' : 'hover:text-brand-emerald'
           }`}
         >
           <Heart size={12} fill={hasLiked ? 'currentColor' : 'none'} />
@@ -132,7 +132,7 @@ export default function PostActions({
         {showComments && (
           <button
             onClick={onCommentClick}
-            className="flex items-center gap-1 hover:text-mint-action transition-colors"
+            className="flex items-center gap-1 hover:text-brand-emerald-light transition-colors"
           >
             <MessageSquare size={12} />
             <span>{commentCount}</span>
@@ -141,7 +141,7 @@ export default function PostActions({
         <div className="relative">
           <button
             onClick={() => setShowShareMenu(!showShareMenu)}
-            className="flex items-center gap-1 hover:text-mint-action transition-colors"
+            className="flex items-center gap-1 hover:text-brand-emerald-light transition-colors"
           >
             <Share2 size={12} />
           </button>
@@ -149,19 +149,19 @@ export default function PostActions({
             <div className="absolute bottom-full right-0 mb-2 bg-white border border-blush-mist rounded-xl shadow-lg py-2 min-w-[140px] z-50">
               <button
                 onClick={handleCopyLink}
-                className="w-full px-3 py-2 text-left text-xs text-brandwood hover:bg-sunset-fade/50 flex items-center gap-2"
+                className="w-full px-3 py-2 text-left text-xs text-brandwood hover:bg-white/50 flex items-center gap-2"
               >
                 <ExternalLink size={12} /> Copy Link
               </button>
               <button
                 onClick={handleShareTwitter}
-                className="w-full px-3 py-2 text-left text-xs text-brandwood hover:bg-sunset-fade/50 flex items-center gap-2"
+                className="w-full px-3 py-2 text-left text-xs text-brandwood hover:bg-white/50 flex items-center gap-2"
               >
                 <Twitter size={12} /> Share on X
               </button>
               <button
                 onClick={handleShareLinkedIn}
-                className="w-full px-3 py-2 text-left text-xs text-brandwood hover:bg-sunset-fade/50 flex items-center gap-2"
+                className="w-full px-3 py-2 text-left text-xs text-brandwood hover:bg-white/50 flex items-center gap-2"
               >
                 <Linkedin size={12} /> Share on LinkedIn
               </button>
@@ -170,7 +170,7 @@ export default function PostActions({
         </div>
         <button
           onClick={handleBookmark}
-          className={`transition-colors ${isBookmarked ? 'text-mint-action' : 'hover:text-mint-action'}`}
+          className={`transition-colors ${isBookmarked ? 'text-brand-emerald-light' : 'hover:text-brand-emerald-light'}`}
         >
           <Bookmark size={12} fill={isBookmarked ? 'currentColor' : 'none'} />
         </button>
@@ -183,7 +183,7 @@ export default function PostActions({
       <button
         onClick={handleLike}
         className={`flex items-center gap-2 transition-colors ${
-          hasLiked ? 'text-coral-flame' : 'text-text-muted hover:text-coral-flame'
+          hasLiked ? 'text-brand-emerald' : 'text-text-muted hover:text-brand-emerald'
         }`}
         disabled={!user}
       >
@@ -194,7 +194,7 @@ export default function PostActions({
       {showComments && (
         <button
           onClick={onCommentClick}
-          className="flex items-center gap-2 text-text-muted hover:text-mint-action transition-colors"
+          className="flex items-center gap-2 text-text-muted hover:text-brand-emerald-light transition-colors"
         >
           <MessageSquare size={16} />
           <span className="text-xs font-bold">{commentCount}</span>
@@ -204,7 +204,7 @@ export default function PostActions({
       <div className="relative">
         <button
           onClick={() => setShowShareMenu(!showShareMenu)}
-          className="flex items-center gap-2 text-text-muted hover:text-mint-action transition-colors"
+          className="flex items-center gap-2 text-text-muted hover:text-brand-emerald-light transition-colors"
         >
           <Share2 size={16} />
           <span className="text-xs font-bold">Share</span>
@@ -214,19 +214,19 @@ export default function PostActions({
           <div className="absolute bottom-full left-0 mb-2 bg-white border border-blush-mist rounded-xl shadow-lg py-2 min-w-[180px] z-50">
             <button
               onClick={handleCopyLink}
-              className="w-full px-4 py-2 text-left text-xs text-brandwood hover:bg-sunset-fade/50 flex items-center gap-2"
+              className="w-full px-4 py-2 text-left text-xs text-brandwood hover:bg-white/50 flex items-center gap-2"
             >
               <ExternalLink size={14} /> Copy Link
             </button>
             <button
               onClick={handleShareTwitter}
-              className="w-full px-4 py-2 text-left text-xs text-brandwood hover:bg-sunset-fade/50 flex items-center gap-2"
+              className="w-full px-4 py-2 text-left text-xs text-brandwood hover:bg-white/50 flex items-center gap-2"
             >
               <Twitter size={14} /> Share on X
             </button>
             <button
               onClick={handleShareLinkedIn}
-              className="w-full px-4 py-2 text-left text-xs text-brandwood hover:bg-sunset-fade/50 flex items-center gap-2"
+              className="w-full px-4 py-2 text-left text-xs text-brandwood hover:bg-white/50 flex items-center gap-2"
             >
               <Linkedin size={14} /> Share on LinkedIn
             </button>
@@ -237,7 +237,7 @@ export default function PostActions({
       <button
         onClick={handleBookmark}
         className={`flex items-center gap-2 transition-colors ${
-          isBookmarked ? 'text-mint-action' : 'text-text-muted hover:text-mint-action'
+          isBookmarked ? 'text-brand-emerald-light' : 'text-text-muted hover:text-brand-emerald-light'
         }`}
         disabled={!user}
       >

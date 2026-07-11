@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { User, LogOut } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -17,7 +18,7 @@ export function ProfileDropdown() {
     <div className="relative">
       <button 
         onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-        className="w-10 h-10 rounded-2xl bg-sunset-fade border border-blush-mist flex items-center justify-center text-brandwood font-black text-sm uppercase cursor-pointer hover:bg-white hover:border-coral-flame hover:text-coral-flame transition-all shadow-warm-lift hover:-translate-y-0.5"
+        className="w-10 h-10 rounded-2xl bg-white border border-blush-mist flex items-center justify-center text-brandwood font-black text-sm uppercase cursor-pointer hover:bg-white hover:border-brand-emerald hover:text-brand-emerald transition-all shadow-card hover:-translate-y-0.5"
       >
         {profile?.name?.[0] || user?.displayName?.[0] || 'U'}
       </button>
@@ -34,10 +35,10 @@ export function ProfileDropdown() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 mt-3 w-72 bg-white rounded-3xl shadow-warm-float border border-blush-mist z-50 overflow-hidden"
+              className="absolute right-0 mt-3 w-72 bg-white rounded-3xl shadow-elevated border border-blush-mist z-50 overflow-hidden"
             >
               {/* Header */}
-              <div className="p-5 bg-sunset-fade border-b border-blush-mist">
+              <div className="p-5 bg-white border-b border-blush-mist">
                 <p className="text-sm font-bold font-sans text-brandwood tracking-tight mb-1">{profile?.name || user?.displayName}</p>
                 <p className="text-xs text-text-muted font-medium">
                   {profile?.topics?.slice(0, 3).join(' · ') || 'Member'}
@@ -49,10 +50,10 @@ export function ProfileDropdown() {
                 <Link 
                   to="/profile" 
                   onClick={() => setShowProfileDropdown(false)}
-                  className="flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-widest text-brandwood hover:bg-mint-action/10 hover:text-mint-action rounded-2xl transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-widest text-brandwood hover:bg-brand-emerald-light/10 hover:text-brand-emerald-light rounded-2xl transition-colors"
                 >
-                  <div className="w-8 h-8 bg-mint-action/10 border border-mint-action/20 rounded-xl flex items-center justify-center shrink-0">
-                    <span className="material-symbols-outlined text-mint-action text-[18px]">person</span>
+                  <div className="w-8 h-8 bg-brand-emerald-light/10 border border-brand-emerald-light/20 rounded-xl flex items-center justify-center shrink-0">
+                    <User size={18} className="text-brand-emerald-light" />
                   </div>
                   My Profile
                 </Link>
@@ -61,10 +62,10 @@ export function ProfileDropdown() {
                     logout();
                     setShowProfileDropdown(false);
                   }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-widest text-coral-flame hover:bg-sunset-fade rounded-2xl transition-colors cursor-pointer"
+                  className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-widest text-brand-emerald hover:bg-white rounded-2xl transition-colors cursor-pointer"
                 >
-                  <div className="w-8 h-8 bg-coral-flame/10 border border-coral-flame/20 rounded-xl flex items-center justify-center shrink-0">
-                    <span className="material-symbols-outlined text-coral-flame text-[18px]">logout</span>
+                  <div className="w-8 h-8 bg-brand-emerald/10 border border-brand-emerald/20 rounded-xl flex items-center justify-center shrink-0">
+                    <LogOut size={18} className="text-brand-emerald" />
                   </div>
                   Sign Out
                 </button>

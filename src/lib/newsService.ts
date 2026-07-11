@@ -1,16 +1,17 @@
-
+import { Building2, Zap, Handshake, Rocket, PiggyBank, TrendingUp, Send } from 'lucide-react';
+import type { ComponentType } from 'react';
 
 const SECTORS = ['Banking', 'Hydropower', 'Microfinance', 'IPO Market', 'Mutual Funds', 'Inflation', 'Remittance'] as const;
 export type Sector = typeof SECTORS[number];
 export const TRENDING_SECTORS: Sector[] = [...SECTORS];
-export const SECTOR_ICONS: Record<Sector, string> = {
-  Banking: 'account_balance',
-  Hydropower: 'bolt',
-  Microfinance: 'handshake',
-  'IPO Market': 'rocket_launch',
-  'Mutual Funds': 'savings',
-  Inflation: 'trending_up',
-  Remittance: 'send_money',
+export const SECTOR_ICONS: Record<Sector, ComponentType<{ size?: number; className?: string }>> = {
+  Banking: Building2,
+  Hydropower: Zap,
+  Microfinance: Handshake,
+  'IPO Market': Rocket,
+  'Mutual Funds': PiggyBank,
+  Inflation: TrendingUp,
+  Remittance: Send,
 };
 export const SECTOR_DESCRIPTIONS: Record<Sector, string> = {
   Banking: 'Commercial banks, development banks, and finance companies',

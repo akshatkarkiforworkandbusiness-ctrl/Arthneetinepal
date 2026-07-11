@@ -12,7 +12,7 @@ import {
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../contexts/AuthContext';
-import { Heart, MessageSquare, Share2, Download, Plus, FileText, HelpCircle, MoreVertical, X, RefreshCw, Users } from 'lucide-react';
+import { Heart, MessageSquare, Share2, Download, Plus, FileText, HelpCircle, MoreVertical, X, RefreshCw, Users, TrendingUp, AlertCircle, Compass, User, Bookmark } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { GradientCard } from './GradientCard';
@@ -155,7 +155,7 @@ export default function CommunityPage() {
               likes: 41,
               commentCount: 0,
               seeded: true,
-              content: `Gold's extraordinary rally — surging over 60% in 2025 and briefly surpassing $5,500 per ounce — is no accident. It reflects a confluence of powerful macroeconomic forces reshaping the global financial landscape. Persistent inflation has eroded confidence in paper currencies, driving investors toward hard assets that preserve real purchasing power. Meanwhile, central banks — particularly in emerging markets like China, India, and Turkey — have been buying electric-mint at record levels, seeking to reduce dependence on the US dollar following the weaponization of dollar-based sanctions against Russia. This broader de-dollarization trend, combined with a weakening dollar index, has made electric-mint increasingly attractive as a neutral, sovereign-free store of value. Compounding this, an exceptionally volatile geopolitical environment — marked by ongoing conflicts and US-China tensions — has embedded a significant "fear premium" into prices. On the monetary policy side, the US Federal Reserve's rate-cutting cycle has lowered the opportunity cost of holding non-yielding electric-mint, while record ETF inflows have brought the rally within reach of everyday investors. Taken together, electric-mint's rise is less a speculative bubble and more a rational, broad-based response to a world questioning the reliability of traditional financial systems — making it one of the most important macroeconomic stories of our time.`,
+              content: `Gold's extraordinary rally — surging over 60% in 2025 and briefly surpassing $5,500 per ounce — is no accident. It reflects a confluence of powerful macroeconomic forces reshaping the global financial landscape. Persistent inflation has eroded confidence in paper currencies, driving investors toward hard assets that preserve real purchasing power. Meanwhile, central banks — particularly in emerging markets like China, India, and Turkey — have been buying brand-emerald at record levels, seeking to reduce dependence on the US dollar following the weaponization of dollar-based sanctions against Russia. This broader de-dollarization trend, combined with a weakening dollar index, has made brand-emerald increasingly attractive as a neutral, sovereign-free store of value. Compounding this, an exceptionally volatile geopolitical environment — marked by ongoing conflicts and US-China tensions — has embedded a significant "fear premium" into prices. On the monetary policy side, the US Federal Reserve's rate-cutting cycle has lowered the opportunity cost of holding non-yielding brand-emerald, while record ETF inflows have brought the rally within reach of everyday investors. Taken together, brand-emerald's rise is less a speculative bubble and more a rational, broad-based response to a world questioning the reliability of traditional financial systems — making it one of the most important macroeconomic stories of our time.`,
               imageUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1000"
             },
             {
@@ -401,17 +401,17 @@ const handleLike = async (postId: string) => {
         <aside className="hidden lg:block lg:col-span-3 space-y-8 sticky top-32 h-fit">
           <div className="flex flex-col gap-2">
             {[
-              { icon: 'explore', label: 'Explore', path: '/discover' },
-              { icon: 'notifications', label: 'Notifications', path: '/notifications' },
-              { icon: 'bookmark', label: 'Bookmarks', path: '/bookmarks' },
-              { icon: 'person', label: 'Profile', path: '/profile' },
+              { icon: <Compass size={24} />, label: 'Explore', path: '/discover' },
+              { icon: <RefreshCw size={24} />, label: 'Notifications', path: '/notifications' },
+              { icon: <Bookmark size={24} />, label: 'Bookmarks', path: '/bookmarks' },
+              { icon: <User size={24} />, label: 'Profile', path: '/profile' },
             ].map((item, idx) => (
               <button 
                 key={idx}
                 onClick={() => navigate(item.path)}
-                className="flex items-center gap-4 p-4 rounded-2xl transition-all text-brandwood hover:bg-sunset-fade/50 hover:text-coral-flame"
+                className="flex items-center gap-4 p-4 rounded-2xl transition-all text-brandwood hover:bg-white/50 hover:text-brand-emerald"
               >
-                <span className="material-symbols-outlined text-2xl">{item.icon}</span>
+                {item.icon}
                 <span className="text-lg tracking-tight">{item.label}</span>
               </button>
             ))}
@@ -420,7 +420,7 @@ const handleLike = async (postId: string) => {
           {user && (
             <button 
               onClick={() => setShowCreateModal(true)}
-              className="w-full bg-coral-flame text-white py-4 rounded-2xl text-sm font-bold uppercase tracking-widest hover:bg-coral-flame/90 transition-all shadow-warm-float flex items-center justify-center gap-2"
+              className="w-full bg-brand-emerald text-white py-4 rounded-2xl text-sm font-bold uppercase tracking-widest hover:bg-brand-emerald/90 transition-all shadow-elevated flex items-center justify-center gap-2"
             >
               <Plus size={20} strokeWidth={3} /> Post
             </button>
@@ -446,13 +446,13 @@ const handleLike = async (postId: string) => {
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
                 className={`flex items-center gap-2 pb-3 text-xs font-bold uppercase tracking-widest relative transition-colors whitespace-nowrap ${
-                  activeTab === tab.key ? 'text-coral-flame' : 'text-text-muted hover:text-brandwood'
+                  activeTab === tab.key ? 'text-brand-emerald' : 'text-text-muted hover:text-brandwood'
                 }`}
               >
                 {tab.icon}
                 {tab.label}
                 {activeTab === tab.key && (
-                  <motion.div layoutId="tabIndicator" className="absolute bottom-0 left-0 right-0 h-1 bg-coral-flame rounded-t-lg" />
+                  <motion.div layoutId="tabIndicator" className="absolute bottom-0 left-0 right-0 h-1 bg-brand-emerald rounded-t-lg" />
                 )}
               </button>
             ))}
@@ -460,8 +460,8 @@ const handleLike = async (postId: string) => {
 
           {/* Quick Create Box (for Questions) */}
           {activeTab === 'questions' && user && (
-             <div className="bg-white p-6 rounded-3xl border border-blush-mist shadow-warm-lift mb-8 flex gap-4">
-               <div className="w-12 h-12 rounded-full bg-sunset-fade flex items-center justify-center text-coral-flame font-black text-lg uppercase shrink-0">
+             <div className="bg-white p-6 rounded-3xl border border-blush-mist shadow-card mb-8 flex gap-4">
+               <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-brand-emerald font-black text-lg uppercase shrink-0">
                   {profile?.name?.[0] || user.displayName?.[0] || 'U'}
                </div>
                <div className="flex-1 space-y-4">
@@ -475,7 +475,7 @@ const handleLike = async (postId: string) => {
                     <select 
                       value={createData.category}
                       onChange={e => setCreateData({...createData, category: e.target.value as any})}
-                      className="bg-sunset-fade text-brandwood text-xs font-bold px-3 py-2 rounded-xl outline-none border border-blush-mist"
+                      className="bg-white text-brandwood text-xs font-bold px-3 py-2 rounded-xl outline-none border border-blush-mist"
                     >
                       <option>Finance</option>
                       <option>Economics</option>
@@ -486,7 +486,7 @@ const handleLike = async (postId: string) => {
                     <button 
                       onClick={handleCreateSubmit}
                       disabled={!createData.content.trim() || isUploading}
-                      className="bg-coral-flame text-white px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-widest hover:shadow-warm-float transition-all disabled:opacity-50"
+                      className="bg-brand-emerald text-white px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-widest hover:shadow-elevated transition-all disabled:opacity-50"
                     >
                       Post
                     </button>
@@ -498,7 +498,7 @@ const handleLike = async (postId: string) => {
           {/* Posts */}
           {activeTab === 'news' && newsLoading && (
             <div className="text-center py-12 bg-white border border-blush-mist rounded-3xl">
-              <RefreshCw className="animate-spin mx-auto mb-4 text-coral-flame" size={32} />
+              <RefreshCw className="animate-spin mx-auto mb-4 text-brand-emerald" size={32} />
               <p className="text-sm font-bold text-brandwood mb-2">Researching {validSector} News</p>
               <p className="text-xs text-text-muted">AI is gathering the latest information...</p>
             </div>
@@ -506,7 +506,7 @@ const handleLike = async (postId: string) => {
 
           {activeTab === 'news' && newsError && (
             <div className="text-center py-12 bg-red-50 border border-red-200 rounded-3xl">
-              <span className="material-symbols-outlined text-red-400 text-3xl mb-4 block">error</span>
+              <AlertCircle size={30} className="text-red-400 mb-4 block" />
               <p className="text-sm font-bold text-brandwood mb-2">Failed to Load News</p>
               <p className="text-xs text-text-muted px-4">{newsError}</p>
             </div>
@@ -516,8 +516,8 @@ const handleLike = async (postId: string) => {
             <LeaderboardPage isEmbedded={true} />
           ) : loading ? (
             <div className="space-y-6">
-              <Skeleton className="h-40 w-full bg-sunset-fade border border-blush-mist rounded-3xl" />
-              <Skeleton className="h-40 w-full bg-sunset-fade border border-blush-mist rounded-3xl" />
+              <Skeleton className="h-40 w-full bg-white border border-blush-mist rounded-3xl" />
+              <Skeleton className="h-40 w-full bg-white border border-blush-mist rounded-3xl" />
             </div>
           ) : (
             <AnimatePresence mode="popLayout">
@@ -527,12 +527,12 @@ const handleLike = async (postId: string) => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="bg-white border border-blush-mist p-6 rounded-3xl shadow-sm hover:shadow-warm-lift transition-all cursor-pointer mb-6"
+                  className="bg-white border border-blush-mist p-6 rounded-3xl shadow-sm hover:shadow-card transition-all cursor-pointer mb-6"
                   onClick={() => navigate(`/post/${post.id}`)}
                 >
                   <div className="flex gap-4">
                     {/* Avatar */}
-                    <div className="w-12 h-12 rounded-full bg-sunset-fade border border-blush-mist flex items-center justify-center text-coral-flame font-black text-lg uppercase shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-white border border-blush-mist flex items-center justify-center text-brand-emerald font-black text-lg uppercase shrink-0">
                       {post.author?.[0] || 'U'}
                     </div>
 
@@ -546,11 +546,11 @@ const handleLike = async (postId: string) => {
                               · {post.createdAt?.toDate ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(post.createdAt.toDate()) : 'Recent'}
                             </span>
                           </div>
-                          <span className="inline-block mt-1 text-[9px] font-bold text-mint-action uppercase tracking-widest bg-mint-action/10 px-2 py-0.5 rounded-lg">
+                          <span className="inline-block mt-1 text-[9px] font-bold text-brand-emerald-light uppercase tracking-widest bg-brand-emerald-light/10 px-2 py-0.5 rounded-lg">
                             {post.category}
                           </span>
                         </div>
-                        <button className="text-text-muted hover:text-coral-flame transition-colors p-2"><MoreVertical size={16} /></button>
+                        <button className="text-text-muted hover:text-brand-emerald transition-colors p-2"><MoreVertical size={16} /></button>
                       </div>
 
                       {post.type === 'discussion' && (
@@ -570,14 +570,14 @@ const handleLike = async (postId: string) => {
                       )}
 
                       {post.type === 'research' && (
-                        <div className="bg-sunset-fade p-6 rounded-2xl border border-blush-mist mb-4">
+                        <div className="bg-white p-6 rounded-2xl border border-blush-mist mb-4">
                           <h3 className="text-lg font-bold text-brandwood mb-2">{post.title}</h3>
                           <p className="text-sm text-text-muted italic mb-4 line-clamp-3">"{post.abstract}"</p>
                           <a 
                             href={post.pdfUrl} 
                             target="_blank" 
                             rel="noreferrer"
-                            className="inline-flex items-center gap-2 bg-white text-coral-flame px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest border border-blush-mist hover:border-coral-flame transition-colors"
+                            className="inline-flex items-center gap-2 bg-white text-brand-emerald px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest border border-blush-mist hover:border-brand-emerald transition-colors"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <Download size={14} /> Download PDF
@@ -588,7 +588,7 @@ const handleLike = async (postId: string) => {
                       {post.type === 'trade-recap' && (
                         <div className="bg-[#003893]/5 border border-[#003893]/10 p-6 rounded-2xl mb-4 relative overflow-hidden">
                           <div className="absolute top-0 right-0 w-20 h-20 bg-[#003893]/10 rounded-bl-full flex items-center justify-center text-[#003893] pointer-events-none">
-                            <span className="material-symbols-outlined text-2xl font-bold">trending_up</span>
+                            <TrendingUp size={24} className="font-bold" />
                           </div>
                           <span className="inline-block mb-2 text-[9px] font-black uppercase tracking-widest text-[#003893] bg-[#003893]/10 px-2 py-0.5 rounded">Shared Trade Recap</span>
                           <h3 className="text-lg font-bold text-brandwood mb-3 leading-snug">{post.title}</h3>
@@ -603,7 +603,7 @@ const handleLike = async (postId: string) => {
                       {post.type === 'news' && (
                         <div className="space-y-3">
                           <div className="flex items-center gap-3 mb-3">
-                            <Badge variant="outline" className="text-[10px] font-black text-coral-flame border-coral-flame/30 uppercase tracking-widest bg-coral-flame/10 px-3 py-1 rounded-lg">
+                            <Badge variant="outline" className="text-[10px] font-black text-brand-emerald border-brand-emerald/30 uppercase tracking-widest bg-brand-emerald/10 px-3 py-1 rounded-lg">
                               {post.sector}
                             </Badge>
                             <span className="text-[9px] font-medium text-text-muted uppercase tracking-widest">
@@ -651,17 +651,17 @@ const handleLike = async (postId: string) => {
         {/* Right Sidebar - Trending & Suggestions */}
         <aside className="hidden xl:block xl:col-span-3 space-y-8 sticky top-32 h-fit">
           {/* Trending Sectors */}
-          <div className="bg-sunset-fade border border-blush-mist rounded-3xl p-6">
+          <div className="bg-white border border-blush-mist rounded-3xl p-6">
             <h3 className="text-lg font-display font-bold text-brandwood mb-4">Trending Sectors</h3>
             <div className="space-y-4">
               {TRENDING_SECTORS.map(sector => (
                 <button
                   key={sector}
                   onClick={() => setSearchParams({ sector })}
-                  className={`w-full text-left p-3 rounded-2xl transition-all flex items-center gap-3 ${validSector === sector ? 'bg-white shadow-sm border-coral-flame border' : 'hover:bg-white border border-transparent'}`}
+                  className={`w-full text-left p-3 rounded-2xl transition-all flex items-center gap-3 ${validSector === sector ? 'bg-white shadow-sm border-brand-emerald border' : 'hover:bg-white border border-transparent'}`}
                 >
                   <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm text-brandwood">
-                    <span className="material-symbols-outlined">{SECTOR_ICONS[sector as Sector]}</span>
+                    {(() => { const Icon = SECTOR_ICONS[sector as Sector]; return <Icon size={20} />; })()}
                   </div>
                   <div>
                     <span className="font-bold text-sm block text-brandwood">{sector}</span>
@@ -673,7 +673,7 @@ const handleLike = async (postId: string) => {
             {validSector && (
               <button
                 onClick={() => setSearchParams({})}
-                className="w-full mt-4 py-2 border border-blush-mist rounded-xl text-xs font-bold text-coral-flame uppercase tracking-widest hover:bg-white transition-colors"
+                className="w-full mt-4 py-2 border border-blush-mist rounded-xl text-xs font-bold text-brand-emerald uppercase tracking-widest hover:bg-white transition-colors"
               >
                 Clear Filter
               </button>
@@ -681,7 +681,7 @@ const handleLike = async (postId: string) => {
           </div>
 
           {/* Suggested To Follow */}
-          <div className="bg-sunset-fade border border-blush-mist rounded-3xl p-6">
+          <div className="bg-white border border-blush-mist rounded-3xl p-6">
             <h3 className="text-lg font-display font-bold text-brandwood mb-4">Suggested Academics</h3>
             <div className="space-y-4">
               {['Akshat Karki', 'Manash Koirala', 'Ujjwal Dhungana'].map((name, i) => (
@@ -714,11 +714,11 @@ const handleLike = async (postId: string) => {
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="bg-white p-8 md:p-12 rounded-[2rem] max-w-2xl w-full max-h-[90vh] overflow-y-auto relative shadow-warm-float border border-blush-mist"
+              className="bg-white p-8 md:p-12 rounded-[2rem] max-w-2xl w-full max-h-[90vh] overflow-y-auto relative shadow-elevated border border-blush-mist"
             >
               <button 
                 onClick={() => setShowCreateModal(false)}
-                className="absolute top-8 right-8 w-10 h-10 bg-sunset-fade rounded-full flex items-center justify-center text-text-muted hover:text-coral-flame transition-colors"
+                className="absolute top-8 right-8 w-10 h-10 bg-white rounded-full flex items-center justify-center text-text-muted hover:text-brand-emerald transition-colors"
               >
                 <X size={20} />
               </button>
@@ -734,7 +734,7 @@ const handleLike = async (postId: string) => {
                     <select 
                       value={createData.category}
                       onChange={e => setCreateData({...createData, category: e.target.value as any})}
-                      className="w-full bg-sunset-fade border border-blush-mist rounded-xl p-4 outline-none focus:border-coral-flame transition-all font-bold text-brandwood"
+                      className="w-full bg-white border border-blush-mist rounded-xl p-4 outline-none focus:border-brand-emerald transition-all font-bold text-brandwood"
                     >
                       <option>Finance</option>
                       <option>Economics</option>
@@ -749,7 +749,7 @@ const handleLike = async (postId: string) => {
                       type="text"
                       value={createData.authorName}
                       onChange={e => setCreateData({...createData, authorName: e.target.value})}
-                      className="w-full bg-sunset-fade border border-blush-mist rounded-xl p-4 outline-none focus:border-coral-flame transition-all font-bold text-brandwood"
+                      className="w-full bg-white border border-blush-mist rounded-xl p-4 outline-none focus:border-brand-emerald transition-all font-bold text-brandwood"
                     />
                   </div>
                 </div>
@@ -761,7 +761,7 @@ const handleLike = async (postId: string) => {
                     type="text"
                     value={createData.title}
                     onChange={e => setCreateData({...createData, title: e.target.value})}
-                    className="w-full bg-sunset-fade border border-blush-mist rounded-xl p-4 outline-none focus:border-coral-flame transition-all font-bold text-brandwood"
+                    className="w-full bg-white border border-blush-mist rounded-xl p-4 outline-none focus:border-brand-emerald transition-all font-bold text-brandwood"
                     placeholder="E.g., My thoughts on the new NRB policy..."
                   />
                 </div>
@@ -773,14 +773,14 @@ const handleLike = async (postId: string) => {
                       required
                       value={createData.abstract}
                       onChange={e => setCreateData({...createData, abstract: e.target.value})}
-                      className="w-full bg-sunset-fade border border-blush-mist rounded-xl p-4 outline-none focus:border-coral-flame transition-all font-sans text-brandwood resize-none h-24"
+                      className="w-full bg-white border border-blush-mist rounded-xl p-4 outline-none focus:border-brand-emerald transition-all font-sans text-brandwood resize-none h-24"
                     />
                   </div>
                 )}
 
                 <div>
                   <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-2 block">Content</label>
-                  <div className="bg-white rounded-xl border border-blush-mist focus-within:border-coral-flame transition-all overflow-hidden font-sans">
+                  <div className="bg-white rounded-xl border border-blush-mist focus-within:border-brand-emerald transition-all overflow-hidden font-sans">
                     <ReactQuill 
                       theme="snow"
                       value={createData.content}
@@ -797,7 +797,7 @@ const handleLike = async (postId: string) => {
                       type="file"
                       accept="image/*"
                       onChange={e => setCreateData({...createData, image: e.target.files?.[0] || null})}
-                      className="w-full text-xs text-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-sunset-fade file:text-coral-flame hover:file:bg-blush-mist transition-all"
+                      className="w-full text-xs text-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-white file:text-brand-emerald hover:file:bg-blush-mist transition-all"
                     />
                   </div>
                   {activeTab === 'research' && (
@@ -808,7 +808,7 @@ const handleLike = async (postId: string) => {
                         type="file"
                         accept=".pdf"
                         onChange={e => setCreateData({...createData, pdf: e.target.files?.[0] || null})}
-                        className="w-full text-xs text-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-sunset-fade file:text-coral-flame hover:file:bg-blush-mist transition-all"
+                        className="w-full text-xs text-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-white file:text-brand-emerald hover:file:bg-blush-mist transition-all"
                       />
                     </div>
                   )}
@@ -817,7 +817,7 @@ const handleLike = async (postId: string) => {
                 <button 
                   type="submit"
                   disabled={isUploading}
-                  className="w-full bg-coral-flame text-white py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-coral-flame/90 transition-all shadow-warm-float disabled:opacity-30 mt-4"
+                  className="w-full bg-brand-emerald text-white py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-emerald/90 transition-all shadow-elevated disabled:opacity-30 mt-4"
                 >
                   {isUploading ? 'UPLOADING...' : 'SUBMIT POST'}
                 </button>

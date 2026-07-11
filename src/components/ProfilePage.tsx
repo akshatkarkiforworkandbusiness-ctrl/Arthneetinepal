@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Mail, Briefcase, User as UserIcon, Award, BookOpen, Star, X, Check, Plus, TrendingUp, Bookmark } from 'lucide-react';
+import { Mail, Briefcase, User as UserIcon, Award, BookOpen, Star, X, Check, Plus, TrendingUp, Bookmark, Heart } from 'lucide-react';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { collection, query, where, orderBy, onSnapshot, doc, getDoc } from 'firebase/firestore';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -360,7 +360,7 @@ export default function ProfilePage() {
                         {post.type}
                       </span>
                       <div className="flex items-center gap-1.5 text-rose-500">
-                        <span className="material-symbols-outlined text-sm">favorite</span>
+                        <Heart size={16} className="text-rose-500" />
                         <span className="text-xs font-bold">{post.likes}</span>
                       </div>
                     </div>

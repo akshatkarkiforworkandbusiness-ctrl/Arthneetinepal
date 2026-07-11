@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Menu, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -32,7 +33,7 @@ export function Navigation() {
             </div>
             <div className="flex flex-col leading-none">
               <span className="text-sm font-bold tracking-widest text-slate-900 font-display uppercase">Arthneeti</span>
-              <span className="text-[9px] text-slate-400 font-medium mt-0.5" style={{ fontFamily: '"Noto Sans Devanagari", sans-serif' }}>अर्थनीति</span>
+              <span className="text-[9px] text-slate-400 font-medium mt-0.5 font-nepali">अर्थनीति</span>
             </div>
           </Link>
 
@@ -63,7 +64,7 @@ export function Navigation() {
             ) : (
               <button 
                 onClick={handleJoinAction}
-                className="px-6 py-2.5 bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl shadow-[0_4px_15px_rgba(5,150,105,0.3)] hover:bg-emerald-700 transition-all flex items-center gap-2"
+                className="px-6 py-2.5 bg-accent-amber text-white text-[10px] font-bold uppercase tracking-widest rounded-xl shadow-[0_4px_15px_rgba(245,158,11,0.3)] hover:bg-accent-amber/90 transition-all flex items-center gap-2"
               >
                 Sign up
               </button>
@@ -75,9 +76,7 @@ export function Navigation() {
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="lg:hidden text-slate-900 p-2 rounded-xl hover:bg-slate-100 transition-colors"
           >
-            <span className="material-symbols-outlined text-2xl">
-              {isMobileMenuOpen ? 'close' : 'menu'}
-            </span>
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
@@ -126,7 +125,7 @@ export function Navigation() {
                   ) : (
                     <button 
                       onClick={() => { handleJoinAction(); setIsMobileMenuOpen(false); }}
-                      className="px-4 py-3 bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl text-center hover:bg-emerald-700 transition-colors"
+                      className="px-4 py-3 bg-accent-amber text-white text-[10px] font-bold uppercase tracking-widest rounded-xl text-center hover:bg-accent-amber/90 transition-colors"
                     >
                       Sign up
                     </button>

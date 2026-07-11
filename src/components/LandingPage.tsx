@@ -12,6 +12,7 @@ import CurriculumRoadmap from './CurriculumRoadmap';
 import SessionPhotos from './SessionPhotos';
 import { LESSONS } from './LearnPage';
 import { FAQ_DATA, FAQ_CATEGORIES } from '../data/faqData';
+import { ArrowRight, ArrowUp, ArrowDown, Play, Download, Heart, ChevronDown, Users, PlayCircle, FileText, HelpCircle, Star, Shield } from 'lucide-react';
 
 interface Topic {
   id: string;
@@ -270,10 +271,10 @@ export default function LandingPage() {
             )}
             <Link 
               to="/discover" 
-              className="bg-white text-slate-700 rounded-2xl px-8 py-4 font-sans font-bold hover:text-emerald-600 transition-all duration-300 text-lg flex items-center justify-center gap-2 border border-slate-200 hover:border-emerald-300"
+              className="bg-white text-slate-700 rounded-2xl px-8 py-4 font-sans font-bold hover:text-brand-emerald transition-all duration-300 text-lg flex items-center justify-center gap-2 border border-slate-200 hover:border-brand-emerald-light"
             >
               Explore Markets
-              <span className="material-symbols-outlined text-xl">arrow_forward</span>
+              <ArrowRight size={20} />
             </Link>
           </div>
         </motion.div>
@@ -331,9 +332,7 @@ export default function LandingPage() {
                       className="text-sm font-bold font-sans inline-flex items-center gap-0.5 mt-1"
                       style={{ color: accentColor }}
                     >
-                      <span className="material-symbols-outlined text-[12px]">
-                        {isGain ? 'arrow_upward' : 'arrow_downward'}
-                      </span>
+                      {isGain ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
                       <span>{sign}{item.changePercent}%</span>
                     </span>
                   </div>
@@ -383,10 +382,10 @@ export default function LandingPage() {
           
           <div className="lg:w-1/2 grid grid-cols-2 gap-6">
             {[
-              { name: 'Women & Girls', nameNp: 'महिला र बालिका', icon: 'woman', delay: 0 },
-              { name: "Children's Welfare", nameNp: 'बाल कल्याण', icon: 'child_care', delay: 0.1 },
-              { name: 'Disability Inclusion', nameNp: 'अपाङ्गता समावेशीकरण', icon: 'accessible', delay: 0.2 },
-              { name: 'Underprivileged', nameNp: 'विपन्न', icon: 'groups', delay: 0.3 }
+              { name: 'Women & Girls', nameNp: 'महिला र बालिका', icon: <Heart size={24} />, delay: 0 },
+              { name: "Children's Welfare", nameNp: 'बाल कल्याण', icon: <Star size={24} />, delay: 0.1 },
+              { name: 'Disability Inclusion', nameNp: 'अपाङ्गता समावेशीकरण', icon: <Shield size={24} />, delay: 0.2 },
+              { name: 'Underprivileged', nameNp: 'विपन्न', icon: <Users size={24} />, delay: 0.3 }
             ].map((item, i) => (
               <motion.div 
                 key={item.name} 
@@ -397,10 +396,10 @@ export default function LandingPage() {
                 className="flex flex-col items-center text-center p-6 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl hover:border-emerald-500/50 hover:bg-white/10 transition-all duration-300 shadow-xl group"
               >
                 <div className="w-14 h-14 rounded-2xl bg-emerald-500 flex items-center justify-center text-white mb-3 shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-2xl">{item.icon}</span>
+                  {item.icon}
                 </div>
                 <span className="text-sm font-bold text-white/90">{item.name}</span>
-                <span className="text-xs text-white/50 mt-1" style={{ fontFamily: '"Noto Sans Devanagari", sans-serif' }}>
+                <span className="text-xs text-white/50 mt-1 font-nepali">
                   {item.nameNp}
                 </span>
               </motion.div>
@@ -423,9 +422,9 @@ export default function LandingPage() {
           {/* Interactive Navigation Tabs */}
           <div className="flex justify-center border-b border-slate-200 pb-4 mb-10 gap-3">
             {[
-              { key: 'videos', label: 'Video Lessons', icon: 'play_circle' },
-              { key: 'pamphlets', label: 'Guides & PDFs', icon: 'article' },
-              { key: 'faq', label: 'Bilingual FAQs', icon: 'help' }
+              { key: 'videos', label: 'Video Lessons', icon: <PlayCircle size={20} /> },
+              { key: 'pamphlets', label: 'Guides & PDFs', icon: <FileText size={20} /> },
+              { key: 'faq', label: 'Bilingual FAQs', icon: <HelpCircle size={20} /> }
             ].map((tab) => (
               <button
                 key={tab.key}
@@ -439,7 +438,7 @@ export default function LandingPage() {
                     : 'text-slate-500 hover:text-slate-900 hover:bg-white border border-slate-200'
                 }`}
               >
-                <span className="material-symbols-outlined text-lg">{tab.icon}</span>
+                {tab.icon}
                 {tab.label}
               </button>
             ))}
@@ -471,7 +470,7 @@ export default function LandingPage() {
                           onClick={() => setSelectedVideoEmbed(video.videoUrl)}
                           className="absolute inset-0 m-auto w-14 h-14 bg-white/90 text-emerald-600 border-2 border-emerald-600 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer"
                         >
-                          <span className="material-symbols-outlined text-3xl">play_arrow</span>
+                          <Play size={30} />
                         </button>
                         <span className="absolute bottom-3 right-3 bg-white text-slate-900 text-[10px] font-bold font-mono px-3 py-1 rounded-xl shadow-sm">
                           {video.duration}
@@ -531,7 +530,7 @@ export default function LandingPage() {
                         rel="noreferrer"
                         className="w-full py-3 bg-slate-50 hover:bg-emerald-600 hover:text-white border border-slate-200 hover:border-emerald-600 text-slate-700 text-[10px] font-bold uppercase tracking-widest rounded-2xl transition-all flex items-center justify-center gap-1.5 shadow-sm"
                       >
-                        <span className="material-symbols-outlined text-sm">download</span>
+                        <Download size={16} />
                         Download PDF
                       </a>
                     </div>
@@ -617,7 +616,7 @@ export default function LandingPage() {
                                   {faqLanguage === 'en' ? faq.question : faq.questionNepali}
                                 </p>
                                 {faqLanguage === 'en' && (
-                                  <p className="text-xs text-slate-400 mt-1" style={{ fontFamily: '"Noto Sans Devanagari", sans-serif' }}>
+                                  <p className="text-xs text-slate-400 mt-1 font-nepali">
                                     {faq.questionNepali}
                                   </p>
                                 )}
@@ -627,9 +626,7 @@ export default function LandingPage() {
                                   </p>
                                 )}
                               </div>
-                              <span className={`material-symbols-outlined text-emerald-600 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
-                                expand_more
-                              </span>
+                              <ChevronDown size={24} className={`text-emerald-600 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
                             </button>
                             
                             <AnimatePresence initial={false}>
@@ -645,7 +642,7 @@ export default function LandingPage() {
                                       {faqLanguage === 'en' ? faq.answer : faq.answerNepali}
                                     </p>
                                     {faqLanguage === 'en' && (
-                                      <p className="text-xs text-slate-400 leading-relaxed" style={{ fontFamily: '"Noto Sans Devanagari", sans-serif' }}>
+                                      <p className="text-xs text-slate-400 leading-relaxed font-nepali">
                                         {faq.answerNepali}
                                       </p>
                                     )}
@@ -701,7 +698,7 @@ export default function LandingPage() {
                     {topic.category}
                   </span>
                   <div className="flex items-center gap-1.5 text-slate-400">
-                    <span className="material-symbols-outlined text-sm">favorite</span>
+                    <Heart size={16} />
                     <span className="text-[10px] font-mono">{topic.likes}</span>
                   </div>
                 </div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -65,20 +66,20 @@ export function AuthModal() {
   return createPortal(
     <AnimatePresence>
       {showAuthModal && (
-        <div className="fixed inset-0 z-[100] bg-slate-base/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-[100] bg-white/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
           <div className="absolute inset-0" onClick={closeAuthModal} />
           
           <motion.div 
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
-            className="bg-white p-8 md:p-10 rounded-lg-2xl max-w-md w-full shadow-2xl relative text-white z-10 my-8 border border-slate-base/10"
+            className="bg-white p-8 md:p-10 rounded-lg-2xl max-w-md w-full shadow-2xl relative text-white z-10 my-8 border border-white/10"
           >
             <button 
               onClick={closeAuthModal}
               className="absolute top-6 right-6 text-text-muted hover:text-white transition-colors cursor-pointer"
             >
-              <span className="material-symbols-outlined">close</span>
+              <X size={24} />
             </button>
 
             <h2 className="font-sans tracking-tight font-semibold text-3xl italic mb-2 text-white">
@@ -99,7 +100,7 @@ export function AuthModal() {
                   <button
                     type="button"
                     onClick={() => { setIsResetMode(false); setResetSent(false); setAuthError(null); }}
-                    className="w-full bg-slate-raised border border-slate-base/10 hover:border-club-green text-white py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer"
+                    className="w-full bg-slate-raised border border-white/10 hover:border-brand-emerald-light text-white py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer"
                   >
                     Back to Log In
                   </button>
@@ -137,7 +138,7 @@ export function AuthModal() {
                   </div>
 
                   {authError && (
-                    <div className="p-3 bg-electric-mint/10 border border-electric-mint/30 rounded-lg text-electric-mint text-[10px] leading-relaxed font-semibold">
+                    <div className="p-3 bg-brand-emerald/10 border border-brand-emerald/30 rounded-lg text-brand-emerald text-[10px] leading-relaxed font-semibold">
                       {authError}
                     </div>
                   )}
@@ -145,7 +146,7 @@ export function AuthModal() {
                   <button 
                     type="submit"
                     disabled={resetSubmitting}
-                    className="w-full bg-electric-mint hover:bg-white hover:text-electric-mint text-slate-base py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                    className="w-full bg-brand-emerald hover:bg-white hover:text-brand-emerald text-white py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                   >
                     {resetSubmitting && (
                       <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-lg animate-spin" />
@@ -164,12 +165,12 @@ export function AuthModal() {
               )
             ) : (
             <>
-            <div className="flex bg-slate-raised p-1.5 rounded-lg border border-slate-base/10 mb-6">
+            <div className="flex bg-slate-raised p-1.5 rounded-lg border border-white/10 mb-6">
               <button
                 type="button"
                 onClick={() => { setIsSignUpMode(false); setAuthError(null); }}
                 className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all cursor-pointer ${
-                  !isSignUpMode ? 'bg-club-green text-white shadow-md' : 'text-text-muted hover:text-white'
+                  !isSignUpMode ? 'bg-brand-emerald-light text-white shadow-md' : 'text-text-muted hover:text-white'
                 }`}
               >
                 Log In
@@ -178,7 +179,7 @@ export function AuthModal() {
                 type="button"
                 onClick={() => { setIsSignUpMode(true); setAuthError(null); }}
                 className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all cursor-pointer ${
-                  isSignUpMode ? 'bg-club-green text-white shadow-md' : 'text-text-muted hover:text-white'
+                  isSignUpMode ? 'bg-brand-emerald-light text-white shadow-md' : 'text-text-muted hover:text-white'
                 }`}
               >
                 Sign Up
@@ -251,7 +252,7 @@ export function AuthModal() {
                         setResetSent(false);
                         setIsResetMode(true);
                       }}
-                      className="text-[9px] font-black uppercase tracking-widest text-club-green hover:underline cursor-pointer"
+                      className="text-[9px] font-black uppercase tracking-widest text-brand-emerald-light hover:underline cursor-pointer"
                     >
                       Forgot password?
                     </button>
@@ -277,8 +278,8 @@ export function AuthModal() {
                           }}
                           className={`px-3 py-1.5 rounded-lg text-[8px] font-black uppercase tracking-widest border transition-all cursor-pointer ${
                             isSelected 
-                              ? 'bg-electric-mint border-electric-mint text-slate-base' 
-                              : 'border-slate-base/10 text-text-muted hover:border-club-green/50'
+                              ? 'bg-brand-emerald border-brand-emerald text-white' 
+                              : 'border-white/10 text-text-muted hover:border-brand-emerald-light/50'
                           }`}
                         >
                           {option}
@@ -290,7 +291,7 @@ export function AuthModal() {
               )}
 
               {authError && (
-                <div className="p-3 bg-electric-mint/10 border border-electric-mint/30 rounded-lg text-electric-mint text-[10px] leading-relaxed font-semibold">
+                <div className="p-3 bg-brand-emerald/10 border border-brand-emerald/30 rounded-lg text-brand-emerald text-[10px] leading-relaxed font-semibold">
                   {authError}
                 </div>
               )}
@@ -298,7 +299,7 @@ export function AuthModal() {
               <button 
                 type="submit"
                 disabled={authSubmitting}
-                className="w-full bg-electric-mint hover:bg-white hover:text-electric-mint text-slate-base py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                className="w-full bg-brand-emerald hover:bg-white hover:text-brand-emerald text-white py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
                 {authSubmitting && (
                   <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-lg animate-spin" />
@@ -309,7 +310,7 @@ export function AuthModal() {
 
             <div className="relative my-6 flex items-center justify-center">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-base/10" />
+                <div className="w-full border-t border-white/10" />
               </div>
               <span className="relative px-3 bg-[#090a0b] text-[9px] font-black uppercase tracking-widest text-text-muted">or continue with</span>
             </div>
@@ -328,7 +329,7 @@ export function AuthModal() {
                   setAuthSubmitting(false);
                 }
               }}
-              className="w-full bg-slate-raised border border-slate-base/10 hover:border-club-green text-white py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              className="w-full bg-slate-raised border border-white/10 hover:border-brand-emerald-light text-white py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />

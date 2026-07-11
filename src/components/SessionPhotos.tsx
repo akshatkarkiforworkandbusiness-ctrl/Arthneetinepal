@@ -103,7 +103,7 @@ export default function SessionPhotos() {
                   <span className="text-white/80 text-xs font-medium">{featured.location}</span>
                 </div>
                 <h3 className="text-white text-xl font-bold mb-1">{featured.title}</h3>
-                <p className="text-white/70 text-sm mb-2" style={{ fontFamily: '"Noto Sans Devanagari", sans-serif' }}>
+                <p className="text-white/70 text-sm mb-2 font-nepali">
                   {featured.titleNepali}
                 </p>
                 <p className="text-white/90 text-sm italic">{featured.quote}</p>
@@ -137,7 +137,7 @@ export default function SessionPhotos() {
                     <span className="text-white/80 text-[10px] font-medium">{session.location}</span>
                   </div>
                   <h4 className="text-white text-sm font-bold mb-0.5">{session.title}</h4>
-                  <p className="text-white/70 text-xs" style={{ fontFamily: '"Noto Sans Devanagari", sans-serif' }}>
+                  <p className="text-white/70 text-xs font-nepali">
                     {session.titleNepali}
                   </p>
                 </div>
@@ -169,7 +169,7 @@ export default function SessionPhotos() {
             >
               <p className="text-3xl font-bold text-emerald-600 mb-1">{stat.number}</p>
               <p className="text-sm text-gray-700 font-medium">{stat.label}</p>
-              <p className="text-xs text-gray-500" style={{ fontFamily: '"Noto Sans Devanagari", sans-serif' }}>
+              <p className="text-xs text-gray-500 font-nepali">
                 {stat.labelNepali}
               </p>
             </motion.div>

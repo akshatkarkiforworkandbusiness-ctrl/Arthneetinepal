@@ -10,7 +10,7 @@ import {
   where, getDocs, updateDoc, increment, doc, deleteDoc, limit
 } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
-import { Heart, MessageSquare, Share2, Clock, RefreshCw, TrendingUp, Newspaper, Zap, ChevronDown } from 'lucide-react';
+import { Heart, MessageSquare, Share2, Clock, RefreshCw, TrendingUp, Newspaper, Zap, ChevronDown, FileText } from 'lucide-react';
 import PostActions from './PostActions';
 import {
   TRENDING_SECTORS,
@@ -413,9 +413,9 @@ export default function NewsFeedPage() {
       {/* Header */}
       <header className="mb-10">
         <div className="flex items-center gap-3 mb-2">
-          <span className="text-[10px] font-bold text-mint-action uppercase tracking-[0.4em]">RESEARCH ASSISTANT</span>
-          <span className={`flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider ${isPostingHours ? 'text-mint-action' : 'text-text-muted'}`}>
-            <span className={`w-2 h-2 rounded-full ${isPostingHours ? 'bg-mint-action animate-pulse' : 'bg-text-muted'}`} />
+          <span className="text-[10px] font-bold text-brand-emerald-light uppercase tracking-[0.4em]">RESEARCH ASSISTANT</span>
+          <span className={`flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider ${isPostingHours ? 'text-brand-emerald-light' : 'text-text-muted'}`}>
+            <span className={`w-2 h-2 rounded-full ${isPostingHours ? 'bg-brand-emerald-light animate-pulse' : 'bg-text-muted'}`} />
             {isPostingHours ? 'Auto-Posting Active' : 'Posting Paused (9AM-5PM NPT)'}
           </span>
         </div>
@@ -428,12 +428,12 @@ export default function NewsFeedPage() {
             <p className="text-text-muted text-sm">
               Latest news for each sector, posted hourly from 9:00 AM to 5:00 PM Nepali time.
               {!isPostingHours && (
-                <span className="ml-2 text-mint-action font-bold">
+                <span className="ml-2 text-brand-emerald-light font-bold">
                   Articles persist until tomorrow's updates.
                 </span>
               )}
               {nextPostIn && isPostingHours && (
-                <span className="ml-2 text-mint-action font-bold">
+                <span className="ml-2 text-brand-emerald-light font-bold">
                   Next update in {nextPostIn}
                 </span>
               )}
@@ -443,7 +443,7 @@ export default function NewsFeedPage() {
             <button
               onClick={researchAllSectors}
               disabled={researching}
-              className="flex items-center gap-2 px-6 py-3 bg-white border border-blush-mist text-brandwood rounded-2xl text-xs font-bold uppercase tracking-widest hover:border-coral-flame/50 hover:bg-sunset-fade transition-all shadow-sm disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-3 bg-white border border-blush-mist text-brandwood rounded-2xl text-xs font-bold uppercase tracking-widest hover:border-brand-emerald/50 hover:bg-white transition-all shadow-sm disabled:opacity-50"
             >
               <RefreshCw size={16} className={researching ? 'animate-spin' : ''} />
               {researching ? 'Researching...' : 'Research Now'}
@@ -451,7 +451,7 @@ export default function NewsFeedPage() {
             <button
               onClick={generateDailyDigest}
               disabled={researching || !!dailyDigest}
-              className="flex items-center gap-2 px-6 py-3 bg-coral-flame text-white rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-coral-flame/90 transition-all shadow-warm-float disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-3 bg-brand-emerald text-white rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-brand-emerald/90 transition-all shadow-elevated disabled:opacity-50"
             >
               <Newspaper size={16} />
               {dailyDigest ? 'Digest Published' : 'Generate Digest'}
@@ -474,11 +474,11 @@ export default function NewsFeedPage() {
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-10 bg-gradient-to-r from-sunset-fade to-white border border-blush-mist rounded-3xl p-6 shadow-warm-lift"
+          className="mb-10 bg-gradient-to-r from-white to-white border border-blush-mist rounded-3xl p-6 shadow-card"
         >
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-mint-action/10 flex items-center justify-center">
-              <TrendingUp size={20} className="text-mint-action" />
+            <div className="w-10 h-10 rounded-xl bg-brand-emerald-light/10 flex items-center justify-center">
+              <TrendingUp size={20} className="text-brand-emerald-light" />
             </div>
             <div>
               <h3 className="text-sm font-bold text-brandwood uppercase tracking-widest">Most Engaged Yesterday</h3>
@@ -486,11 +486,11 @@ export default function NewsFeedPage() {
             </div>
           </div>
           <div
-            className="bg-white rounded-2xl p-4 border border-blush-mist cursor-pointer hover:border-coral-flame/30 transition-all"
+            className="bg-white rounded-2xl p-4 border border-blush-mist cursor-pointer hover:border-brand-emerald/30 transition-all"
             onClick={() => navigate(`/post/${mostEngagedYesterday.id}`)}
           >
             <div className="flex items-center gap-2 mb-2">
-              <Badge variant="outline" className="text-[10px] font-black text-coral-flame border-coral-flame/30 uppercase tracking-widest bg-coral-flame/10 px-3 py-1 rounded-lg">
+              <Badge variant="outline" className="text-[10px] font-black text-brand-emerald border-brand-emerald/30 uppercase tracking-widest bg-brand-emerald/10 px-3 py-1 rounded-lg">
                 {mostEngagedYesterday.sector}
               </Badge>
               <span className="text-[9px] text-text-muted uppercase tracking-widest">
@@ -512,11 +512,11 @@ export default function NewsFeedPage() {
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-10 bg-white border-2 border-coral-flame/30 rounded-3xl p-6 shadow-warm-lift"
+          className="mb-10 bg-white border-2 border-brand-emerald/30 rounded-3xl p-6 shadow-card"
         >
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-coral-flame/10 flex items-center justify-center">
-              <Newspaper size={20} className="text-coral-flame" />
+            <div className="w-10 h-10 rounded-xl bg-brand-emerald/10 flex items-center justify-center">
+              <Newspaper size={20} className="text-brand-emerald" />
             </div>
             <div>
               <h3 className="text-sm font-bold text-brandwood uppercase tracking-widest">Daily Digest</h3>
@@ -524,7 +524,7 @@ export default function NewsFeedPage() {
             </div>
           </div>
           <div
-            className="bg-sunset-fade/30 rounded-2xl p-6 border border-blush-mist cursor-pointer hover:border-coral-flame/30 transition-all"
+            className="bg-white/30 rounded-2xl p-6 border border-blush-mist cursor-pointer hover:border-brand-emerald/30 transition-all"
             onClick={() => navigate(`/post/${dailyDigest.id}`)}
           >
             <h4 className="text-xl font-display font-medium text-brandwood mb-3">{dailyDigest.title}</h4>
@@ -548,7 +548,7 @@ export default function NewsFeedPage() {
           className={`px-5 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all ${
             !selectedSector
               ? 'bg-brandwood text-white'
-              : 'bg-white border border-blush-mist text-brandwood hover:border-coral-flame/50'
+              : 'bg-white border border-blush-mist text-brandwood hover:border-brand-emerald/50'
           }`}
         >
           All Sectors
@@ -560,7 +560,7 @@ export default function NewsFeedPage() {
             className={`px-5 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all ${
               selectedSector === sector
                 ? 'bg-brandwood text-white'
-                : 'bg-white border border-blush-mist text-brandwood hover:border-coral-flame/50'
+                : 'bg-white border border-blush-mist text-brandwood hover:border-brand-emerald/50'
             }`}
           >
             {sector}
@@ -579,13 +579,13 @@ export default function NewsFeedPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-20px" }}
             transition={{ delay: i * 0.05, type: 'spring', damping: 20 }}
-            className="bg-white border border-blush-mist rounded-3xl overflow-hidden shadow-warm-lift hover:shadow-warm-float transition-all"
+            className="bg-white border border-blush-mist rounded-3xl overflow-hidden shadow-card hover:shadow-elevated transition-all"
           >
             {/* Sector Header */}
             <div className="p-6 border-b border-blush-mist">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-sunset-fade border border-blush-mist flex items-center justify-center text-brandwood shrink-0">
-                  <span className="material-symbols-outlined text-2xl">{SECTOR_ICONS[feed.sector]}</span>
+                <div className="w-12 h-12 rounded-2xl bg-white border border-blush-mist flex items-center justify-center text-brandwood shrink-0">
+                  {(() => { const Icon = SECTOR_ICONS[feed.sector]; return <Icon size={24} />; })()}
                 </div>
                 <div className="min-w-0 flex-1">
                   <h3 className="font-display font-bold text-xl text-brandwood leading-tight">{feed.sector}</h3>
@@ -603,11 +603,11 @@ export default function NewsFeedPage() {
             {/* Latest Article */}
             {feed.latestArticle ? (
               <div
-                className="p-6 cursor-pointer hover:bg-sunset-fade/30 transition-colors"
+                className="p-6 cursor-pointer hover:bg-white/30 transition-colors"
                 onClick={() => navigate(`/post/${feed.latestArticle!.id}`)}
               >
                 <div className="flex items-center gap-2 mb-3">
-                  <Badge variant="outline" className="text-[9px] font-black text-mint-action border-mint-action/30 uppercase tracking-widest bg-mint-action/10 px-2 py-0.5 rounded-md">
+                  <Badge variant="outline" className="text-[9px] font-black text-brand-emerald-light border-brand-emerald-light/30 uppercase tracking-widest bg-brand-emerald-light/10 px-2 py-0.5 rounded-md">
                     Latest
                   </Badge>
                   <span className="text-[9px] text-text-muted uppercase tracking-widest">
@@ -626,7 +626,7 @@ export default function NewsFeedPage() {
               </div>
             ) : (
               <div className="p-6 text-center">
-                <span className="material-symbols-outlined text-4xl text-blush-mist block mb-2">article</span>
+                <FileText size={36} className="text-blush-mist block mb-2" />
                 <p className="text-xs text-text-muted italic">No articles yet today. Next update at 9:00 AM.</p>
               </div>
             )}
@@ -635,7 +635,7 @@ export default function NewsFeedPage() {
             {feed.allTodayPosts.length > 1 && (
               <button
                 onClick={() => toggleSector(feed.sector)}
-                className="w-full py-3 border-t border-blush-mist text-[10px] font-bold text-text-muted uppercase tracking-widest hover:bg-sunset-fade/50 transition-colors flex items-center justify-center gap-1"
+                className="w-full py-3 border-t border-blush-mist text-[10px] font-bold text-text-muted uppercase tracking-widest hover:bg-white/50 transition-colors flex items-center justify-center gap-1"
               >
                 {expandedSectors.has(feed.sector) ? 'Show Less' : `View All ${feed.allTodayPosts.length} Articles`}
                 <ChevronDown size={14} className={`transition-transform ${expandedSectors.has(feed.sector) ? 'rotate-180' : ''}`} />
@@ -655,11 +655,11 @@ export default function NewsFeedPage() {
                     {feed.allTodayPosts.filter(p => p.id !== feed.latestArticle?.id).map(post => (
                       <div
                         key={post.id}
-                        className="p-3 bg-sunset-fade/30 rounded-xl border border-blush-mist cursor-pointer hover:border-coral-flame/30 transition-all"
+                        className="p-3 bg-white/30 rounded-xl border border-blush-mist cursor-pointer hover:border-brand-emerald/30 transition-all"
                         onClick={() => navigate(`/post/${post.id}`)}
                       >
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="text-[9px] text-mint-action font-bold">{post.hourPublished}:00</span>
+                          <span className="text-[9px] text-brand-emerald-light font-bold">{post.hourPublished}:00</span>
                           <span className="text-[9px] text-text-muted">NPT</span>
                         </div>
                         <h5 className="text-sm font-bold text-brandwood line-clamp-1">{post.title}</h5>
@@ -685,11 +685,11 @@ export default function NewsFeedPage() {
               key={post.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white border border-blush-mist p-5 rounded-2xl shadow-sm hover:shadow-warm-lift transition-all cursor-pointer"
+              className="bg-white border border-blush-mist p-5 rounded-2xl shadow-sm hover:shadow-card transition-all cursor-pointer"
               onClick={() => navigate(`/post/${post.id}`)}
             >
               <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-full bg-sunset-fade border border-blush-mist flex items-center justify-center text-coral-flame font-black text-sm uppercase shrink-0">
+                <div className="w-10 h-10 rounded-full bg-white border border-blush-mist flex items-center justify-center text-brand-emerald font-black text-sm uppercase shrink-0">
                   {post.author?.[0] || 'A'}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -700,7 +700,7 @@ export default function NewsFeedPage() {
                     </span>
                   </div>
                   {post.sector && (
-                    <Badge variant="outline" className="text-[9px] font-black text-coral-flame border-coral-flame/30 uppercase tracking-widest bg-coral-flame/10 px-2 py-0.5 rounded-lg mb-2">
+                    <Badge variant="outline" className="text-[9px] font-black text-brand-emerald border-brand-emerald/30 uppercase tracking-widest bg-brand-emerald/10 px-2 py-0.5 rounded-lg mb-2">
                       {post.sector}
                     </Badge>
                   )}

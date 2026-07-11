@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { Mail } from 'lucide-react';
 
 export default function BoardPage() {
   const members = [
@@ -36,7 +37,7 @@ export default function BoardPage() {
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-24">
-          <span className="text-[10px] font-black text-electric-mint mb-4 block uppercase tracking-[0.4em]">LEADERSHIP</span>
+          <span className="text-[10px] font-black text-brand-emerald mb-4 block uppercase tracking-[0.4em]">LEADERSHIP</span>
           <h1 className="text-6xl md:text-8xl text-text-primary italic mb-8 font-sans tracking-tight font-semibold">Executive Board</h1>
           <p className="text-text-muted max-w-xl mx-auto italic font-sans">
             The founding team driving the movement for financial intelligence in Nepal.
@@ -51,19 +52,19 @@ export default function BoardPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="bg-slate-base p-10 rounded-lg relative border-t-8 border-electric-mint shadow-2xl flex flex-col items-center text-center group hover:-translate-y-2 transition-all duration-500"
+              className="bg-white p-10 rounded-lg relative border-t-8 border-brand-emerald shadow-2xl flex flex-col items-center text-center group hover:-translate-y-2 transition-all duration-500"
             >
-              <div className="w-24 h-24 rounded-lg border-4 border-white/10 flex items-center justify-center text-white font-sans tracking-tight font-semibold italic text-4xl mb-8 group-hover:border-electric-mint group-hover:text-electric-mint transition-all duration-500">
+              <div className="w-24 h-24 rounded-lg border-4 border-white/10 flex items-center justify-center text-white font-sans tracking-tight font-semibold italic text-4xl mb-8 group-hover:border-brand-emerald group-hover:text-brand-emerald transition-all duration-500">
                 {member.name.split(' ').map(n => n[0]).join('')}
               </div>
               <h3 className="text-2xl text-white font-sans tracking-tight font-semibold italic mb-2">{member.name}</h3>
-              <p className="text-[10px] font-black uppercase tracking-widest text-electric-mint mb-6">{member.role}</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-brand-emerald mb-6">{member.role}</p>
               <p className="text-white/60 text-xs italic font-sans leading-relaxed mb-6">
                 {member.bio}
               </p>
               <a 
                 href={`mailto:${member.email}`}
-                className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-electric-mint transition-colors"
+                className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-brand-emerald transition-colors"
               >
                 Get In Touch
               </a>
@@ -76,9 +77,9 @@ export default function BoardPage() {
           <p className="text-text-muted mb-12 font-sans italic">Have specific questions about school partnerships or partnerships?</p>
           <a 
             href="mailto:learnarthneeti@gmail.com"
-            className="inline-flex items-center gap-4 bg-slate-base text-slate-base px-12 py-5 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-electric-mint transition-all shadow-xl"
+            className="inline-flex items-center gap-4 bg-white text-white px-12 py-5 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-brand-emerald transition-all shadow-xl"
           >
-            <span className="material-symbols-outlined text-electric-mint">mail</span>
+            <Mail size={24} className="text-brand-emerald" />
             learnarthneeti@gmail.com
           </a>
         </section>

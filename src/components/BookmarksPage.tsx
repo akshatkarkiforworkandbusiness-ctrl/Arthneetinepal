@@ -114,7 +114,7 @@ export default function BookmarksPage() {
       {loading ? (
         <div className="space-y-4">
           {[1, 2, 3].map(i => (
-            <Skeleton key={i} className="h-32 w-full bg-sunset-fade border border-blush-mist rounded-2xl" />
+            <Skeleton key={i} className="h-32 w-full bg-white border border-blush-mist rounded-2xl" />
           ))}
         </div>
       ) : bookmarks.length === 0 ? (
@@ -133,17 +133,17 @@ export default function BookmarksPage() {
                 key={bookmark.postId}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white border border-blush-mist p-6 rounded-2xl shadow-sm hover:shadow-warm-lift transition-all cursor-pointer"
+                className="bg-white border border-blush-mist p-6 rounded-2xl shadow-sm hover:shadow-card transition-all cursor-pointer"
                 onClick={() => navigate(`/post/${bookmark.postId}`)}
               >
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-[9px] font-bold text-mint-action uppercase tracking-widest bg-mint-action/10 px-2 py-0.5 rounded-lg">
+                      <span className="text-[9px] font-bold text-brand-emerald-light uppercase tracking-widest bg-brand-emerald-light/10 px-2 py-0.5 rounded-lg">
                         {post.category}
                       </span>
                       {post.sector && (
-                        <span className="text-[9px] font-bold text-coral-flame uppercase tracking-widest bg-coral-flame/10 px-2 py-0.5 rounded-lg">
+                        <span className="text-[9px] font-bold text-brand-emerald uppercase tracking-widest bg-brand-emerald/10 px-2 py-0.5 rounded-lg">
                           {post.sector}
                         </span>
                       )}
@@ -165,7 +165,7 @@ export default function BookmarksPage() {
                       e.stopPropagation();
                       removeBookmark(bookmark.postId);
                     }}
-                    className="p-2 text-text-muted hover:text-coral-flame transition-colors"
+                    className="p-2 text-text-muted hover:text-brand-emerald transition-colors"
                   >
                     <Trash2 size={16} />
                   </button>

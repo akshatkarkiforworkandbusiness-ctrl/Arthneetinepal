@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MarketSummary, TopStocks, MarketIndex } from '../lib/nepseApi';
 import { Portfolio } from '../lib/tradingApi';
+import { Brain, X, Loader2, Send, Sparkles } from 'lucide-react';
 
 interface AIMarketAssistantProps {
   summary: MarketSummary | null;
@@ -235,23 +236,23 @@ export default function AIMarketAssistant({
               className="bg-white/95 backdrop-blur-xl border border-blush-mist rounded-2xl shadow-2xl w-[350px] md:w-[400px] h-[500px] flex flex-col overflow-hidden"
             >
               {/* Header */}
-              <div className="p-4 border-b border-blush-mist flex justify-between items-center bg-sunset-fade/30">
+              <div className="p-4 border-b border-blush-mist flex justify-between items-center bg-white/30">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-coral-flame flex items-center justify-center">
-                    <span className="material-symbols-outlined text-white text-sm">psychology</span>
+                  <div className="w-8 h-8 rounded-full bg-brand-emerald flex items-center justify-center">
+                    <Brain size={16} className="text-white" />
                   </div>
                   <div>
                     <h3 className="text-brandwood font-bold font-sans text-sm">Market Intelligence</h3>
                     <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest">Powered by Groq</p>
                   </div>
                 </div>
-                <button onClick={() => setIsOpen(false)} className="text-text-muted hover:text-coral-flame transition-colors">
-                  <span className="material-symbols-outlined">close</span>
+                <button onClick={() => setIsOpen(false)} className="text-text-muted hover:text-brand-emerald transition-colors">
+                  <X size={24} />
                 </button>
               </div>
 
               {error && (
-                <div className="bg-red-50 text-coral-flame p-3 text-xs font-sans border-b border-red-100">
+                <div className="bg-red-50 text-brand-emerald p-3 text-xs font-sans border-b border-red-100">
                   {error}
                 </div>
               )}
@@ -260,7 +261,7 @@ export default function AIMarketAssistant({
               <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
                 {/* Greeting */}
                 <div className="flex justify-start">
-                  <div className="max-w-[85%] rounded-2xl p-3 font-sans text-[13px] leading-relaxed shadow-sm bg-sunset-fade/30 text-brandwood rounded-bl-sm border border-blush-mist">
+                  <div className="max-w-[85%] rounded-2xl p-3 font-sans text-[13px] leading-relaxed shadow-sm bg-white/30 text-brandwood rounded-bl-sm border border-blush-mist">
                     <div dangerouslySetInnerHTML={{ __html: GREETING.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>') }} />
                   </div>
                 </div>
@@ -269,7 +270,7 @@ export default function AIMarketAssistant({
                     <div className={`max-w-[85%] rounded-2xl p-3 font-sans text-[13px] leading-relaxed shadow-sm ${
                       msg.role === 'user' 
                         ? 'bg-brandwood text-white rounded-br-sm' 
-                        : 'bg-sunset-fade/30 text-brandwood rounded-bl-sm border border-blush-mist'
+                        : 'bg-white/30 text-brandwood rounded-bl-sm border border-blush-mist'
                     }`}>
                       <div dangerouslySetInnerHTML={{ __html: msg.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>') }} />
                     </div>
@@ -277,8 +278,8 @@ export default function AIMarketAssistant({
                 ))}
                 {isTyping && (
                   <div className="flex justify-start">
-                    <div className="bg-sunset-fade/30 text-brandwood rounded-2xl p-3 rounded-bl-sm border border-blush-mist text-xs flex items-center gap-2">
-                      <span className="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>
+                    <div className="bg-white/30 text-brandwood rounded-2xl p-3 rounded-bl-sm border border-blush-mist text-xs flex items-center gap-2">
+                      <Loader2 size={14} className="animate-spin" />
                       Analyzing data...
                     </div>
                   </div>
@@ -294,15 +295,15 @@ export default function AIMarketAssistant({
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Ask about NEPSE..." 
-                    className="w-full bg-sunset-fade/20 border border-blush-mist rounded-xl px-4 py-2.5 pr-12 text-brandwood font-sans text-sm focus:outline-none focus:border-coral-flame transition-colors placeholder:text-text-muted/60"
+                    className="w-full bg-white/20 border border-blush-mist rounded-xl px-4 py-2.5 pr-12 text-brandwood font-sans text-sm focus:outline-none focus:border-brand-emerald transition-colors placeholder:text-text-muted/60"
                     disabled={!apiKeyRef.current || isTyping}
                   />
                   <button 
                     type="submit"
                     disabled={!input.trim() || !apiKeyRef.current || isTyping}
-                    className="absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg bg-coral-flame text-white flex items-center justify-center hover:bg-coral-flame/90 transition-colors disabled:opacity-50"
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg bg-brand-emerald text-white flex items-center justify-center hover:bg-brand-emerald/90 transition-colors disabled:opacity-50"
                   >
-                    <span className="material-symbols-outlined text-[14px]">send</span>
+                    <Send size={14} />
                   </button>
                 </div>
               </form>
@@ -313,18 +314,18 @@ export default function AIMarketAssistant({
         {/* Trigger Button - using Arthneeti text as requested */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="relative group bg-white border border-blush-mist px-6 py-3 rounded-full shadow-lg hover:shadow-xl hover:border-coral-flame/30 transition-all duration-300 flex items-center gap-2"
+          className="relative group bg-white border border-blush-mist px-6 py-3 rounded-full shadow-lg hover:shadow-xl hover:border-brand-emerald/30 transition-all duration-300 flex items-center gap-2"
         >
           {hasNewMessage && !isOpen && (
-            <span className="absolute -top-1 -right-1 w-3 h-3 bg-coral-flame rounded-full animate-ping" />
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-brand-emerald rounded-full animate-ping" />
           )}
           {hasNewMessage && !isOpen && (
-            <span className="absolute -top-1 -right-1 w-3 h-3 bg-coral-flame rounded-full" />
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-brand-emerald rounded-full" />
           )}
-          <span className="material-symbols-outlined text-coral-flame group-hover:rotate-12 transition-transform">temp_preferences_custom</span>
+          <Sparkles size={24} className="text-brand-emerald group-hover:rotate-12 transition-transform" />
           <div className="flex items-baseline gap-1.5">
-            <span className="text-sm font-black text-brandwood tracking-widest transition-colors group-hover:text-coral-flame">ARTHNEETI</span>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-mint-action bg-mint-action/10 px-2 py-0.5 rounded-full">AI</span>
+            <span className="text-sm font-black text-brandwood tracking-widest transition-colors group-hover:text-brand-emerald">ARTHNEETI</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-brand-emerald-light bg-brand-emerald-light/10 px-2 py-0.5 rounded-full">AI</span>
           </div>
         </button>
 

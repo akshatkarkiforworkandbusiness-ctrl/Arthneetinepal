@@ -127,7 +127,7 @@ export default function CurriculumRoadmap() {
 
                   {/* Title */}
                   <h3 className="text-xl font-bold text-gray-900 mb-1">{module.title}</h3>
-                  <p className="text-sm text-gray-500 mb-3" style={{ fontFamily: '"Noto Sans Devanagari", sans-serif' }}>
+                  <p className="text-sm text-gray-500 mb-3 font-nepali">
                     {module.titleNepali}
                   </p>
 
