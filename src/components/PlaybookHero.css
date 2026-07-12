@@ -1,6 +1,6 @@
 .playbook-hero-container {
   position: relative;
-  min-height: 200vh; /* Allow enough scrolling for the animation */
+  min-height: 200vh;
   background: #ffffff;
   overflow: hidden;
 }
@@ -23,14 +23,14 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  padding: 0 24px;
+  padding: 100px 24px 0 24px;
 }
 
 .hero-main-content {
-  position: absolute;
-  z-index: 10;
+  position: relative;
+  z-index: 50;
   max-width: 1024px;
   display: flex;
   flex-direction: column;
@@ -116,7 +116,7 @@
   font-size: 18px;
   font-weight: 500;
   color: #1e293b;
-  min-height: 27px; /* Prevent jitter */
+  min-height: 27px;
 }
 
 .prompt-cursor {
@@ -193,7 +193,7 @@
 /* Bento Grid */
 .bento-grid-container {
   position: absolute;
-  top: 50%;
+  top: 60%;
   left: 50%;
   width: 100%;
   height: 100%;
@@ -207,19 +207,27 @@
   height: 160px;
   margin-left: -100px;
   margin-top: -80px;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
+}
+
+.state-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   border-radius: 24px;
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 1);
-  border: 1px solid rgba(255, 255, 255, 0.5);
   padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 1);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   transition: box-shadow 0.3s ease;
 }
 
-.bento-card::before {
+.state-layer::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -232,20 +240,14 @@
   pointer-events: none;
 }
 
-.bento-card.color-emerald { border-color: #a7f3d0; background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(236, 253, 245, 0.8)); }
-.bento-card.color-blue { border-color: #bfdbfe; background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(239, 246, 255, 0.8)); }
-.bento-card.color-orange { border-color: #fed7aa; background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255, 247, 237, 0.8)); }
-.bento-card.color-purple { border-color: #e9d5ff; background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(250, 245, 255, 0.8)); }
-.bento-card.color-teal { border-color: #99f6e4; background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(240, 253, 250, 0.8)); }
-.bento-card.color-rose { border-color: #fecdd3; background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255, 241, 242, 0.8)); }
-.bento-card.color-amber { border-color: #fde68a; background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255, 251, 235, 0.8)); }
-.bento-card.color-indigo { border-color: #c7d2fe; background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(238, 242, 255, 0.8)); }
-
-.bento-card-inner {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
+.color-emerald { border-color: #a7f3d0; background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(236, 253, 245, 0.8)); }
+.color-blue { border-color: #bfdbfe; background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(239, 246, 255, 0.8)); }
+.color-orange { border-color: #fed7aa; background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255, 247, 237, 0.8)); }
+.color-purple { border-color: #e9d5ff; background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(250, 245, 255, 0.8)); }
+.color-teal { border-color: #99f6e4; background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(240, 253, 250, 0.8)); }
+.color-rose { border-color: #fecdd3; background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255, 241, 242, 0.8)); }
+.color-amber { border-color: #fde68a; background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255, 251, 235, 0.8)); }
+.color-indigo { border-color: #c7d2fe; background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(238, 242, 255, 0.8)); }
 
 .bento-card-header {
   display: flex;
@@ -269,20 +271,27 @@
 .color-indigo .bento-card-icon { color: #4f46e5; }
 
 .bento-card-title {
-  font-size: 14px;
   font-weight: 700;
-  color: #1e293b;
+  font-size: 14px;
+  color: #0f172a;
 }
 
 .bento-card-content {
-  font-size: 20px;
-  font-weight: 600;
-  color: #0f172a;
+  font-size: 13px;
+  color: #475569;
+  font-weight: 500;
   margin-top: auto;
+}
+
+.central-solution-card {
+  z-index: 50;
+  width: 260px;
+  height: 160px;
 }
 
 @media (max-width: 768px) {
   .bento-grid-container {
-    display: none; /* Hide complex animation on mobile for performance, or degrade gracefully */
+    transform: scale(0.6);
+    transform-origin: center top;
   }
 }
