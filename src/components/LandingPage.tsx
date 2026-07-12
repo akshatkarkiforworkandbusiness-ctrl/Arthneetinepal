@@ -1,6 +1,4 @@
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { Canvas } from '@react-three/fiber';
-import { Float, OrbitControls, Environment, Torus, Icosahedron } from '@react-three/drei';
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { gsap } from 'gsap';
@@ -8,8 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
-import Hero3DVisuals from './Hero3DVisuals';
-import HeroTextReveal from './HeroTextReveal';
+import PlaybookHero from './PlaybookHero';
 import ProblemToFeatureAnimation from './ProblemToFeatureAnimation';
 import CurriculumRoadmap from './CurriculumRoadmap';
 import SessionPhotos from './SessionPhotos';
@@ -297,65 +294,7 @@ export default function LandingPage() {
       {showIntro && <ProblemToFeatureAnimation onComplete={handleIntroComplete} />}
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-40 pb-32 px-6 min-h-[90vh] flex flex-col justify-center items-center text-center bg-white">
-        <Hero3DVisuals />
-        
-        {/* Background ambient shapes */}
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none" />
-        
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative z-10 max-w-5xl mx-auto w-full flex flex-col items-center"
-        >
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="bg-white/80 backdrop-blur-sm px-6 py-2.5 rounded-full text-sm font-bold text-emerald-600 uppercase tracking-widest mb-10 border border-emerald-200"
-          >
-            Arthneeti
-          </motion.div>
-          
-          <HeroTextReveal delay={0.5}>
-            <h1 className="text-6xl md:text-[90px] text-slate-900 leading-[1.1] tracking-tight font-display font-bold mb-10">
-              Think Big.<br />
-              Invest Smart.<br />
-              <span className="text-emerald-600 italic">Lead Nepal.</span>
-            </h1>
-          </HeroTextReveal>
-          <p className="text-lg md:text-2xl text-slate-600 mb-12 max-w-2xl font-sans leading-relaxed">
-            Building the next generation of economically literate leaders and investors across Nepal through structural economic knowledge.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-6 justify-center w-full sm:w-auto">
-            {!user ? (
-              <button 
-                onClick={handleJoinAction}
-                className="bg-emerald-600 text-white rounded-2xl px-8 py-4 font-sans font-bold hover:bg-emerald-700 transition-all duration-300 text-lg shadow-lg shadow-emerald-600/20"
-              >
-                Join the Movement
-              </button>
-            ) : (
-              <Link 
-                to="/profile" 
-                className="bg-emerald-600 text-white rounded-2xl px-8 py-4 font-sans font-bold transition-all duration-300 text-lg shadow-lg shadow-emerald-600/20 text-center"
-              >
-                Go to Dashboard →
-              </Link>
-            )}
-            <Link 
-              to="/discover" 
-              className="bg-white text-slate-700 rounded-2xl px-8 py-4 font-sans font-bold hover:text-brand-emerald transition-all duration-300 text-lg flex items-center justify-center gap-2 border border-slate-200 hover:border-brand-emerald-light"
-            >
-              Explore Markets
-              <ArrowRight size={20} />
-            </Link>
-          </div>
-        </motion.div>
-      </section>
+      <PlaybookHero />
 
       {/* Session Photos Section (Improved) */}
       <SessionPhotos />
