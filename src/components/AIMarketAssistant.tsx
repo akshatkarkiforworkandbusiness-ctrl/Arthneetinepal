@@ -35,14 +35,14 @@ export default function AIMarketAssistant({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const apiKeyRef = useRef<string | null>(null);
 
-  // Initialize Gemini API
+  // Initialize Groq API
   useEffect(() => {
-    const geminiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    const groqKey = import.meta.env.VITE_GROQ_API_KEY;
     
-    if (geminiKey && geminiKey.length > 10) {
-      apiKeyRef.current = geminiKey;
+    if (groqKey && groqKey.length > 10) {
+      apiKeyRef.current = groqKey;
     } else {
-      setError(`No API key available. Set VITE_GEMINI_API_KEY in your .env file.`);
+      setError(`No API key available. Set VITE_GROQ_API_KEY in your .env file.`);
     }
   }, []);
 
@@ -123,44 +123,45 @@ export default function AIMarketAssistant({
     setIsTyping(true);
 
     const systemPrompt = buildSystemPrompt();
-    
     const history = messages.map(msg => ({
       role: msg.role === 'model' ? 'assistant' : 'user',
       content: msg.content
     }));
 
-    const callGemini = async (): Promise<string> => {
+    const callGroq = async (): Promise<string> => {
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKeyRef.current}`,
+        `https://api.groq.com/openai/v1/chat/completions`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKeyRef.current}`
+          },
           body: JSON.stringify({
-            contents: [
+            model: "llama-3.3-70b-versatile",
+            messages: [
+              { role: "system", content: systemPrompt },
               ...history.map(msg => ({
-                role: msg.role === 'user' ? 'user' : 'model',
-                parts: [{ text: msg.content }]
+                role: msg.role,
+                content: msg.content
               })),
-              { role: 'user', parts: [{ text: userMsg }] }
+              { role: "user", content: userMsg }
             ],
-            systemInstruction: { parts: [{ text: systemPrompt }] },
-            generationConfig: {
-              temperature: 0.2,
-              maxOutputTokens: 2048
-            }
+            temperature: 0.2,
+            max_tokens: 2048
           })
         }
       );
       if (!res.ok) {
         const errData = await res.json() as any;
-        throw new Error(errData.error?.message || "Gemini API failed");
+        throw new Error(errData.error?.message || "Groq API failed");
       }
       const data = await res.json() as any;
-      return data.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated.";
+      return data.choices?.[0]?.message?.content || "No response generated.";
     };
 
     try {
-      const responseText = await callGemini();
+      const responseText = await callGroq();
       setMessages(prev => [...prev, { role: 'model', content: responseText }]);
       if (!isOpen) setHasNewMessage(true);
     } catch (err) {
@@ -193,7 +194,7 @@ export default function AIMarketAssistant({
                   </div>
                   <div>
                     <h3 className="text-brandwood font-bold font-sans text-sm">Market Intelligence</h3>
-                    <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest">Powered by Gemini AI</p>
+                    <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest">Powered by Groq AI</p>
                   </div>
                 </div>
                 <button onClick={() => setIsOpen(false)} className="text-text-muted hover:text-brand-emerald transition-colors">

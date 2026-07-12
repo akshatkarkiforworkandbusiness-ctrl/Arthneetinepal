@@ -35,16 +35,16 @@ export default function AILessonAssistant({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const apiKeyRef = useRef<string | null>(null);
 
-  // Initialize Gemini API
+  // Initialize Cerebras API
   useEffect(() => {
-    const geminiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    const cerebrasKey = import.meta.env.VITE_CEREBRAS_API_KEY;
     
-    if (geminiKey && geminiKey.length > 10) {
-      apiKeyRef.current = geminiKey;
-      console.log("[AI Tutor] Gemini key loaded, length:", geminiKey.length);
+    if (cerebrasKey && cerebrasKey.length > 10) {
+      apiKeyRef.current = cerebrasKey;
+      console.log("[AI Tutor] Cerebras key loaded, length:", cerebrasKey.length);
     } else {
-      console.warn("[AI Tutor] No Gemini key found. VITE_GEMINI_API_KEY =", geminiKey);
-      setError(`No API key available. Set VITE_GEMINI_API_KEY in your .env file.`);
+      console.warn("[AI Tutor] No Cerebras key found. VITE_CEREBRAS_API_KEY =", cerebrasKey);
+      setError(`No API key available. Set VITE_CEREBRAS_API_KEY in your .env file.`);
     }
   }, []);
 
@@ -98,38 +98,40 @@ export default function AILessonAssistant({
       content: msg.content
     }));
 
-    const callGemini = async (): Promise<string> => {
+    const callCerebras = async (): Promise<string> => {
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKeyRef.current}`,
+        `https://api.cerebras.ai/v1/chat/completions`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKeyRef.current}`
+          },
           body: JSON.stringify({
-            contents: [
+            model: "llama-3.3-70b",
+            messages: [
+              { role: "system", content: systemPrompt },
               ...historyOpenAI.map(msg => ({
-                role: msg.role === 'user' ? 'user' : 'model',
-                parts: [{ text: msg.content }]
+                role: msg.role,
+                content: msg.content
               })),
-              { role: 'user', parts: [{ text: userMsg }] }
+              { role: "user", content: userMsg }
             ],
-            systemInstruction: { parts: [{ text: systemPrompt }] },
-            generationConfig: {
-              temperature: 0.2,
-              maxOutputTokens: 2048
-            }
+            temperature: 0.2,
+            max_tokens: 2048
           })
         }
       );
       if (!res.ok) {
         const errData = await res.json() as any;
-        throw new Error(errData.error?.message || "Gemini API failed");
+        throw new Error(errData.error?.message || "Cerebras API failed");
       }
       const data = await res.json() as any;
-      return data.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated.";
+      return data.choices?.[0]?.message?.content || "No response generated.";
     };
 
     try {
-      const responseText = await callGemini();
+      const responseText = await callCerebras();
       setMessages(prev => [...prev, { role: 'model', content: responseText }]);
     } catch (err) {
       console.error("AI Assistant Error:", err);
@@ -152,7 +154,7 @@ export default function AILessonAssistant({
           </div>
           <div>
             <h3 className="text-white font-display font-medium">Arthneeti AI Tutor</h3>
-            <p className="text-xs text-[#5DCAA5]">Powered by Google Gemini</p>
+            <p className="text-xs text-[#5DCAA5]">Powered by Cerebras AI</p>
           </div>
         </div>
         <button onClick={onClose} className="text-text-muted hover:text-white transition-colors">
@@ -216,7 +218,7 @@ export default function AILessonAssistant({
             <p className="text-[10px] text-[#9f9fa0] mt-0.5 leading-relaxed">Try virtual trading this in your paper portfolio.</p>
           </div>
           <Link 
-            to="/trade" 
+            to="/trade-game" 
             onClick={onClose}
             className="px-4 py-2 bg-[#dc143c] hover:bg-[#b01030] text-white text-[9px] font-black uppercase tracking-widest rounded-lg transition-colors shrink-0"
           >
