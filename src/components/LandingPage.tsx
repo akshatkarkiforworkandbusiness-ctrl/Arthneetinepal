@@ -10,7 +10,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import Hero3DVisuals from './Hero3DVisuals';
 import HeroTextReveal from './HeroTextReveal';
-import CinematicIntro from './CinematicIntro';
+import ProblemToFeatureAnimation from './ProblemToFeatureAnimation';
 import CurriculumRoadmap from './CurriculumRoadmap';
 import SessionPhotos from './SessionPhotos';
 import { LESSONS } from './LearnPage';
@@ -294,7 +294,7 @@ export default function LandingPage() {
       className="flex flex-col bg-white"
     >
       {/* Cinematic Intro */}
-      {showIntro && <CinematicIntro onComplete={handleIntroComplete} />}
+      {showIntro && <ProblemToFeatureAnimation onComplete={handleIntroComplete} />}
 
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-40 pb-32 px-6 min-h-[90vh] flex flex-col justify-center items-center text-center bg-white">
