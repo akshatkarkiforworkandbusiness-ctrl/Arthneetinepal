@@ -64,14 +64,11 @@ export default function CommunityPage() {
     }
   }, [profile]);
 
-  // Seeding Logic — uses setDoc with explicit IDs (avoids addDoc+updateDoc pattern that violates Firestore rules)
+  // Seeding Logic — just setDoc all posts (works offline via Firestore persistence queue)
   useEffect(() => {
     const seedDiscussionPosts = async () => {
       try {
         const seededKey = doc(db, 'meta', 'seeded');
-        const seededSnap = await getDoc(seededKey);
-        console.log('Seeding check: meta/seeded exists?', seededSnap.exists());
-        if (seededSnap.exists()) return;
 
         const posts = [
           {
