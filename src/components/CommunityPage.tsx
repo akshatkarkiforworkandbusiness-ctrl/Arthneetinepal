@@ -64,137 +64,177 @@ export default function CommunityPage() {
     }
   }, [profile]);
 
-  // Seeding & Cleanup Logic
+  // Seeding Logic — uses setDoc with explicit IDs (avoids addDoc+updateDoc pattern that violates Firestore rules)
   useEffect(() => {
-    const seedAndCleanup = async () => {
+    const seedDiscussionPosts = async () => {
       try {
-        const metaRef = doc(db, 'meta', 'seeded');
-        const metaSnap = await getDoc(metaRef);
-        
-        // 1. Hardened Cleanup: Remove any duplicates (identifiable by title and author)
-        const postsSnap = await getDocs(collection(db, 'posts'));
-        const seen = new Set<string>();
-        const toDelete: string[] = [];
+        const seededKey = doc(db, 'meta', 'seeded');
+        const seededSnap = await getDoc(seededKey);
+        if (seededSnap.exists()) return;
 
-        postsSnap.docs.forEach(docSnap => {
-          const data = docSnap.data();
-          const identifier = `${data.title}-${data.author}`;
-          if (seen.has(identifier)) {
-            toDelete.push(docSnap.id);
-          } else {
-            seen.add(identifier);
-          }
-        });
-
-        if (toDelete.length > 0) {
-          console.log(`Cleaning up ${toDelete.length} duplicate posts...`);
-          for (const id of toDelete) {
-            await deleteDoc(doc(db, 'posts', id));
-          }
-        }
-        
-        // 2. Controlled Seeding
-        const metaRefV6 = doc(db, 'meta', 'seeded_v6');
-        const metaSnapV6 = await getDoc(metaRefV6);
-
-        if (!metaSnapV6.exists()) {
-          const seededPosts = [
-            {
+        const posts = [
+          {
+            id: 'seed-fundamental-analysis',
+            data: {
               title: "Fundamental Analysis of Stocks: Reading a Company Before You Invest",
               author: "Akshat Karki",
+              authorId: "system-seed",
               category: "Finance",
               type: "discussion",
               createdAt: serverTimestamp(),
               likes: 47,
               commentCount: 0,
-              seeded: true,
-              content: `Before you buy a single share of any company, you owe it to yourself — and your money — to actually understand what that business does, how it makes money, and whether the price you are being asked to pay is reasonable. This is the essence of fundamental analysis, and it is the single most important skill separating investors from gamblers. Start with the income statement, which tells you whether the company is genuinely profitable — look at revenue growth over multiple years, not just one good quarter, and pay attention to net profit margins, because a company selling billions but keeping almost nothing is a red flag. Move to the balance sheet next, where you get a honest picture of financial health: how much debt does the company carry relative to its equity, does it have enough liquid assets to survive a bad year, and is it consistently generating more than it owes. The cash flow statement is arguably the most telling of all three, because profit on paper can be manipulated through accounting choices, but cash moving in and out of a business is much harder to fake — a company consistently generating strong operating cash flow is usually a company with a real, functioning business model. In the Nepali context, when analyzing NEPSE-listed companies — particularly banks, hydropower projects, and insurance firms — pay close attention to metrics like earnings per share (EPS), price-to-earnings ratio (P/E), net worth per share, and return on equity (ROE), all of which are publicly available through the company's annual reports and the NEPSE website itself. Beyond the numbers, ask qualitative questions too: does this company have a competitive advantage, is management trustworthy and transparent, does the industry it operates in have long-term growth potential in Nepal's developing economy. Numbers tell you what a company has done — judgment tells you what it is likely to do next — and fundamental analysis is the disciplined practice of combining both before you commit your hard-earned money.`,
-              imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1000"
-            },
-            {
-              title: "Technical Analysis of Stocks: How to Read Charts Like a Trader",
-              author: "Manash Koirala",
-              category: "Finance",
-              type: "discussion",
+              content: 'Before you buy a single share of any company, you owe it to yourself — and your money — to actually understand what that business does, how it makes money, and whether the price you are being asked to pay is reasonable. This is the essence of fundamental analysis, and it is the single most important skill separating investors from gamblers. Start with the income statement, which tells you whether the company is genuinely profitable — look at revenue growth over multiple years, not just one good quarter, and pay attention to net profit margins, because a company selling billions but keeping almost nothing is a red flag. Move to the balance sheet next, where you get a honest picture of financial health: how much debt does the company carry relative to its equity, does it have enough liquid assets to survive a bad year, and is it consistently generating more than it owes. The cash flow statement is arguably the most telling of all three, because profit on paper can be manipulated through accounting choices, but cash moving in and out of a business is much harder to fake — a company consistently generating strong operating cash flow is usually a company with a real, functioning business model. In the Nepali context, when analyzing NEPSE-listed companies — particularly banks, hydropower projects, and insurance firms — pay close attention to metrics like earnings per share (EPS), price-to-earnings ratio (P/E), net worth per share, and return on equity (ROE), all of which are publicly available through the company\'s annual reports and the NEPSE website itself. Beyond the numbers, ask qualitative questions too: does this company have a competitive advantage, is management trustworthy and transparent, does the industry it operates in have long-term growth potential in Nepal\'s developing economy. Numbers tell you what a company has done — judgment tells you what it is likely to do next — and fundamental analysis is the disciplined practice of combining both.',
+              imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1000'
+            }
+          },
+          {
+            id: 'seed-technical-analysis',
+            data: {
+              title: 'Technical Analysis of Stocks: How to Read Charts Like a Trader',
+              author: 'Manash Koirala',
+              authorId: 'system-seed',
+              category: 'Finance',
+              type: 'discussion',
               createdAt: serverTimestamp(),
               likes: 38,
               commentCount: 0,
-              seeded: true,
-              content: `Where fundamental analysis asks what a company is worth, technical analysis asks what the market is doing right now — and for active traders, that distinction is everything. Technical analysis is the practice of reading price charts, volume patterns, and momentum indicators to forecast where a stock is likely to move next, based on the simple but powerful premise that all known information about a stock is already reflected in its price, and that human behavior in markets tends to repeat itself in recognizable patterns. The first thing any aspiring trader needs to get comfortable with is the candlestick chart — each candle tells you four things about a given time period: the opening price, the closing price, the highest point reached, and the lowest point touched — and learning to read clusters of these candles reveals whether buyers or sellers are currently in control of a stock. From there, support and resistance levels become your map: support is a price floor where buying interest has historically been strong enough to stop a stock from falling further, while resistance is a ceiling where selling pressure tends to overpower buyers — and when a stock decisively breaks through either level on high volume, it often signals the beginning of a significant move. Moving averages — particularly the 50-day and 200-day — smooth out the noise of daily price swings and help traders identify the broader trend direction, with the widely watched "golden cross" occurring when the shorter average crosses above the longer one, historically signaling bullish momentum. Indicators like the Relative Strength Index (RSI) tell you whether a stock is overbought or oversold, the MACD helps identify shifts in momentum before they fully materialize in price, and volume analysis confirms whether a price move has genuine conviction behind it or is likely to reverse. In the context of NEPSE, technical analysis is particularly relevant because the market is still developing in terms of information transparency, meaning price action and volume patterns often reveal institutional and broker behavior before any news becomes public — watching for unusual volume spikes, breakouts from consolidation zones, and trend reversals on the NEPSE chart can give alert traders a meaningful edge. The most important thing to internalize about technical analysis, however, is that no indicator is a crystal ball — they are probabilistic tools, not guarantees, and the best traders use them not to predict the future with certainty but to identify high-probability setups where the potential reward clearly justifies the risk being taken.`,
-              imageUrl: "https://images.unsplash.com/photo-1611974714658-75d4f1ad33da?auto=format&fit=crop&q=80&w=1000"
-            },
-            {
-              title: "Budgeting & Saving: The Financial Foundation You Can't Skip",
-              author: "Pranjal Khatiwada",
-              category: "Finance",
-              type: "discussion",
+              content: 'Where fundamental analysis asks what a company is worth, technical analysis asks what the market is doing right now — and for active traders, that distinction is everything. Technical analysis is the practice of reading price charts, volume patterns, and momentum indicators to forecast where a stock is likely to move next, based on the simple but powerful premise that all known information about a stock is already reflected in its price, and that human behavior in markets tends to repeat itself in recognizable patterns. The first thing any aspiring trader needs to get comfortable with is the candlestick chart — each candle tells you four things about a given time period: the opening price, the closing price, the highest point reached, and the lowest point touched — and learning to read clusters of these candles reveals whether buyers or sellers are currently in control of a stock. From there, support and resistance levels become your map: support is a price floor where buying interest has historically been strong enough to stop a stock from falling further, while resistance is a ceiling where selling pressure tends to overpower buyers — and when a stock decisively breaks through either level on high volume, it often signals the beginning of a significant move. Moving averages — particularly the 50-day and 200-day — smooth out the noise of daily price swings and help traders identify the broader trend direction. Indicators like the Relative Strength Index (RSI) tell you whether a stock is overbought or oversold, the MACD helps identify shifts in momentum before they fully materialize in price, and volume analysis confirms whether a price move has genuine conviction behind it or is likely to reverse. In the context of NEPSE, technical analysis is particularly relevant because the market is still developing — liquidity varies widely between stocks, institutional participation is growing but not dominant, and retail sentiment often creates opportunities that purely fundamental analysis would miss.',
+              imageUrl: 'https://images.unsplash.com/photo-1611974714658-75d4f1ad33da?auto=format&fit=crop&q=80&w=1000'
+            }
+          },
+          {
+            id: 'seed-budgeting-saving',
+            data: {
+              title: 'Budgeting & Saving: The Financial Foundation You Can\'t Skip',
+              author: 'Pranjal Khatiwada',
+              authorId: 'system-seed',
+              category: 'Finance',
+              type: 'discussion',
               createdAt: serverTimestamp(),
               likes: 55,
               commentCount: 0,
-              seeded: true,
-              content: `Before you invest a single rupee, you need to know where your rupees are going. Budgeting is not about restriction — it's about intention. This post covers the 50/30/20 rule adapted for Nepali students and young earners, how to track expenses (apps, spreadsheets, or just a notebook), and how to build an emergency fund before you think about the stock market. We'll also cover the psychology of saving — why it's hard, why lifestyle inflation is dangerous, and how small habits compound into wealth over time. Financial freedom starts with knowing your numbers. This is the foundation. Everything else is built on top of it.`,
-              imageUrl: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&q=80&w=1000"
-            },
-            {
-              title: "Investment Roadmap for Beginners: Where to Start and How to Grow",
-              author: "Ujjwal Dhungana",
-              category: "Finance",
-              type: "discussion",
+              content: 'Before you invest a single rupee, you need to know where your rupees are going. Budgeting is not about restriction — it\'s about intention. This post covers the 50/30/20 rule adapted for Nepali students and young earners, how to track expenses (apps, spreadsheets, or just a notebook), and how to build an emergency fund before you think about the stock market. We\'ll also cover the psychology of saving — why it\'s hard, why lifestyle inflation is dangerous, and how small habits compound into wealth over time. Financial freedom starts with knowing your numbers. This is the foundation. Everything else is built on top of it.',
+              imageUrl: 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&q=80&w=1000'
+            }
+          },
+          {
+            id: 'seed-investment-roadmap',
+            data: {
+              title: 'Investment Roadmap for Beginners: Where to Start and How to Grow',
+              author: 'Ujjwal Dhungana',
+              authorId: 'system-seed',
+              category: 'Finance',
+              type: 'discussion',
               createdAt: serverTimestamp(),
               likes: 62,
               commentCount: 0,
-              seeded: true,
-              content: `Starting your investment journey in Nepal begins with one essential step: understanding what you are getting into before putting a single rupee at risk. The Nepal Stock Exchange (NEPSE) is the country's only stock market, and for most Nepalese beginners, it represents the most accessible entry point into formal investing. Before diving in, you need a DEMAT account — opened through your bank or a licensed broker — which is essentially a digital wallet that holds your shares. From there, the smartest move is not to chase hot stocks based on tips from friends or social media, but to start with what you actually understand. Many beginners in Nepal find it useful to look at companies they interact with daily — banks, hydropower firms, insurance companies — since these sectors dominate NEPSE and tend to be more stable than speculative counters. Mutual funds are another underrated starting point, particularly for those who do not yet have the confidence or time to pick individual stocks, as they pool money across many securities and spread the risk. The honest truth about NEPSE is that it can be volatile — prices swing with political news, interest rate changes from Nepal Rastra Bank, and even seasonal liquidity patterns tied to agricultural cycles and remittance flows. This means patience is not just a virtue here; it is a strategy. Growing your investments over time means consistently reinvesting returns, gradually learning to read financial statements of listed companies, and resisting the very human urge to panic-sell during market dips. Nepal's capital market is still maturing, which cuts both ways — there is real risk, but also real opportunity for those who take the time to learn the rules of the game before playing it .`,
-              imageUrl: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=1000"
-            },
-            {
-              title: "Why Is Gold So Popular Right Now? A Macroeconomic Perspective",
-              author: "Aman",
-              category: "Economics",
-              type: "discussion",
+              content: 'Starting your investment journey in Nepal begins with one essential step: understanding what you are getting into before putting a single rupee at risk. The Nepal Stock Exchange (NEPSE) is the country\'s only stock market, and for most Nepalese beginners, it represents the most accessible entry point into formal investing. Before diving in, you need a DEMAT account — opened through your bank or a licensed broker — which is essentially a digital wallet that holds your shares. From there, the smartest move is not to chase hot stocks based on tips from friends or social media, but to start with what you actually understand. Many beginners in Nepal find it useful to look at companies they interact with daily — banks, hydropower firms, insurance companies — since these sectors dominate NEPSE and tend to be more stable than speculative counters. Mutual funds are another underrated starting point, particularly for those who do not yet have the confidence or time to pick individual stocks, as they pool money across many securities and spread the risk. The honest truth about NEPSE is that it can be volatile — prices swing with political news, interest rate changes from Nepal Rastra Bank, and even seasonal liquidity patterns tied to agricultural cycles and remittance flows. This means patience is not just a virtue here; it is a strategy.',
+              imageUrl: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=1000'
+            }
+          },
+          {
+            id: 'seed-gold-popular',
+            data: {
+              title: 'Why Is Gold So Popular Right Now? A Macroeconomic Perspective',
+              author: 'Aman',
+              authorId: 'system-seed',
+              category: 'Economics',
+              type: 'discussion',
               createdAt: serverTimestamp(),
               likes: 41,
               commentCount: 0,
-              seeded: true,
-              content: `Gold's extraordinary rally — surging over 60% in 2025 and briefly surpassing $5,500 per ounce — is no accident. It reflects a confluence of powerful macroeconomic forces reshaping the global financial landscape. Persistent inflation has eroded confidence in paper currencies, driving investors toward hard assets that preserve real purchasing power. Meanwhile, central banks — particularly in emerging markets like China, India, and Turkey — have been buying brand-emerald at record levels, seeking to reduce dependence on the US dollar following the weaponization of dollar-based sanctions against Russia. This broader de-dollarization trend, combined with a weakening dollar index, has made brand-emerald increasingly attractive as a neutral, sovereign-free store of value. Compounding this, an exceptionally volatile geopolitical environment — marked by ongoing conflicts and US-China tensions — has embedded a significant "fear premium" into prices. On the monetary policy side, the US Federal Reserve's rate-cutting cycle has lowered the opportunity cost of holding non-yielding brand-emerald, while record ETF inflows have brought the rally within reach of everyday investors. Taken together, brand-emerald's rise is less a speculative bubble and more a rational, broad-based response to a world questioning the reliability of traditional financial systems — making it one of the most important macroeconomic stories of our time.`,
-              imageUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1000"
-            },
-            {
-              title: "How to Educate Yourself Financially: A Self-Learning Roadmap",
-              author: "Biraj",
-              category: "Finance",
-              type: "discussion",
+              content: 'Gold\'s extraordinary rally — surging over 60% in 2025 and briefly surpassing $5,500 per ounce — is no accident. It reflects a confluence of powerful macroeconomic forces reshaping the global financial landscape. Persistent inflation has eroded confidence in paper currencies, driving investors toward hard assets that preserve real purchasing power. Meanwhile, central banks — particularly in emerging markets like China, India, and Turkey — have been buying gold at record levels, seeking to reduce dependence on the US dollar following the weaponization of dollar-based sanctions against Russia. This broader de-dollarization trend, combined with a weakening dollar index, has made gold increasingly attractive as a neutral, sovereign-free store of value. Compounding this, an exceptionally volatile geopolitical environment — marked by ongoing conflicts and US-China tensions — has embedded a significant fear premium into prices.',
+              imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1000'
+            }
+          },
+          {
+            id: 'seed-financial-education',
+            data: {
+              title: 'How to Educate Yourself Financially: A Self-Learning Roadmap',
+              author: 'Biraj',
+              authorId: 'system-seed',
+              category: 'Finance',
+              type: 'discussion',
               createdAt: serverTimestamp(),
               likes: 33,
               commentCount: 0,
-              seeded: true,
-              content: `Financial education rarely comes from a single book, course, or moment of inspiration — it builds slowly, through consistent curiosity and the willingness to learn from both theory and real-world mistakes. The most honest starting point is admitting what you do not know, because most people's financial blind spots are not about complex instruments or advanced mathematics — they are about basics like how interest compounds, what inflation actually does to savings, and why diversification matters. From there, the self-learning journey has a natural progression: start with personal finance fundamentals — budgeting, debt management, emergency funds — before ever touching investment concepts. Books like Robert Kiyosaki's Rich Dad Poor Dad, Morgan Housel's The Psychology of Money, and Benjamin Graham's The Intelligent Investor are widely recommended not because they give you stock tips, but because they reshape how you think about money entirely. Once the mindset is in place, move into understanding how markets work — read annual reports of companies you are curious about, follow credible financial news sources, and study how economic indicators like inflation, interest rates, and GDP growth connect to asset prices. In the Nepali context, this means paying attention to Nepal Rastra Bank's monetary policy announcements, understanding how remittance flows affect liquidity in the economy, and following NEPSE trends with analytical eyes rather than speculative ones. YouTube channels, podcasts, and free platforms like Investopedia have made quality financial education more accessible than ever, but the real differentiator is application — tracking your own spending, paper-trading before investing real money, and discussing ideas with peers who challenge your thinking. Financial literacy is ultimately a lifelong practice, not a destination, and the people who grow their wealth most consistently are almost always the ones who never stopped treating themselves as students of money.`,
-              imageUrl: "/financial_roadmap.png"
+              content: 'Financial education rarely comes from a single book, course, or moment of inspiration — it builds slowly, through consistent curiosity and the willingness to learn from both theory and real-world mistakes. The most honest starting point is admitting what you do not know, because most people\'s financial blind spots are not about complex instruments or advanced mathematics — they are about basics like how interest compounds, what inflation actually does to savings, and why diversification matters. From there, the self-learning journey has a natural progression: start with personal finance fundamentals — budgeting, debt management, emergency funds — before ever touching investment concepts. Books like Rich Dad Poor Dad, The Psychology of Money, and The Intelligent Investor are widely recommended not because they give you stock tips, but because they reshape how you think about money entirely. In the Nepali context, this means paying attention to Nepal Rastra Bank\'s monetary policy announcements, understanding how remittance flows affect liquidity in the economy, and following NEPSE trends with analytical eyes rather than speculative ones.',
+              imageUrl: '/financial_roadmap.png'
             }
-          ];
-
-          // Check for existing before seeding to avoid duplicates
-          for (const p of seededPosts) {
-            const existingQ = query(collection(db, 'posts'), where('title', '==', p.title), where('author', '==', p.author));
-            const existingSnap = await getDocs(existingQ);
-            if (existingSnap.empty) {
-              await addDoc(collection(db, 'posts'), p);
-            } else {
-              // Update content and imageUrl for existing seeded posts to reflect changes in central data
-              const docId = existingSnap.docs[0].id;
-              await updateDoc(doc(db, 'posts', docId), { 
-                content: p.content,
-                imageUrl: p.imageUrl
-              });
+          },
+          {
+            id: 'seed-compound-interest',
+            data: {
+              title: 'Understanding Compound Interest: The 8th Wonder of the World',
+              author: 'Aarav Sharma',
+              authorId: 'system-seed',
+              category: 'Finance',
+              type: 'discussion',
+              createdAt: serverTimestamp(),
+              likes: 47,
+              commentCount: 0,
+              content: 'Did you know that if you invest NPR 10,000 per month at a 12% annual return, you\'ll have over NPR 1 crore in just 20 years? That\'s the power of compound interest! Here\'s the breakdown: Year 1-5 your money grows slowly to NPR 8.5 lakhs, Year 5-10 things start picking up to NPR 23 lakhs, Year 10-15 the magic happens to NPR 50 lakhs, and Year 15-20 exponential growth to NPR 1.02 crores. The key takeaway? Start early, be consistent, and let time do the heavy lifting. Even small amounts matter when compounded over decades.',
+              imageUrl: 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&q=80&w=1000'
+            }
+          },
+          {
+            id: 'seed-nepse-banking',
+            data: {
+              title: 'NEPSE Index Analysis: Why Banking Sector Dominates Nepal\'s Stock Market',
+              author: 'Pranish Koirala',
+              authorId: 'system-seed',
+              category: 'Finance',
+              type: 'discussion',
+              createdAt: serverTimestamp(),
+              likes: 62,
+              commentCount: 0,
+              content: 'The Nepal Stock Exchange (NEPSE) index is heavily influenced by banking stocks. Commercial banks make up over 40% of NEPSE market cap, and the top 5 banks account for 60% of banking sector trading volume. Banking sector P/E ratio averages 12-15x, lower than global peers. When NRB announces monetary policy changes, banking stocks move first. The recent relaxation of margin lending rules saw Nabil Bank jump 8% in a single day. I keep 60% of my portfolio in quality banking stocks like Nabil, NICA, and SANIMA for stability plus regular dividends averaging 15-20% annually.',
+              imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1000'
+            }
+          },
+          {
+            id: 'seed-hydropower',
+            data: {
+              title: 'Hydropower Stocks: Nepal\'s Green Energy Goldmine?',
+              author: 'Bikash Gurung',
+              authorId: 'system-seed',
+              category: 'Finance',
+              type: 'discussion',
+              createdAt: serverTimestamp(),
+              likes: 38,
+              commentCount: 0,
+              content: 'Nepal has huge hydropower potential — over 83,000 MW! But only 2,800 MW is currently developed. Is this an opportunity for stock investors? Top hydropower stocks to watch include Chilime (CHL) with 22.5 MW and 18% ROE, Arun Valley (AHPC) with 60 MW and strong management, and Upper Tamakoshi (UPPER) at 456 MW as the largest under construction. Risks include construction delays, water dependency, and political uncertainty. My analysis suggests hydropower stocks are undervalued relative to their long-term potential.',
+              imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1000'
+            }
+          },
+          {
+            id: 'seed-emergency-fund',
+            data: {
+              title: 'Building an Emergency Fund: Your First Step to Financial Freedom',
+              author: 'Anisha Rai',
+              authorId: 'system-seed',
+              category: 'Finance',
+              type: 'discussion',
+              createdAt: serverTimestamp(),
+              likes: 71,
+              commentCount: 0,
+              content: 'Before you start investing, you need an emergency fund. Medical emergencies can cost NPR 50,000-500,000+, job loss can happen unexpectedly, and car repairs and home maintenance add up. You need a minimum of 3 months of essential expenses, with 6 months recommended and 12 months ideal. Keep it in a savings account for accessibility, fixed deposit for better returns (7-9% in Nepal), or a money market fund for the best of both worlds. I started with NPR 500/month and now have 6 months saved.',
+              imageUrl: 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&q=80&w=1000'
             }
           }
-          await setDoc(metaRefV6, { seededAt: serverTimestamp() });
+        ];
+
+        for (const post of posts) {
+          await setDoc(doc(db, 'posts', post.id), post.data);
         }
+        await setDoc(seededKey, { seededAt: serverTimestamp() });
+        console.log('Seeded all 10 discussion posts');
       } catch (error) {
-        console.warn("Seeding or Cleanup failed/skipped", error);
+        console.warn('Seeding skipped or failed:', error);
       }
     };
-    seedAndCleanup();
+    seedDiscussionPosts();
   }, []);
 
 // Listen for Posts
