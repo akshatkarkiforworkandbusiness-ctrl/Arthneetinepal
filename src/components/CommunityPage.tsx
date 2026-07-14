@@ -70,6 +70,7 @@ export default function CommunityPage() {
       try {
         const seededKey = doc(db, 'meta', 'seeded');
         const seededSnap = await getDoc(seededKey);
+        console.log('Seeding check: meta/seeded exists?', seededSnap.exists());
         if (seededSnap.exists()) return;
 
         const posts = [
@@ -236,10 +237,15 @@ export default function CommunityPage() {
         ];
 
         for (const post of posts) {
-          await setDoc(doc(db, 'posts', post.id), post.data);
+          try {
+            await setDoc(doc(db, 'posts', post.id), post.data);
+            console.log('Seeded:', post.id);
+          } catch (e) {
+            console.error('Failed to seed:', post.id, e);
+          }
         }
         await setDoc(seededKey, { seededAt: serverTimestamp() });
-        console.log('Seeded all 10 discussion posts');
+        console.log('Seeding complete — all 10 posts written');
       } catch (error) {
         console.warn('Seeding skipped or failed:', error);
       }
@@ -253,7 +259,9 @@ useEffect(() => {
   const qPosts = query(collection(db, path), orderBy('createdAt', 'desc'));
   const unsubscribe = onSnapshot(qPosts, 
     (snapshot) => {
-      setPosts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Post)));
+      const allPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Post));
+      console.log('Posts loaded:', allPosts.length, allPosts.map(p => ({ id: p.id, type: p.type, title: p.title })));
+      setPosts(allPosts);
       setLoading(false);
     },
     (error) => {
