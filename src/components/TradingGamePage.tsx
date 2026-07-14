@@ -4,14 +4,16 @@ import { toast } from 'sonner';
 import {
   TrendingUp, TrendingDown, Briefcase, History,
   ArrowUpRight, RefreshCw, Lock, AlertTriangle,
-  Search, BarChart3, Trophy
+  Search, BarChart3, Trophy, Gift, Wallet
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { db } from '../lib/firebase';
 import { fetchStocks, StockRow } from '../lib/nepseApi';
-import { getOrCreatePortfolio, subscribeToPortfolio, executeTrade, getLeaderboard } from '../lib/trading';
+import { getOrCreatePortfolio, subscribeToPortfolio, executeTrade, getLeaderboard, calculateTradingFees } from '../lib/trading';
+import { marketSimulation } from '../lib/marketSimulation';
+import { claimRewards, awardDailyLogin } from '../lib/rewards';
 import { collection, query, orderBy, onSnapshot, limit } from 'firebase/firestore';
-import type { Portfolio, Trade } from '../types/trading';
+import type { Portfolio, Trade, TradingFees } from '../types/trading';
 
 export default function TradingGamePage() {
   const { user, profile, loading: authLoading, handleJoinAction } = useAuth();
@@ -31,6 +33,8 @@ export default function TradingGamePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [estimatedFees, setEstimatedFees] = useState<TradingFees | null>(null);
+  const [isClaimingRewards, setIsClaimingRewards] = useState(false);
 
   // Load portfolio
   useEffect(() => {
@@ -73,13 +77,21 @@ export default function TradingGamePage() {
     return () => unsubTrades();
   }, [user]);
 
-  // Fetch stocks
+  // Fetch stocks and initialize simulation
   const getStocks = useCallback(async () => {
     setIsRefreshing(true);
     setLoadingStocks(true);
     try {
       const data = await fetchStocks();
       setStocks(data);
+      
+      // Initialize market simulation if not already done
+      if (!marketSimulation['state']?.isInitialized) {
+        marketSimulation.initialize(data);
+      } else {
+        // Update base prices from live data
+        marketSimulation.updateBasePrices(data);
+      }
     } catch {
       toast.error('Failed to fetch live NEPSE prices.');
     } finally {
@@ -90,7 +102,25 @@ export default function TradingGamePage() {
 
   useEffect(() => {
     getStocks();
+    
+    // Subscribe to simulated price updates
+    const unsubscribe = marketSimulation.subscribe((simulatedStocks) => {
+      setStocks(simulatedStocks);
+    });
+    
+    return () => unsubscribe();
   }, [getStocks]);
+  
+  // Award daily login on first load
+  useEffect(() => {
+    if (user) {
+      awardDailyLogin(user.uid).then(result => {
+        if (result.success) {
+          toast.success(result.message);
+        }
+      });
+    }
+  }, [user]);
 
   // Fetch leaderboard
   useEffect(() => {
@@ -106,15 +136,16 @@ export default function TradingGamePage() {
 
     setTradingLoading(true);
     try {
-      await executeTrade(user.uid, selectedSymbol, orderSide, orderQty, currentPrice);
+      const { fees } = await executeTrade(user.uid, selectedSymbol, orderSide, orderQty, currentPrice);
       toast.success(
         orderSide === 'buy'
-          ? `Bought ${orderQty} ${selectedSymbol.toUpperCase()} at Rs. ${currentPrice}`
-          : `Sold ${orderQty} ${selectedSymbol.toUpperCase()} at Rs. ${currentPrice}`
+          ? `Bought ${orderQty} ${selectedSymbol.toUpperCase()} at Rs. ${currentPrice} (Fees: Rs. ${fees.totalFees.toFixed(2)})`
+          : `Sold ${orderQty} ${selectedSymbol.toUpperCase()} at Rs. ${currentPrice} (Fees: Rs. ${fees.totalFees.toFixed(2)})`
       );
       setOrderQty(1);
       setSelectedSymbol('');
       setSearchQuery('');
+      setEstimatedFees(null);
     } catch (error: any) {
       toast.error(error.message || 'Trade failed.');
     } finally {
@@ -125,13 +156,31 @@ export default function TradingGamePage() {
   // Calculations
   const selectedStock = stocks.find(s => s.symbol === selectedSymbol);
   const currentPrice = selectedStock ? selectedStock.ltp : 0;
-  const estTotal = currentPrice * orderQty;
+  const estSubtotal = currentPrice * orderQty;
+
+  // Calculate estimated fees when selection changes
+  useEffect(() => {
+    if (selectedSymbol && orderQty > 0 && currentPrice > 0) {
+      const existingHolding = portfolio?.holdings[selectedSymbol.toUpperCase()];
+      const fees = calculateTradingFees(
+        orderSide,
+        orderQty,
+        currentPrice,
+        existingHolding ? { avgCost: existingHolding.avgCost } : undefined
+      );
+      setEstimatedFees(fees);
+    } else {
+      setEstimatedFees(null);
+    }
+  }, [selectedSymbol, orderQty, currentPrice, orderSide, portfolio?.holdings]);
 
   const holdingsValue = useMemo(() => {
     if (!portfolio) return 0;
     return Object.entries(portfolio.holdings).reduce((acc, [sym, pos]) => {
+      // Use simulated price for valuation
+      const simulatedPrice = marketSimulation.getPrice(sym);
       const liveStock = stocks.find(s => s.symbol === sym);
-      const livePrice = liveStock ? liveStock.ltp : pos.avgCost;
+      const livePrice = simulatedPrice || (liveStock ? liveStock.ltp : pos.avgCost);
       return acc + (pos.quantity * livePrice);
     }, 0);
   }, [portfolio?.holdings, stocks]);
@@ -145,6 +194,24 @@ export default function TradingGamePage() {
   const totalReturn = portfolio && portfolio.cashBalance + totalCost > 0
     ? ((totalPortfolioValue - (portfolio.cashBalance + totalCost)) / (portfolio.cashBalance + totalCost)) * 100
     : 0;
+
+  // Handle claim rewards
+  const handleClaimRewards = async () => {
+    if (!user) return;
+    setIsClaimingRewards(true);
+    try {
+      const result = await claimRewards(user.uid);
+      if (result.success) {
+        toast.success(result.message);
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error: any) {
+      toast.error('Failed to claim rewards');
+    } finally {
+      setIsClaimingRewards(false);
+    }
+  };
 
   const upperSymbol = selectedSymbol.toUpperCase();
 
@@ -215,7 +282,7 @@ export default function TradingGamePage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <div className="bg-[#161F30] border border-[#1F2A3F] rounded-2xl p-5">
             <span className="text-[10px] font-black uppercase tracking-widest text-[#9f9fa0] block mb-1">
               Portfolio Value
@@ -258,6 +325,24 @@ export default function TradingGamePage() {
             <span className={`text-xl font-mono font-bold ${unrealizedPL >= 0 ? 'text-[#00f59b]' : 'text-[#ef4444]'}`}>
               {unrealizedPL >= 0 ? '+' : ''}{unrealizedPL.toLocaleString(undefined, { maximumFractionDigits: 0 })}
             </span>
+          </div>
+          <div className="bg-[#161F30] border border-[#1F2A3F] rounded-2xl p-5 relative">
+            <span className="text-[10px] font-black uppercase tracking-widest text-[#9f9fa0] block mb-1">
+              Reward Balance
+            </span>
+            <span className="text-xl font-mono font-bold text-[#fbbf24]">
+              NPR {portfolio?.rewardBalance?.toLocaleString(undefined, { maximumFractionDigits: 0 }) ?? '0'}
+            </span>
+            {portfolio && portfolio.rewardBalance > 0 && (
+              <button
+                onClick={handleClaimRewards}
+                disabled={isClaimingRewards}
+                className="mt-2 px-3 py-1 bg-[#fbbf24]/10 hover:bg-[#fbbf24] text-[#fbbf24] hover:text-[#0B0F19] text-[9px] font-black uppercase tracking-wider rounded-lg transition-all flex items-center gap-1"
+              >
+                {isClaimingRewards ? <RefreshCw className="animate-spin" size={10} /> : <Gift size={10} />}
+                Claim
+              </button>
+            )}
           </div>
         </div>
 
@@ -549,9 +634,31 @@ export default function TradingGamePage() {
                   <div className="p-3 bg-[#0B0F19]/50 border border-[#1F2A3F] rounded-xl space-y-2 font-mono text-xs">
                     <div className="flex justify-between">
                       <span className="text-[#9f9fa0]">Subtotal:</span>
-                      <span className="text-white">NPR {(currentPrice * orderQty).toLocaleString()}</span>
+                      <span className="text-white">NPR {estSubtotal.toLocaleString()}</span>
                     </div>
-                    {orderSide === 'buy' && estTotal > (portfolio?.cashBalance ?? 0) && (
+                    {estimatedFees && (
+                      <>
+                        <div className="flex justify-between text-[#9f9fa0]">
+                          <span>Brokerage (0.40%):</span>
+                          <span>Rs. {estimatedFees.brokerage.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between text-[#9f9fa0]">
+                          <span>SEBON Fee (0.015%):</span>
+                          <span>Rs. {estimatedFees.sebonFee.toFixed(2)}</span>
+                        </div>
+                        {estimatedFees.capitalGainsTax > 0 && (
+                          <div className="flex justify-between text-[#9f9fa0]">
+                            <span>Capital Gains Tax:</span>
+                            <span>Rs. {estimatedFees.capitalGainsTax.toFixed(2)}</span>
+                          </div>
+                        )}
+                        <div className="border-t border-[#1F2A3F] pt-2 flex justify-between font-bold">
+                          <span className="text-white">Total Cost:</span>
+                          <span className="text-white">NPR {(estSubtotal + estimatedFees.totalFees).toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                        </div>
+                      </>
+                    )}
+                    {orderSide === 'buy' && estSubtotal > (portfolio?.cashBalance ?? 0) && (
                       <div className="p-2 bg-[#ef4444]/10 border border-[#ef4444]/20 text-[#ef4444] rounded-lg flex items-start gap-2 text-[10px]">
                         <AlertTriangle className="shrink-0 mt-0.5" size={12} />
                         <span>Insufficient cash</span>
@@ -575,7 +682,7 @@ export default function TradingGamePage() {
                     tradingLoading ||
                     !selectedSymbol ||
                     orderQty <= 0 ||
-                    (orderSide === 'buy' && estTotal > (portfolio?.cashBalance ?? 0)) ||
+                    (orderSide === 'buy' && estimatedFees && (estSubtotal + estimatedFees.totalFees) > (portfolio?.cashBalance ?? 0)) ||
                     (orderSide === 'sell' && (!portfolio?.holdings[upperSymbol] || (portfolio?.holdings[upperSymbol]?.quantity ?? 0) < orderQty))
                   }
                   className={`w-full py-3 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg flex justify-center items-center gap-2 disabled:opacity-30 ${
@@ -587,6 +694,39 @@ export default function TradingGamePage() {
                   {tradingLoading ? <RefreshCw className="animate-spin" size={14} /> : `Execute ${orderSide.toUpperCase()}`}
                 </button>
               </form>
+            </div>
+
+            {/* Market Events */}
+            <div className="bg-[#161F30] border border-[#1F2A3F] rounded-3xl overflow-hidden shadow-xl">
+              <div className="p-6 border-b border-[#1F2A3F] flex items-center gap-3">
+                <TrendingUp className="text-[#fbbf24]" size={20} />
+                <h2 className="text-lg font-bold font-sans">Market Events</h2>
+              </div>
+              {marketSimulation.getEvents().length === 0 ? (
+                <div className="p-6 text-center text-[#9f9fa0] text-xs">
+                  No active market events
+                </div>
+              ) : (
+                <div className="divide-y divide-[#1F2A3F]/50">
+                  {marketSimulation.getEvents().slice(0, 3).map((event) => (
+                    <div key={event.id} className="px-6 py-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className={`w-2 h-2 rounded-full ${
+                          event.type === 'positive' ? 'bg-[#00f59b]' :
+                          event.type === 'negative' ? 'bg-[#ef4444]' :
+                          'bg-[#9f9fa0]'
+                        }`} />
+                        <span className="text-[10px] font-black uppercase tracking-wider text-[#9f9fa0]">
+                          {event.sectors.join(', ')}
+                        </span>
+                      </div>
+                      <p className="text-xs text-white leading-relaxed">
+                        {event.message}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Leaderboard */}

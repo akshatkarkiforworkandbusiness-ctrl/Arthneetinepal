@@ -1,7 +1,8 @@
 import { doc, getDoc, getDocs, runTransaction, collection, query, orderBy, limit, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from './firebase';
-import { Portfolio, STARTING_CASH_BALANCE } from '../types/trading';
+import { Portfolio, STARTING_CASH_BALANCE, TradingFees, TRADING_FEE_RATES } from '../types/trading';
 import type { Unsubscribe } from 'firebase/firestore';
+import { marketSimulation } from './marketSimulation';
 
 /**
  * Creates or retrieves a portfolio for the given user inside a Firestore transaction.
@@ -20,6 +21,12 @@ export async function getOrCreatePortfolio(uid: string): Promise<Portfolio> {
         holdings: {},
         totalValue: STARTING_CASH_BALANCE,
         updatedAt: serverTimestamp(),
+        // Initialize reward fields
+        rewardBalance: 0,
+        totalRewardsEarned: 0,
+        completedLessons: [],
+        totalPostsCreated: 0,
+        totalLikesGiven: 0,
       };
       transaction.set(portfolioRef, newPortfolio);
       return newPortfolio;
@@ -50,11 +57,56 @@ export function subscribeToPortfolio(uid: string, callback: (p: Portfolio) => vo
 }
 
 /**
+ * Calculate trading fees for a transaction
+ */
+export function calculateTradingFees(
+  side: 'buy' | 'sell',
+  quantity: number,
+  price: number,
+  holding?: { avgCost: number; purchaseDate?: Date }
+): TradingFees {
+  const total = quantity * price;
+  
+  // Brokerage fee: 0.40% for orders <= 1 lakh, 1.50% for larger orders
+  const brokerageRate = total <= TRADING_FEE_RATES.BROKERAGE_THRESHOLD 
+    ? TRADING_FEE_RATES.BROKERAGE_MIN 
+    : TRADING_FEE_RATES.BROKERAGE_MAX;
+  const brokerage = total * brokerageRate;
+  
+  // SEBON fee: 0.015% (both buy and sell)
+  const sebonFee = total * TRADING_FEE_RATES.SEBON_FEE;
+  
+  // Capital Gains Tax: only on sell side, only on profit
+  let capitalGainsTax = 0;
+  if (side === 'sell' && holding) {
+    const profit = (price - holding.avgCost) * quantity;
+    if (profit > 0) {
+      // Determine holding period
+      const holdingDays = holding.purchaseDate 
+        ? Math.floor((Date.now() - holding.purchaseDate.getTime()) / (1000 * 60 * 60 * 24))
+        : 0;
+      
+      const cgtRate = holdingDays > TRADING_FEE_RATES.CGT_THRESHOLD_DAYS 
+        ? TRADING_FEE_RATES.CGT_LONG_TERM 
+        : TRADING_FEE_RATES.CGT_SHORT_TERM;
+      capitalGainsTax = profit * cgtRate;
+    }
+  }
+  
+  const totalFees = brokerage + sebonFee + capitalGainsTax;
+  
+  return {
+    brokerage: Math.round(brokerage * 100) / 100,
+    sebonFee: Math.round(sebonFee * 100) / 100,
+    capitalGainsTax: Math.round(capitalGainsTax * 100) / 100,
+    totalFees: Math.round(totalFees * 100) / 100,
+  };
+}
+
+/**
  * Executes a buy or sell trade inside a Firestore transaction.
- *
- * Known limitation: totalValue is only accurate as of each user's last trade
- * for stocks they hold, not live market price, because there's no backend to
- * refresh it. This is an acceptable v1 simplification for a club-scale project.
+ * Uses simulated prices from market simulation engine.
+ * Applies trading fees to all transactions.
  */
 export async function executeTrade(
   uid: string,
@@ -62,12 +114,12 @@ export async function executeTrade(
   side: 'buy' | 'sell',
   quantity: number,
   price: number
-): Promise<void> {
+): Promise<{ fees: TradingFees }> {
   const upperSymbol = symbol.toUpperCase();
   const portfolioRef = doc(db, 'portfolios', uid);
 
   try {
-    await runTransaction(db, async (transaction) => {
+    return await runTransaction(db, async (transaction) => {
       const snap = await transaction.get(portfolioRef);
       if (!snap.exists()) {
         throw new Error('Portfolio not found. Please refresh and try again.');
@@ -80,28 +132,42 @@ export async function executeTrade(
         throw new Error('Quantity must be a positive whole number.');
       }
 
+      // Get simulated price (use provided price as fallback)
+      const simulatedPrice = marketSimulation.getPrice(upperSymbol) || price;
+
+      // Calculate trading fees
+      const existingHolding = portfolio.holdings[upperSymbol];
+      const fees = calculateTradingFees(
+        side,
+        quantity,
+        simulatedPrice,
+        existingHolding ? { avgCost: existingHolding.avgCost } : undefined
+      );
+
+      // Calculate total cost including fees
+      const subtotal = quantity * simulatedPrice;
+      const totalCost = subtotal + fees.totalFees;
+
       if (side === 'buy') {
-        const cost = quantity * price;
-        if (cost > portfolio.cashBalance) {
+        if (totalCost > portfolio.cashBalance) {
           throw new Error(
-            `Insufficient cash. Buying ${quantity} shares at Rs. ${price} costs Rs. ${cost.toLocaleString()}, but you only have Rs. ${portfolio.cashBalance.toLocaleString()}.`
+            `Insufficient cash. Buying ${quantity} shares at Rs. ${simulatedPrice} costs Rs. ${subtotal.toLocaleString()} + Rs. ${fees.totalFees.toFixed(2)} fees = Rs. ${totalCost.toLocaleString()}, but you only have Rs. ${portfolio.cashBalance.toLocaleString()}.`
           );
         }
 
-        // Deduct cash
-        const newCashBalance = portfolio.cashBalance - cost;
+        // Deduct cash (including fees)
+        const newCashBalance = portfolio.cashBalance - totalCost;
 
         // Update holdings — weighted average cost
-        const existing = portfolio.holdings[upperSymbol];
         let newAvgCost: number;
         let newQuantity: number;
-        if (existing) {
-          const existingTotal = existing.quantity * existing.avgCost;
-          newQuantity = existing.quantity + quantity;
-          newAvgCost = (existingTotal + cost) / newQuantity;
+        if (existingHolding) {
+          const existingTotal = existingHolding.quantity * existingHolding.avgCost;
+          newQuantity = existingHolding.quantity + quantity;
+          newAvgCost = (existingTotal + subtotal) / newQuantity;
         } else {
           newQuantity = quantity;
-          newAvgCost = price;
+          newAvgCost = simulatedPrice;
         }
 
         const newHoldings = {
@@ -109,13 +175,15 @@ export async function executeTrade(
           [upperSymbol]: { quantity: newQuantity, avgCost: newAvgCost },
         };
 
-        // Recompute totalValue using trade price for this symbol
-        // Known limitation: uses trade price, not live market price for held stocks
+        // Recompute totalValue using simulated prices
         let holdingsValue = 0;
         for (const [sym, holding] of Object.entries(newHoldings)) {
-          const effectivePrice = sym === upperSymbol ? price : holding.avgCost;
+          const effectivePrice = marketSimulation.getPrice(sym) || holding.avgCost;
           holdingsValue += holding.quantity * effectivePrice;
         }
+
+        // Apply price impact for large orders
+        marketSimulation.applyPriceImpact(upperSymbol, quantity, 'buy');
 
         transaction.update(portfolioRef, {
           cashBalance: newCashBalance,
@@ -125,31 +193,34 @@ export async function executeTrade(
         });
       } else {
         // Sell
-        const existing = portfolio.holdings[upperSymbol];
-        if (!existing || existing.quantity < quantity) {
-          const owned = existing ? existing.quantity : 0;
+        if (!existingHolding || existingHolding.quantity < quantity) {
+          const owned = existingHolding ? existingHolding.quantity : 0;
           throw new Error(
             `Insufficient shares. You own ${owned} share${owned === 1 ? '' : 's'} of ${upperSymbol} but tried to sell ${quantity}.`
           );
         }
 
-        const proceeds = quantity * price;
+        // Proceeds minus fees
+        const proceeds = subtotal - fees.totalFees;
         const newCashBalance = portfolio.cashBalance + proceeds;
-        const newQuantity = existing.quantity - quantity;
+        const newQuantity = existingHolding.quantity - quantity;
 
         let newHoldings = { ...portfolio.holdings };
         if (newQuantity === 0) {
           delete newHoldings[upperSymbol];
         } else {
-          newHoldings[upperSymbol] = { quantity: newQuantity, avgCost: existing.avgCost };
+          newHoldings[upperSymbol] = { quantity: newQuantity, avgCost: existingHolding.avgCost };
         }
 
-        // Recompute totalValue
+        // Recompute totalValue using simulated prices
         let holdingsValue = 0;
         for (const [sym, holding] of Object.entries(newHoldings)) {
-          const effectivePrice = sym === upperSymbol ? price : holding.avgCost;
+          const effectivePrice = marketSimulation.getPrice(sym) || holding.avgCost;
           holdingsValue += holding.quantity * effectivePrice;
         }
+
+        // Apply price impact for large orders
+        marketSimulation.applyPriceImpact(upperSymbol, quantity, 'sell');
 
         transaction.update(portfolioRef, {
           cashBalance: newCashBalance,
@@ -159,17 +230,20 @@ export async function executeTrade(
         });
       }
 
-      // Write trade record to subcollection
+      // Write trade record to subcollection (including fees breakdown)
       const tradesRef = collection(db, 'portfolios', uid, 'trades');
       const tradeRef = doc(tradesRef);
       transaction.set(tradeRef, {
         symbol: upperSymbol,
         side,
         quantity,
-        price,
-        total: quantity * price,
+        price: simulatedPrice,
+        total: subtotal,
+        fees: fees,
         timestamp: serverTimestamp(),
       });
+
+      return { fees };
     });
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, `portfolios/${uid}/trades`);

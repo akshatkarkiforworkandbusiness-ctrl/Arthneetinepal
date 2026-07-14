@@ -12,7 +12,7 @@ import {
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../contexts/AuthContext';
-import { Heart, MessageSquare, Share2, Download, Plus, FileText, HelpCircle, MoreVertical, X, RefreshCw, Users, TrendingUp, AlertCircle, Compass, User, Bookmark } from 'lucide-react';
+import { Heart, MessageSquare, Share2, Download, Plus, FileText, HelpCircle, MoreVertical, X, RefreshCw, Users, TrendingUp, AlertCircle, Compass, User, Bookmark, Gift } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { GradientCard } from './GradientCard';
@@ -26,6 +26,7 @@ import {
   researchSectorNews,
   type Sector,
 } from '../lib/newsService';
+import { awardPostCreation, awardLike, incrementPostCount, incrementLikesGiven } from '../lib/rewards';
 import type { Post } from '../types/post';
 
 export default function CommunityPage() {
@@ -301,7 +302,19 @@ const handleLike = async (postId: string) => {
     } else {
        await setDoc(likeRef, { likedAt: serverTimestamp() });
        await updateDoc(postRef, { likes: increment(1) });
-       toast.success("Post liked!");
+       
+       // Award reward for liking a post
+       const rewardResult = await awardLike(user.uid, postId);
+       if (rewardResult.success) {
+         toast.success(`Post liked! Earned NPR ${rewardResult.amount.toLocaleString()}`, {
+           duration: 3000,
+         });
+       } else {
+         toast.success("Post liked!");
+       }
+       
+       // Increment likes given count
+       await incrementLikesGiven(user.uid);
     }
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, likePath);
@@ -351,7 +364,7 @@ const handleLike = async (postId: string) => {
         createdAt: serverTimestamp(),
       };
 
-      await addDoc(collection(db, 'posts'), postData);
+      const docRef = await addDoc(collection(db, 'posts'), postData);
       setShowCreateModal(false);
       setCreateData({
         title: '',
@@ -362,7 +375,19 @@ const handleLike = async (postId: string) => {
         pdf: null,
         authorName: profile?.name || '',
       });
-      toast.success("Post submitted successfully!");
+      
+      // Award reward for creating a post
+      const rewardResult = await awardPostCreation(user.uid, docRef.id);
+      if (rewardResult.success) {
+        toast.success(`Post submitted! Earned NPR ${rewardResult.amount.toLocaleString()}`, {
+          duration: 5000,
+        });
+      } else {
+        toast.success("Post submitted successfully!");
+      }
+      
+      // Increment post count
+      await incrementPostCount(user.uid);
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, 'posts');
       toast.error("Failed to submit post.");
@@ -726,6 +751,12 @@ const handleLike = async (postId: string) => {
               <h2 className="font-display tracking-tight font-medium text-3xl text-brandwood mb-8">
                 {activeTab === 'research' ? 'Submit Research' : 'Create New Post'}
               </h2>
+              
+              {/* Reward Indicator */}
+              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#fbbf24] bg-[#fbbf24]/10 px-3 py-2 rounded-lg mb-6">
+                <Gift size={12} />
+                <span>Earn NPR 1,000 for creating a post</span>
+              </div>
 
               <form onSubmit={handleCreateSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

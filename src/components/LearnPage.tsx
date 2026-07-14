@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Play, Check, BookOpen, Download, Award, Brain } from 'lucide-react';
+import { Play, Check, BookOpen, Download, Award, Brain, Gift } from 'lucide-react';
 import CertificateModal from './CertificateModal';
 import { db } from '../lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -9,6 +9,7 @@ import { useAuth } from '../contexts/AuthContext';
 import LessonCommentSection from './LessonCommentSection';
 import LessonQuiz from './LessonQuiz';
 import AILessonAssistant from './AILessonAssistant';
+import { awardLessonCompletion, markLessonComplete } from '../lib/rewards';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -1989,6 +1990,7 @@ export default function LearnPage() {
     }
 
     const next = new Set(completed);
+    const isNewCompletion = !next.has(lessonId);
     next.add(lessonId);
     setCompleted(next);
 
@@ -2009,6 +2011,21 @@ export default function LearnPage() {
         },
         { merge: true }
       );
+
+      // Award reward for completing a lesson (only for new completions)
+      if (isNewCompletion) {
+        const rewardResult = await awardLessonCompletion(user.uid, lessonId);
+        if (rewardResult.success) {
+          // Show reward toast
+          const { toast } = await import('sonner');
+          toast.success(`Earned NPR ${rewardResult.amount.toLocaleString()} for completing the quiz!`, {
+            duration: 5000,
+          });
+        }
+        
+        // Mark lesson complete in portfolio for reward tracking
+        await markLessonComplete(user.uid, lessonId);
+      }
     }
   };
 
@@ -2218,13 +2235,21 @@ export default function LearnPage() {
 
             {/* Inline FAQs */}
             {user && activeLesson.quiz && activeLesson.quiz.length > 0 && (
-              <LessonQuiz
-                lessonId={activeLesson.id}
-                questions={activeLesson.quiz}
-                passed={completed.has(activeLesson.id)}
-                existingScore={quizScores[activeLesson.id]}
-                onSubmit={submitQuiz}
-              />
+              <div className="space-y-3">
+                {!completed.has(activeLesson.id) && (
+                  <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#fbbf24] bg-[#fbbf24]/10 px-3 py-2 rounded-lg">
+                    <Gift size={12} />
+                    <span>Earn NPR 5,000 for completing this quiz</span>
+                  </div>
+                )}
+                <LessonQuiz
+                  lessonId={activeLesson.id}
+                  questions={activeLesson.quiz}
+                  passed={completed.has(activeLesson.id)}
+                  existingScore={quizScores[activeLesson.id]}
+                  onSubmit={submitQuiz}
+                />
+              </div>
             )}
 
             {activeLesson.faqs && activeLesson.faqs.length > 0 && (
