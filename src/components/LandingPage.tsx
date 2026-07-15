@@ -5,9 +5,8 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
-import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import PlaybookHero from './PlaybookHero';
-import ProblemToFeatureAnimation from './ProblemToFeatureAnimation';
+import CinematicIntro from './CinematicIntro';
 import CurriculumRoadmap from './CurriculumRoadmap';
 import SessionPhotos from './SessionPhotos';
 import { LESSONS } from './LearnPage';
@@ -291,7 +290,7 @@ export default function LandingPage() {
       className="flex flex-col bg-white"
     >
       {/* Cinematic Intro */}
-      {showIntro && <ProblemToFeatureAnimation onComplete={handleIntroComplete} />}
+      {showIntro && <CinematicIntro onComplete={handleIntroComplete} />}
 
       {/* Hero Section */}
       <PlaybookHero />
