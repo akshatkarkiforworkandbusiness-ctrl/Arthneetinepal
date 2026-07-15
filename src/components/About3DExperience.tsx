@@ -1,16 +1,16 @@
 import { useState, useRef, useMemo } from 'react';
 import { Pointer, Rocket, Shield, Diamond, Monitor } from 'lucide-react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float, Html, OrbitControls, Environment, ContactShadows, Text, Stars } from '@react-three/drei';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Float, Html, OrbitControls, Environment, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 
 // The four pillars of content
 const CONTENT_NODES = [
   {
     id: 'mission',
     title: 'Our Mission',
-    color: '#847dff',
+    color: '#00875a',
     position: [0, 1.5, 2.5] as [number, number, number],
     rotation: [0, 0, 0] as [number, number, number],
     content: "Empowering Nepal's next generation with real financial intelligence. We travel across Nepal, bringing interactive workshops to every high school student.",
@@ -19,7 +19,7 @@ const CONTENT_NODES = [
   {
     id: 'work',
     title: 'Our Work',
-    color: '#3b82f6',
+    color: '#2563eb',
     position: [2.5, -0.5, 1.5] as [number, number, number],
     rotation: [0, Math.PI / 6, 0] as [number, number, number],
     content: "We provide full session curriculums, professional guest speakers, and simulated markets. Active in over 50 schools nationwide.",
@@ -28,7 +28,7 @@ const CONTENT_NODES = [
   {
     id: 'values',
     title: 'Core Values',
-    color: '#003893',
+    color: '#00875a',
     position: [-2.5, -0.5, 1.5] as [number, number, number],
     rotation: [0, -Math.PI / 6, 0] as [number, number, number],
     content: "Knowledge First. Prosperity for All. Grounded in Truth. We believe financial freedom is a skill, not a privilege.",
@@ -37,7 +37,7 @@ const CONTENT_NODES = [
   {
     id: 'features',
     title: 'The Platform',
-    color: '#847dff',
+    color: '#9333ea',
     position: [0, -2, 2.5] as [number, number, number],
     rotation: [0, 0, 0] as [number, number, number],
     content: "Track live NEPSE data, take guided video courses, test your knowledge with quizzes, and earn printable certificates.",
@@ -60,11 +60,11 @@ function CardNode({ data, activeId, setActiveId }: { data: typeof CONTENT_NODES[
       <group>
         {/* Visual 3D Anchor */}
         <mesh>
-          <sphereGeometry args={[isActive ? 0.1 : 0.15, 32, 32]} />
+          <sphereGeometry args={[isActive ? 0.12 : 0.15, 32, 32]} />
           <meshStandardMaterial 
             color={data.color} 
             emissive={data.color} 
-            emissiveIntensity={isActive ? 2 : 0.5} 
+            emissiveIntensity={isActive ? 1.5 : 0.3} 
             toneMapped={false} 
           />
         </mesh>
@@ -76,26 +76,26 @@ function CardNode({ data, activeId, setActiveId }: { data: typeof CONTENT_NODES[
             initial={false}
             animate={{
               width: isActive ? 360 : 200,
-              opacity: isBlurred ? 0.2 : 1,
+              opacity: isBlurred ? 0.25 : 1,
               scale: isBlurred ? 0.9 : 1,
             }}
             onClick={() => setActiveId(isActive ? null : data.id)}
-            className={`cursor-pointer overflow-hidden backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl transition-colors duration-500 ${
-              isActive ? 'bg-[#0f172a]/90 border-white/20' : 'bg-[#1e293b]/60 hover:bg-[#1e293b]/80'
+            className={`cursor-pointer overflow-hidden backdrop-blur-md rounded-2xl shadow-card transition-all duration-300 border ${
+              isActive ? 'bg-white border-club-green shadow-elevated' : 'bg-white/90 hover:bg-white border-border'
             }`}
             style={{ pointerEvents: isBlurred ? 'none' : 'auto' }}
           >
-            <div className="p-6">
-              <div className="flex items-center gap-4 mb-2">
+            <div className="p-5">
+              <div className="flex items-center gap-3 mb-1">
                 <div 
-                  className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-lg"
-                  style={{ backgroundColor: `${data.color}20`, border: `1px solid ${data.color}50` }}
+                  className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
+                  style={{ backgroundColor: `${data.color}15`, border: `1px solid ${data.color}40` }}
                 >
-                  <span className="text-xl" style={{ color: data.color }}>
-                    <data.Icon size={20} />
+                  <span className="text-lg" style={{ color: data.color }}>
+                    <data.Icon size={18} />
                   </span>
                 </div>
-                <h3 className={`font-display font-bold transition-all ${isActive ? 'text-2xl text-white' : 'text-lg text-white/90'}`}>
+                <h3 className={`font-display font-bold transition-all ${isActive ? 'text-xl text-text-primary' : 'text-base text-text-primary'}`}>
                   {data.title}
                 </h3>
               </div>
@@ -107,19 +107,19 @@ function CardNode({ data, activeId, setActiveId }: { data: typeof CONTENT_NODES[
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="mt-4"
+                    className="mt-3"
                   >
-                    <div className="w-full h-px bg-white/10 mb-4" />
-                    <p className="text-sm font-sans text-slate-300 leading-relaxed">
+                    <div className="w-full h-px bg-border mb-3" />
+                    <p className="text-xs font-sans text-text-muted leading-relaxed">
                       {data.content}
                     </p>
-                    <div className="mt-6 flex justify-end">
+                    <div className="mt-4 flex justify-end">
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();
                           setActiveId(null);
                         }}
-                        className="text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-white transition-colors"
+                        className="text-[10px] font-bold uppercase tracking-wider text-text-muted hover:text-club-green transition-colors"
                       >
                         Close
                       </button>
@@ -135,9 +135,6 @@ function CardNode({ data, activeId, setActiveId }: { data: typeof CONTENT_NODES[
   );
 }
 
-// Just a helper to re-import AnimatePresence locally since it wasn't in the top import
-import { AnimatePresence } from 'motion/react';
-
 function AbstractCore() {
   const groupRef = useRef<THREE.Group>(null);
   
@@ -148,101 +145,39 @@ function AbstractCore() {
     }
   });
 
-  // Stacked currency notes — three planes at different angles, like a fan of banknotes
   const notes = useMemo(() => [
-    { ry: -0.3, y: -0.5, color: '#003893' },
-    { ry: 0, y: 0, color: '#3b82f6' },
-    { ry: 0.3, y: 0.5, color: '#847dff' },
+    { ry: -0.3, y: -0.5, color: '#00875a' },
+    { ry: 0, y: 0, color: '#00F59B' },
+    { ry: 0.3, y: 0.5, color: '#2563eb' },
   ], []);
-
-  // Security line pattern on each note
-  const securityLines = useMemo(() => {
-    const geos: THREE.BufferGeometry[] = [];
-    for (let i = 0; i < 5; i++) {
-      const pts: THREE.Vector3[] = [];
-      const y = -0.6 + i * 0.3;
-      for (let j = 0; j <= 20; j++) {
-        const x = -1.0 + (j / 20) * 2.0;
-        const z = Math.sin(x * 6 + i * 0.8) * 0.02;
-        pts.push(new THREE.Vector3(x, y, z));
-      }
-      const curve = new THREE.CatmullRomCurve3(pts);
-      geos.push(new THREE.TubeGeometry(curve, 24, 0.004, 3, false));
-    }
-    return geos;
-  }, []);
 
   return (
     <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.6}>
       <group ref={groupRef}>
-        {/* Stacked banknote planes */}
         {notes.map((note, i) => (
           <mesh key={i} position={[0, note.y, 0]} rotation={[0, note.ry, 0]}>
             <planeGeometry args={[2.2, 1.4]} />
             <meshStandardMaterial
               color={note.color}
               emissive={note.color}
-              emissiveIntensity={0.4}
+              emissiveIntensity={0.2}
               transparent
-              opacity={0.55}
-              roughness={0.3}
-              metalness={0.3}
+              opacity={0.65}
+              roughness={0.2}
+              metalness={0.1}
               side={THREE.DoubleSide}
             />
           </mesh>
         ))}
 
-        {/* Security thread lines across notes */}
-        {securityLines.map((geo, i) => (
-          <mesh key={i} geometry={geo}>
-            <meshStandardMaterial
-              color="#ffffff"
-              transparent
-              opacity={0.2}
-              emissive="#3b82f6"
-              emissiveIntensity={0.4}
-            />
-          </mesh>
-        ))}
-
-        {/* Central denomination seal — medallion */}
+        {/* Central seal */}
         <mesh position={[0, 0, 0.08]}>
           <cylinderGeometry args={[0.22, 0.22, 0.04, 24]} />
           <meshStandardMaterial
-            color="#847dff"
-            emissive="#847dff"
-            emissiveIntensity={0.8}
-            roughness={0.2}
-            metalness={0.7}
+            color="#FFFFFF"
+            roughness={0.1}
+            metalness={0.2}
           />
-        </mesh>
-        {/* Seal rim */}
-        <mesh position={[0, 0, 0.08]} rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[0.22, 0.012, 6, 24]} />
-          <meshStandardMaterial color="#ffffff" transparent opacity={0.4} emissive="#3b82f6" emissiveIntensity={0.3} />
-        </mesh>
-
-        {/* Corner data nodes — connected to notes */}
-        {[
-          [-0.9, -0.5, 0.05], [0.9, -0.5, 0.05],
-          [-0.9, 0.5, 0.05], [0.9, 0.5, 0.05],
-        ].map((pos, i) => (
-          <group key={i} position={pos as [number, number, number]}>
-            <mesh>
-              <sphereGeometry args={[0.04, 12, 12]} />
-              <meshStandardMaterial
-                color="#3b82f6"
-                emissive="#3b82f6"
-                emissiveIntensity={1.2}
-              />
-            </mesh>
-          </group>
-        ))}
-
-        {/* Orbiting ring — data flow indicator */}
-        <mesh rotation={[Math.PI / 3, 0, 0]}>
-          <torusGeometry args={[1.3, 0.008, 6, 64]} />
-          <meshStandardMaterial color="#847dff" transparent opacity={0.25} emissive="#847dff" emissiveIntensity={0.3} />
         </mesh>
       </group>
     </Float>
@@ -253,14 +188,12 @@ export default function About3DExperience() {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   return (
-    <div className="w-full h-[800px] bg-[#0B0F19] relative rounded-3xl overflow-hidden border border-white/5 shadow-2xl">
+    <div className="w-full h-[650px] bg-[#F7FAF9] relative rounded-3xl overflow-hidden border border-border shadow-card">
       <Canvas camera={{ position: [0, 0, 8], fov: 45 }}>
-        <color attach="background" args={['#0B0F19']} />
-        <ambientLight intensity={0.5} />
-        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} />
-        
-        {/* Background Particles */}
-        <Stars radius={100} depth={50} count={2000} factor={4} saturation={0} fade speed={1} />
+        <color attach="background" args={['#F7FAF9']} />
+        <ambientLight intensity={1.5} />
+        <directionalLight position={[10, 10, 10]} intensity={2} color="#FFFFFF" />
+        <Environment preset="studio" />
 
         <OrbitControls 
           autoRotate 
@@ -284,15 +217,14 @@ export default function About3DExperience() {
           ))}
         </group>
 
-        {/* Floor Shadow */}
-        <ContactShadows position={[0, -3.5, 0]} opacity={0.4} scale={20} blur={2} far={4} />
+        <ContactShadows position={[0, -3.5, 0]} opacity={0.25} scale={20} blur={2} far={4} color="#00875a" />
       </Canvas>
 
-      {/* 2D Overlay Help Text */}
+      {/* Helper text overlay */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 pointer-events-none text-center">
-        <div className="bg-white/5 backdrop-blur border border-white/10 px-4 py-2 rounded-full inline-flex items-center gap-2">
-          <Pointer size={16} className="text-slate-400" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Click nodes to explore • Drag to rotate</span>
+        <div className="bg-white/80 backdrop-blur border border-border px-4 py-2 rounded-full inline-flex items-center gap-2 shadow-sm">
+          <Pointer size={14} className="text-club-green" />
+          <span className="text-[10px] font-bold uppercase tracking-wider text-text-primary">Click nodes to explore • Drag to rotate</span>
         </div>
       </div>
     </div>

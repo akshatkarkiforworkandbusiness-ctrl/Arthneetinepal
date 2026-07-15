@@ -2484,6 +2484,29 @@ export default function LearnPage() {
           </section>
         );
       })}
+
+      {/* Trading League — Coming Soon Section */}
+      <motion.section 
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="mt-16 p-8 md:p-12 rounded-3xl bg-gradient-to-br from-surface to-surface-muted border border-border shadow-card text-center max-w-4xl mx-auto"
+      >
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-club-green text-xs font-bold uppercase tracking-wider mb-4">
+          <Award size={14} />
+          <span>Feature Preview</span>
+        </div>
+        <h3 className="text-3xl md:text-4xl font-display font-bold text-text-primary mb-3">
+          Arthneeti Simulated Trading League
+        </h3>
+        <p className="text-text-muted text-base max-w-xl mx-auto mb-6 leading-relaxed">
+          Test your NEPSE portfolio strategies risk-free against students across Nepal. Virtual capital, real live market data, and seasonal leaderboard prizes.
+        </p>
+        <div className="inline-flex items-center gap-2 text-xs font-bold text-text-muted bg-white border border-border px-5 py-2.5 rounded-xl shadow-sm">
+          <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+          <span>Currently in Private Beta — Releasing Season 1 Soon</span>
+        </div>
+      </motion.section>
     </div>
 
     {/* Modals & Assistants */}

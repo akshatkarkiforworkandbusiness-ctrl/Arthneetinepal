@@ -303,59 +303,75 @@ export default function LandingPage() {
       <CurriculumRoadmap />
 
       {/* Market Ticker Sparkline Section */}
-      <section ref={tickerRef} className="bg-white py-16 px-6">
+      <section ref={tickerRef} className="bg-surface py-16 px-6 border-b border-border">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-900">NEPSE Market Indices</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-text-primary">NEPSE Market Indices</span>
               {marketDataSource === 'live' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-600 text-[9px] font-bold uppercase tracking-widest">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block" />
-                  Live
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-emerald-50 border border-emerald-200 text-club-green text-[10px] font-bold uppercase tracking-widest">
+                  <span className="w-1.5 h-1.5 rounded-full bg-club-green animate-pulse inline-block" />
+                  Live Data
                 </span>
               )}
               {marketDataSource === 'simulated' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-600 text-[9px] font-bold uppercase tracking-widest">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-bold uppercase tracking-widest">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block" />
                   Simulated
                 </span>
               )}
             </div>
-            <p className="text-[10px] text-slate-500 max-w-xs sm:text-right">
+            <p className="text-[11px] text-text-muted max-w-xs sm:text-right">
               {marketDataSource === 'live'
-                ? `Data via NepseAPI (unofficial). For educational use only.${lastUpdated ? ` Updated ${lastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}` : ''}`
-                : 'Live data unavailable. Showing simulated values for illustration only.'}
+                ? `Data via NepseAPI. For educational use.${lastUpdated ? ` Updated ${lastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}` : ''}`
+                : 'Showing simulated values for demonstration.'}
             </p>
           </div>
 
-          {/* Index Cards */}
+          {/* Index Cards with Live Pulse Animation */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {Object.keys(marketIndices).map((key) => {
               const item = marketIndices[key];
               const isGain = item.change >= 0;
-              const accentColor = isGain ? '#10b981' : '#ef4444';
+              const accentColor = isGain ? '#00875a' : '#ef4444';
               const sign = isGain ? '+' : '';
               
               return (
-                <div 
+                <motion.div 
                   key={key} 
-                  className="bg-slate-50 p-6 rounded-3xl flex justify-between items-center border border-slate-200 hover:shadow-md transition-shadow"
+                  whileHover={{ y: -3, scale: 1.01 }}
+                  transition={{ duration: 0.2 }}
+                  className="bg-white p-6 rounded-3xl flex justify-between items-center border border-border shadow-card hover:border-club-green/30 transition-all"
                 >
                   <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-1">{item.name}</span>
-                    <h4 className="text-3xl font-medium font-display text-slate-900 tracking-tight">{item.value.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h4>
+                    <span className="text-xs font-bold uppercase tracking-wider text-text-muted block mb-1">{item.name}</span>
+                    <AnimatePresence mode="wait">
+                      <motion.h4 
+                        key={item.value}
+                        initial={{ opacity: 0.6, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0.6 }}
+                        transition={{ duration: 0.2 }}
+                        className="text-3xl font-bold font-display text-text-primary tracking-tight"
+                      >
+                        {item.value.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      </motion.h4>
+                    </AnimatePresence>
                     <span 
-                      className="text-sm font-bold font-sans inline-flex items-center gap-0.5 mt-1"
-                      style={{ color: accentColor }}
+                      className="text-xs font-bold font-sans inline-flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-md"
+                      style={{ 
+                        color: accentColor,
+                        backgroundColor: isGain ? '#EFF5F2' : '#FEF2F2'
+                      }}
                     >
-                      {isGain ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
+                      {isGain ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
                       <span>{sign}{item.changePercent}%</span>
                     </span>
                   </div>
                   
                   {/* Sparkline Graphic */}
-                  <div className="w-[100px] h-[40px] flex items-center">
-                    <svg className="w-full h-full">
+                  <div className="w-[110px] h-[44px] flex items-center">
+                    <svg className="w-full h-full overflow-visible">
                       <path 
                         d={getSparklinePath(item.sparkline)}
                         fill="none"
@@ -366,9 +382,153 @@ export default function LandingPage() {
                       />
                     </svg>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* 3 Product Pillars Feature Showcase Section */}
+      <section className="py-24 px-6 bg-surface-muted border-b border-border">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <span className="text-xs font-bold text-club-green uppercase tracking-[0.3em] block mb-2">Platform Pillars</span>
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-text-primary tracking-tight mb-4">
+              Everything You Need for Financial Intelligence
+            </h2>
+            <p className="text-text-muted text-base md:text-lg">
+              Explore our core products designed to guide Nepali youth from beginner concepts to market mastery.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Card 1: Discover */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              whileHover={{ y: -4 }}
+              className="bg-white p-8 rounded-3xl border border-border shadow-card hover:shadow-elevated transition-all flex flex-col justify-between group"
+            >
+              <div>
+                <div className="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-club-green mb-6 group-hover:scale-110 transition-transform">
+                  <LineChart size={28} />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-club-green bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">Pillar 01</span>
+                <h3 className="text-2xl font-bold font-display text-text-primary mt-3 mb-3">Discover Markets</h3>
+                <p className="text-text-muted text-sm leading-relaxed mb-6">
+                  Access real-time NEPSE indices, company fundamentals, financial pamphlets, and market signals customized for Nepal's economic landscape.
+                </p>
+              </div>
+
+              <div className="bg-surface-muted p-4 rounded-2xl border border-border mb-6">
+                <div className="flex justify-between text-xs font-bold text-text-primary mb-2">
+                  <span>NEPSE Index</span>
+                  <span className="text-club-green">+1.75%</span>
+                </div>
+                <div className="w-full bg-border h-2 rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: "30%" }}
+                    whileInView={{ width: "78%" }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                    className="bg-club-green h-full rounded-full"
+                  />
+                </div>
+              </div>
+
+              <Link 
+                to="/discover" 
+                className="w-full py-3 px-5 rounded-xl bg-surface-muted hover:bg-club-green hover:text-white text-text-primary font-bold text-sm transition-all text-center flex items-center justify-center gap-2 group-hover:bg-club-green group-hover:text-white"
+              >
+                <span>Explore Discover</span>
+                <ArrowRight size={16} />
+              </Link>
+            </motion.div>
+
+            {/* Card 2: Community */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              whileHover={{ y: -4 }}
+              className="bg-white p-8 rounded-3xl border border-border shadow-card hover:shadow-elevated transition-all flex flex-col justify-between group"
+            >
+              <div>
+                <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-6 group-hover:scale-110 transition-transform">
+                  <Users size={28} />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200">Pillar 02</span>
+                <h3 className="text-2xl font-bold font-display text-text-primary mt-3 mb-3">Verified Community</h3>
+                <p className="text-text-muted text-sm leading-relaxed mb-6">
+                  Engage in constructive economic debates, post research threads, verify market rumors, and interact with fellow student investors.
+                </p>
+              </div>
+
+              <div className="bg-surface-muted p-4 rounded-2xl border border-border mb-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-6 h-6 rounded-full bg-club-green text-white text-[10px] font-bold flex items-center justify-center">AK</div>
+                  <span className="text-xs font-bold text-text-primary">Akshat Karki</span>
+                </div>
+                <p className="text-[11px] text-text-muted line-clamp-1 italic">"Evaluating Hydropower quarter 3 earnings..."</p>
+              </div>
+
+              <Link 
+                to="/community" 
+                className="w-full py-3 px-5 rounded-xl bg-surface-muted hover:bg-blue-600 hover:text-white text-text-primary font-bold text-sm transition-all text-center flex items-center justify-center gap-2 group-hover:bg-blue-600 group-hover:text-white"
+              >
+                <span>Join Discussion</span>
+                <ArrowRight size={16} />
+              </Link>
+            </motion.div>
+
+            {/* Card 3: Learn */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              whileHover={{ y: -4 }}
+              className="bg-white p-8 rounded-3xl border border-border shadow-card hover:shadow-elevated transition-all flex flex-col justify-between group"
+            >
+              <div>
+                <div className="w-14 h-14 rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-600 mb-6 group-hover:scale-110 transition-transform">
+                  <FileText size={28} />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-purple-600 bg-purple-50 px-2.5 py-1 rounded-full border border-purple-200">Pillar 03</span>
+                <h3 className="text-2xl font-bold font-display text-text-primary mt-3 mb-3">Structured Learning</h3>
+                <p className="text-text-muted text-sm leading-relaxed mb-6">
+                  Master financial literacy through structured video modules, bilingual quizzes, earn verifiable digital certificates, and prepare for our upcoming trading league.
+                </p>
+              </div>
+
+              <div className="bg-surface-muted p-4 rounded-2xl border border-border mb-6">
+                <div className="flex justify-between text-xs font-bold text-text-primary mb-1">
+                  <span>Module Progress</span>
+                  <span className="text-purple-600">80% Completed</span>
+                </div>
+                <div className="w-full bg-border h-2 rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: "0%" }}
+                    whileInView={{ width: "80%" }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1.2, ease: "easeOut" }}
+                    className="bg-purple-600 h-full rounded-full"
+                  />
+                </div>
+              </div>
+
+              <Link 
+                to="/learn" 
+                className="w-full py-3 px-5 rounded-xl bg-surface-muted hover:bg-purple-600 hover:text-white text-text-primary font-bold text-sm transition-all text-center flex items-center justify-center gap-2 group-hover:bg-purple-600 group-hover:text-white"
+              >
+                <span>Start Curriculum</span>
+                <ArrowRight size={16} />
+              </Link>
+            </motion.div>
           </div>
         </div>
       </section>

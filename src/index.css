@@ -1,42 +1,44 @@
+/* Source of Truth: Arthneeti Unified Light Theme Tokens.
+ * Shadcn and custom components map directly to these variables.
+ */
+
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
 @theme {
-  /* Core Brand Colors */
-  --color-brand-emerald: #059669;
-  --color-brand-emerald-light: #10b981;
+  /* Exact Specified Brand Tokens */
+  --color-background: #F7FAF9;      /* cool, faintly mint-tinted off-white — base surface */
+  --color-surface: #FFFFFF;         /* cards, modals, raised panels — pure white */
+  --color-surface-muted: #EFF5F2;   /* secondary panels, input fields, subtle breaks */
+  --color-border: #E1E8E4;          /* soft green-gray */
+  --color-text-primary: #0F172A;    /* slate-base hex */
+  --color-text-muted: #5B6B66;      /* AA compliant 5.3:1 contrast */
+  --color-club-green: #00875a;      /* primary accent, CTAs, data-ink */
+  --color-electric-mint: #00F59B;   /* decorative ambient, highlights, glows */
+  --color-gainer: #00875a;         /* WCAG contrast compliant gainer color */
+  --color-loser: #ef4444;
+
+  /* Legacy aliases mapped for full backwards compatibility */
+  --color-brand-emerald: #00875a;
+  --color-brand-emerald-light: #00F59B;
   --color-brand-emerald-deep: #047857;
   --color-brandwood: #0f172a;
-  --color-blush-mist: #d1fae5;
+  --color-blush-mist: #E1E8E4;
   --color-pure-white: #ffffff;
   --color-carbon: #0f172a;
-
-  /* Accent — Amber */
   --color-accent-amber: #f59e0b;
   --color-accent-amber-light: #fef3c7;
-
-  /* Dark sections */
   --color-dark-section: #0f172a;
+  --color-surface-base: #FFFFFF;
+  --color-surface-raised: #EFF5F2;
+  --color-surface-high: #E1E8E4;
 
   /* Typography */
   --font-display: "DM Sans", sans-serif;
   --font-sans: "Inter", sans-serif;
   --font-body: "Inter", sans-serif;
-
-  /* Surfaces */
-  --color-background: #ffffff;
-  --color-surface-base: #ffffff;
-  --color-surface-raised: #ecfdf5;
-  --color-surface-high: #d1fae5;
-  --color-text-primary: #0f172a;
-  --color-text-muted: #475569;
-
-  /* Chart / market */
-  --color-gainer: #10b981;
-  --color-loser: #ef4444;
-  --color-chart-grid: #d1fae5;
 
   /* Border Radius — 3 levels */
   --radius-lg: 8px;
@@ -45,8 +47,29 @@
   --radius-3xl: 24px;
 
   /* Shadows — 2 levels */
-  --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-elevated: 0 10px 25px rgba(0,0,0,0.08), 0 4px 10px rgba(0,0,0,0.04);
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+  --shadow-elevated: 0 10px 25px rgba(0, 135, 90, 0.08), 0 4px 10px rgba(15, 23, 42, 0.03);
+}
+
+:root {
+  --background: var(--color-background);
+  --foreground: var(--color-text-primary);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text-primary);
+  --popover: var(--color-surface);
+  --popover-foreground: var(--color-text-primary);
+  --primary: var(--color-club-green);
+  --primary-foreground: #FFFFFF;
+  --secondary: var(--color-surface-muted);
+  --secondary-foreground: var(--color-text-primary);
+  --muted: var(--color-surface-muted);
+  --muted-foreground: var(--color-text-muted);
+  --accent: var(--color-surface-muted);
+  --accent-foreground: var(--color-club-green);
+  --destructive: var(--color-loser);
+  --border: var(--color-border);
+  --input: var(--color-border);
+  --ring: var(--color-club-green);
 }
 
 @utility font-nepali {
@@ -63,26 +86,63 @@
   }
 
   * {
-    @apply border-blush-mist outline-brand-emerald/50;
+    @apply border-border outline-club-green/50;
   }
+}
+
+/* Light Theme Paper Texture */
+.paper-texture {
+  background-color: #F7FAF9;
+  background-image: radial-gradient(#E1E8E4 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F7FAF9;
+}
+::-webkit-scrollbar-thumb {
+  background: #E1E8E4;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #5B6B66;
+}
+
+/* Quill Editor Light Theme */
+.ql-toolbar.ql-snow {
+  background-color: #FFFFFF !important;
+  border-color: #E1E8E4 !important;
+}
+.ql-container.ql-snow {
+  background-color: #FFFFFF !important;
+  border-color: #E1E8E4 !important;
+  color: #0F172A !important;
+}
+.ql-editor {
+  color: #0F172A !important;
 }
 
 /* Utility classes for Arthneeti layout elements */
 .hero-gradient {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, #00875a 0%, #047857 100%);
 }
 
 .outlined-cta {
-  @apply bg-white border-2 border-brand-emerald text-brand-emerald rounded-2xl px-6 py-2.5 font-sans font-medium transition-transform active:scale-95 hover:shadow-elevated;
+  @apply bg-white border-2 border-club-green text-club-green rounded-2xl px-6 py-2.5 font-sans font-medium transition-transform active:scale-95 hover:shadow-elevated;
 }
 
 /* Glass Card */
 .glass-card {
-  @apply bg-white/90 backdrop-blur-md border border-gray-200 shadow-card transition-all duration-300 rounded-2xl;
+  @apply bg-white/90 backdrop-blur-md border border-border shadow-card transition-all duration-300 rounded-2xl;
 }
 
 .glass-card:hover {
-  @apply border-brand-emerald/40 shadow-elevated scale-[1.02];
+  @apply border-club-green/40 shadow-elevated scale-[1.02];
 }
 
 /* Interactive element animations */
@@ -91,7 +151,7 @@
 }
 
 .interactive-card:hover {
-  @apply -translate-y-2 shadow-elevated;
+  @apply -translate-y-1 shadow-elevated;
 }
 
 .interactive-card:active {
@@ -103,7 +163,7 @@
 }
 
 .hover-scale {
-  @apply transition-transform duration-300 hover:scale-[1.03];
+  @apply transition-transform duration-300 hover:scale-[1.02];
 }
 
 /* Print styles preserved */
@@ -134,7 +194,7 @@
 }
 
 .nepal-region:hover {
-  filter: brightness(1.1);
+  filter: brightness(1.05);
 }
 
 /* Pulse animation for interactive elements */
@@ -151,7 +211,7 @@
 @keyframes slide-up {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -160,5 +220,5 @@
 }
 
 .animate-slide-up {
-  animation: slide-up 0.5s ease-out forwards;
+  animation: slide-up 0.4s ease-out forwards;
 }

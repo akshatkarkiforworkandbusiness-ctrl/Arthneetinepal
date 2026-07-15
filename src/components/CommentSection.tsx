@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { toast } from 'sonner';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import {
@@ -21,55 +22,67 @@ const CommentItem: React.FC<CommentItemProps> = ({
   onReply
 }) => {
   const { user } = useAuth();
+  const [likeCount, setLikeCount] = useState(comment.likes);
+  const [isLiked, setIsLiked] = useState(false);
 
   const handleLike = async () => {
     if (!user) return;
+    setIsLiked(true);
+    setLikeCount(prev => prev + 1);
     try {
       await updateDoc(doc(db, `posts/${postId}/comments`, comment.id), {
         likes: increment(1)
       });
       toast.success("Comment liked!");
     } catch (error) {
+      setIsLiked(false);
+      setLikeCount(comment.likes);
       toast.error("Failed to like comment.");
     }
   };
 
   return (
-    <div className="flex gap-4">
-      <div className="w-8 h-8 rounded-lg bg-brand-emerald flex items-center justify-center text-white font-black text-[10px] shrink-0">
-        {comment.authorName?.[0]}
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="flex gap-4"
+    >
+      <div className="w-8 h-8 rounded-xl bg-club-green flex items-center justify-center text-white font-bold text-[11px] shrink-0 shadow-sm">
+        {comment.authorName?.[0]?.toUpperCase()}
       </div>
       <div className="flex-1">
-        <div className="bg-surface-base p-4 rounded-lg border border-surface-high">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-black text-text-primary uppercase tracking-widest">{comment.authorName}</span>
+        <div className="bg-white p-4 rounded-2xl border border-border shadow-card hover:border-club-green/20 transition-colors">
+          <div className="flex justify-between items-center mb-1.5">
+            <span className="text-xs font-bold text-text-primary uppercase tracking-wider">{comment.authorName}</span>
             <span className="text-[10px] text-text-muted font-medium">
-              {comment.createdAt?.toDate ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(comment.createdAt.toDate()) : '...'}
+              {comment.createdAt?.toDate ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(comment.createdAt.toDate()) : 'Just now'}
             </span>
           </div>
-          <p className="text-sm text-text-muted leading-relaxed">{comment.text}</p>
+          <p className="text-sm text-text-primary leading-relaxed">{comment.text}</p>
         </div>
         <div className="flex items-center gap-6 mt-2 ml-2">
-          <button
+          <motion.button
+            whileTap={{ scale: 0.9 }}
             onClick={handleLike}
-            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-text-muted hover:text-brand-emerald transition-colors"
+            className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-text-muted hover:text-club-green transition-colors"
           >
-            <Heart size={12} fill={comment.likes > 0 ? 'currentColor' : 'none'} className={comment.likes > 0 ? 'text-brand-emerald' : ''} />
-            {comment.likes}
-          </button>
+            <Heart size={14} fill={likeCount > 0 || isLiked ? 'currentColor' : 'none'} className={likeCount > 0 || isLiked ? 'text-club-green' : ''} />
+            <span>{likeCount}</span>
+          </motion.button>
           {!comment.parentId && (
             <button
               onClick={() => onReply(comment.id, comment.authorName)}
-              className="text-[10px] font-black uppercase tracking-widest text-text-muted hover:text-text-primary transition-colors"
+              className="text-[11px] font-bold uppercase tracking-widest text-text-muted hover:text-text-primary transition-colors"
             >
               Reply
             </button>
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
-}
+};
 
 export function CommentSection({ postId }: { postId: string }) {
   const { user, profile } = useAuth();
@@ -100,7 +113,7 @@ export function CommentSection({ postId }: { postId: string }) {
     try {
       const commentData: any = {
         authorId: user.uid,
-        authorName: profile?.name || user.displayName || 'Anonymous',
+        authorName: profile?.name || user.displayName || 'Anonymous User',
         text: newComment,
         likes: 0,
         createdAt: serverTimestamp(),
@@ -115,7 +128,7 @@ export function CommentSection({ postId }: { postId: string }) {
       });
       setNewComment('');
       setReplyTo(null);
-      toast.success("Comment added!");
+      toast.success("Comment posted!");
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, path);
       toast.error("Failed to add comment.");
@@ -126,57 +139,73 @@ export function CommentSection({ postId }: { postId: string }) {
   const getReplies = (parentId: string) => comments.filter(c => c.parentId === parentId);
 
   return (
-    <div id="comments" className="mt-8 pt-8 border-t border-white/5 space-y-8">
-      <h3 className="text-xs font-black uppercase tracking-widest text-text-muted">
+    <div id="comments" className="mt-8 pt-8 border-t border-border space-y-8">
+      <h3 className="text-xs font-bold uppercase tracking-widest text-text-muted">
         {comments.length} {comments.length === 1 ? 'Comment' : 'Comments'}
       </h3>
 
       {user && (
         <form onSubmit={handleAddComment} className="relative mb-12">
-          {replyTo && (
-            <div className="flex justify-between items-center bg-brand-emerald/10 p-2 px-4 rounded-lg mb-2">
-              <span className="text-[10px] font-black text-brand-emerald uppercase tracking-widest">Replying to {replyTo.name}</span>
-              <button onClick={() => setReplyTo(null)} className="text-text-muted hover:text-text-primary"><X size={14} /></button>
-            </div>
-          )}
+          <AnimatePresence>
+            {replyTo && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="flex justify-between items-center bg-emerald-50 border border-emerald-200 p-2.5 px-4 rounded-xl mb-3"
+              >
+                <span className="text-xs font-bold text-club-green uppercase tracking-wider">Replying to {replyTo.name}</span>
+                <button onClick={() => setReplyTo(null)} className="text-text-muted hover:text-text-primary"><X size={16} /></button>
+              </motion.div>
+            )}
+          </AnimatePresence>
           <textarea
             value={newComment}
             onChange={e => setNewComment(e.target.value)}
-            placeholder="Share your thoughts..."
-            className="w-full bg-surface-base border border-surface-high rounded-lg p-5 text-sm text-text-primary outline-none focus:border-brand-emerald transition-all resize-none h-24"
+            placeholder="Share your economic research or perspective..."
+            className="w-full bg-white border border-border rounded-2xl p-5 text-sm text-text-primary outline-none focus:border-club-green focus:ring-1 focus:ring-club-green/30 transition-all resize-none h-28 shadow-card"
           />
           <button
             type="submit"
             disabled={!newComment.trim()}
-            className="absolute bottom-4 right-4 bg-white text-white p-3 rounded-lg hover:bg-brand-emerald transition-all disabled:opacity-20"
+            className="absolute bottom-4 right-4 bg-club-green text-white p-3 rounded-xl hover:bg-[#047857] transition-all disabled:opacity-30 shadow-sm"
           >
             <Send size={18} />
           </button>
         </form>
       )}
 
-      <div className="space-y-10">
-        {rootComments.map((comment) => (
-          <div key={comment.id} className="space-y-6">
-            <CommentItem
-              comment={comment}
-              postId={postId}
-              onReply={(id, name) => setReplyTo({ id, name })}
-            />
-            {/* Replies */}
-            <div className="ml-12 space-y-6 border-l-2 border-slate-raised/5 pl-8">
-              {getReplies(comment.id).map(reply => (
-                <CommentItem
-                  key={reply.id}
-                  comment={reply}
-                  postId={postId}
-                  onReply={(pid, name) => setReplyTo({ id: pid, name })}
-                />
-              ))}
-            </div>
-          </div>
-        ))}
+      <div className="space-y-8">
+        <AnimatePresence initial={false}>
+          {rootComments.map((comment) => (
+            <motion.div 
+              key={comment.id} 
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-6"
+            >
+              <CommentItem
+                comment={comment}
+                postId={postId}
+                onReply={(id, name) => setReplyTo({ id, name })}
+              />
+              {/* Replies */}
+              <div className="ml-10 space-y-4 border-l-2 border-border pl-6">
+                {getReplies(comment.id).map(reply => (
+                  <CommentItem
+                    key={reply.id}
+                    comment={reply}
+                    postId={postId}
+                    onReply={(pid, name) => setReplyTo({ id: pid, name })}
+                  />
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
     </div>
   );
 }
+
+export default CommentSection;

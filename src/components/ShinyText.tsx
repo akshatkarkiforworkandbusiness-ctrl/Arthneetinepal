@@ -16,11 +16,11 @@ interface ShinyTextProps {
 
 const ShinyText = ({
   text,
-  speed = 2,
+  speed = 3,
   delay = 0,
-  color = '#b5b5b5',
-  shineColor = '#ffffff',
-  spread = 120,
+  color = '#00875a',
+  shineColor = '#00F59B',
+  spread = 150,
   direction = 'left',
   yoyo = false,
   pauseOnHover = false,
@@ -46,7 +46,7 @@ const ShinyText = ({
         WebkitTextFillColor: disabled ? color : 'transparent',
         animation: disabled
           ? 'none'
-          : `shine ${animationDuration} ${yoyo ? 'alternate' : 'normal'} linear infinite`,
+          : `shinySweep ${animationDuration} ${yoyo ? 'alternate' : 'normal'} linear infinite`,
         animationDelay: animationDelay,
         animationPlayState: pauseOnHover ? 'var(--play-state, running)' : 'running',
       }}
@@ -60,12 +60,12 @@ const ShinyText = ({
       <span className="relative z-10 pointer-events-none">{text}</span>
       <style>
         {`
-          @keyframes shine {
+          @keyframes shinySweep {
             0% {
-              background-position: ${direction === 'left' ? '200% center' : '-200% center'};
+              background-position: ${direction === 'left' ? '250% center' : '-250% center'};
             }
             100% {
-              background-position: ${direction === 'left' ? '-200% center' : '200% center'};
+              background-position: ${direction === 'left' ? '-250% center' : '250% center'};
             }
           }
         `}
