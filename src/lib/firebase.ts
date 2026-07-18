@@ -12,8 +12,14 @@ const requiredEnvVars = [
   'VITE_FIREBASE_APP_ID',
 ] as const;
 
+const envVars: Record<string, string> = {};
+for (const key of requiredEnvVars) {
+  const raw = import.meta.env[key];
+  envVars[key] = typeof raw === 'string' ? raw.trim() : (raw ?? '');
+}
+
 const missingVars = requiredEnvVars.filter(
-  (key) => !import.meta.env[key]
+  (key) => !envVars[key]
 );
 
 if (missingVars.length > 0) {
@@ -24,13 +30,13 @@ if (missingVars.length > 0) {
 }
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+  apiKey: envVars['VITE_FIREBASE_API_KEY'],
+  authDomain: envVars['VITE_FIREBASE_AUTH_DOMAIN'],
+  projectId: envVars['VITE_FIREBASE_PROJECT_ID'],
+  storageBucket: envVars['VITE_FIREBASE_STORAGE_BUCKET'],
+  messagingSenderId: envVars['VITE_FIREBASE_MESSAGING_SENDER_ID'],
+  appId: envVars['VITE_FIREBASE_APP_ID'],
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID?.trim() || undefined,
 };
 
 const app = initializeApp(firebaseConfig);

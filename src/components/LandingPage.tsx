@@ -179,6 +179,8 @@ export default function LandingPage() {
         ...doc.data()
       })) as Topic[];
       setLatestTopics(topics);
+    }, (error) => {
+      console.warn('Failed to fetch latest topics:', error);
     });
 
     return () => unsubscribeLatest();
