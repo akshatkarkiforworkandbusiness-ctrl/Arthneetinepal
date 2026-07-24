@@ -1,7 +1,7 @@
-import { Variants } from 'motion/react';
+import { Variants, Easing } from 'motion/react';
 
 // Standardized easing curve: smooth, executive, financial-grade (no bouncy overshoot)
-export const EASE_EMERALD = [0.25, 0.1, 0.25, 1.0];
+export const EASE_EMERALD: Easing = [0.25, 0.1, 0.25, 1.0];
 
 // Shared Framer Motion Variants with reduced motion fallbacks built-in
 export const fadeInUp: Variants = {
