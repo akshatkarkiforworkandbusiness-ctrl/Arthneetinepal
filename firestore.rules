@@ -57,8 +57,8 @@ service cloud.firestore {
 
     function isValidPost(data) {
       return data.keys().hasAll(['type', 'author', 'authorId', 'category', 'content', 'likes', 'commentCount', 'createdAt'])
-        && data.authorId == request.auth.uid
-        && data.type in ['discussion', 'research', 'question', 'trade-recap']
+        && (data.authorId == request.auth.uid || data.authorId == 'system')
+        && data.type in ['discussion', 'research', 'question', 'trade-recap', 'news']
         && data.category in ['Finance', 'Economics', 'Business', 'Policy', 'Other']
         && data.likes is int && data.likes >= 0
         && data.commentCount is int && data.commentCount >= 0
@@ -216,10 +216,18 @@ service cloud.firestore {
     match /portfolios/{userId} {
       allow read: if isOwner(userId) || (isSignedIn() && get(/databases/$(database)/documents/users/$(userId)).data.publicPortfolio == true);
       allow create: if isOwner(userId)
-        && request.resource.data.keys().hasOnly(['cashBalance', 'holdings', 'totalValue', 'updatedAt'])
+        && request.resource.data.keys().hasOnly([
+          'cashBalance', 'holdings', 'totalValue', 'updatedAt',
+          'rewardBalance', 'totalRewardsEarned', 'completedLessons',
+          'totalPostsCreated', 'totalLikesGiven'
+        ])
         && request.resource.data.cashBalance is number && request.resource.data.cashBalance >= 0;
       allow update: if isOwner(userId)
-        && request.resource.data.keys().hasOnly(['cashBalance', 'holdings', 'totalValue', 'updatedAt'])
+        && request.resource.data.keys().hasOnly([
+          'cashBalance', 'holdings', 'totalValue', 'updatedAt',
+          'rewardBalance', 'totalRewardsEarned', 'completedLessons',
+          'totalPostsCreated', 'totalLikesGiven'
+        ])
         && request.resource.data.cashBalance is number && request.resource.data.cashBalance >= 0;
       allow delete: if false;
 
@@ -230,6 +238,20 @@ service cloud.firestore {
           && request.resource.data.quantity is number && request.resource.data.quantity > 0;
         allow update, delete: if false; // trade history is append-only
       }
+    }
+
+    // Rewards
+    match /rewards/{rewardId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // Reward Claims
+    match /rewardClaims/{claimId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
     }
 
     // Leaderboards

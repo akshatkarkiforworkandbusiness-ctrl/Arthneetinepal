@@ -7,16 +7,13 @@ const MODELS = [
 ];
 
 const SECTORS = [
-  'Commercial Banks',
-  'Development Banks',
-  'Finance Companies',
-  'Insurance Companies',
-  'Microfinance Institutions',
-  'Non-Bank Financial Institutions',
-  'Hydropower Companies',
-  'Manufacturing & Consumer Goods',
-  'Hotels & Tourism',
-  'Telecommunications',
+  'Banking',
+  'Hydropower',
+  'Microfinance',
+  'IPO Market',
+  'Mutual Funds',
+  'Inflation',
+  'Remittance',
 ];
 
 const CORS_HEADERS: Record<string, string> = {
