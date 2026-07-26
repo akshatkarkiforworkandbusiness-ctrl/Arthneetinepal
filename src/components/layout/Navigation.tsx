@@ -15,6 +15,11 @@ const navLinks = [
   { name: 'Trade', path: '/trade-game' },
 ];
 
+const legalLinks = [
+  { name: 'Privacy Policy', path: '/privacy-policy' },
+  { name: 'Terms of Service', path: '/terms-of-service' },
+];
+
 export function Navigation() {
   const location = useLocation();
   const { user, logout, handleJoinAction } = useAuth();
@@ -53,6 +58,20 @@ export function Navigation() {
                 <span className={`absolute bottom-1 left-4 right-4 h-0.5 rounded-full transition-all duration-300 ${
                   location.pathname === link.path ? 'bg-emerald-600 opacity-100' : 'bg-slate-900 opacity-0 invisible group-hover:opacity-20 group-hover:visible group-hover:bottom-1.5'
                 }`} />
+              </Link>
+            ))}
+            <div className="w-px h-5 bg-slate-200 mx-1" />
+            {legalLinks.map((link) => (
+              <Link
+                key={link.name}
+                to={link.path}
+                className={`relative group px-3 py-2 text-xs font-sans font-bold uppercase tracking-widest rounded-xl transition-all duration-300 ${
+                  location.pathname === link.path 
+                    ? 'text-emerald-600 bg-emerald-50' 
+                    : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                {link.name}
               </Link>
             ))}
           </nav>
@@ -104,6 +123,23 @@ export function Navigation() {
                     {link.name}
                   </Link>
                 ))}
+                
+                <div className="pt-4 border-t border-slate-200 mt-2 flex flex-col gap-2">
+                  {legalLinks.map((link) => (
+                    <Link
+                      key={link.name}
+                      to={link.path}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`px-4 py-3 text-xs font-sans font-bold uppercase tracking-widest rounded-xl transition-colors ${
+                        location.pathname === link.path 
+                          ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' 
+                          : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
+                      }`}
+                    >
+                      {link.name}
+                    </Link>
+                  ))}
+                </div>
                 
                 <div className="pt-4 border-t border-slate-200 mt-2 flex flex-col gap-2">
                   {user ? (

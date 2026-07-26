@@ -16,6 +16,8 @@ import LeaderboardPage from './components/LeaderboardPage';
 import PublicCertificatePage from './components/PublicCertificatePage';
 import BookmarksPage from './components/BookmarksPage';
 import NotificationsPage from './components/NotificationsPage';
+import PrivacyPolicyPage from './components/PrivacyPolicyPage';
+import TermsOfServicePage from './components/TermsOfServicePage';
 import { AuthProvider } from './contexts/AuthContext';
 import { Toaster } from '@/components/ui/sonner';
 import AmbientBackground from './components/AmbientBackground';
@@ -51,6 +53,8 @@ function AnimatedRoutes() {
           <Route path="/bookmarks" element={<BookmarksPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/certificate/:uid/:moduleId" element={<PublicCertificatePage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms-of-service" element={<TermsOfServicePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </motion.div>
