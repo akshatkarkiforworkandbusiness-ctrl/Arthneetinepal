@@ -30,12 +30,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { articles, date } = req.body as {
+    const { articles, date, apiKey: clientApiKey } = req.body as {
       articles: Array<{ title: string; summary: string; sector: string; source: string }>;
       date: string;
+      apiKey?: string;
     };
 
-    const apiKey = process.env.NVIDIA_API_KEY;
+    const apiKey = process.env.NVIDIA_API_KEY || clientApiKey;
     if (!apiKey) {
       return res.status(500).json({
         error: 'NVIDIA API key not configured.',

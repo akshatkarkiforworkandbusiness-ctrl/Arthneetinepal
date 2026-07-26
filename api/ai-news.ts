@@ -40,12 +40,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { allSectors, sector } = req.body as { allSectors?: boolean; sector?: string };
+    const { allSectors, sector, apiKey: clientApiKey } = req.body as { allSectors?: boolean; sector?: string; apiKey?: string };
 
-    const apiKey = process.env.NVIDIA_API_KEY;
+    const apiKey = process.env.NVIDIA_API_KEY || clientApiKey;
     if (!apiKey) {
+      console.error('NVIDIA_API_KEY not found in env or request body');
       return res.status(500).json({
-        error: 'NVIDIA API key not configured.',
+        error: 'NVIDIA API key not configured. Set NVIDIA_API_KEY in Vercel project settings.',
       });
     }
 

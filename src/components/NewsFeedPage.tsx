@@ -81,7 +81,6 @@ export default function NewsFeedPage() {
   const [dailyDigest, setDailyDigest] = useState<Post | null>(null);
   const [mostEngagedYesterday, setMostEngagedYesterday] = useState<Post | null>(null);
   const [expandedSectors, setExpandedSectors] = useState<Set<Sector>>(new Set());
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Listen for all posts
   useEffect(() => {
@@ -189,13 +188,17 @@ export default function NewsFeedPage() {
     setResearching(true);
 
     try {
+      const nvidiaKey = import.meta.env.VITE_NVIDIA_API_KEY || '';
       const response = await fetch('/api/ai-news', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ allSectors: true })
+        body: JSON.stringify({ allSectors: true, apiKey: nvidiaKey })
       });
 
-      if (!response.ok) throw new Error('Failed to fetch news');
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || `Failed to fetch news: ${response.status}`);
+      }
 
       const data = await response.json();
       const articles = data.articles || [];
@@ -245,7 +248,7 @@ export default function NewsFeedPage() {
       }
     } catch (error) {
       console.error('Research error:', error);
-      toast.error('Failed to research news');
+      toast.error(`Failed to research news: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setResearching(false);
     }
@@ -264,6 +267,7 @@ export default function NewsFeedPage() {
 
     setResearching(true);
     try {
+      const nvidiaKey = import.meta.env.VITE_NVIDIA_API_KEY || '';
       const response = await fetch('/api/ai-digest', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -274,7 +278,8 @@ export default function NewsFeedPage() {
             sector: p.sector,
             source: p.source,
           })),
-          date: today
+          date: today,
+          apiKey: nvidiaKey,
         })
       });
 
@@ -342,17 +347,23 @@ export default function NewsFeedPage() {
   }, [mostEngagedYesterday]);
 
   // Auto-trigger hourly research
+  // Use a ref to avoid interval resets when researching state changes
+  const researchRef = useRef(researchAllSectors);
+  researchRef.current = researchAllSectors;
+
   useEffect(() => {
     if (!isPostingHours) return;
 
-    intervalRef.current = setInterval(() => {
-      researchAllSectors();
-    }, 60 * 60 * 1000); // Every hour
+    // Run immediately on mount / when posting hours begin
+    researchRef.current();
 
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [isPostingHours, researchAllSectors]);
+    // Then every hour
+    const id = setInterval(() => {
+      researchRef.current();
+    }, 60 * 60 * 1000);
+
+    return () => clearInterval(id);
+  }, [isPostingHours]);
 
   // Auto-trigger daily digest at 5:30 PM and cleanup at 9 AM
   useEffect(() => {

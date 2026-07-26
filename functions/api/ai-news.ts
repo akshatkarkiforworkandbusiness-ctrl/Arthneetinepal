@@ -26,8 +26,8 @@ export async function onRequestGet(context: { request: Request; env: Env }) {
 
 export async function onRequestPost({ request, env }: { request: Request; env: Env }) {
   try {
-    const body = await request.json().catch(() => ({})) as { sector?: string; allSectors?: boolean };
-    const apiKey = env.NVIDIA_API_KEY;
+    const body = await request.json().catch(() => ({})) as { sector?: string; allSectors?: boolean; apiKey?: string };
+    const apiKey = env.NVIDIA_API_KEY || body.apiKey;
 
     if (!apiKey) {
       return new Response(JSON.stringify({
