@@ -39,26 +39,15 @@ function getNepalDate(): string {
 }
 
 function isWithinPostingHours(): boolean {
-  const hour = getNepalHour();
-  return hour >= 9 && hour < 17; // 9AM to 5PM
+  return true; // Articles update 24/7
 }
 
 function getTimeUntilNextPost(): number {
   const nepal = getNepalTime();
-  const hour = nepal.getHours();
   const min = nepal.getMinutes();
   const sec = nepal.getSeconds();
-
-  if (hour < 9) {
-    // Before 9AM - time until 9AM
-    return ((9 - hour - 1) * 60 + (60 - min)) * 60 - sec;
-  } else if (hour >= 17) {
-    // After 5PM - time until 9AM next day
-    return ((24 - hour + 9 - 1) * 60 + (60 - min)) * 60 - sec;
-  } else {
-    // Between posts - time until next hour
-    return ((60 - min) * 60 - sec) * 1000;
-  }
+  // Time until next hour
+  return ((60 - min) * 60 - sec) * 1000;
 }
 
 interface SectorFeed {
@@ -158,23 +147,14 @@ export default function NewsFeedPage() {
   useEffect(() => {
     const updateCountdown = () => {
       const nepal = getNepalTime();
-      const hour = nepal.getHours();
       const min = nepal.getMinutes();
       const sec = nepal.getSeconds();
 
-      setIsPostingHours(isWithinPostingHours());
+      setIsPostingHours(true);
 
-      if (hour < 9) {
-        const mins = (9 - hour - 1) * 60 + (60 - min);
-        setNextPostIn(`${mins}m until 9:00 AM`);
-      } else if (hour >= 17) {
-        const mins = (24 - hour + 9 - 1) * 60 + (60 - min);
-        setNextPostIn(`${mins}m until 9:00 AM tomorrow`);
-      } else {
-        const mins = 60 - min - 1;
-        const secs = 60 - sec;
-        setNextPostIn(`${mins}m ${secs}s`);
-      }
+      const mins = 60 - min - 1;
+      const secs = 60 - sec;
+      setNextPostIn(`${mins}m ${secs}s`);
     };
 
     updateCountdown();
@@ -346,15 +326,13 @@ export default function NewsFeedPage() {
     }
   }, [mostEngagedYesterday]);
 
-  // Auto-trigger hourly research
+  // Auto-trigger hourly research — runs 24/7
   // Use a ref to avoid interval resets when researching state changes
   const researchRef = useRef(researchAllSectors);
   researchRef.current = researchAllSectors;
 
   useEffect(() => {
-    if (!isPostingHours) return;
-
-    // Run immediately on mount / when posting hours begin
+    // Run immediately on mount
     researchRef.current();
 
     // Then every hour
@@ -363,7 +341,7 @@ export default function NewsFeedPage() {
     }, 60 * 60 * 1000);
 
     return () => clearInterval(id);
-  }, [isPostingHours]);
+  }, []);
 
   // Auto-trigger daily digest at 5:30 PM and cleanup at 9 AM
   useEffect(() => {
@@ -425,9 +403,9 @@ export default function NewsFeedPage() {
       <header className="mb-10">
         <div className="flex items-center gap-3 mb-2">
           <span className="text-[10px] font-bold text-brand-emerald-light uppercase tracking-[0.4em]">RESEARCH ASSISTANT</span>
-          <span className={`flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider ${isPostingHours ? 'text-brand-emerald-light' : 'text-text-muted'}`}>
-            <span className={`w-2 h-2 rounded-full ${isPostingHours ? 'bg-brand-emerald-light animate-pulse' : 'bg-text-muted'}`} />
-            {isPostingHours ? 'Auto-Posting Active' : 'Posting Paused (9AM-5PM NPT)'}
+          <span className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider text-brand-emerald-light">
+            <span className="w-2 h-2 rounded-full bg-brand-emerald-light animate-pulse" />
+            Auto-Posting Active
           </span>
         </div>
 
@@ -437,13 +415,8 @@ export default function NewsFeedPage() {
               Trending Sectors
             </h1>
             <p className="text-text-muted text-sm">
-              Latest news for each sector, posted hourly from 9:00 AM to 5:00 PM Nepali time.
-              {!isPostingHours && (
-                <span className="ml-2 text-brand-emerald-light font-bold">
-                  Articles persist until tomorrow's updates.
-                </span>
-              )}
-              {nextPostIn && isPostingHours && (
+              Latest news for each sector, updated every hour.
+              {nextPostIn && (
                 <span className="ml-2 text-brand-emerald-light font-bold">
                   Next update in {nextPostIn}
                 </span>
