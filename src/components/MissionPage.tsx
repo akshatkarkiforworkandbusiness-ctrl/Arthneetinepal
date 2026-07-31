@@ -55,7 +55,7 @@ export default function MissionPage() {
       <Tagline3D />
 
       {/* --- THREE REGIONS BACKGROUND SECTION --- */}
-      <section className="relative py-24 px-6 bg-[#0f172a] overflow-hidden">
+      <section className="relative py-24 px-6 bg-slate-900 overflow-hidden">
         {/* Mountain Silhouette Background */}
         <div className="absolute inset-0 pointer-events-none">
           <svg

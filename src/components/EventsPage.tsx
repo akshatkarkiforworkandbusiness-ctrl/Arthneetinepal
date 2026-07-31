@@ -182,18 +182,20 @@ export default function EventsPage() {
 
     try {
       const imageUrl = await uploadImage();
-      const payload = {
-        title: formData.title, date: formData.date, time: formData.time,
-        location: formData.location, description: formData.description,
-        category: formData.category, imageUrl: imageUrl || '',
+      const basePayload = {
+        title: formData.title,
+        location: formData.location,
+        description: formData.description,
+        category: formData.category,
+        imageUrl: imageUrl || '',
         dateTime: Timestamp.fromDate(dateTime),
       };
 
       if (editingEvent) {
-        await updateDoc(doc(db, 'events', editingEvent.id), payload);
+        await updateDoc(doc(db, 'events', editingEvent.id), basePayload);
         toast.success("Event updated successfully!");
       } else {
-        const eventRef = await addDoc(collection(db, 'events'), { ...payload, createdAt: serverTimestamp() });
+        const eventRef = await addDoc(collection(db, 'events'), { ...basePayload, createdAt: serverTimestamp() });
         setNewEventIds(prev => new Set([...prev, eventRef.id]));
         await addDoc(collection(db, 'posts'), {
           title: `New Event: ${formData.title}`, author: 'Arthneeti Admin',

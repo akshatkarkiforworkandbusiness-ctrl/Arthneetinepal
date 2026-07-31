@@ -35,17 +35,10 @@ export default function AILessonAssistant({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const apiKeyRef = useRef<string | null>(null);
 
-  // Initialize Cerebras API
+  // Initialize API
   useEffect(() => {
-    const cerebrasKey = import.meta.env.VITE_CEREBRAS_API_KEY;
-    
-    if (cerebrasKey && cerebrasKey.length > 10) {
-      apiKeyRef.current = cerebrasKey;
-      console.log("[AI Tutor] Cerebras key loaded, length:", cerebrasKey.length);
-    } else {
-      console.warn("[AI Tutor] No Cerebras key found. VITE_CEREBRAS_API_KEY =", cerebrasKey);
-      setError(`No API key available. Set VITE_CEREBRAS_API_KEY in your .env file.`);
-    }
+    // API key check is no longer needed client-side since we proxy through serverless function
+    apiKeyRef.current = 'proxy';
   }, []);
 
   // Auto-scroll to bottom of chat
@@ -99,32 +92,27 @@ export default function AILessonAssistant({
     }));
 
     const callCerebras = async (): Promise<string> => {
-      const res = await fetch(
-        `https://api.cerebras.ai/v1/chat/completions`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${apiKeyRef.current}`
-          },
-          body: JSON.stringify({
-            model: "llama-3.3-70b",
-            messages: [
-              { role: "system", content: systemPrompt },
-              ...historyOpenAI.map(msg => ({
-                role: msg.role,
-                content: msg.content
-              })),
-              { role: "user", content: userMsg }
-            ],
-            temperature: 0.2,
-            max_tokens: 2048
-          })
-        }
-      );
+      const res = await fetch('/api/ai-tutor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...historyOpenAI.map(msg => ({
+              role: msg.role,
+              content: msg.content
+            })),
+            { role: 'user', content: userMsg }
+          ],
+          temperature: 0.2,
+          max_tokens: 2048
+        })
+      });
       if (!res.ok) {
         const errData = await res.json() as any;
-        throw new Error(errData.error?.message || "Cerebras API failed");
+        throw new Error(errData.error || "AI Tutor API failed");
       }
       const data = await res.json() as any;
       return data.choices?.[0]?.message?.content || "No response generated.";
@@ -154,7 +142,7 @@ export default function AILessonAssistant({
           </div>
           <div>
             <h3 className="text-white font-display font-medium">Arthneeti AI Tutor</h3>
-            <p className="text-xs text-[#5DCAA5]">Powered by Cerebras AI</p>
+            <p className="text-xs text-[#5DCAA5]">Powered by AI</p>
           </div>
         </div>
         <button onClick={onClose} className="text-text-muted hover:text-white transition-colors">

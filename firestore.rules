@@ -181,8 +181,10 @@ service cloud.firestore {
       allow read: if true;
       allow create: if isAdmin() && isValidEvent(incoming());
       allow update: if isAdmin() && (
-        isValidEvent(incoming())
-        || incoming().diff(existing()).affectedKeys().hasOnly(['imageUrl', 'completed', 'studentsReached'])
+        incoming().diff(existing()).affectedKeys().hasOnly([
+          'title', 'dateTime', 'location', 'description', 'category',
+          'imageUrl', 'completed', 'studentsReached'
+        ])
       );
       allow delete: if isAdmin();
     }

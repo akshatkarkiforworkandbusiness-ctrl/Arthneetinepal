@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Heart, MessageSquare, Share2, Bookmark, ExternalLink, Twitter, Linkedin } from 'lucide-react';
 import { toast } from 'sonner';
-import { doc, setDoc, deleteDoc, updateDoc, increment, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, updateDoc, increment, serverTimestamp, getDoc } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -31,6 +31,28 @@ export default function PostActions({
   const [likeCount, setLikeCount] = useState(likes);
   const [isBookmarked, setIsBookmarked] = useState(initialIsBookmarked);
   const [showShareMenu, setShowShareMenu] = useState(false);
+  const shareMenuRef = useRef<HTMLDivElement>(null);
+
+  // Check existing like status from Firestore on mount
+  useEffect(() => {
+    if (!user || !postId) return;
+    const likeRef = doc(db, `posts/${postId}/likes/${user.uid}`);
+    getDoc(likeRef).then(snap => {
+      setHasLiked(snap.exists());
+    }).catch(() => {});
+  }, [user, postId]);
+
+  // Close share menu on outside click
+  useEffect(() => {
+    if (!showShareMenu) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (shareMenuRef.current && !shareMenuRef.current.contains(e.target as Node)) {
+        setShowShareMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showShareMenu]);
 
   const handleLike = async () => {
     if (!user) {
@@ -46,7 +68,6 @@ export default function PostActions({
         await deleteDoc(likeRef);
         await updateDoc(postRef, {
           likes: increment(-1),
-          engagementScore: increment(-1),
         });
         setHasLiked(false);
         setLikeCount(prev => prev - 1);
@@ -54,7 +75,6 @@ export default function PostActions({
         await setDoc(likeRef, { likedAt: serverTimestamp() });
         await updateDoc(postRef, {
           likes: increment(1),
-          engagementScore: increment(1),
         });
         setHasLiked(true);
         setLikeCount(prev => prev + 1);
@@ -138,7 +158,7 @@ export default function PostActions({
             <span>{commentCount}</span>
           </button>
         )}
-        <div className="relative">
+        <div className="relative" ref={shareMenuRef}>
           <button
             onClick={() => setShowShareMenu(!showShareMenu)}
             className="flex items-center gap-1 hover:text-brand-emerald-light transition-colors"
@@ -201,7 +221,7 @@ export default function PostActions({
         </button>
       )}
       
-      <div className="relative">
+      <div className="relative" ref={!compact ? shareMenuRef : undefined}>
         <button
           onClick={() => setShowShareMenu(!showShareMenu)}
           className="flex items-center gap-2 text-text-muted hover:text-brand-emerald-light transition-colors"

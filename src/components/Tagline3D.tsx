@@ -4,13 +4,14 @@ import { Float, Text, OrbitControls, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'motion/react';
 
-// --- BRAND COLORS (Balanced Palette) ---
-const BRAND_GREEN = '#059669';
-const BRAND_TEAL = '#10b981';
-const BRAND_LIGHT = '#34d399';
+// --- BRAND COLORS (Light Theme Palette) ---
+const CLUB_GREEN = '#00875a';
+const ELECTRIC_MINT = '#00F59B';
+const LIGHT_GREEN = '#34d399';
+const BG_LIGHT = '#F7FAF9';
 
 // --- FLOATING PARTICLES ---
-function FloatingParticles({ count = 80 }) {
+function FloatingParticles({ count = 60 }) {
   const mesh = useRef<THREE.InstancedMesh>(null);
   
   const particles = useMemo(() => {
@@ -22,8 +23,8 @@ function FloatingParticles({ count = 80 }) {
           (Math.random() - 0.5) * 8,
           (Math.random() - 0.5) * 6 - 3
         ] as [number, number, number],
-        scale: Math.random() * 0.03 + 0.015,
-        speed: Math.random() * 0.2 + 0.08,
+        scale: Math.random() * 0.04 + 0.02,
+        speed: Math.random() * 0.15 + 0.05,
         offset: Math.random() * Math.PI * 2
       });
     }
@@ -40,12 +41,12 @@ function FloatingParticles({ count = 80 }) {
       const { position, scale, speed, offset } = particle;
       
       dummy.position.set(
-        position[0] + Math.sin(time * speed + offset) * 0.2,
-        position[1] + Math.cos(time * speed * 0.7 + offset) * 0.15,
+        position[0] + Math.sin(time * speed + offset) * 0.3,
+        position[1] + Math.cos(time * speed * 0.7 + offset) * 0.2,
         position[2]
       );
       
-      dummy.scale.setScalar(scale * (1 + Math.sin(time * 1.2 + offset) * 0.15));
+      dummy.scale.setScalar(scale * (1 + Math.sin(time * 1.5 + offset) * 0.2));
       dummy.updateMatrix();
       mesh.current!.setMatrixAt(i, dummy.matrix);
     });
@@ -54,13 +55,13 @@ function FloatingParticles({ count = 80 }) {
 
   return (
     <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
-      <sphereGeometry args={[1, 6, 6]} />
+      <sphereGeometry args={[1, 8, 8]} />
       <meshStandardMaterial
-        color={BRAND_TEAL}
-        emissive={BRAND_GREEN}
-        emissiveIntensity={0.6}
+        color={CLUB_GREEN}
+        emissive={CLUB_GREEN}
+        emissiveIntensity={0.4}
         transparent
-        opacity={0.5}
+        opacity={0.35}
       />
     </instancedMesh>
   );
@@ -71,7 +72,7 @@ function AnimatedWord3D({
   text, 
   position, 
   delay, 
-  color = '#ffffff'
+  color = '#0f172a'
 }: { 
   text: string; 
   position: [number, number, number]; 
@@ -88,21 +89,21 @@ function AnimatedWord3D({
   if (!visible) return null;
 
   return (
-    <Float speed={1.2} rotationIntensity={0.15} floatIntensity={0.2}>
+    <Float speed={1.2} rotationIntensity={0.1} floatIntensity={0.15}>
       <Text
         position={position}
         fontSize={0.7}
         color={color}
         anchorX="center"
         anchorY="middle"
-        outlineWidth={0.01}
-        outlineColor="#0f172a"
+        outlineWidth={0.008}
+        outlineColor="#F7FAF9"
       >
         {text}
         <meshStandardMaterial
           color={color}
           emissive={color}
-          emissiveIntensity={0.3}
+          emissiveIntensity={0.15}
           toneMapped={false}
         />
       </Text>
@@ -119,24 +120,24 @@ function OrbitingRings() {
     const time = state.clock.elapsedTime;
     
     if (ring1Ref.current) {
-      ring1Ref.current.rotation.x = time * 0.2;
-      ring1Ref.current.rotation.y = time * 0.15;
+      ring1Ref.current.rotation.x = time * 0.15;
+      ring1Ref.current.rotation.y = time * 0.12;
     }
     if (ring2Ref.current) {
-      ring2Ref.current.rotation.x = -time * 0.15;
-      ring2Ref.current.rotation.z = time * 0.2;
+      ring2Ref.current.rotation.x = -time * 0.12;
+      ring2Ref.current.rotation.z = time * 0.15;
     }
   });
 
   return (
     <group position={[0, 0, -2.5]}>
       <mesh ref={ring1Ref}>
-        <torusGeometry args={[2.2, 0.015, 16, 100]} />
-        <meshStandardMaterial color={BRAND_TEAL} emissive={BRAND_TEAL} emissiveIntensity={0.8} toneMapped={false} />
+        <torusGeometry args={[2.2, 0.012, 16, 100]} />
+        <meshStandardMaterial color={CLUB_GREEN} emissive={CLUB_GREEN} emissiveIntensity={0.5} toneMapped={false} />
       </mesh>
       <mesh ref={ring2Ref}>
-        <torusGeometry args={[2.8, 0.01, 16, 100]} />
-        <meshStandardMaterial color={BRAND_GREEN} emissive={BRAND_GREEN} emissiveIntensity={0.6} toneMapped={false} />
+        <torusGeometry args={[2.8, 0.008, 16, 100]} />
+        <meshStandardMaterial color={ELECTRIC_MINT} emissive={ELECTRIC_MINT} emissiveIntensity={0.4} toneMapped={false} />
       </mesh>
     </group>
   );
@@ -149,19 +150,19 @@ function CentralGlow() {
   useFrame((state) => {
     if (!meshRef.current) return;
     const time = state.clock.elapsedTime;
-    const scale = 1 + Math.sin(time * 1.5) * 0.1;
+    const scale = 1 + Math.sin(time * 1.2) * 0.12;
     meshRef.current.scale.setScalar(scale);
   });
 
   return (
     <mesh ref={meshRef} position={[0, 0, -1.5]}>
-      <sphereGeometry args={[0.4, 32, 32]} />
+      <sphereGeometry args={[0.35, 32, 32]} />
       <meshStandardMaterial
-        color={BRAND_GREEN}
-        emissive={BRAND_GREEN}
-        emissiveIntensity={1.5}
+        color={CLUB_GREEN}
+        emissive={CLUB_GREEN}
+        emissiveIntensity={0.8}
         transparent
-        opacity={0.25}
+        opacity={0.15}
         toneMapped={false}
       />
     </mesh>
@@ -172,25 +173,25 @@ function CentralGlow() {
 function TaglineScene({ activePhase }: { activePhase: number }) {
   return (
     <>
-      {/* Lighting */}
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[5, 5, 5]} intensity={1.2} color="#ffffff" />
-      <pointLight position={[-4, 2, 3]} intensity={0.8} color={BRAND_GREEN} />
-      <pointLight position={[4, -2, 3]} intensity={0.6} color={BRAND_TEAL} />
+      {/* Lighting - Bright for light theme */}
+      <ambientLight intensity={1.2} />
+      <directionalLight position={[5, 5, 5]} intensity={1.0} color="#ffffff" />
+      <pointLight position={[-4, 2, 3]} intensity={0.5} color={CLUB_GREEN} />
+      <pointLight position={[4, -2, 3]} intensity={0.4} color={ELECTRIC_MINT} />
 
       {/* Background Elements */}
-      <FloatingParticles count={60} />
+      <FloatingParticles count={50} />
       <OrbitingRings />
       <CentralGlow />
 
       {/* Sparkles Effect */}
       <Sparkles
-        count={40}
+        count={30}
         scale={10}
-        size={2}
-        speed={0.2}
-        opacity={0.4}
-        color={BRAND_TEAL}
+        size={1.5}
+        speed={0.15}
+        opacity={0.3}
+        color={ELECTRIC_MINT}
       />
 
       {/* 3D Text Animation - Phase by Phase */}
@@ -199,7 +200,7 @@ function TaglineScene({ activePhase }: { activePhase: number }) {
           text="THINK BIG."
           position={[0, 1, 0]}
           delay={0}
-          color="#ffffff"
+          color="#0f172a"
         />
       )}
       
@@ -208,7 +209,7 @@ function TaglineScene({ activePhase }: { activePhase: number }) {
           text="INVEST SMART."
           position={[0, 0, 0]}
           delay={150}
-          color={BRAND_TEAL}
+          color={CLUB_GREEN}
         />
       )}
       
@@ -217,7 +218,7 @@ function TaglineScene({ activePhase }: { activePhase: number }) {
           text="LEAD NEPAL."
           position={[0, -1, 0]}
           delay={300}
-          color={BRAND_LIGHT}
+          color={LIGHT_GREEN}
         />
       )}
 
@@ -248,18 +249,25 @@ export default function Tagline3D() {
   }, []);
 
   return (
-    <div className="relative w-full h-screen min-h-[600px] bg-[#0f172a] overflow-hidden">
+    <div className="relative w-full h-screen min-h-[600px] bg-[#F7FAF9] overflow-hidden">
+      {/* Paper texture grid overlay */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        backgroundImage: 'radial-gradient(circle, #E1E8E4 1px, transparent 1px)',
+        backgroundSize: '24px 24px',
+        opacity: 0.4
+      }} />
+
       {/* 3D Canvas */}
       <div className="absolute inset-0">
         <Canvas camera={{ position: [0, 0, 4.5], fov: 55 }}>
-          <color attach="background" args={['#0f172a']} />
-          <fog attach="fog" args={['#0f172a', 4, 12]} />
+          <color attach="background" args={['#F7FAF9']} />
+          <fog attach="fog" args={['#F7FAF9', 5, 14]} />
           <TaglineScene activePhase={activePhase} />
         </Canvas>
       </div>
 
-      {/* Mountain Silhouette Background - Three Regions */}
-      <div className="absolute bottom-0 left-0 right-0 h-[45%] pointer-events-none">
+      {/* Mountain Silhouette Background - Three Regions (Light Theme) */}
+      <div className="absolute bottom-0 left-0 right-0 h-[40%] pointer-events-none">
         <svg
           viewBox="0 0 1440 400"
           className="w-full h-full"
@@ -267,16 +275,16 @@ export default function Tagline3D() {
         >
           <defs>
             <linearGradient id="taglineTerai" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#10b981" stopOpacity="0.1" />
-              <stop offset="100%" stopColor="#0f172a" stopOpacity="0.5" />
+              <stop offset="0%" stopColor="#00875a" stopOpacity="0.06" />
+              <stop offset="100%" stopColor="#F7FAF9" stopOpacity="0.3" />
             </linearGradient>
             <linearGradient id="taglineHilly" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#059669" stopOpacity="0.15" />
-              <stop offset="100%" stopColor="#0f172a" stopOpacity="0.6" />
+              <stop offset="0%" stopColor="#00875a" stopOpacity="0.1" />
+              <stop offset="100%" stopColor="#F7FAF9" stopOpacity="0.5" />
             </linearGradient>
             <linearGradient id="taglineHimalayan" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#047857" stopOpacity="0.2" />
-              <stop offset="100%" stopColor="#0f172a" stopOpacity="0.7" />
+              <stop offset="0%" stopColor="#047857" stopOpacity="0.12" />
+              <stop offset="100%" stopColor="#F7FAF9" stopOpacity="0.6" />
             </linearGradient>
           </defs>
 
@@ -301,7 +309,7 @@ export default function Tagline3D() {
       </div>
 
       {/* Gradient Overlays for Depth */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-[#0f172a]/50 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#F7FAF9] via-transparent to-[#F7FAF9]/60 pointer-events-none" />
 
       {/* 2D Overlay - Brand Mark */}
       <div className="absolute top-8 left-8 z-10">
@@ -312,18 +320,18 @@ export default function Tagline3D() {
           className="flex items-center gap-3"
         >
           <svg width="36" height="36" viewBox="0 0 64 64" fill="none">
-            <path d="M20 46 L32 24 L44 46Z" fill="#10b981" opacity="0.7" />
+            <path d="M20 46 L32 24 L44 46Z" fill="#00875a" opacity="0.7" />
             <polyline
               points="14,44 24,36 32,38 40,26 50,18"
-              stroke="#10b981"
+              stroke="#00875a"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
               fill="none"
             />
-            <circle cx="50" cy="18" r="3" fill="#10b981" />
+            <circle cx="50" cy="18" r="3" fill="#00875a" />
           </svg>
-          <span className="text-white/60 text-sm font-medium tracking-[0.3em] uppercase">
+          <span className="text-slate-900/50 text-sm font-medium tracking-[0.3em] uppercase">
             Arthneeti
           </span>
         </motion.div>
@@ -338,7 +346,7 @@ export default function Tagline3D() {
             transition={{ delay: 0.8, duration: 0.8 }}
             className="absolute bottom-28 left-1/2 -translate-x-1/2 z-10 text-center"
           >
-            <p className="text-white/35 text-sm tracking-[0.15em]">
+            <p className="text-slate-900/30 text-sm tracking-[0.15em]">
               ठूलो सोच · स्मार्ट लगानी · नेपाल नेतृत्व
             </p>
           </motion.div>
@@ -352,11 +360,11 @@ export default function Tagline3D() {
         transition={{ delay: 1.2, duration: 0.8 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
       >
-        <span className="text-white/30 text-[10px] uppercase tracking-widest">Scroll to explore</span>
+        <span className="text-slate-900/30 text-[10px] uppercase tracking-widest">Scroll to explore</span>
         <motion.div
           animate={{ y: [0, 6, 0] }}
           transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-          className="w-px h-6 bg-gradient-to-b from-[#10b981]/50 to-transparent"
+          className="w-px h-6 bg-gradient-to-b from-[#00875a]/40 to-transparent"
         />
       </motion.div>
 
@@ -367,8 +375,8 @@ export default function Tagline3D() {
         transition={{ delay: 1.5, duration: 0.8 }}
         className="absolute bottom-8 right-8 z-10"
       >
-        <div className="bg-white/5 backdrop-blur border border-white/10 px-4 py-2 rounded-full inline-flex items-center gap-2">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
+        <div className="bg-white/60 backdrop-blur border border-slate-200 px-4 py-2 rounded-full inline-flex items-center gap-2">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
             Drag to interact
           </span>
         </div>

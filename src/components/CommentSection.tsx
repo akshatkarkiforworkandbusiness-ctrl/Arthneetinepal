@@ -8,6 +8,7 @@ import {
 } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import { Heart, Send, X } from 'lucide-react';
+import { awardComment } from '../lib/rewards';
 import type { Comment } from '../types/post';
 
 interface CommentItemProps {
@@ -100,7 +101,7 @@ export function CommentSection({ postId }: { postId: string }) {
       (snapshot) => {
         setComments(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Comment)));
       },
-      (error) => handleFirestoreError(error, OperationType.GET, path)
+      (error) => handleFirestoreError(error, OperationType.GET, path, false)
     );
     return () => unsubscribe();
   }, [postId]);
@@ -129,8 +130,10 @@ export function CommentSection({ postId }: { postId: string }) {
       setNewComment('');
       setReplyTo(null);
       toast.success("Comment posted!");
+      // Award reward for commenting
+      try { await awardComment(user.uid, postId); } catch { /* non-critical */ }
     } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, path);
+      handleFirestoreError(error, OperationType.WRITE, path, false);
       toast.error("Failed to add comment.");
     }
   };
