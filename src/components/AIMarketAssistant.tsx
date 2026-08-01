@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MarketSummary, TopStocks, MarketIndex } from '../lib/nepseApi';
-import { Portfolio } from '../lib/tradingApi';
+import { Portfolio } from '../types/trading';
 import { Brain, X, Loader2, Send, Sparkles } from 'lucide-react';
 
 interface AIMarketAssistantProps {
@@ -65,7 +65,7 @@ export default function AIMarketAssistant({
 
     if (portfolio) {
       prompt += `USER PORTFOLIO (Virtual Trading League):\n`;
-      prompt += `- Cash Balance: Rs. ${portfolio.cash.toLocaleString()}\n`;
+      prompt += `- Cash Balance: Rs. ${portfolio.cashBalance.toLocaleString()}\n`;
       prompt += `- Starting Capital: Rs. ${portfolio.startingCapital.toLocaleString()}\n`;
       prompt += `- Current Holdings:\n`;
       const holdingsEntries = Object.entries(portfolio.holdings);
@@ -73,7 +73,7 @@ export default function AIMarketAssistant({
         prompt += `  * No active holdings yet.\n`;
       } else {
         holdingsEntries.forEach(([sym, pos]) => {
-          prompt += `  * ${sym}: ${pos.qty} shares (Avg Cost: Rs. ${pos.avgCost.toFixed(2)})\n`;
+          prompt += `  * ${sym}: ${pos.quantity} shares (Avg Cost: Rs. ${pos.avgCost.toFixed(2)})\n`;
         });
       }
       prompt += `Note: reference their holdings and stats if they ask questions about what stocks they own or how their portfolio is doing.\n\n`;

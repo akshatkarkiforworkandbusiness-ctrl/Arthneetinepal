@@ -4,14 +4,14 @@ const CEREBRAS_API_URL = 'https://api.cerebras.ai/v1/chat/completions';
 const MODEL = 'llama-3.3-70b';
 
 const CORS_HEADERS: Record<string, string> = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': 'https://arthneetinepal.web.app',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') {
-    return res.status(204).json({});
+    return res.status(204).end();
   }
 
   if (req.method !== 'POST') {

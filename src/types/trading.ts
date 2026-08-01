@@ -15,6 +15,12 @@ export interface Portfolio {
   holdings: Record<string, Holding>; // keyed by stock symbol
   totalValue: number; // cashBalance + sum(holding.quantity * lastKnownPrice), recomputed on every trade
   updatedAt: unknown; // Firestore Timestamp
+  // Server-side fields (set by unlock API)
+  startingCapital: number;
+  seasonId?: string;
+  appliedBonuses?: string[];
+  dailyTradesCount?: number;
+  lastTradeDay?: string;
   // Reward fields
   rewardBalance: number;      // Accumulated rewards pending claim
   totalRewardsEarned: number; // Lifetime rewards earned

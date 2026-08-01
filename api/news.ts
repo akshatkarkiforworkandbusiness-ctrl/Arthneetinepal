@@ -7,7 +7,7 @@ const MODELS = [
 ];
 
 const CORS_HEADERS: Record<string, string> = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': 'https://arthneetinepal.web.app',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
@@ -15,15 +15,10 @@ const CORS_HEADERS: Record<string, string> = {
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
-    return res.status(204).json({});
+    return res.status(204).end();
   }
 
-  // Allow GET to behave like POST
-  if (req.method === 'GET') {
-    req.method = 'POST';
-  }
-
-  if (req.method !== 'POST') {
+  if (req.method !== 'GET' && req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 

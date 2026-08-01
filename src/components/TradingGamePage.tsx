@@ -86,7 +86,7 @@ export default function TradingGamePage() {
       setStocks(data);
       
       // Initialize market simulation if not already done
-      if (!marketSimulation['state']?.isInitialized) {
+      if (!marketSimulation.isInitialized) {
         marketSimulation.initialize(data);
       } else {
         // Update base prices from live data

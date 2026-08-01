@@ -1,4 +1,4 @@
-import { doc, getDoc, getDocs, runTransaction, collection, query, orderBy, limit, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, getDocs, runTransaction, collection, query, orderBy, limit, where, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from './firebase';
 import { Portfolio, STARTING_CASH_BALANCE, TradingFees, TRADING_FEE_RATES } from '../types/trading';
 import type { Unsubscribe } from 'firebase/firestore';
@@ -21,6 +21,7 @@ export async function getOrCreatePortfolio(uid: string): Promise<Portfolio> {
         holdings: {},
         totalValue: STARTING_CASH_BALANCE,
         updatedAt: serverTimestamp(),
+        startingCapital: STARTING_CASH_BALANCE,
         // Initialize reward fields
         rewardBalance: 0,
         totalRewardsEarned: 0,
@@ -255,34 +256,50 @@ export async function executeTrade(
  * Fetches the top N portfolios for the leaderboard.
  * Only returns users with publicPortfolio == true.
  *
- * Known limitation: totalValue is stale until next trade — no backend to
- * refresh. Acceptable for v1 at club scale.
+ * Uses a batched approach: fetch top portfolios, then batch-check
+ * publicPortfolio status to avoid N+1 queries.
  */
 export async function getLeaderboard(
   limitCount = 20
 ): Promise<Array<{ uid: string; name: string; totalValue: number }>> {
   const portfoliosRef = collection(db, 'portfolios');
-  const q = query(portfoliosRef, orderBy('totalValue', 'desc'), limit(limitCount));
+  const q = query(portfoliosRef, orderBy('totalValue', 'desc'), limit(limitCount * 3));
 
   try {
     const snapshot = await getDocs(q);
     const results: Array<{ uid: string; name: string; totalValue: number }> = [];
+    const candidateDocs = snapshot.docs;
 
-    for (const docSnap of snapshot.docs) {
+    if (candidateDocs.length === 0) return [];
+
+    // Batch fetch user profiles (max 10 per IN query)
+    const allUids = candidateDocs.map(d => d.id);
+    const publicUserIds = new Set<string>();
+    const userNames = new Map<string, string>();
+
+    for (let i = 0; i < allUids.length; i += 10) {
+      const batch = allUids.slice(i, i + 10);
+      const usersRef = collection(db, 'users');
+      const usersQuery = query(usersRef, where('__name__', 'in', batch));
+      const usersSnap = await getDocs(usersQuery);
+      usersSnap.forEach(docSnap => {
+        const data = docSnap.data();
+        userNames.set(docSnap.id, data.name || 'Anonymous');
+        if (data.publicPortfolio === true) {
+          publicUserIds.add(docSnap.id);
+        }
+      });
+    }
+
+    for (const docSnap of candidateDocs) {
+      if (results.length >= limitCount) break;
       const uid = docSnap.id;
-      const data = docSnap.data();
-
-      // Check publicPortfolio
-      const userRef = doc(db, 'users', uid);
-      const userSnap = await getDoc(userRef);
-      if (!userSnap.exists()) continue;
-      const userData = userSnap.data();
-      if (!userData.publicPortfolio) continue;
+      if (!publicUserIds.has(uid)) continue;
 
       results.push({
         uid,
-        name: userData.name || 'Anonymous',
-        totalValue: data.totalValue || 0,
+        name: userNames.get(uid) || 'Anonymous',
+        totalValue: docSnap.data().totalValue || 0,
       });
     }
 

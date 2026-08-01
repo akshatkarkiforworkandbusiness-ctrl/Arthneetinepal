@@ -9,7 +9,8 @@ import { db } from '../lib/firebase';
 import { doc, onSnapshot, collection, query, orderBy, limit, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import { fetchStocks, StockRow } from '../lib/nepseApi';
-import { unlockPortfolio, executeTrade, Portfolio, Trade } from '../lib/tradingApi';
+import { unlockPortfolio, executeTrade } from '../lib/tradingApi';
+import type { Portfolio, Trade } from '../types/trading';
 
 export default function TradingPage() {
   const { user, profile, updateProfile, loading: authLoading, handleJoinAction } = useAuth();
@@ -51,7 +52,7 @@ export default function TradingPage() {
 
     const tradesQuery = query(
       collection(db, 'portfolios', user.uid, 'trades'),
-      orderBy('execAt', 'desc'),
+      orderBy('timestamp', 'desc'),
       limit(10)
     );
     const unsubTrades = onSnapshot(tradesQuery, (snap) => {
@@ -111,7 +112,7 @@ export default function TradingPage() {
         likes: 0,
         commentCount: 0,
         createdAt: serverTimestamp(),
-        content: `I just executed a <strong>${trade.side}</strong> order for <strong>${trade.qty} shares</strong> of <strong>${trade.symbol}</strong> at <strong>Rs. ${trade.execPrice}</strong> in my virtual portfolio!<br/>Current portfolio value: Rs. ${totalPortfolioValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`
+        content: `I just executed a <strong>${trade.side}</strong> order for <strong>${trade.quantity} shares</strong> of <strong>${trade.symbol}</strong> at <strong>Rs. ${trade.price}</strong> in my virtual portfolio!<br/>Current portfolio value: Rs. ${totalPortfolioValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`
       });
 
       toast.promise(sharePromise, {
@@ -133,8 +134,9 @@ export default function TradingPage() {
     
     setTradingLoading(true);
     try {
-      const { trade } = await executeTrade(selectedSymbol, orderSide, orderQty);
-      toast.success(`Trade Executed: ${trade.side.toUpperCase()} ${trade.qty} ${trade.symbol} at Rs. ${trade.execPrice}`);
+      const result = await executeTrade(selectedSymbol, orderSide, orderQty);
+      const apiTrade = result.trade as any;
+      toast.success(`Trade Executed: ${apiTrade.side.toUpperCase()} ${apiTrade.qty} ${apiTrade.symbol} at Rs. ${apiTrade.execPrice}`);
       setOrderQty(1);
       setSelectedSymbol('');
       setSearchQuery('');
@@ -153,11 +155,11 @@ export default function TradingPage() {
   const holdingsValue = portfolio ? Object.entries(portfolio.holdings).reduce((acc, [sym, pos]) => {
     const liveStock = stocks.find(s => s.symbol === sym);
     const livePrice = liveStock ? liveStock.ltp : pos.avgCost;
-    return acc + (pos.qty * livePrice);
+    return acc + (pos.quantity * livePrice);
   }, 0) : 0;
 
-  const totalPortfolioValue = portfolio ? (portfolio.cash + holdingsValue) : 0;
-  const totalCost = portfolio ? Object.values(portfolio.holdings).reduce((acc, pos) => acc + (pos.qty * pos.avgCost), 0) : 0;
+  const totalPortfolioValue = portfolio ? (portfolio.cashBalance + holdingsValue) : 0;
+  const totalCost = portfolio ? Object.values(portfolio.holdings).reduce((acc, pos) => acc + (pos.quantity * pos.avgCost), 0) : 0;
   const unrealizedPL = holdingsValue - totalCost;
   const totalReturn = portfolio ? ((totalPortfolioValue - portfolio.startingCapital) / portfolio.startingCapital) * 100 : 0;
   const hasAppliedFL = portfolio?.appliedBonuses?.includes('financial-literacy');
@@ -276,7 +278,7 @@ export default function TradingPage() {
               <div>
                 <h3 className="font-bold text-white text-lg">Boost Your Capital!</h3>
                 <p className="text-[#9f9fa0] text-sm mt-0.5">
-                  Complete the exam for **Financial Literacy** or **Economic Research** with 80%+ to unlock a **+10% starting capital bonus (+NPR 100,000 each)**!
+                  Complete the exam for <strong className="text-white">Financial Literacy</strong> or <strong className="text-white">Economic Research</strong> with 80%+ to unlock a <strong className="text-white">+10% starting capital bonus (+NPR 100,000 each)</strong>!
                 </p>
               </div>
             </div>
@@ -321,7 +323,7 @@ export default function TradingPage() {
           {/* Cash Balance */}
           <div className="bg-white/[0.02] border border-white/[0.06] rounded-3xl p-8 relative overflow-hidden">
             <span className="text-[10px] font-black uppercase tracking-widest text-[#9f9fa0] block mb-2">Virtual Cash Balance</span>
-            <span className="text-3xl font-mono font-bold text-white">NPR {portfolio.cash.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span className="text-3xl font-mono font-bold text-white">NPR {portfolio.cashBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             <p className="text-[10px] text-[#9f9fa0] uppercase tracking-wider mt-3">Available for buy trades</p>
           </div>
 
@@ -393,8 +395,8 @@ export default function TradingPage() {
                         const ltp = stock ? stock.ltp : pos.avgCost;
                         const change = stock ? stock.change : 0;
                         
-                        const mktVal = pos.qty * ltp;
-                        const costBasis = pos.qty * pos.avgCost;
+                        const mktVal = pos.quantity * ltp;
+                        const costBasis = pos.quantity * pos.avgCost;
                         const pl = mktVal - costBasis;
                         const plPct = (pl / costBasis) * 100;
 
@@ -410,7 +412,7 @@ export default function TradingPage() {
                                 </span>
                               )}
                             </td>
-                            <td className="py-5 px-6 text-right font-bold text-white">{pos.qty}</td>
+                            <td className="py-5 px-6 text-right font-bold text-white">{pos.quantity}</td>
                             <td className="py-5 px-6 text-right text-[#9f9fa0]">Rs. {pos.avgCost.toFixed(2)}</td>
                             <td className="py-5 px-6 text-right text-[#9f9fa0]">Rs. {ltp.toFixed(2)}</td>
                             <td className="py-5 px-6 text-right font-bold text-white">Rs. {mktVal.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
@@ -424,7 +426,7 @@ export default function TradingPage() {
                                   setOrderSide('sell');
                                   setSelectedSymbol(sym);
                                   setSearchQuery(sym);
-                                  setOrderQty(pos.qty);
+                                  setOrderQty(pos.quantity);
                                 }}
                                 className="px-3 py-1.5 bg-[#dc143c]/10 hover:bg-[#dc143c] hover:text-white text-[#dc143c] font-black text-[9px] uppercase tracking-wider rounded-lg transition-all"
                               >
@@ -466,7 +468,7 @@ export default function TradingPage() {
                     </thead>
                     <tbody>
                       {trades.map((trade) => {
-                        const date = trade.execAt?.toDate ? trade.execAt.toDate() : new Date(trade.execAt);
+                        const date = (trade.timestamp as any)?.toDate ? (trade.timestamp as any).toDate() : new Date(trade.timestamp as any);
                         return (
                           <tr key={trade.id} className="border-b border-white/[0.04] hover:bg-white/[0.01] transition-colors font-mono text-xs">
                             <td className="py-4 px-6 text-[#9f9fa0]">{date.toLocaleString()}</td>
@@ -478,9 +480,9 @@ export default function TradingPage() {
                                 {trade.side}
                               </span>
                             </td>
-                            <td className="py-4 px-6 text-right font-bold text-white">{trade.qty}</td>
-                            <td className="py-4 px-6 text-right text-[#9f9fa0]">Rs. {trade.execPrice.toFixed(2)}</td>
-                            <td className="py-4 px-6 text-right text-[#9f9fa0]">Rs. {trade.resultingCash.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
+                            <td className="py-4 px-6 text-right font-bold text-white">{trade.quantity}</td>
+                            <td className="py-4 px-6 text-right text-[#9f9fa0]">Rs. {trade.price.toFixed(2)}</td>
+                            <td className="py-4 px-6 text-right text-[#9f9fa0]">Rs. {(trade.total || (trade.quantity * trade.price)).toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
                             <td className="py-4 px-6 text-center">
                               <button 
                                 onClick={() => handleShareTrade(trade)}
@@ -678,7 +680,7 @@ export default function TradingPage() {
                     </div>
                     
                     {/* Error Alerts */}
-                    {orderSide === 'buy' && estTotal > portfolio.cash && (
+                    {orderSide === 'buy' && estTotal > portfolio.cashBalance && (
                       <div className="p-3 bg-[#dc143c]/10 border border-[#dc143c]/20 text-[#dc143c] rounded-xl flex items-start gap-2 text-[10px] font-sans">
                         <AlertTriangle className="shrink-0 mt-0.5" size={14} />
                         <span>Insufficient Cash! This trade exceeds your available cash balance.</span>
@@ -690,10 +692,10 @@ export default function TradingPage() {
                         <span>Anti-Cheat Alert: Exceeds 25% single-stock cap (Max. allocation: Rs. {(0.25 * totalPortfolioValue).toLocaleString(undefined, { maximumFractionDigits: 0 })}).</span>
                       </div>
                     )}
-                    {orderSide === 'sell' && (!portfolio.holdings[upperSymbol] || portfolio.holdings[upperSymbol].qty < orderQty) && (
+                    {orderSide === 'sell' && (!portfolio.holdings[upperSymbol] || portfolio.holdings[upperSymbol].quantity < orderQty) && (
                       <div className="p-3 bg-[#dc143c]/10 border border-[#dc143c]/20 text-[#dc143c] rounded-xl flex items-start gap-2 text-[10px] font-sans">
                         <AlertTriangle className="shrink-0 mt-0.5" size={14} />
-                        <span>Insufficient Shares! You only own {portfolio.holdings[upperSymbol]?.qty || 0} shares of {upperSymbol}.</span>
+                        <span>Insufficient Shares! You only own {portfolio.holdings[upperSymbol]?.quantity || 0} shares of {upperSymbol}.</span>
                       </div>
                     )}
                   </div>
@@ -705,8 +707,8 @@ export default function TradingPage() {
                   disabled={
                     tradingLoading || 
                     !selectedSymbol || 
-                    (orderSide === 'buy' && (estTotal > portfolio.cash || estTotal > 0.25 * totalPortfolioValue)) ||
-                    (orderSide === 'sell' && (!portfolio.holdings[upperSymbol] || portfolio.holdings[upperSymbol].qty < orderQty))
+                    (orderSide === 'buy' && (estTotal > portfolio.cashBalance || estTotal > 0.25 * totalPortfolioValue)) ||
+                    (orderSide === 'sell' && (!portfolio.holdings[upperSymbol] || portfolio.holdings[upperSymbol].quantity < orderQty))
                   }
                   className={`w-full py-4 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg flex justify-center items-center gap-2 ${
                     orderSide === 'buy' 
@@ -726,15 +728,15 @@ export default function TradingPage() {
               <ul className="space-y-2.5 text-xs text-[#9f9fa0] leading-relaxed">
                 <li className="flex items-start gap-2">
                   <span className="text-[#3b82f6]">•</span>
-                  <span>**25% Position Cap**: You cannot hold more than 25% of your total portfolio value in a single stock.</span>
+                  <span><strong className="text-white">25% Position Cap</strong>: You cannot hold more than 25% of your total portfolio value in a single stock.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-[#3b82f6]">•</span>
-                  <span>**5-Min Cooldown**: You must wait 5 minutes between trades of the same symbol.</span>
+                  <span><strong className="text-white">5-Min Cooldown</strong>: You must wait 5 minutes between trades of the same symbol.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-[#3b82f6]">•</span>
-                  <span>**20 Trades / Day**: Maximum of 20 transaction tickets allowed per user daily.</span>
+                  <span><strong className="text-white">20 Trades / Day</strong>: Maximum of 20 transaction tickets allowed per user daily.</span>
                 </li>
               </ul>
             </div>

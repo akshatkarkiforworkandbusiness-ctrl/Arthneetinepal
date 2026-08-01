@@ -71,7 +71,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         createdAt: FieldValue.serverTimestamp(),
         lastTradeAt: null,
         totalTrades: 0,
-        appliedBonuses
+        dailyTradesCount: 0,
+        lastTradeDay: '',
+        appliedBonuses,
       };
       if (schoolId) portfolio.schoolId = schoolId;
 

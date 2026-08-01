@@ -55,12 +55,12 @@ export default function PublicCertificatePage() {
                 // Fetch stocks to compute live MTM returns
                 const stocksData = await fetchStocks();
                 let holdingsValue = 0;
-                for (const [sym, pos] of Object.entries(portfolio.holdings as Record<string, { qty: number; avgCost: number }>)) {
+                for (const [sym, pos] of Object.entries(portfolio.holdings as Record<string, { quantity: number; avgCost: number }>)) {
                   const stock = stocksData.find(s => s.symbol === sym);
                   const ltp = stock ? stock.ltp : pos.avgCost;
-                  holdingsValue += pos.qty * ltp;
+                  holdingsValue += pos.quantity * ltp;
                 }
-                const totalValue = portfolio.cash + holdingsValue;
+                const totalValue = portfolio.cashBalance + holdingsValue;
                 const returnPercent = ((totalValue - portfolio.startingCapital) / portfolio.startingCapital) * 100;
 
                 // 4. Fetch latest season leaderboard to compare

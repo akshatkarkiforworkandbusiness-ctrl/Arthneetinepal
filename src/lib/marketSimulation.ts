@@ -407,6 +407,13 @@ class MarketSimulationEngine {
   }
 
   /**
+   * Whether the simulation has been initialized with live data
+   */
+  get isInitialized(): boolean {
+    return this.state.isInitialized;
+  }
+
+  /**
    * Subscribe to stock updates
    */
   subscribe(callback: (stocks: StockRow[]) => void): () => void {
@@ -449,7 +456,7 @@ class MarketSimulationEngine {
   updateBasePrices(liveStocks: StockRow[]): void {
     for (const liveStock of liveStocks) {
       const simulated = this.state.stocks.get(liveStock.symbol);
-      if (simulated) {
+      if (simulated && simulated.basePrice > 0) {
         // Only update base price if difference is significant (>5%)
         const diff = Math.abs(liveStock.ltp - simulated.basePrice) / simulated.basePrice;
         if (diff > 0.05) {
