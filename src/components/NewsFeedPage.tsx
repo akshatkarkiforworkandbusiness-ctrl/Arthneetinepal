@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import {
   collection, query, orderBy, onSnapshot, addDoc, serverTimestamp,
-  where, getDocs, updateDoc, increment, doc, deleteDoc, limit
+  where, getDocs, updateDoc, increment, doc, deleteDoc, limit, startAfter
 } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import { Heart, MessageSquare, Share2, Clock, RefreshCw, TrendingUp, Newspaper, Zap, ChevronDown, FileText } from 'lucide-react';
@@ -70,17 +70,23 @@ export default function NewsFeedPage() {
   const [dailyDigest, setDailyDigest] = useState<Post | null>(null);
   const [mostEngagedYesterday, setMostEngagedYesterday] = useState<Post | null>(null);
   const [expandedSectors, setExpandedSectors] = useState<Set<Sector>>(new Set());
+  const [lastDoc, setLastDoc] = useState<any>(null);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   // Listen for all posts
   useEffect(() => {
     const qPosts = query(
       collection(db, 'posts'),
-      orderBy('createdAt', 'desc')
+      orderBy('createdAt', 'desc'),
+      limit(50)
     );
     const unsubscribe = onSnapshot(qPosts,
       (snapshot) => {
         const allPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Post));
         setPosts(allPosts);
+        setLastDoc(snapshot.docs[snapshot.docs.length - 1] || null);
+        setHasMore(snapshot.docs.length === 50);
         setLoading(false);
       },
       (error) => {
@@ -90,6 +96,28 @@ export default function NewsFeedPage() {
     );
     return () => unsubscribe();
   }, []);
+
+  const loadMore = useCallback(async () => {
+    if (!lastDoc || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const moreQuery = query(
+        collection(db, 'posts'),
+        orderBy('createdAt', 'desc'),
+        startAfter(lastDoc),
+        limit(50)
+      );
+      const snap = await getDocs(moreQuery);
+      const morePosts = snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Post));
+      setPosts(prev => [...prev, ...morePosts]);
+      setLastDoc(snap.docs[snap.docs.length - 1] || null);
+      setHasMore(snap.docs.length === 50);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.LIST, 'posts');
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [lastDoc, loadingMore]);
 
   // Derive today's posts and sector feeds - show all posts from today
   const todayPosts = useMemo(() => {
@@ -664,7 +692,7 @@ export default function NewsFeedPage() {
       <section className="border-t border-blush-mist pt-10">
         <h2 className="font-display font-medium text-3xl text-brandwood mb-6 tracking-[0.03em]">All Recent Posts</h2>
         <div className="space-y-4">
-          {filteredPosts.slice(0, 20).map((post) => (
+          {filteredPosts.map((post) => (
             <motion.div
               key={post.id}
               initial={{ opacity: 0, y: 10 }}
@@ -705,6 +733,17 @@ export default function NewsFeedPage() {
             </motion.div>
           ))}
         </div>
+        {hasMore && (
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={loadMore}
+              disabled={loadingMore}
+              className="px-8 py-3 bg-white border border-blush-mist text-brandwood rounded-2xl text-xs font-bold uppercase tracking-widest hover:border-brand-emerald/50 transition-all disabled:opacity-50"
+            >
+              {loadingMore ? 'Loading...' : 'Load More'}
+            </button>
+          </div>
+        )}
       </section>
     </motion.main>
   );

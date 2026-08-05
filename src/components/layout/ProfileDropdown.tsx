@@ -7,12 +7,29 @@ import { useAuth } from '../../contexts/AuthContext';
 export function ProfileDropdown() {
   const { user, profile, logout } = useAuth();
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const location = useLocation();
 
-  // Close dropdown on route change
   useEffect(() => {
     setShowProfileDropdown(false);
   }, [location.pathname]);
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      await logout();
+      setShowProfileDropdown(false);
+    } catch (error) {
+      console.error('Logout failed:', error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
+  const displayName = profile?.name || user?.displayName || 'User';
+  const displayEmail = profile?.email || user?.email || '';
+  const displayTopics = (profile?.topics || []).slice(0, 3).join(' · ') || 'Member';
 
   return (
     <div className="relative">
@@ -20,7 +37,7 @@ export function ProfileDropdown() {
         onClick={() => setShowProfileDropdown(!showProfileDropdown)}
         className="w-10 h-10 rounded-2xl bg-white border border-blush-mist flex items-center justify-center text-brandwood font-black text-sm uppercase cursor-pointer hover:bg-white hover:border-brand-emerald hover:text-brand-emerald transition-all shadow-card hover:-translate-y-0.5"
       >
-        {profile?.name?.[0] || user?.displayName?.[0] || 'U'}
+        {displayName[0] || 'U'}
       </button>
       
       <AnimatePresence>
@@ -37,15 +54,16 @@ export function ProfileDropdown() {
               transition={{ duration: 0.15 }}
               className="absolute right-0 mt-3 w-72 bg-white rounded-3xl shadow-elevated border border-blush-mist z-50 overflow-hidden"
             >
-              {/* Header */}
               <div className="p-5 bg-white border-b border-blush-mist">
-                <p className="text-sm font-bold font-sans text-brandwood tracking-tight mb-1">{profile?.name || user?.displayName}</p>
+                <p className="text-sm font-bold font-sans text-brandwood tracking-tight mb-1">{displayName}</p>
+                {displayEmail && (
+                  <p className="text-xs text-text-muted font-medium truncate mb-1">{displayEmail}</p>
+                )}
                 <p className="text-xs text-text-muted font-medium">
-                  {profile?.topics?.slice(0, 3).join(' · ') || 'Member'}
+                  {displayTopics}
                 </p>
               </div>
 
-              {/* Menu Items */}
               <div className="p-2">
                 <Link 
                   to="/profile" 
@@ -58,16 +76,14 @@ export function ProfileDropdown() {
                   My Profile
                 </Link>
                 <button 
-                  onClick={() => {
-                    logout();
-                    setShowProfileDropdown(false);
-                  }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-widest text-brand-emerald hover:bg-white rounded-2xl transition-colors cursor-pointer"
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-widest text-brand-emerald hover:bg-white rounded-2xl transition-colors cursor-pointer disabled:opacity-50"
                 >
                   <div className="w-8 h-8 bg-brand-emerald/10 border border-brand-emerald/20 rounded-xl flex items-center justify-center shrink-0">
                     <LogOut size={18} className="text-brand-emerald" />
                   </div>
-                  Sign Out
+                  {isLoggingOut ? 'Signing Out...' : 'Sign Out'}
                 </button>
               </div>
             </motion.div>

@@ -38,11 +38,11 @@ export default function PostDetailPage() {
 
   const isAuthor = !!user && !!post && user.uid === post.authorId;
   
-  const createdAtTime = post?.createdAt?.toDate ? post.createdAt.toDate().getTime() : Date.now();
-  const isWithin24Hours = createdAtTime > Date.now() - 24 * 60 * 60 * 1000;
-  
-  const canEdit = isAdmin || (isAuthor && isWithin24Hours);
-  const canDelete = isAdmin || (isAuthor && post?.commentCount === 0);
+  const createdAtTime = post?.createdAt?.toDate ? post.createdAt.toDate().getTime() : null;
+  const isWithin24Hours = createdAtTime !== null && createdAtTime > Date.now() - 24 * 60 * 60 * 1000;
+
+  const canEdit = isAuthor && isWithin24Hours;
+  const canDelete = isAdmin || isAuthor;
   const canManage = canEdit || canDelete;
 
   // Load post

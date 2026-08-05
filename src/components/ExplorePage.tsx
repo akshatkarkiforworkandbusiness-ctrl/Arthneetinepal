@@ -649,7 +649,7 @@ export default function ExplorePage() {
                     transition={{ duration: 0.5 }}
                     className="w-12 h-12 rounded-2xl bg-white border border-blush-mist flex items-center justify-center text-brand-emerald-light group-hover:bg-brand-emerald-light/10 group-hover:border-brand-emerald-light/30 transition-all shrink-0 cursor-default"
                   >
-                    {(() => { const Icon = SECTOR_ICONS[sector]; return <Icon size={24} className="text-brand-emerald-light" />; })()}
+                    {(() => { const Icon = SECTOR_ICONS[sector] || Compass; return <Icon size={24} className="text-brand-emerald-light" />; })()}
                   </motion.div>
                   <div className="min-w-0">
                     <h3 className="font-display font-bold text-xl text-brandwood group-hover:text-brand-emerald transition-colors leading-tight">

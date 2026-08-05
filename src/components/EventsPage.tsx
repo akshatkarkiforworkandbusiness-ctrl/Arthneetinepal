@@ -144,7 +144,7 @@ export default function EventsPage() {
             description: "Financial literacy and investing session for students.",
             location: "Kathmandu Valley",
             category: "Session",
-            dateTime: Timestamp.fromDate(new Date(`2025-06-${15 + createIdx}T10:00:00`)),
+            dateTime: Timestamp.fromDate(new Date(2025, 5, 15 + createIdx, 10, 0, 0)),
             createdAt: serverTimestamp(),
             imageUrl: images[createIdx]
           });
@@ -238,9 +238,12 @@ export default function EventsPage() {
 
   const downloadICS = (event: Event) => {
     const date = event.dateTime.toDate();
+    const endDate = new Date(date);
+    endDate.setHours(endDate.getHours() + 1);
     const dateStr = date.toISOString().replace(/-|:|\.\d+/g, "");
+    const endDateStr = endDate.toISOString().replace(/-|:|\.\d+/g, "");
     const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "BEGIN:VEVENT",
-      `DTSTART:${dateStr}`, `DTEND:${dateStr}`,
+      `DTSTART:${dateStr}`, `DTEND:${endDateStr}`,
       `SUMMARY:${event.title}`, `DESCRIPTION:${event.description}`,
       `LOCATION:${event.location}`, "END:VEVENT", "END:VCALENDAR"].join("\n");
     const blob = new Blob([ics], { type: "text/calendar" });
@@ -469,7 +472,7 @@ export default function EventsPage() {
                     {(imagePreview || formData.imageUrl) && (
                       <div className="relative w-20 h-20 rounded-xl overflow-hidden border border-white/[0.06] shrink-0">
                         <img src={imagePreview || formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                        <button type="button" onClick={() => { setImageFile(null); setImagePreview(''); setFormData({ ...formData, imageUrl: '' }); }}
+                        <button type="button" onClick={() => { setImageFile(null); setImagePreview(''); setFormData({ ...formData, imageUrl: '' }); toast.success('Image removed'); }}
                           className="absolute top-1 right-1 bg-[#0f1011]/80 rounded-full p-0.5 hover:bg-[#ef4444] transition-colors">
                           <X size={12} className="text-white" />
                         </button>

@@ -45,6 +45,7 @@ export default function CommunityPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newsLoading, setNewsLoading] = useState(false);
   const [newsError, setNewsError] = useState<string | null>(null);
+  const hasSeeded = useRef(false);
   
   // Create Post State
   const [isUploading, setIsUploading] = useState(false);
@@ -66,6 +67,9 @@ export default function CommunityPage() {
 
   // Seeding Logic — just setDoc all posts (works offline via Firestore persistence queue)
   useEffect(() => {
+    if (hasSeeded.current) return;
+    hasSeeded.current = true;
+
     const seedDiscussionPosts = async () => {
       try {
         const seededKey = doc(db, 'meta', 'seeded');
@@ -462,8 +466,8 @@ const handleLike = async (postId: string) => {
     const sector = validSector.toLowerCase();
     return (
       (p.title && p.title.toLowerCase().includes(sector)) ||
-      p.category.toLowerCase().includes(sector) ||
-      p.content.toLowerCase().includes(sector) ||
+      (p.category || '').toLowerCase().includes(sector) ||
+      (p.content || '').toLowerCase().includes(sector) ||
       (p.sector && p.sector.toLowerCase().includes(sector))
     );
   });
@@ -741,7 +745,7 @@ const handleLike = async (postId: string) => {
                   className={`w-full text-left p-3 rounded-2xl transition-all flex items-center gap-3 ${validSector === sector ? 'bg-white shadow-sm border-brand-emerald border' : 'hover:bg-white border border-transparent'}`}
                 >
                   <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm text-brandwood">
-                    {(() => { const Icon = SECTOR_ICONS[sector as Sector]; return <Icon size={20} />; })()}
+                    {(() => { const Icon = SECTOR_ICONS[sector as Sector] || FileText; return <Icon size={20} />; })()}
                   </div>
                   <div>
                     <span className="font-bold text-sm block text-brandwood">{sector}</span>

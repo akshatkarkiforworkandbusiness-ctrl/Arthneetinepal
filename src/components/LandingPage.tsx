@@ -200,10 +200,13 @@ export default function LandingPage() {
 
     const fetchLiveData = async () => {
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 6000);
         const [indexRes, subIndexRes] = await Promise.all([
-          fetch(`${NEPSE_API}/NepseIndex`, { signal: AbortSignal.timeout(6000) }),
-          fetch(`${NEPSE_API}/SubIndices`, { signal: AbortSignal.timeout(6000) }),
+          fetch(`${NEPSE_API}/NepseIndex`, { signal: controller.signal }),
+          fetch(`${NEPSE_API}/SubIndices`, { signal: controller.signal }),
         ]);
+        clearTimeout(timeoutId);
         if (!indexRes.ok) throw new Error('API error');
         const indexData = await indexRes.json();
         const subData = subIndexRes.ok ? await subIndexRes.json() : [];

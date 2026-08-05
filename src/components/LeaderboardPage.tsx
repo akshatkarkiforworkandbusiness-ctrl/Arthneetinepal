@@ -33,25 +33,32 @@ const SCHOOL_NAMES: Record<string, string> = {
 };
 
 export default function LeaderboardPage({ isEmbedded = false }: { isEmbedded?: boolean }) {
-  const { user, profile, isAdmin } = useAuth();
-  const [activeScope, setActiveScope] = useState<'national' | 'school'>('national');
-  const [activePeriod, setActivePeriod] = useState<'season' | 'daily'>('season');
-  const [snapshot, setSnapshot] = useState<LeaderboardSnapshot | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [triggeringSnapshot, setTriggeringSnapshot] = useState(false);
+   const { user, profile, isAdmin } = useAuth();
+   const [activeScope, setActiveScope] = useState<'national' | 'school'>('national');
+   const [activePeriod, setActivePeriod] = useState<'season' | 'daily'>('season');
+   const [snapshot, setSnapshot] = useState<LeaderboardSnapshot | null>(null);
+   const [loading, setLoading] = useState(true);
+   const [triggeringSnapshot, setTriggeringSnapshot] = useState(false);
+   const [hasNoSchool, setHasNoSchool] = useState(false);
 
-  useEffect(() => {
-    setLoading(true);
-    const scopeVal = activeScope === 'school' ? (profile?.schoolId || 'none') : 'national';
-    
-    // Query the latest leaderboard snapshot matching scope & period
-    const q = query(
-      collection(db, 'leaderboards'),
-      where('scope', '==', scopeVal),
-      where('period', '==', activePeriod),
-      orderBy('computedAt', 'desc'),
-      limit(1)
-    );
+   useEffect(() => {
+     if (activeScope === 'school' && !profile?.schoolId) {
+       setHasNoSchool(true);
+       setLoading(false);
+       return;
+     }
+     setHasNoSchool(false);
+     setLoading(true);
+     const scopeVal = activeScope === 'school' ? profile!.schoolId! : 'national';
+
+     // Query the latest leaderboard snapshot matching scope & period
+     const q = query(
+       collection(db, 'leaderboards'),
+       where('scope', '==', scopeVal),
+       where('period', '==', activePeriod),
+       orderBy('computedAt', 'desc'),
+       limit(1)
+     );
 
     const unsubscribe = onSnapshot(q, (snap) => {
       if (!snap.empty) {
@@ -66,8 +73,8 @@ export default function LeaderboardPage({ isEmbedded = false }: { isEmbedded?: b
       setLoading(false);
     });
 
-    return () => unsubscribe();
-  }, [activeScope, activePeriod, profile?.schoolId]);
+     return () => unsubscribe();
+   }, [activeScope, activePeriod, profile?.schoolId]);
 
   const forceSnapshot = async () => {
     setTriggeringSnapshot(true);
@@ -202,14 +209,25 @@ export default function LeaderboardPage({ isEmbedded = false }: { isEmbedded?: b
               <RefreshCw className="animate-spin text-[#dc143c]" size={24} />
               <span className="font-bold text-xs uppercase tracking-widest">Loading Ranks...</span>
             </div>
-          ) : !snapshot || snapshot.entries.length === 0 ? (
-            <div className="p-24 text-center text-[#9f9fa0] space-y-4">
-              <Trophy className="mx-auto text-[#9f9fa0]/20 animate-bounce" size={48} />
-              <p className="text-sm">No rankings calculated for this category yet.</p>
-              <p className="text-xs text-[#9f9fa0]/60 max-w-xs mx-auto">
-                Rankings calculate daily at NEPSE market close (3:00 PM NPT). Be sure to trade and join a school to start competing!
-              </p>
-            </div>
+           ) : !snapshot || snapshot.entries.length === 0 ? (
+             <div className="p-24 text-center text-[#9f9fa0] space-y-4">
+               <Trophy className="mx-auto text-[#9f9fa0]/20 animate-bounce" size={48} />
+               {hasNoSchool ? (
+                 <>
+                   <p className="text-sm">Set your school to view school league rankings.</p>
+                   <p className="text-xs text-[#9f9fa0]/60 max-w-xs mx-auto">
+                     Add your school in Onboarding or Settings to compete in the School League.
+                   </p>
+                 </>
+               ) : (
+                 <>
+                   <p className="text-sm">No rankings calculated for this category yet.</p>
+                   <p className="text-xs text-[#9f9fa0]/60 max-w-xs mx-auto">
+                     Rankings calculate daily at NEPSE market close (3:00 PM NPT). Be sure to trade and join a school to start competing!
+                   </p>
+                 </>
+               )}
+             </div>
           ) : (
             <div>
               {/* Snapshot Timestamp */}

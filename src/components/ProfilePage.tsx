@@ -211,7 +211,7 @@ export default function ProfilePage() {
   }
 
   const displayName = isOwnProfile ? (ownProfile?.name || user?.displayName) : publicProfile?.name;
-  const displayTopics = isOwnProfile ? (ownProfile?.topics || ['Economics', 'Finance']) : (publicProfile?.topics || []);
+  const displayTopics = isOwnProfile ? (ownProfile?.topics || []) : (publicProfile?.topics || []);
 
   return (
     <motion.main 
@@ -268,13 +268,15 @@ export default function ProfilePage() {
              {/* Interests */}
              <div>
                 <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Interests</h4>
-                <div className="flex flex-wrap gap-2">
-                  {displayTopics.map(topic => (
-                    <span key={topic} className={`px-3 py-1.5 rounded-xl text-xs font-semibold border ${getTopicColor(topic)}`}>
-                      {topic}
-                    </span>
-                  ))}
-                </div>
+                 <div className="flex flex-wrap gap-2">
+                   {displayTopics.length > 0 ? displayTopics.map(topic => (
+                     <span key={topic} className={`px-3 py-1.5 rounded-xl text-xs font-semibold border ${getTopicColor(topic)}`}>
+                       {topic}
+                     </span>
+                   )) : (
+                     <span className="text-xs text-gray-400 italic">No interests set</span>
+                   )}
+                 </div>
              </div>
 
              {/* Stats */}
@@ -461,29 +463,29 @@ export default function ProfilePage() {
               )}
             </TabsContent>
 
-            <TabsContent value="bookmarks">
-              <div className="flex flex-col items-center justify-center py-16 text-center">
-                 <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mb-6">
-                   <Bookmark size={36} className="text-blue-400" />
-                 </div>
-                 <h3 className="text-2xl text-gray-900 font-sans tracking-tight font-bold mb-3">No Saved Analysis</h3>
-                 <p className="text-gray-500 font-sans max-w-sm leading-relaxed">
-                   Bookmark posts from the explore page to read them later.
-                 </p>
-              </div>
-            </TabsContent>
+             <TabsContent value="bookmarks">
+               <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mb-6">
+                    <Bookmark size={36} className="text-blue-400" />
+                  </div>
+                  <h3 className="text-2xl text-gray-900 font-sans tracking-tight font-bold mb-3">Saved Analysis</h3>
+                  <p className="text-gray-500 font-sans max-w-sm leading-relaxed">
+                    Coming soon — bookmark posts from the explore page to read them later.
+                  </p>
+               </div>
+             </TabsContent>
 
-            <TabsContent value="activity">
-              <div className="flex flex-col items-center justify-center py-16 text-center">
-                 <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center mb-6">
-                   <TrendingUp size={36} className="text-green-400" />
-                 </div>
-                 <h3 className="text-2xl text-gray-900 font-sans tracking-tight font-bold mb-3">No Recent Activity</h3>
-                 <p className="text-gray-500 font-sans max-w-sm leading-relaxed">
-                   Your recent interactions and activities will be displayed here.
-                 </p>
-              </div>
-            </TabsContent>
+             <TabsContent value="activity">
+               <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center mb-6">
+                    <TrendingUp size={36} className="text-green-400" />
+                  </div>
+                  <h3 className="text-2xl text-gray-900 font-sans tracking-tight font-bold mb-3">Activity Log</h3>
+                  <p className="text-gray-500 font-sans max-w-sm leading-relaxed">
+                    Coming soon — your recent interactions and activities will be displayed here.
+                  </p>
+               </div>
+             </TabsContent>
           </>
         )}
       </Tabs>

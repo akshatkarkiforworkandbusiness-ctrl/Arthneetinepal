@@ -55,7 +55,7 @@ export default function PublicCertificatePage() {
                 // Fetch stocks to compute live MTM returns
                 const stocksData = await fetchStocks();
                 let holdingsValue = 0;
-                for (const [sym, pos] of Object.entries(portfolio.holdings as Record<string, { quantity: number; avgCost: number }>)) {
+                for (const [sym, pos] of Object.entries((portfolio.holdings || {}) as Record<string, { quantity: number; avgCost: number }>)) {
                   const stock = stocksData.find(s => s.symbol === sym);
                   const ltp = stock ? stock.ltp : pos.avgCost;
                   holdingsValue += pos.quantity * ltp;

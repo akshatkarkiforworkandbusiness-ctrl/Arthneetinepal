@@ -100,31 +100,6 @@ export default function TradingPage() {
     }
   };
 
-  const handleShareTrade = async (trade: Trade) => {
-    if (!user || !profile) return;
-    try {
-      const sharePromise = addDoc(collection(db, 'posts'), {
-        title: `Trade Recap: ${profile.name} ${trade.side === 'buy' ? 'bought' : 'sold'} ${trade.symbol}`,
-        type: 'trade-recap',
-        author: profile.name,
-        authorId: user.uid,
-        category: 'Finance',
-        likes: 0,
-        commentCount: 0,
-        createdAt: serverTimestamp(),
-        content: `I just executed a <strong>${trade.side}</strong> order for <strong>${trade.quantity} shares</strong> of <strong>${trade.symbol}</strong> at <strong>Rs. ${trade.price}</strong> in my virtual portfolio!<br/>Current portfolio value: Rs. ${totalPortfolioValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`
-      });
-
-      toast.promise(sharePromise, {
-        loading: 'Sharing trade to community feed...',
-        success: 'Trade shared successfully!',
-        error: 'Failed to share trade.'
-      });
-    } catch (error) {
-      console.error("Error sharing trade:", error);
-    }
-  };
-
   const handleOrderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedSymbol || orderQty <= 0) {
@@ -159,6 +134,32 @@ export default function TradingPage() {
   }, 0) : 0;
 
   const totalPortfolioValue = portfolio ? (portfolio.cashBalance + holdingsValue) : 0;
+
+  const handleShareTrade = async (trade: Trade) => {
+    if (!user || !profile) return;
+    try {
+      const sharePromise = addDoc(collection(db, 'posts'), {
+        title: `Trade Recap: ${profile.name} ${trade.side === 'buy' ? 'bought' : 'sold'} ${trade.symbol}`,
+        type: 'trade-recap',
+        author: profile.name,
+        authorId: user.uid,
+        category: 'Finance',
+        likes: 0,
+        commentCount: 0,
+        createdAt: serverTimestamp(),
+        content: `I just executed a <strong>${trade.side}</strong> order for <strong>${trade.quantity} shares</strong> of <strong>${trade.symbol}</strong> at <strong>Rs. ${trade.price}</strong> in my virtual portfolio!<br/>Current portfolio value: Rs. ${totalPortfolioValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`
+      });
+
+      toast.promise(sharePromise, {
+        loading: 'Sharing trade to community feed...',
+        success: 'Trade shared successfully!',
+        error: 'Failed to share trade.'
+      });
+    } catch (error) {
+      console.error("Error sharing trade:", error);
+    }
+  };
+
   const totalCost = portfolio ? Object.values(portfolio.holdings).reduce((acc, pos) => acc + (pos.quantity * pos.avgCost), 0) : 0;
   const unrealizedPL = holdingsValue - totalCost;
   const totalReturn = portfolio ? ((totalPortfolioValue - portfolio.startingCapital) / portfolio.startingCapital) * 100 : 0;
@@ -166,6 +167,7 @@ export default function TradingPage() {
   const hasAppliedER = portfolio?.appliedBonuses?.includes('economics-research');
 
   const upperSymbol = selectedSymbol.toUpperCase();
+  const holdingsKey = portfolio ? (Object.keys(portfolio.holdings).find(k => k.toUpperCase() === upperSymbol) || upperSymbol) : upperSymbol;
 
   // Filter stocks for dropdown
   const filteredStocks = searchQuery.trim() === ''
@@ -686,16 +688,16 @@ export default function TradingPage() {
                         <span>Insufficient Cash! This trade exceeds your available cash balance.</span>
                       </div>
                     )}
-                    {orderSide === 'buy' && estTotal > 0.25 * totalPortfolioValue && (
+                    {orderSide === 'buy' && estTotal > 0.25 * portfolio.cashBalance && (
                       <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-xl flex items-start gap-2 text-[10px] font-sans">
                         <AlertTriangle className="shrink-0 mt-0.5" size={14} />
-                        <span>Anti-Cheat Alert: Exceeds 25% single-stock cap (Max. allocation: Rs. {(0.25 * totalPortfolioValue).toLocaleString(undefined, { maximumFractionDigits: 0 })}).</span>
+                        <span>Anti-Cheat Alert: Exceeds 25% single-stock cap (Max. allocation: Rs. {(0.25 * portfolio.cashBalance).toLocaleString(undefined, { maximumFractionDigits: 0 })}).</span>
                       </div>
                     )}
-                    {orderSide === 'sell' && (!portfolio.holdings[upperSymbol] || portfolio.holdings[upperSymbol].quantity < orderQty) && (
+                    {orderSide === 'sell' && (!portfolio.holdings[holdingsKey] || portfolio.holdings[holdingsKey].quantity < orderQty) && (
                       <div className="p-3 bg-[#dc143c]/10 border border-[#dc143c]/20 text-[#dc143c] rounded-xl flex items-start gap-2 text-[10px] font-sans">
                         <AlertTriangle className="shrink-0 mt-0.5" size={14} />
-                        <span>Insufficient Shares! You only own {portfolio.holdings[upperSymbol]?.quantity || 0} shares of {upperSymbol}.</span>
+                        <span>Insufficient Shares! You only own {portfolio.holdings[holdingsKey]?.quantity || 0} shares of {holdingsKey}.</span>
                       </div>
                     )}
                   </div>
@@ -707,8 +709,8 @@ export default function TradingPage() {
                   disabled={
                     tradingLoading || 
                     !selectedSymbol || 
-                    (orderSide === 'buy' && (estTotal > portfolio.cashBalance || estTotal > 0.25 * totalPortfolioValue)) ||
-                    (orderSide === 'sell' && (!portfolio.holdings[upperSymbol] || portfolio.holdings[upperSymbol].quantity < orderQty))
+                    (orderSide === 'buy' && (estTotal > portfolio.cashBalance || estTotal > 0.25 * portfolio.cashBalance)) ||
+                    (orderSide === 'sell' && (!portfolio.holdings[holdingsKey] || portfolio.holdings[holdingsKey].quantity < orderQty))
                   }
                   className={`w-full py-4 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg flex justify-center items-center gap-2 ${
                     orderSide === 'buy' 

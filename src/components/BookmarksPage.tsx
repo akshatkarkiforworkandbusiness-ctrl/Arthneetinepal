@@ -57,26 +57,32 @@ export default function BookmarksPage() {
     return () => unsubscribe();
   }, [user]);
 
-  const fetchPosts = async (postIds: string[]) => {
-    try {
-      const { getDoc } = await import('firebase/firestore');
-      const postsMap = new Map<string, Post>();
-      
-      for (const postId of postIds) {
-        const postDoc = await getDoc(doc(db, 'posts', postId));
-        if (postDoc.exists()) {
-          postsMap.set(postId, { id: postDoc.id, ...postDoc.data() } as Post);
-        }
-      }
-      
-      setPosts(postsMap);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-      toast.error('Failed to load bookmarked posts');
-      setLoading(false);
-    }
-  };
+   const fetchPosts = async (postIds: string[]) => {
+     try {
+       const postsMap = new Map<string, Post>();
+       let missingCount = 0;
+
+       for (const postId of postIds) {
+         const postDoc = await getDoc(doc(db, 'posts', postId));
+         if (postDoc.exists()) {
+           postsMap.set(postId, { id: postDoc.id, ...postDoc.data() } as Post);
+         } else {
+           missingCount++;
+         }
+       }
+
+       if (missingCount > 0) {
+         toast.error(`${missingCount} bookmarked post${missingCount > 1 ? 's' : ''} no longer available.`);
+       }
+
+       setPosts(postsMap);
+       setLoading(false);
+     } catch (error) {
+       console.error('Error fetching posts:', error);
+       toast.error('Failed to load bookmarked posts');
+       setLoading(false);
+     }
+   };
 
   const removeBookmark = async (postId: string) => {
     if (!user) return;

@@ -191,8 +191,9 @@ export default function TradingGamePage() {
     return Object.values(portfolio.holdings).reduce((acc, pos) => acc + (pos.quantity * pos.avgCost), 0);
   }, [portfolio?.holdings]);
   const unrealizedPL = holdingsValue - totalCost;
-  const totalReturn = portfolio && portfolio.cashBalance + totalCost > 0
-    ? ((totalPortfolioValue - (portfolio.cashBalance + totalCost)) / (portfolio.cashBalance + totalCost)) * 100
+  const denominator = portfolio ? portfolio.cashBalance + totalCost : 0;
+  const totalReturn = denominator > 0
+    ? ((totalPortfolioValue - denominator) / denominator) * 100
     : 0;
 
   // Handle claim rewards

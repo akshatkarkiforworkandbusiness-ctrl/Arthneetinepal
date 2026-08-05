@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Bell, Heart, MessageSquare, UserPlus, Check } from 'lucide-react';
-import { collection, query, orderBy, onSnapshot, doc, updateDoc, where, getDocs } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, doc, updateDoc, where, getDocs, writeBatch } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -75,9 +75,8 @@ export default function NotificationsPage() {
         where('read', '==', false)
       );
       const unreadSnap = await getDocs(unreadQuery);
-      
-      const { writeBatch } = await import('firebase/firestore');
-      const batch = writeBatch(db);
+
+       const batch = writeBatch(db);
       
       unreadSnap.docs.forEach(doc => {
         batch.update(doc.ref, { read: true });

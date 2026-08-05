@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Eye, EyeOff } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -55,12 +55,33 @@ export function AuthModal() {
   const [authForm, setAuthForm] = useState({ name: '', email: '', password: '', interests: [] as string[] });
   const [authError, setAuthError] = useState<string | null>(null);
   const [authSubmitting, setAuthSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const resetAuthForm = () => {
+    setAuthForm({ name: '', email: '', password: '', interests: [] });
+  };
 
   const closeAuthModal = () => {
     setShowAuthModal(false);
     setIsResetMode(false);
+    setIsSignUpMode(false);
     setResetSent(false);
+    setResetEmail('');
     setAuthError(null);
+    setShowPassword(false);
+    resetAuthForm();
+  };
+
+  const switchToLogin = () => {
+    setIsSignUpMode(false);
+    setAuthError(null);
+    resetAuthForm();
+  };
+
+  const switchToSignUp = () => {
+    setIsSignUpMode(true);
+    setAuthError(null);
+    resetAuthForm();
   };
 
   return createPortal(
@@ -109,6 +130,12 @@ export function AuthModal() {
                 <form onSubmit={async (e) => {
                   e.preventDefault();
                   setAuthError(null);
+
+                  if (!resetEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(resetEmail)) {
+                    setAuthError('Please enter a valid email address.');
+                    return;
+                  }
+
                   setResetSubmitting(true);
                   try {
                     await resetPassword(resetEmail);
@@ -138,7 +165,7 @@ export function AuthModal() {
                   </div>
 
                   {authError && (
-                    <div className="p-3 bg-brand-emerald/10 border border-brand-emerald/30 rounded-lg text-brand-emerald text-[10px] leading-relaxed font-semibold">
+                    <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-[10px] leading-relaxed font-semibold">
                       {authError}
                     </div>
                   )}
@@ -168,7 +195,7 @@ export function AuthModal() {
             <div className="flex bg-slate-raised p-1.5 rounded-lg border border-white/10 mb-6">
               <button
                 type="button"
-                onClick={() => { setIsSignUpMode(false); setAuthError(null); }}
+                onClick={switchToLogin}
                 className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all cursor-pointer ${
                   !isSignUpMode ? 'bg-brand-emerald-light text-white shadow-md' : 'text-text-muted hover:text-white'
                 }`}
@@ -177,7 +204,7 @@ export function AuthModal() {
               </button>
               <button
                 type="button"
-                onClick={() => { setIsSignUpMode(true); setAuthError(null); }}
+                onClick={switchToSignUp}
                 className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all cursor-pointer ${
                   isSignUpMode ? 'bg-brand-emerald-light text-white shadow-md' : 'text-text-muted hover:text-white'
                 }`}
@@ -189,16 +216,40 @@ export function AuthModal() {
             <form onSubmit={async (e) => {
               e.preventDefault();
               setAuthError(null);
+
+              if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(authForm.email)) {
+                setAuthError('Please enter a valid email address.');
+                return;
+              }
+
+              if (isSignUpMode) {
+                if (!authForm.name.trim()) {
+                  setAuthError('Please enter your full name.');
+                  return;
+                }
+                if (authForm.name.trim().length < 2) {
+                  setAuthError('Name must be at least 2 characters.');
+                  return;
+                }
+                if (authForm.interests.length === 0) {
+                  setAuthError('Please select at least one field of interest.');
+                  return;
+                }
+              }
+
+              if (authForm.password.length < 6) {
+                setAuthError('Password must be at least 6 characters.');
+                return;
+              }
+
               setAuthSubmitting(true);
               try {
                 if (isSignUpMode) {
-                  if (!authForm.name.trim()) throw new Error('Please enter your full name.');
-                  if (authForm.interests.length === 0) throw new Error('Please select at least one field of interest.');
                   await signUpWithEmail(authForm.email, authForm.password, authForm.name, authForm.interests);
                 } else {
                   await signInWithEmail(authForm.email, authForm.password);
                 }
-                setAuthForm({ name: '', email: '', password: '', interests: [] });
+                resetAuthForm();
               } catch (err: any) {
                 setAuthError(getReadableAuthError(err));
               } finally {
@@ -234,14 +285,27 @@ export function AuthModal() {
 
               <div>
                 <label className="text-[9px] font-black uppercase tracking-widest text-text-muted mb-1.5 block">Password</label>
-                <input 
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  value={authForm.password}
-                  onChange={e => setAuthForm({...authForm, password: e.target.value})}
-                  className="w-full bg-[#0f1011] border border-white/[0.06] rounded-lg p-3 text-xs outline-none focus:border-[#847dff] text-white transition-all font-medium"
-                />
+                <div className="relative">
+                  <input 
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    placeholder="••••••••"
+                    minLength={6}
+                    value={authForm.password}
+                    onChange={e => setAuthForm({...authForm, password: e.target.value})}
+                    className="w-full bg-[#0f1011] border border-white/[0.06] rounded-lg p-3 pr-10 text-xs outline-none focus:border-[#847dff] text-white transition-all font-medium"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-white transition-colors cursor-pointer"
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+                {isSignUpMode && authForm.password.length > 0 && authForm.password.length < 6 && (
+                  <p className="text-[9px] text-amber-400 mt-1">Password must be at least 6 characters.</p>
+                )}
                 {!isSignUpMode && (
                   <div className="text-right mt-1.5">
                     <button
@@ -291,7 +355,7 @@ export function AuthModal() {
               )}
 
               {authError && (
-                <div className="p-3 bg-brand-emerald/10 border border-brand-emerald/30 rounded-lg text-brand-emerald text-[10px] leading-relaxed font-semibold">
+                <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-[10px] leading-relaxed font-semibold">
                   {authError}
                 </div>
               )}

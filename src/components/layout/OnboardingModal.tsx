@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 const interestOptions = ['Finance', 'Economics', 'Business', 'Policy', 'Corporate Law', 'Entrepreneurship', 'Other'];
@@ -13,10 +14,16 @@ const schoolOptions = [
 ];
 
 export function OnboardingModal() {
-  const { user, profile, showOnboarding, updateProfile } = useAuth();
+  const { user, profile, showOnboarding, setShowOnboarding, updateProfile } = useAuth();
   const [setupForm, setSetupForm] = useState({ name: '', email: '', interests: [] as string[], schoolId: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const initialized = useRef(false);
 
   useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
+
     if (profile) {
       setSetupForm({ 
         name: profile.name, 
@@ -29,6 +36,46 @@ export function OnboardingModal() {
     }
   }, [profile, user]);
 
+  const isGoogleUser = user?.providerData?.some(p => p.providerId === 'google.com');
+
+  const handleSkip = () => {
+    setShowOnboarding(false);
+    setError(null);
+  };
+
+  const handleSubmit = async () => {
+    setError(null);
+
+    if (!setupForm.name.trim()) {
+      setError('Please enter your full name.');
+      return;
+    }
+    if (setupForm.name.trim().length < 2) {
+      setError('Name must be at least 2 characters.');
+      return;
+    }
+    if (setupForm.interests.length === 0) {
+      setError('Please select at least one field of interest.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await updateProfile({ 
+        name: setupForm.name, 
+        email: setupForm.email,
+        topics: setupForm.interests,
+        schoolId: setupForm.schoolId || undefined,
+        publicPortfolio: false
+      });
+      setShowOnboarding(false);
+    } catch (err: any) {
+      setError(err?.message || 'Failed to save profile. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <AnimatePresence>
       {showOnboarding && (
@@ -36,8 +83,17 @@ export function OnboardingModal() {
           <motion.div 
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.95, opacity: 0 }}
             className="bg-white p-8 md:p-12 rounded-lg-2xl max-w-xl w-full shadow-2xl relative"
           >
+            <button 
+              onClick={handleSkip}
+              className="absolute top-6 right-6 text-text-muted hover:text-white transition-colors cursor-pointer"
+              title="Skip for now"
+            >
+              <X size={24} />
+            </button>
+
             <h2 className="font-sans tracking-tight font-semibold text-4xl text-white italic mb-4">Complete Your Profile</h2>
             <p className="text-text-muted mb-8 text-sm">Tell us a bit more about yourself to join the community.</p>
             
@@ -62,7 +118,9 @@ export function OnboardingModal() {
                   readOnly
                   className="w-full bg-slate-raised border-2 border-white/5 rounded-lg p-4 outline-none focus:border-brand-emerald transition-all font-bold text-white opacity-60 cursor-not-allowed"
                 />
-                <p className="text-[8px] text-white/40 mt-1 uppercase tracking-widest">Verified via Google</p>
+                {isGoogleUser && (
+                  <p className="text-[8px] text-white/40 mt-1 uppercase tracking-widest">Verified via Google</p>
+                )}
               </div>
               
               <div>
@@ -85,6 +143,7 @@ export function OnboardingModal() {
                   {interestOptions.map(option => (
                     <button
                       key={option}
+                      type="button"
                       onClick={() => {
                         const newInterests = setupForm.interests.includes(option)
                           ? setupForm.interests.filter(i => i !== option)
@@ -103,20 +162,28 @@ export function OnboardingModal() {
                 </div>
               </div>
 
+              {error && (
+                <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-[10px] leading-relaxed font-semibold">
+                  {error}
+                </div>
+              )}
+
               <button 
-                onClick={() => {
-                  updateProfile({ 
-                    name: setupForm.name, 
-                    email: setupForm.email,
-                    topics: setupForm.interests,
-                    schoolId: setupForm.schoolId || undefined,
-                    publicPortfolio: false
-                  });
-                }}
-                disabled={!setupForm.name || setupForm.interests.length === 0}
-                className="w-full bg-brand-emerald text-white py-5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-brand-emerald transition-all disabled:opacity-30 mt-4 shadow-xl"
+                onClick={handleSubmit}
+                disabled={!setupForm.name || setupForm.interests.length === 0 || isSubmitting}
+                className="w-full bg-brand-emerald text-white py-5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-brand-emerald transition-all disabled:opacity-30 mt-4 shadow-xl flex items-center justify-center gap-2 cursor-pointer"
               >
-                JOIN ARTHNEETI
+                {isSubmitting && (
+                  <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                )}
+                {isSubmitting ? 'Joining...' : 'JOIN ARTHNEETI'}
+              </button>
+
+              <button 
+                onClick={handleSkip}
+                className="w-full text-text-muted hover:text-white text-[10px] font-bold text-center cursor-pointer transition-colors"
+              >
+                Skip for now
               </button>
             </div>
           </motion.div>
