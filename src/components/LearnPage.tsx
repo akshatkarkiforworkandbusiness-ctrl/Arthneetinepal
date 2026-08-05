@@ -156,105 +156,6 @@ export const LESSONS: Lesson[] = [
     ]
   },
   {
-    id: 'budgeting-emergency-fund',
-    level: 'Beginner',
-    title: 'Budgeting, Saving & Building Financial Resilience',
-    desc: 'The 50/30/20 rule, compound interest vs inflation, SMART financial goals, responsible borrowing, and how NRB policy reaches your personal wallet.',
-    duration: '9:30',
-    tag: 'Financial Literacy',
-    videoUrl: 'https://www.youtube.com/embed/REFRRa9CtS4',
-    thumbnail: 'https://img.youtube.com/vi/REFRRa9CtS4/hqdefault.jpg',
-    resources: [
-      { title: '50/30/20 Budgeting Excel Template', size: '45 KB XLSX', url: '#' }
-    ],
-    chapters: [
-      'The 50/30/20 budgeting rule and building an emergency fund',
-      'Compound interest vs inflation — the two forces shaping your wealth',
-      'Calculating net worth and setting SMART financial goals',
-      'Responsible borrowing, EMIs, and Nepal\'s Credit Information Bureau (CIB)',
-      'How NRB policy decisions and deposit insurance affect your money',
-    ],
-    faqs: [
-      {
-        topic: 'Financial Literacy',
-        question: 'What is the 50/30/20 budgeting rule, and how can it be applied in Nepal?',
-        answer: 'The 50/30/20 rule recommends allocating 50% of your income to needs (rent, food, transport), 30% to wants (eating out, entertainment), and 20% to savings and investments. For example, on a Rs. 40,000 monthly income in Kathmandu, that\'s Rs. 20,000 on essentials, Rs. 12,000 on lifestyle, and Rs. 8,000 saved. In high-cost areas you might adjust to 60/20/20 — the key is consistency, not the exact ratio.',
-      },
-      {
-        topic: 'Financial Literacy',
-        question: 'What is the difference between simple and compound interest?',
-        answer: 'Simple interest is calculated only on your original principal amount. Compound interest is calculated on the principal plus all interest already earned, so it grows exponentially over time. Rs. 1,00,000 at 8% simple interest over 10 years grows to Rs. 1,80,000 — the same amount at compound interest grows to Rs. 2,15,892.',
-      },
-      {
-        topic: 'Financial Literacy',
-        question: 'How do I set SMART financial goals?',
-        answer: 'Vague goals like "I want to save money" usually fail. SMART goals are Specific, Measurable, Achievable, Relevant, and Time-bound. For example: "I want to save Rs. 2,40,000 in 24 months for a motorcycle by depositing Rs. 10,000 per month in a fixed deposit at 9% interest."',
-      },
-      {
-        topic: 'Financial Literacy',
-        question: 'Why is an emergency fund so important, and how much should it be?',
-        answer: 'An emergency fund protects you from unexpected crises like job loss or medical emergencies without forcing you to sell long-term investments. Your target should be 3 to 6 months of essential living expenses, kept in a separate, easily accessible savings account.',
-      },
-      {
-        topic: 'Financial Literacy',
-        question: 'How does inflation affect my savings hidden at home?',
-        answer: 'Inflation is a "silent tax" that reduces the purchasing power of your money over time. Keeping large amounts of cash hidden at home is financially harmful in the long run because it loses value. To protect your wealth, your money needs to earn a return higher than Nepal\'s inflation rate — known as the "real return."',
-      },
-      {
-        topic: 'Financial Literacy',
-        question: 'What is a Systematic Investment Plan (SIP) and why does it work?',
-        answer: 'A SIP involves investing a fixed amount every month — into mutual funds, for example — regardless of market conditions. This uses rupee-cost averaging: you automatically buy more units when prices are low and fewer when prices are high, lowering your average cost over time while leveraging compounding for long-term wealth.',
-      },
-      {
-        topic: 'Financial Literacy',
-        question: 'What is Net Worth and why does it matter more than income?',
-        answer: 'Net Worth is your Total Assets (what you own) minus your Total Liabilities (what you owe). It\'s the true scorecard of financial health — a high-earning person with massive debt can have a lower net worth than a modest earner with no debt and steady savings. Tracking and growing net worth matters more than focusing on monthly salary alone.',
-      },
-      {
-        topic: 'Financial Literacy',
-        question: 'How does my borrowing history affect my future in Nepal?',
-        answer: 'Nepal\'s Credit Information Bureau (CIB) tracks your borrowing history. Missing loan payments or defaulting builds a poor credit record, making it harder and more expensive to borrow from banks in the future. Build a positive history by borrowing only what you can afford and paying on time.',
-      },
-      {
-        topic: 'Financial Literacy',
-        question: 'How do decisions made by Nepal Rastra Bank (NRB) affect my wallet?',
-        answer: 'NRB is Nepal\'s central bank and sets monetary policy. When NRB raises the Policy Rate (the benchmark interest rate), commercial banks typically raise the rates they charge on loans (increasing your EMIs) and the rates they pay on deposits. Watching NRB policy helps you anticipate whether borrowing will get cheaper or more expensive.',
-      },
-      {
-        topic: 'Financial Literacy',
-        question: 'Are my bank deposits safe if a bank fails in Nepal?',
-        answer: 'Yes, up to a limit. Deposits up to Rs. 5,00,000 per depositor per licensed commercial bank are insured by the Deposit and Credit Guarantee Corporation (DCGC). This protection does not fully apply to unregulated schemes or cooperatives, which is why keeping large sums in cooperatives carries higher risk.',
-      },
-    ],
-    quiz: [
-      {
-        question: 'Under the 50/30/20 budgeting rule, how should you divide your after-tax income?',
-        options: ['50% to savings, 30% to wants, 20% to needs', '50% to needs, 30% to wants, 20% to savings and debt repayment', '50% to investments, 30% to housing, 20% to entertainment', '50% to needs, 30% to savings, 20% to wants'],
-        correctIndex: 1
-      },
-      {
-        question: 'What is the primary difference between compound interest and inflation?',
-        options: ['Compound interest decreases your wealth over time, while inflation increases it.', 'Compound interest only applies to bank loans, while inflation applies to groceries.', 'Compound interest exponentially grows your money, while inflation slowly decreases its purchasing power.', 'They are exactly the same concept applied to different currencies.'],
-        correctIndex: 2
-      },
-      {
-        question: 'When setting a SMART financial goal, what does the "M" stand for?',
-        options: ['Meaningful (It must be important to you)', 'Measurable (You must be able to track your exact progress)', 'Manageable (It must be easy to achieve)', 'Monetary (It must involve cash)'],
-        correctIndex: 1
-      },
-      {
-        question: 'What role does Nepal\'s Credit Information Bureau (CIB) play when you apply for a loan?',
-        options: ['It provides the actual money for the loan.', 'It determines the national interest rate for all banks.', 'It maintains a record of your borrowing history to help banks assess how risky it is to lend to you.', 'It forgives your debt if you cannot pay your EMI on time.'],
-        correctIndex: 2
-      },
-      {
-        question: 'How do Nepal Rastra Bank (NRB) policy decisions typically affect your personal wallet?',
-        options: ['They directly control how much your employer pays you.', 'They dictate the exact prices of vegetables in local markets.', 'They influence the interest rates you earn on deposits and pay on loans.', 'They determine how much tax you pay on your income.'],
-        correctIndex: 2
-      }
-    ]
-  },
-  {
     id: 'monetary-policy-2026',
     level: 'Advanced',
     title: 'Monetary Policy 2026: NRB\'s Cautiously Accommodative Stance',
@@ -1815,6 +1716,870 @@ export const LESSONS: Lesson[] = [
         correctIndex: 0
       }
     ]
+  },
+  {
+    id: 'banking-interest-dynamics',
+    level: 'Intermediate',
+    title: 'Banking Services & Interest Rate Dynamics in Nepal',
+    desc: 'Deconstructing Nepal\'s four-tier BFI classification, CD ratio 90% caps, monthly Base Rates, central bank spread regulations, and monetary policy stances.',
+    duration: '18:00',
+    tag: 'Financial Literacy',
+    videoUrl: 'https://www.youtube.com/embed/pWDk22_FNIs',
+    thumbnail: 'https://img.youtube.com/vi/pWDk22_FNIs/hqdefault.jpg',
+    chapters: [
+      'Four-Tier Classification of BFIs (Class A, B, C, D) & DCGC Protection',
+      'The Credit-to-Deposit (CD) Ratio 90% Cap & Liquidity Dynamics',
+      'The Base Rate Formula: Determinants of the Lending Floor',
+      'Stricter Interest Rate Spread Regulations & Margin Squeeze',
+      'Monetary Policy Stances: From COVID Easing to 2026/27 Flexibility',
+    ],
+    faqs: [
+      {
+        topic: 'Financial Literacy',
+        question: 'How does Nepal Rastra Bank (NRB) classify banks, and what are the main differences between the classes?',
+        answer: 'NRB categorizes licensed banks and financial institutions (BFIs) into four classes (A, B, C, and D) in descending order of paid-up capital requirements and permitted financial activities: Class "A" (Commercial Banks) are full-service institutions with 20 banks operating; Class "B" (Development Banks) are mid-sized regional/SME institutions; Class "C" (Finance Companies) focus on deposit-taking and hire-purchase; and Class "D" (Microfinance Institutions) provide rural micro-loans.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How are my savings protected if I deposit money in a smaller Class B or Class C institution?',
+        answer: 'To protect depositors, NRB mandates that all licensed Class A, B, and C institutions participate in the Deposit & Credit Guarantee Corporation (DCGC) scheme. This scheme guarantees deposits up to NPR 5 lakh per depositor, per institution, providing equal protection regardless of bank size.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Why do Class B development banks and Class C finance companies often offer higher interest rates on deposits than Class A commercial banks?',
+        answer: 'Because Class A commercial banks possess massive scale, extensive branch networks, and brand convenience, they can easily attract deposits at lower interest rates. Smaller Class B and C institutions must aggressively compete to pull deposits by offering higher savings and fixed deposit (FD) interest rates.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What is the Credit-to-Deposit (CD) ratio, and what happens if a bank breaches the regulatory limit in Nepal?',
+        answer: 'The CD ratio measures what percentage of a bank\'s mobilized deposits are deployed as loans: CD Ratio = [Total Credit / (Total Deposits + Core Capital)] * 100. NRB enforces a strict regulatory cap of 90%. Any BFI exceeding 90% faces regulatory penalties and is forced to freeze credit issuance until compliance is restored.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How does a low CD ratio (surplus liquidity) impact the Nepalese stock market (NEPSE)?',
+        answer: 'A low CD ratio (e.g. 75% to 78%) signifies surplus liquidity where banks have cash but low credit demand. This forces banks to compete by cutting lending interest rates. Lower borrowing costs boost corporate profitability and investor morale, acting as a bullish catalyst for NEPSE.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Why is a persistently low CD ratio sometimes considered a warning sign for the economy?',
+        answer: 'While stock investors welcome falling interest rates, a persistently low CD ratio without credit growth indicates that private sector investment is stagnant, businesses lack confidence to borrow, and the broader real economy is experiencing structural slowdown.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What is a bank\'s "Base Rate," and can a bank issue a loan below it?',
+        answer: 'The Base Rate is the regulatory minimum interest rate floor below which banks are legally prohibited from lending to any customer. It ensures credit is never priced below a bank\'s actual operational and funding costs.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What are the key factors that determine a bank\'s monthly Base Rate?',
+        answer: 'Base rates are calculated monthly based on five variables: 1) Cost of Funds, 2) Cost of Cash Reserve Ratio (CRR), 3) Cost of Statutory Liquidity Ratio (SLR), 4) Administrative & Operating Costs, and 5) Minimum Rate of Return.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What is the "Spread Rate," and how did NRB\'s revised formula impact Nepalese banks?',
+        answer: 'The Spread Rate is the net difference between average loan interest earned and average deposit interest paid. NRB revised the formula to exclude interest income earned from government securities. This squeezed bank profit margins but successfully lowered retail lending rates for the public.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How has NRB shifted its monetary policy stance over recent economic cycles?',
+        answer: 'NRB shifted from a loose monetary policy during COVID-19 to an aggressive tightening in 2022/23 (bank rate 8.5%, CRR 4.0%) to curb import inflation. For 2026/27, backed by strong forex reserves, NRB transitioned to a "cautiously flexible" stance targeting 7.0% GDP growth.',
+      },
+    ],
+    quiz: [
+      {
+        question: 'Under NRB regulation, what maximum deposit amount per depositor per institution is protected by the DCGC in Class A, B, and C BFIs?',
+        options: ['NPR 2 Lakhs', 'NPR 3 Lakhs', 'NPR 5 Lakhs', 'NPR 10 Lakhs'],
+        correctIndex: 2
+      },
+      {
+        question: 'What is the strict regulatory Credit-to-Deposit (CD) ratio cap enforced by Nepal Rastra Bank?',
+        options: ['75%', '80%', '85%', '90%'],
+        correctIndex: 3
+      },
+      {
+        question: 'Which rate acts as the legal minimum interest rate floor below which banks cannot offer loans in Nepal?',
+        options: ['Policy Rate', 'Base Rate', 'Spread Rate', 'Repo Rate'],
+        correctIndex: 1
+      },
+      {
+        question: 'What major income source did NRB explicitly exclude from the net interest spread calculation to lower retail lending rates?',
+        options: ['Interbank lending interest', 'Government securities interest income', 'Credit card service fees', 'Foreign exchange commission'],
+        correctIndex: 1
+      },
+      {
+        question: 'What economic growth target did NRB set under its 2026/27 "cautiously flexible" monetary policy stance?',
+        options: ['4.5%', '5.5%', '7.0%', '9.0%'],
+        correctIndex: 2
+      }
+    ]
+  },
+  {
+    id: 'floorsheet-advanced-ta',
+    level: 'Advanced',
+    title: 'Floor Sheet Analysis & Advanced Technical Indicators',
+    desc: 'Reading NEPSE floor sheets, tracking broker accumulation vs distribution, using MACD & RSI divergence, Fibonacci retracements, and avoiding retail bull/bear traps.',
+    duration: '24:00',
+    tag: 'Technical Analysis',
+    videoUrl: 'https://www.youtube.com/embed/L7G0OfOUkms',
+    thumbnail: 'https://img.youtube.com/vi/L7G0OfOUkms/hqdefault.jpg',
+    chapters: [
+      'Understanding NEPSE Floor Sheets & Broker ID Tracking',
+      'Detecting Institutional Accumulation vs. Retail Distribution',
+      'Advanced RSI & MACD Divergence Patterns',
+      'Fibonacci Retracement & Extension Levels for Target Setting',
+      'Volume Price Analysis & Identifying Trap Breakouts',
+    ],
+    faqs: [
+      {
+        topic: 'Technical Analysis',
+        question: 'What is a Floor Sheet in NEPSE and how is it used by active traders?',
+        answer: 'A Floor Sheet is a real-time record of all completed trades on NEPSE, showing transaction price, quantity, buyer broker ID, and seller broker ID. Active traders analyze floor sheets to track which major brokerages are accumulating or dumping specific stocks.',
+      },
+      {
+        topic: 'Technical Analysis',
+        question: 'How do you identify Broker Accumulation vs Distribution?',
+        answer: 'Accumulation happens when a single broker ID consistently buys large quantities of a stock across multiple small orders without spiking the price. Distribution happens when a major broker ID repeatedly sells large blocks into retail buying surges near resistance levels.',
+      },
+      {
+        topic: 'Technical Analysis',
+        question: 'What is Bullish RSI Divergence and why is it a powerful signal?',
+        answer: 'Bullish RSI Divergence occurs when a stock price makes a new lower low, but the RSI indicator makes a higher low. This indicates that downward selling momentum is weakening despite lower prices, signaling an impending upward trend reversal.',
+      },
+      {
+        topic: 'Technical Analysis',
+        question: 'How are Fibonacci Retracement levels (0.382, 0.5, 0.618) applied in NEPSE?',
+        answer: 'Traders draw Fibonacci retracement lines from a major swing low to swing high. Key levels—especially 50% and 61.8% (the Golden Ratio)—act as potential support zones where buyers typically step in during market pullbacks.',
+      },
+      {
+        topic: 'Technical Analysis',
+        question: 'What is a "Fakeout" or "Bull Trap" and how can traders protect themselves?',
+        answer: 'A Bull Trap occurs when price breaks above a resistance level, enticing retail traders to buy, but quickly reverses downwards. Traders protect themselves by requiring breakout confirmation with above-average volume and waiting for a successful retest of the broken level as support.',
+      }
+    ],
+    quiz: [
+      {
+        question: 'What key information is revealed in a NEPSE Floor Sheet transaction record?',
+        options: ['Investor CNIC number and address', 'Transaction price, quantity, buyer broker ID, and seller broker ID', 'Company bank balance and debt details', 'SEBON inspection notes'],
+        correctIndex: 1
+      },
+      {
+        question: 'What does a Bullish RSI Divergence indicate?',
+        options: ['Price makes a lower low but RSI makes a higher low, signaling weakening downward momentum', 'Price and RSI are both dropping rapidly', 'Price makes a higher high and RSI reaches 100', 'Volume has dropped to zero'],
+        correctIndex: 0
+      },
+      {
+        question: 'Which Fibonacci Retracement level is widely referred to as the "Golden Ratio" support zone?',
+        options: ['23.6%', '38.2%', '61.8%', '100%'],
+        correctIndex: 2
+      },
+      {
+        question: 'What sign helps confirm a genuine breakout above resistance versus a Bull Trap?',
+        options: ['Low volume and no news', 'Breakout accompanied by significantly above-average volume and retest confirmation', 'RSI below 20', 'Immediate 10% lower circuit'],
+        correctIndex: 1
+      }
+    ]
+  },
+  {
+    id: 'real-estate-nepal',
+    level: 'Intermediate',
+    title: 'Real Estate Valuation & Land Economics in Nepal',
+    desc: 'Understanding Ropani-Aana vs Bigha-Kattha systems, Malpot vs Market Valuation, Gross Rental Yields, ICAN Valuation Manual 2083, and NRB credit relief.',
+    duration: '18:00',
+    tag: 'Financial Literacy',
+    videoUrl: 'https://www.youtube.com/embed/_2bE6zfJ5cM',
+    thumbnail: 'https://img.youtube.com/vi/_2bE6zfJ5cM/hqdefault.jpg',
+    chapters: [
+      'The Dual Geographic Land Measurement System (Hills vs Terai)',
+      'Government Valuation (Malpot Rate) vs. Market Valuation (Bazar Bhau)',
+      'Gross Rental Yield as the New North Star (Residential vs Commercial)',
+      'Standardized Valuation Approaches (ICAN Manual 2083 & NFRS 13)',
+      'Monetary Policy Credit Relief, Beta Calculations & Liquidity Traps',
+    ],
+    faqs: [
+      {
+        topic: 'Financial Literacy',
+        question: 'How do I read land measurement notation like "1-2-3-1" on a Kathmandu title deed (Lalpurja)?',
+        answer: 'In the Hills/Kathmandu system, land ownership documents sequentially record areas using the format [Ropani] - [Aana] - [Paisa] - [Daam]. A notation of 1-2-3-1 means 1 Ropani, 2 Aana, 3 Paisa, and 1 Daam. A standard small residential plot sits on 3 to 4 Aana, whereas a generous plot spans 8 Aana to 1 Ropani.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How do I convert land measurements between the Terai (Bigha) and Hill (Ropani) systems?',
+        answer: '1 Bigha (used in the flat Terai regions like Chitwan or Biratnagar) is equivalent to approximately 13.31 Ropanis (or precisely 13.63 Ropanis). In terms of area, 1 Ropani is 5,476 sq. ft., whereas 1 Bigha is 72,900 sq. ft.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What is the "registration cost trap" that surprises first-time property buyers in Nepal?',
+        answer: 'Many buyers assume registration fees (stamp duty) are strictly 4% of the government (Malpot) valuation. However, Land Revenue Offices also charge a minimum fee equivalent to 1.5% of the declared transaction price if that sale price is higher than Malpot rates, leading to higher upfront budget requirements.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Why would government valuation (Malpot rates) ever equal or exceed actual market rates?',
+        answer: 'In prime commercial zones of Kathmandu (Putalisadak, New Baneshwor), Land Revenue Offices have aggressively revised Malpot rates upward since 2080 BS to NPR 38-72 Lakh per aana, closely matching or exceeding market prices, whereas developing suburbs still maintain wider gaps.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How do I calculate Gross Rental Yield on a Kathmandu property?',
+        answer: 'Gross Rental Yield evaluates cash flow relative to purchase price: Gross Rental Yield = (Expected Monthly Rent * 12 / Total Property Purchase Price) * 100. For example, buying a Lalitpur apartment for NPR 2 Crore and renting for NPR 80,000/month gives a 4.8% yield.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Why are commercial office yields in Kathmandu so much higher than traditional residential flats?',
+        answer: 'Standard residential flats suffer from high supply outside the Ring Road, keeping yields at 2.5% to 3.5%. Commercial offices and ground-floor retail in high-footfall corridors command premium rents with tenant-funded fit-outs, generating higher yields of 7.0% to 9.0%.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How do we statistically calculate a stock\'s Beta (β) for a NFRS valuation?',
+        answer: 'Under Chapter 5 of the ICAN Valuation Manual 2083, Beta is mathematically defined as the covariance of asset returns with market returns divided by market variance: Beta = Cov(Ri, Rm) / Var(Rm). A Beta of 1.4 indicates the asset is 40% more volatile than NEPSE.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Why must we "un-lever" and "re-lever" Beta when valuing a private company?',
+        answer: 'Un-levering isolates pure operational risk from debt risk in proxy public companies. We un-lever listed peer betas to obtain Asset Beta (βu), then re-lever it (βl) using the subject company\'s specific debt-to-equity ratio and tax rate.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What is the difference between Level 1, Level 2, and Level 3 inputs under NFRS 13 Fair Value guidelines?',
+        answer: 'Level 1 inputs are unadjusted quoted prices in active markets (e.g. daily NEPSE closing price). Level 2 inputs are observable market inputs like peer P/E multiples. Level 3 inputs are unobservable inputs relying on forward-looking DCF assumptions.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What is a "liquidity trap" and how does central bank policy affect real estate credit?',
+        answer: 'A liquidity trap occurs when interbank rates drop (e.g., NRB policy floor 2.75%) but market confidence is low so investors hold cash. NRB eases credit by permitting banks to conduct internal collateral valuations for small business loans up to NPR 10 Lakhs.',
+      },
+    ],
+    quiz: [
+      {
+        question: 'In Nepal\'s hill land measurement system, how many Aana equal 1 Ropani?',
+        options: ['4 Aana', '10 Aana', '16 Aana', '20 Aana'],
+        correctIndex: 2
+      },
+      {
+        question: 'Approximately how many Ropanis make up 1 Bigha in the Terai land measurement system?',
+        options: ['5 Ropanis', '13.31 Ropanis', '25 Ropanis', '50 Ropanis'],
+        correctIndex: 1
+      },
+      {
+        question: 'What is the formula for calculating Gross Rental Yield on real estate?',
+        options: [
+          '(Gross Monthly Rent * 12 / Total Property Purchase Price) * 100',
+          '(Net Annual Rent / Malpot Valuation) * 100',
+          '(Total Purchase Price / Annual Rent) * 100',
+          '(Monthly Rent / Bank Loan EMI) * 100'
+        ],
+        correctIndex: 0
+      },
+      {
+        question: 'Under NFRS 13 Fair Value hierarchy, which level corresponds to unadjusted quoted prices in active public markets like NEPSE?',
+        options: ['Level 1 (Highest Priority)', 'Level 2', 'Level 3 (Lowest Priority)', 'Level 4'],
+        correctIndex: 0
+      },
+      {
+        question: 'What maximum loan limit recently allowed banks to perform internal collateral valuations by their own staff under NRB directives?',
+        options: ['NPR 2 Lakhs', 'NPR 5 Lakhs', 'NPR 10 Lakhs (10 Lakhs)', 'NPR 50 Lakhs'],
+        correctIndex: 2
+      }
+    ]
+  },
+  {
+    id: 'cooperatives-financial-safety',
+    level: 'Beginner',
+    title: 'Cooperatives (Sahakari) Crisis & Financial Safety',
+    desc: 'Analyzing Nepal\'s Sahakari crisis, NCRA regulatory reset, Gorkha Media scam, DCGF deposit insurance gaps, CIB blacklisting traps, and the 6% spread cap.',
+    duration: '18:00',
+    tag: 'Financial Literacy',
+    videoUrl: 'https://www.youtube.com/embed/DfcsNGQsPJc',
+    thumbnail: 'https://img.youtube.com/vi/DfcsNGQsPJc/hqdefault.jpg',
+    chapters: [
+      'The Regulatory Oversight Deficit & The NCRA "Regulatory Reset"',
+      'Systemic Embezzlement & The Gorkha Media Cooperative Scam',
+      'The Post-Collapse Loan Survival Trap & Cooperative Recovery Tribunal',
+      'The Absence of Deposit Insurance & The "Double-Squeeze" Clause',
+      'Interest Rate Caps, 6% Spread Constraints & 2081 Ordinance Reforms',
+    ],
+    faqs: [
+      {
+        topic: 'Financial Literacy',
+        question: 'What are savings and credit cooperatives, and why did they become so popular in Nepal?',
+        answer: 'Savings and credit cooperatives are member-owned financial institutions offering localized services. They became popular due to simpler, faster lending procedures compared to commercial banks and historically offered unrealistically high deposit interest rates to attract funds.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What structural and regulatory failures triggered this massive cooperative crisis?',
+        answer: 'The crisis stemmed from an oversight deficit under the Department of Cooperatives, which lacked central bank inspection powers. Loose appraisal standards, unchecked insider lending, and diverting public savings into speculative real estate/shares led to massive liquidity collapses.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What is the "Gorkha Media Cooperative Scam," and who is implicated?',
+        answer: 'It involved the suspected illegal diversion of over NPR 2.58 billion from multiple cooperatives into Gorkha Media Network Pvt. Ltd. to fund Galaxy 4K TV. Key implicated figures include GB Rai and former Home Minister Rabi Lamichhane following parliamentary inquiry recommendations.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Does the government insure cooperative deposits the same way it protects bank deposits?',
+        answer: 'No. The Deposit and Credit Guarantee Fund (DCGF) secures bank deposits up to Rs 500,000 but explicitly excludes savings and credit cooperatives. Cooperative depositors have no automatic, guaranteed safety net.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What is the "Integrated Depositors Protection Fund," and how does the "double-squeeze" clause work?',
+        answer: 'It is an ad-hoc emergency fund repaying savers of crisis-ridden cooperatives up to Rs 500,000. However, depositors holding outstanding loans with that cooperative are barred from receiving payouts until their loans are paid in full, creating a double-squeeze.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What happens to a member\'s outstanding loan if their cooperative collapses?',
+        answer: 'Loan obligations survive the collapse. Under Section 104 of the Cooperative Act 2074, the state-run Crisis-ridden Cooperative Management Committee demands borrowers clear principal, interest, and arrears in full under threat of asset seizure.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What is the "Credit Information Bureau (CIB) blacklist trap" for cooperative borrowers?',
+        answer: 'Defaulting borrowers face CIB blacklisting which blocks all future bank loans. Removing a listing requires formal written recommendations from the reporting institution, which is extremely difficult when the original cooperative is defunct or under slow state administration.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What is the "Cooperative Loan Recovery Tribunal," and why was it necessary?',
+        answer: 'Established on June 27, 2025, the tribunal is a dedicated judicial body to resolve cooperative debt disputes. It was needed because government committees demanded payoff amounts exceeding court-verified settlements before releasing mortgaged property collateral.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How did interest rate spread caps and commercial bank rate hikes squeeze cooperatives?',
+        answer: 'A 6% interest rate spread cap alongside flat lending limits squeezed cooperatives when commercial banks hiked deposit rates to ~12-15%. Cooperatives couldn\'t retain deposits without operating on razor-thin, unsustainable margins, triggering insolvencies.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How is the government attempting to reform the sector through the 2081 Presidential Ordinance?',
+        answer: 'Issued Dec 29, 2024, it established the National Cooperative Regulatory Authority (NCRA), restricted directors to 2 terms, capped individual deposits (Rs 1M-5M based on scope), mandated source disclosure above Rs 1M, and banned insider borrowing.',
+      },
+    ],
+    quiz: [
+      {
+        question: 'Does the national Deposit and Credit Guarantee Fund (DCGF) Rs 500,000 deposit insurance cover savings and credit cooperatives in Nepal?',
+        options: ['Yes, fully covered', 'No, cooperatives are explicitly excluded from DCGF coverage', 'Only cooperatives in Kathmandu Valley', 'Yes, up to Rs 100,000 only'],
+        correctIndex: 1
+      },
+      {
+        question: 'What autonomous regulatory body was created under the December 2024 Presidential Ordinance to oversee cooperatives in Nepal?',
+        options: [
+          'National Cooperative Regulatory Authority (NCRA)',
+          'Securities Board of Nepal (SEBON)',
+          'Nepal Rastra Bank (NRB)',
+          'Department of Land Revenue'
+        ],
+        correctIndex: 0
+      },
+      {
+        question: 'Under Section 104 of the Cooperative Act 2074, what happens to outstanding member loans if a cooperative collapses?',
+        options: [
+          'Loans are automatically forgiven by the government',
+          'Loans are reduced by 50%',
+          'The state-run Management Committee legally enforces full repayment of principal and interest',
+          'Loans are converted into government bonds'
+        ],
+        correctIndex: 2
+      },
+      {
+        question: 'What maximum interest rate spread cap was mandated by central bank directives for cooperatives to limit predatory margin gaps?',
+        options: ['2.0%', '4.4%', '6.0%', '10.0%'],
+        correctIndex: 2
+      },
+      {
+        question: 'Under the 2081 Ordinance reforms, what mandatory requirement applies to individual cooperative deposits exceeding Rs 1 million?',
+        options: [
+          'Automatic 15% tax deduction',
+          'Legal disclosure of the source of funds',
+          'Conversion into 5-year fixed deposits',
+          'Mandatory approval from the Ministry of Finance'
+        ],
+        correctIndex: 1
+      }
+    ]
+  },
+  {
+    id: 'gold-silver-investing',
+    level: 'Beginner',
+    title: 'Gold & Silver Investing in Nepal',
+    desc: 'Converting Tola to grams, FENEGOSIDA daily rates, 24K vs 22K purity, Jyala & Jadau friction costs, customs duty impacts, and the Metal Rotation Strategy.',
+    duration: '15:00',
+    tag: 'Financial Literacy',
+    videoUrl: 'https://www.youtube.com/embed/-SDJqElfLlM',
+    thumbnail: 'https://img.youtube.com/vi/-SDJqElfLlM/hqdefault.jpg',
+    chapters: [
+      'The Karat System: 24K Hallmark, 22K Tejabi & 18K Purity Marks',
+      'Daily Price Discovery & Tola to Gram Conversions (1 Tola = 11.6638g)',
+      'The Resale Trap: Jyala (Making), Jadau (Wastage) & 13% VAT',
+      'Macroeconomic Policies, NRB Import Quotas & Customs Duty Spikes',
+      'Alternative Strategies: Metal Rotation & Gold as a Zero-Beta Asset',
+    ],
+    faqs: [
+      {
+        topic: 'Financial Literacy',
+        question: 'Why is gold priced in "tola" in Nepal instead of grams, and how do we convert between them?',
+        answer: 'The tola is a traditional South Asian unit of weight (1 tola = 11.6638 grams). FENEGOSIDA publishes daily rates in tola. To convert grams to tola, divide grams by 11.6638; to convert tola to grams, multiply tola by 11.6638.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How can a student start investing in precious metals on a small budget?',
+        answer: 'By using the Metal Rotation Strategy. Since silver is roughly 63 times cheaper than gold per tola, students can systematically accumulate physical silver coins/granules monthly and rotate/convert them into gold once their savings reach the target gold price.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Why doesn\'t Nepal make its own jewelry in pure 24K gold?',
+        answer: 'Pure 24K gold (99.9% pure) is extremely soft and easily bends or scratches. Goldsmiths alloy pure gold with ~8.4% copper/silver to create 22K gold (Tejabi - 916 purity), providing structural durability for intricate jewelry.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Why does gold jewelry suffer an immediate financial loss upon purchase?',
+        answer: 'Jewelry prices include non-recoverable Jyala (making charges), Jadau/Jarti (wastage fees), and 13% VAT. NRB studies show an average immediate loss of 17.74% upon purchase (up to 49.93% for complex Tilhari). Pure investors should buy 24K bars or coins instead.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What do the stamps "999", "916", and "750" etched inside gold jewelry mean?',
+        answer: 'These are fineness marks representing gold purity: 999 = 24K (99.9% pure bullion), 916 = 22K (91.6% pure traditional jewelry), and 750 = 18K (75% pure diamond settings).',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Why did the price of gold in Nepal jump by Rs 20,500 per tola in a single day in May 2026?',
+        answer: 'The spike was caused by local tax policy changes when the government doubled customs import duty on gold from 10% to 20% in the FY 2026/27 budget, causing an immediate single-day domestic price surge.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'If the Nepal Stock Exchange (NEPSE) crashes, will gold lose value too?',
+        answer: 'No. Empirical NRB research shows gold acts as a zero-beta asset with no long-run causal correlation to NEPSE movements. Gold prices are driven by global spot markets and exchange rates, making it an independent portfolio safe-haven.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'How does FENEGOSIDA set the official daily gold rate in Nepal every morning?',
+        answer: 'Every business morning, FENEGOSIDA fixes the benchmark daily rate based on international USD spot prices, USD/NPR exchange rates, import customs duties, and local levies.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Why does the Nepal Government restrict gold imports through commercial bank quotas?',
+        answer: 'Gold is classified as a luxury import. Unrestricted imports cause massive foreign currency outflows, swelling trade deficits and draining NRB foreign exchange reserves. NRB caps daily bank import quotas (e.g. 20 kg/day) to preserve reserves.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Can gold jewelry be used as bank loan collateral in Nepal?',
+        answer: 'Yes. Commercial banks offer gold-backed loans lending 80% to 90% of assessed market value. Higher-karat 22K (Tejabi) gold yields higher borrowing power per gram than 18K due to higher pure gold content.',
+      },
+    ],
+    quiz: [
+      {
+        question: 'How many grams are equal to 1 tola in Nepal\'s precious metals market?',
+        options: ['10.0000g', '11.6638g', '15.5000g', '31.1035g'],
+        correctIndex: 1
+      },
+      {
+        question: 'What fineness stamp represents 22K (Tejabi) gold standard in Nepal?',
+        options: ['750', '916', '999', '240'],
+        correctIndex: 1
+      },
+      {
+        question: 'According to empirical NRB studies, what is the average immediate financial loss upon purchasing gold jewelry due to making and wastage charges?',
+        options: ['2.50%', '5.00%', '17.74%', '50.00%'],
+        correctIndex: 2
+      },
+      {
+        question: 'What entity publishes the official daily benchmark gold and silver rate in Nepal every morning?',
+        options: [
+          'Nepal Rastra Bank (NRB)',
+          'Federation of Nepal Gold and Silver Dealers\' Association (FENEGOSIDA)',
+          'Securities Board of Nepal (SEBON)',
+          'Ministry of Finance'
+        ],
+        correctIndex: 1
+      },
+      {
+        question: 'What relationship exists between gold price movements and the NEPSE stock index according to NRB empirical research?',
+        options: [
+          'Direct positive correlation (NEPSE up = Gold up)',
+          'Zero-beta asset with no long-run causal correlation',
+          'Perfect inverse correlation (-1.0)',
+          'Gold moves at exactly double the NEPSE index percentage'
+        ],
+        correctIndex: 1
+      }
+    ]
+  },
+  {
+    id: 'mergers-acquisitions-nepse',
+    level: 'Intermediate',
+    title: 'Mergers, Acquisitions & Auction Shares in NEPSE',
+    desc: 'Understanding Share Swap Ratios, post-merger employee identification, Section 57 Income Tax rules, CGT rates, SEBON 15-day trading halts, and bidding in Right Share Auctions.',
+    duration: '18:00',
+    tag: 'Stock Market',
+    videoUrl: 'https://www.youtube.com/embed/8R5NH3cMOBc',
+    thumbnail: 'https://img.youtube.com/vi/8R5NH3cMOBc/hqdefault.jpg',
+    chapters: [
+      'Share Swap Ratio Calculation Formulas (Net Assets & Market Price)',
+      'The Human Side of M&A: Trust, Identity & Employee Retention Research',
+      'Section 57 Income Tax Act 2058 & Deemed Disposal Rules',
+      'Capital Gains Tax (CGT) Slabs, Book Closure & SEBON 15-Day Trading Halts',
+      'Unsubscribed Right Share Auctions: Bidding Mechanics & Cut-Off Price',
+    ],
+    faqs: [
+      {
+        topic: 'Stock Market',
+        question: 'What is a "Share Swap Ratio," and how is it calculated in Nepal?',
+        answer: 'The share swap ratio is the ratio at which an acquiring company offers its own shares for the target company\'s shares (e.g. 100:82.45). NRB prescribes a formula combining net assets per share, EPS, book value, and market price for listed BFIs.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Why do mergers and acquisitions often fail to retain talent according to NRB empirical research?',
+        answer: 'NRB research shows turnover is driven by a lack of post-merger organizational identification (β = -0.30). Transactional perks (monetary benefits, authority delegation) do not build emotional buy-in, while "trust in the merger" is the single strongest predictor of employee alignment (β = 0.53).',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What is "Section 57" of the Income Tax Act 2058, and why is it a major hurdle in Nepali M&A?',
+        answer: 'Section 57 states that if a company\'s underlying ownership changes by 50% or more within 3 consecutive years, it is "deemed" to have disposed of all assets/liabilities at market value (calculated via DCF method under Bottlers Nepal and Axiata/Ncell rulings), triggering immediate tax.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What are the capital gains tax (CGT) rates on share transfers in Nepal?',
+        answer: 'For resident individuals, listed shares held >365 days are taxed at 5%, and <=365 days at 7.5% (unlisted 10%). Resident entities pay 15% on share disposals, while non-resident shareholders pay 25%.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What is an "unsubscribed right share auction," and how can a retail investor bid?',
+        answer: 'When right shares remain unclaimed, they are auctioned to the public via sealed bids. Investors buy a Rs 100 auction form, deposit the full bid amount via a Good for Payment cheque, seal the envelope with wax ("Laha Chhap"), and submit it to the issue manager.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'How does the allotment process work in a share auction, and what is the "cut-off price"?',
+        answer: 'Allotments are made in descending order starting from the highest bidder. The cut-off price is the lowest winning price where remaining shares run out; all bids below the cut-off price are rejected and refunded within 3 working days.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What is the "Book Closure Date" in NEPSE, and how does T+1 settlement affect it?',
+        answer: 'Book closure is the cutoff period when a company freezes its registry to finalize shareholders eligible for dividends/rights/AGMs. Under T+1 settlement, investors must buy shares at least 1 trading day prior to the book closure date.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'How long are share transactions suspended during a merger or acquisition under SEBON rules?',
+        answer: 'To prevent prolonged liquidity freezes, SEBON caps share trading halts during M&A to a maximum of 15 working days, reserved strictly for re-registration and dematerialisation of unified shares.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What legal framework governs corporate mergers in Nepal, and what are the anti-trust thresholds?',
+        answer: 'Sections 177-180 of the Companies Act 2063 require a 75% special resolution shareholder vote. Section 16 of the Competition Promotion Act 2063 bans mergers creating a combined entity with >40% market share without prior Competition Board approval.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Are there any statutory exceptions to the Section 57 "deemed disposal" tax rule?',
+        answer: 'Yes. Section 57 does not apply to venture capital / private equity fund capital expansions (where original founder share count remains unchanged) or involuntary ownership transfers resulting from death/inheritance.',
+      },
+    ],
+    quiz: [
+      {
+        question: 'What maximum share trading suspension limit did SEBON enforce during corporate M&A transactions to protect minority liquidity?',
+        options: ['7 Working Days', '15 Working Days', '30 Working Days', '6 Months'],
+        correctIndex: 1
+      },
+      {
+        question: 'Under Section 57 of the Income Tax Act 2058, what percentage change in underlying ownership within 3 years triggers a "deemed disposal" tax liability?',
+        options: ['25% or more', '40% or more', '50% or more', '75% or more'],
+        correctIndex: 2
+      },
+      {
+        question: 'What is the Capital Gains Tax (CGT) rate for a resident individual selling listed NEPSE shares held for more than 365 days?',
+        options: ['5%', '7.5%', '10%', '15%'],
+        correctIndex: 0
+      },
+      {
+        question: 'Under Section 16 of the Competition Promotion and Market Protection Act 2063, what combined market share threshold triggers anti-trust approval requirements?',
+        options: ['More than 25%', 'More than 40%', 'More than 60%', 'More than 75%'],
+        correctIndex: 1
+      },
+      {
+        question: 'According to NRB research on M&A talent retention, which variable is the single strongest driver of employee alignment and satisfaction?',
+        options: ['Monetary bonuses & salary increases', 'Authority delegation', 'Trust in the merger (β = 0.53)', 'Office location changes'],
+        correctIndex: 2
+      }
+    ]
+  },
+  {
+    id: 'microfinance-rural-credit',
+    level: 'Intermediate',
+    title: 'Microfinance (Laghubitta) & Rural Credit Economics',
+    desc: 'Analyzing Class D MFIs, Cost of Funds, NPL > 5% provisioning risks, 2082 Base Rate frameworks, multiple borrowing crises, and Distributable Profit vs EPS.',
+    duration: '18:00',
+    tag: 'Policy & Economics',
+    videoUrl: 'https://www.youtube.com/embed/aOiAEhRdMk0',
+    thumbnail: 'https://img.youtube.com/vi/aOiAEhRdMk0/hqdefault.jpg',
+    chapters: [
+      'Class D MFIs vs Commercial Banks: Collateral-Free Group Lending Models',
+      'The Cost of Funds & Why MFI Interest Rates Are Structurally Higher',
+      'The 2082 NRB Base Rate Framework & Multiple Borrowing Stacking Crisis',
+      'Non-Performing Loans (NPL > 5%), Provisioning & Distributable Profit',
+      'Mission Drift, Socio-Economic Impact & Why Blanket Loan Waivers Fail',
+    ],
+    faqs: [
+      {
+        topic: 'Policy & Economics',
+        question: 'What are Class "D" financial institutions (Laghubittas) in Nepal, and how do they differ from commercial banks?',
+        answer: 'Class D MFIs lend to unbanked rural populations (primarily women) in self-guaranteed groups of 5-10 members without collateral, unlike Class A commercial banks which require land deeds or salary slips.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'Why are interest rates on microfinance loans in Nepal structurally higher (around 15%) than commercial bank loans?',
+        answer: 'MFI interest rates are driven by a high cost of funds (borrowing wholesale from banks), high field administration costs for tiny loans, and last-mile rural branch operations. The average sector Return on Assets is just 0.7%.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'What is the new "Base Rate" premium framework introduced by Nepal Rastra Bank (NRB) in 2025?',
+        answer: 'Effective Shrawan 2082, NRB replaced flat caps with a base-rate framework allowing MFIs a maximum 3% premium, capped at commercial bank base rate average plus 9%, whichever is lower.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'What is "multiple borrowing" (loan stacking), and why did it trigger a sector-wide crisis?',
+        answer: 'Multiple borrowing occurs when a client joins several MFI groups simultaneously to take multiple loans. Lack of credit bureau checks led to debt recycling, pushing sector NPLs from 2.6% in 2022 to 7.2% by April 2025.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'How does the practice of "compulsory savings" act as a hidden cost for microfinance borrowers?',
+        answer: 'Compulsory savings require a portion of the loan to be frozen as collateral. Borrowers pay interest on the full approved loan amount while accessing less net cash, creating a hidden interest rate multiplier.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'What is "mission drift," and how has the transition from non-profit FINGOs to profit-oriented MFIs impacted the sector?',
+        answer: 'Mission drift occurs when MFIs shift from social poverty alleviation to profit maximization. Transforming FINGOs into Class D companies boosted loan sizes and profits but caused clustering in urban areas.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'Why is a Non-Performing Loan (NPL) ratio above 5% considered a severe threat to an MFI\'s financial health?',
+        answer: 'NPLs above 5% require strict loan-loss provisions (up to 100% of defaulted loan value) deducted directly from operating profits, which can completely wipe out net earnings and dividends.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'What is the difference between Earnings Per Share (EPS) and Distributable Profit Per Share when analyzing an MFI stock?',
+        answer: 'EPS shows net profit, but NRB mandates deducting 20% for General Reserve, 1% for CSR, bonuses, and overdue loan reserves before calculating free cash flow. Only Distributable Profit per share reflects actual dividend capacity.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'What socio-economic impacts has microfinance had on rural Nepalese communities, particularly on women?',
+        answer: 'Over 90% of female borrowers report increased household decision-making power and mobility. However, MFIs have struggled to generate long-term sustainable micro-enterprises beyond basic livestock.',
+      },
+      {
+        topic: 'Policy & Economics',
+        question: 'Why are economists warning against blanket loan waivers despite intense pressure from borrower protest groups?',
+        answer: 'Blanket waivers create severe moral hazard, punish disciplined borrowers, and risk cascading bank failures because MFIs owe billions in wholesale debt back to Class A commercial banks.',
+      },
+    ],
+    quiz: [
+      {
+        question: 'Under NRB guidelines for Class D Microfinances, what NPL percentage threshold is considered a critical danger level that triggers heavy profit provisioning?',
+        options: ['1%', '3%', '5%', '10%'],
+        correctIndex: 2
+      },
+      {
+        question: 'Under the 2082 NRB framework, what maximum premium rate can an MFI add to its monthly base rate?',
+        options: ['1.5%', '3.0%', '5.0%', '9.0%'],
+        correctIndex: 1
+      },
+      {
+        question: 'What percentage of net profit must an MFI mandatorily deduct for the General Reserve before calculating Distributable Profit?',
+        options: ['5%', '10%', '20%', '30%'],
+        correctIndex: 2
+      },
+      {
+        question: 'What is the primary funding source for up to 60% of microfinance lending in Nepal?',
+        options: ['Wholesale borrowing from Class A commercial banks', 'World Bank grants', 'SEBON stock issues', 'Foreign currency deposits'],
+        correctIndex: 0
+      },
+      {
+        question: 'Why do economists warn against blanket microfinance loan waivers in Nepal?',
+        options: ['It lowers inflation too quickly', 'It creates moral hazard and risks cascading failures across Class A commercial banks', 'It prevents foreign tourists from entering Nepal', 'It forces all MFIs to close operations permanently'],
+        correctIndex: 1
+      }
+    ]
+  },
+  {
+    id: 'reading-financial-news-nepal',
+    level: 'Beginner',
+    title: 'How to Read Financial News & Economic Reports in Nepal',
+    desc: 'Mastering unaudited Q4 vs audited reports, Distributable Profit conversion, NRB liquidity metrics, Floor Sheet broker concentration, and SEBON Securities Act compliance.',
+    duration: '18:00',
+    tag: 'Stock Market',
+    videoUrl: 'https://www.youtube.com/embed/rci0RyhKMBc',
+    thumbnail: 'https://img.youtube.com/vi/rci0RyhKMBc/hqdefault.jpg',
+    chapters: [
+      'Unaudited Q4 Drafts vs. Audited Financial Statements (True-Up Checks)',
+      'Reported Net Profit vs. Distributable Profit & Mandatory Allocations',
+      'NRB Monetary Policy & CD Ratio Liquidity Transmission Channels',
+      'Floor Sheet Broker Concentration, Volume Breakouts & Circular Trading',
+      'Auditor Disclosures, NFRS Standards & SEBON Stock Tip Penalties',
+    ],
+    faqs: [
+      {
+        topic: 'Stock Market',
+        question: 'Why shouldn\'t I treat the fourth-quarter (Q4) net profit reported by a Nepali company as a finalized fact?',
+        answer: 'Q4 figures are strictly unaudited drafts. Revisions during annual audits often shift numbers by up to 8% or more (e.g., NIFRA\'s Q4 reported Rs 1.14B net profit vs Rs 1.23B audited). Always check the prior-year comparative column.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What is "distributable profit" for a bank in Nepal, and why does it differ from reported net profit?',
+        answer: 'Banks cannot distribute total net profit as dividends. By regulation, 20% must go to General Reserves, followed by allocations for deferred tax and accrued interest. Only the remaining distributable profit can be paid out.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'How does the Credit-to-Deposit (CD) ratio affect banking liquidity and NEPSE?',
+        answer: 'When the system CD ratio sits well below the 90% cap (e.g., at 74.32%), banks have surplus liquidity. Falling deposit interest rates lower opportunity costs, pushing capital into NEPSE equities.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'How can I use a daily floor sheet to identify potential stock manipulation or "pump-and-dump" schemes in NEPSE?',
+        answer: 'Look for red flags: the same broker appearing on both buy/sell sides (circular trading), a single broker handling >40-50% of daily volume (pump-and-dump), or sudden 3-5x volume breakouts without corporate news.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What do the different types of auditor\'s opinions mean for an investor?',
+        answer: 'An Unqualified (Clean) opinion confirms financial statements fairly comply with NFRS accounting standards. Qualified or Adverse opinions flag material discrepancies, bad loans, or governance failures.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What is the historical origin and ownership structure of NEPSE?',
+        answer: 'Securities trading began in 1937 with Biratnagar Jute Mill. The Securities Exchange Center was established in 1976 and converted to NEPSE in 1993, opening its trading floor on Jan 13, 1994. It is owned by the Government, NRB, NIDC, and brokers.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Why is NEPSE so heavily influenced by Nepal Rastra Bank\'s (NRB) monetary policy?',
+        answer: 'Financial stocks dominate NEPSE capitalization. NRB policy repo rates dictate discount rates, interest spread caps (e.g. 3.49%) govern bank net margins, and NPL provisioning rules control dividend payouts.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'How do financial analysts compute the rate of return in NEPSE when a company issues a stock dividend (bonus shares)?',
+        answer: 'Analysts convert stock dividends to cash equivalent: Stock Dividend Value = [% of Stock Dividend] * [Post-Dividend MPS]. This value is added to cash dividends to calculate total holding period return.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'What is the difference between systematic and unsystematic risk in NEPSE?',
+        answer: 'Systematic risk is macro market volatility affecting all stocks (measured by Beta β). Unsystematic risk is company-specific (e.g. hydropower turbine failures) and can be reduced via portfolio diversification.',
+      },
+      {
+        topic: 'Stock Market',
+        question: 'Is it legal to give stock tips or coordinate stock transactions on platforms like Clubhouse or Facebook in Nepal?',
+        answer: 'No. SEBON strictly prohibits forming social media groups to manipulate investors or coordinate transactions. Under the Securities Act 2063, market manipulation is a punishable crime with severe legal penalties.',
+      },
+    ],
+    quiz: [
+      {
+        question: 'Under NRB regulation, what percentage of net profit must a listed commercial bank mandatorily transfer to its General Reserve before declaring dividends?',
+        options: ['5%', '10%', '20%', '35%'],
+        correctIndex: 2
+      },
+      {
+        question: 'What system-wide CD ratio level indicates that Nepali banks are flush with surplus liquidity?',
+        options: ['Above 90%', 'Exactly 90%', 'Well below 90% (e.g., 74.32%)', '100%'],
+        correctIndex: 2
+      },
+      {
+        question: 'On a NEPSE floor sheet, what does seeing the exact same broker code on both the buy and sell sides of a large transaction strongly suggest?',
+        options: ['Institutional dividend distribution', 'Circular trading to artificially inflate volume', 'Government tax collection', 'Foreign direct investment'],
+        correctIndex: 1
+      },
+      {
+        question: 'In what year did the Nepal Stock Exchange (NEPSE) officially open its physical trading floor?',
+        options: ['1937', '1976', '1994', '2008'],
+        correctIndex: 2
+      },
+      {
+        question: 'Under the Securities Act 2063, what stance does SEBON maintain regarding paid stock tips and coordinated trading on social media platforms like Facebook or Clubhouse?',
+        options: ['Encouraged as public education', 'Allowed if under Rs 1,000 per tip', 'Strictly illegal and punishable as market manipulation', 'Permitted for licensed broker staff only'],
+        correctIndex: 2
+      }
+    ]
+  },
+  {
+    id: 'freelance-remittance-economics',
+    level: 'Intermediate',
+    title: 'Freelance Economy, USD Accounts & International Payments',
+    desc: 'Understanding NRB $500 vs $5,000 Prepaid Dollar Cards, 5% flat final tax on digital exports, NPR 30L VAT rules, 3% EST and 15% TCS on foreign tests.',
+    duration: '18:00',
+    tag: 'Financial Literacy',
+    videoUrl: 'https://www.youtube.com/embed/WYJ7BmyCVLY',
+    thumbnail: 'https://img.youtube.com/vi/WYJ7BmyCVLY/hqdefault.jpg',
+    chapters: [
+      'Prepaid Dollar Cards: USD 500 Standard vs USD 5,000 Exporter Limits',
+      'The 5% Flat Final Tax on Digital Foreign Service Exports (<Rs 40 Lakhs)',
+      'Progressive Tax Slabs (1%-39%), Deductible Expenses & Rs 30L VAT Rules',
+      'Education Service Tax (3% EST) & 15% TCS on Standardized Tests (IELTS/GRE)',
+      'Foreign Exchange Regulations: One-Card Rule & Crypto/Forex Restrictions',
+    ],
+    faqs: [
+      {
+        topic: 'Financial Literacy',
+        question: 'What is the annual limit on a prepaid dollar card for online student and freelance expenses?',
+        answer: 'The standard limit is USD 500/year for individuals. Freelancers providing bank proof of foreign earnings can scale their limit up to USD 5,000/year.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Do I need a passport to apply for a prepaid dollar card to pay for application fees?',
+        answer: 'No passport is needed for online cards. You only need your Citizenship Certificate, PAN card copy, application/self-declaration form, and updated bank KYC.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What is the Education Service Tax (EST), and how much is it?',
+        answer: 'Students exchanging foreign currency for abroad higher education pay a 3% Education Service Tax (EST) collected by banks at the time of currency exchange.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Is there an extra tax on payments for standardized tests like IELTS, TOEFL, SAT, or GRE?',
+        answer: 'Yes. Banks collect a 15% Tax Collected at Source (TCS) on foreign exchange provided for language exams and standardized tests.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Can I get a refund on the 3% Education Service Tax if my visa is rejected?',
+        answer: 'Yes. If foreign currency was exchanged but education could not be pursued, you can claim a refund of the 3% EST through your bank via IRD guidelines.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Can I use the prepaid dollar card to buy online courses or pay for software subscriptions?',
+        answer: 'Yes. You can pay for Udemy, Canva, hosting, and software subscriptions online as long as total transactions stay within your annual USD limit.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Can I open prepaid dollar cards at multiple banks to bypass the USD 500 annual limit?',
+        answer: 'No. NRB circulars permit holding only one prepaid card across all banks per person. Bypassing this rule violates the Foreign Exchange Regulation Act.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Can I use my prepaid dollar card to withdraw cash from an ATM or pay at physical stores abroad?',
+        answer: 'No. Prepaid dollar cards cannot be used for international ATM cash withdrawals or physical POS machine payments—they are strictly for online e-commerce.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'What documents must a student prepare to apply for a prepaid dollar card?',
+        answer: 'You must submit your Citizenship Certificate copy, mandatory PAN card copy, completed card application & self-declaration form, and an updated bank KYC.',
+      },
+      {
+        topic: 'Financial Literacy',
+        question: 'Can I use my prepaid dollar card to invest in international stocks or trade cryptocurrency?',
+        answer: 'No. Buying foreign shares, online forex trading, cryptocurrency (Bitcoin, USDT, NFTs), and online gambling are strictly illegal under Nepalese laws.',
+      },
+    ],
+    quiz: [
+      {
+        question: 'What standard annual spending limit does NRB enforce for individual Prepaid Dollar Cards in Nepal?',
+        options: ['$100', '$500', '$1,000', '$5,000'],
+        correctIndex: 1
+      },
+      {
+        question: 'What flat final tax rate is automatically withheld by Nepali banks on foreign digital service exports under Rs 40 Lakhs?',
+        options: ['1%', '5%', '13%', '15%'],
+        correctIndex: 1
+      },
+      {
+        question: 'What Tax Collected at Source (TCS) percentage is levied by banks on payments for standardized tests like IELTS, TOEFL, or GRE?',
+        options: ['3%', '5%', '15%', '25%'],
+        correctIndex: 2
+      },
+      {
+        question: 'What 12-month rolling turnover threshold makes Value Added Tax (VAT) registration legally mandatory for freelancers in Nepal?',
+        options: ['NPR 10 Lakhs', 'NPR 30 Lakhs', 'NPR 50 Lakhs', 'NPR 1 Crore'],
+        correctIndex: 1
+      },
+      {
+        question: 'Are Nepali citizens legally permitted to hold Prepaid Dollar Cards at multiple commercial banks simultaneously?',
+        options: ['Yes, up to 3 cards', 'Yes, unlimited cards', 'No, NRB rules strictly limit each individual to 1 card across all banks', 'Only if approved by SEBON'],
+        correctIndex: 2
+      }
+    ]
   }
 ];
 
@@ -1887,22 +2652,52 @@ const MODULES: Module[] = [
   {
     id: 'financial-literacy',
     title: 'Financial Literacy',
-    description: 'Personal finance fundamentals — budgeting, saving, and understanding how NRB policy affects your wallet.',
-    lessonIds: ['budgeting-emergency-fund', 'financial-literacy-youth', 'digital-payments-security', 'navigating-taxes-nepal', 'retirement-social-security', 'insurance-101'],
+    description: 'Personal finance fundamentals — banking, taxes, retirement, real estate, cooperatives, gold, and digital export income.',
+    lessonIds: [
+      'financial-literacy-youth', 
+      'digital-payments-security', 
+      'banking-interest-dynamics',
+      'navigating-taxes-nepal', 
+      'retirement-social-security', 
+      'insurance-101',
+      'real-estate-nepal',
+      'cooperatives-financial-safety',
+      'gold-silver-investing',
+      'freelance-remittance-economics'
+    ],
     guideIds: ['financial-literacy'],
   },
   {
     id: 'investing-markets',
     title: 'Investing & Markets',
-    description: 'How NEPSE works, how to read it, and how to start investing in Nepal\'s stock market.',
-    lessonIds: ['demystifying-nepse', 'nepse-fundamental-analysis', 'technical-analysis-intro', 'ipo-vs-secondary-market', 'modern-finance-intro', 'mutual-funds-sips', 'portfolio-risk-management', 'behavioral-finance'],
+    description: 'How NEPSE works, fundamental & technical analysis, floor sheets, M&A swap ratios, financial news, and portfolio risk management.',
+    lessonIds: [
+      'demystifying-nepse', 
+      'ipo-vs-secondary-market', 
+      'mutual-funds-sips', 
+      'nepse-fundamental-analysis', 
+      'technical-analysis-intro', 
+      'floorsheet-advanced-ta', 
+      'mergers-acquisitions-nepse',
+      'reading-financial-news-nepal',
+      'portfolio-risk-management', 
+      'modern-finance-intro', 
+      'behavioral-finance'
+    ],
     guideIds: ['nepse-guide'],
   },
   {
     id: 'economics-research',
     title: 'Economics & Research',
-    description: 'Macroeconomics, monetary policy, and original Arthneeti research on Nepal\'s economy.',
-    lessonIds: ['monetary-policy-2026', 'ssa-reality', 'national-budget-fiscal-policy', 'remittance-economy', 'trade-deficit-hydropower'],
+    description: 'Macroeconomics, monetary & fiscal policy, trade deficit, microfinance, remittance economics, and original Arthneeti research.',
+    lessonIds: [
+      'monetary-policy-2026', 
+      'national-budget-fiscal-policy', 
+      'remittance-economy', 
+      'trade-deficit-hydropower', 
+      'microfinance-rural-credit',
+      'ssa-reality'
+    ],
     guideIds: ['economics-guidebook'],
   },
 ];
