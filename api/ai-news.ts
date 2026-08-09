@@ -1,4 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { handleCors } from './_lib/cors';
+import { cached } from './_lib/cache';
 
 const MODELS = [
   'meta/llama-3.1-70b-instruct',
@@ -16,31 +18,20 @@ const SECTORS = [
   'Remittance',
 ];
 
-const CORS_HEADERS: Record<string, string> = {
-  'Access-Control-Allow-Origin': 'https://arthneetinepal.web.app',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-};
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method === 'OPTIONS') {
-    return res.status(204).end();
-  }
+  if (handleCors(req, res)) return;
 
   if (req.method !== 'GET' && req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  for (const [key, value] of Object.entries(CORS_HEADERS)) {
-    res.setHeader(key, value);
-  }
-
   try {
-    const { allSectors, sector, apiKey: clientApiKey } = req.body as { allSectors?: boolean; sector?: string; apiKey?: string };
+    const { allSectors, sector } = req.body as { allSectors?: boolean; sector?: string };
 
-    const apiKey = process.env.NVIDIA_API_KEY || clientApiKey;
+    const apiKey = process.env.NVIDIA_API_KEY;
     if (!apiKey) {
-      console.error('NVIDIA_API_KEY not found in env or request body');
       return res.status(500).json({
         error: 'NVIDIA API key not configured. Set NVIDIA_API_KEY in Vercel project settings.',
       });
@@ -48,17 +39,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const sectorsToResearch = allSectors ? SECTORS : [sector || SECTORS[0]];
 
-    const allArticles: Array<{
-      sector: string;
-      title: string;
-      summary: string;
-      date: string;
-      source: string;
-      url: string;
-    }> = [];
-
-    for (const sec of sectorsToResearch) {
-      const prompt = `Research and summarize the LATEST news about the "${sec}" sector in Nepal's stock market (NEPSE). Return a JSON array with 1 article. Each article must have:
+    // Research all sectors in parallel
+    const sectorPromises = sectorsToResearch.map(async (sec) => {
+      const cacheKey = `news:${sec}`;
+      return cached(cacheKey, CACHE_TTL_MS, async () => {
+        const prompt = `Research and summarize the LATEST news about the "${sec}" sector in Nepal's stock market (NEPSE). Return a JSON array with 1 article. Each article must have:
 - "title": concise headline
 - "summary": 2-3 sentence summary
 - "date": "Today"
@@ -68,52 +53,74 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 Focus on: NRB policy, NEPSE performance, dividends, listings, economic indicators.
 Return ONLY a valid JSON array with no markdown.`;
 
-      for (const model of MODELS) {
-        try {
-          const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify({
-              model,
-              messages: [{ role: 'user', content: prompt }],
-              temperature: 0.3,
-              max_tokens: 1024,
-            }),
-          });
+        // Try all models in parallel, take first success
+        const modelResults = await Promise.allSettled(
+          MODELS.map(async (model) => {
+            const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${apiKey}`,
+              },
+              body: JSON.stringify({
+                model,
+                messages: [{ role: 'user', content: prompt }],
+                temperature: 0.3,
+                max_tokens: 1024,
+              }),
+            });
 
-          if (response.ok) {
+            if (!response.ok) {
+              const errText = await response.text().catch(() => '');
+              throw new Error(`NVIDIA ${model}: ${response.status} - ${errText}`);
+            }
+
             const data = await response.json();
             const content = data.choices?.[0]?.message?.content || '[]';
 
             let parsed: any[];
             try {
-              const jsonMatch = content.match(/\[[\s\S]*\]/);
-              parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(content);
+              // Strip markdown code fences and extract JSON array
+              const cleaned = content
+                .replace(/```json\s*/g, '')
+                .replace(/```\s*/g, '')
+                .trim();
+              const jsonMatch = cleaned.match(/\[[\s\S]*\]/);
+              parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(cleaned);
             } catch {
               parsed = [];
             }
 
-            if (parsed.length > 0) {
-              allArticles.push({
-                sector: sec,
-                title: parsed[0].title || `Latest News: ${sec}`,
-                summary: parsed[0].summary || '',
-                date: parsed[0].date || 'Today',
-                source: parsed[0].source || 'NVIDIA AI',
-                url: parsed[0].url || '/news',
-              });
-            }
-            break;
-          }
-        } catch (err) {
-          console.warn(`Model ${model} failed for ${sec}, trying next...`);
-        }
-      }
-    }
+            if (parsed.length === 0) throw new Error('Empty parsed result');
 
+            return {
+              sector: sec,
+              title: parsed[0].title || `Latest News: ${sec}`,
+              summary: parsed[0].summary || '',
+              date: parsed[0].date || 'Today',
+              source: parsed[0].source || 'NVIDIA AI',
+              url: parsed[0].url || '/news',
+            };
+          })
+        );
+
+        // Return first successful result
+        for (const result of modelResults) {
+          if (result.status === 'fulfilled') return result.value;
+        }
+        // All models failed — return a fallback article
+        return {
+          sector: sec,
+          title: `Latest ${sec} Sector Update`,
+          summary: 'News data temporarily unavailable. Please check back later.',
+          date: 'Today',
+          source: 'Arthneeti',
+          url: '/news',
+        };
+      });
+    });
+
+    const allArticles = await Promise.all(sectorPromises);
     return res.status(200).json({ articles: allArticles });
   } catch (error) {
     return res.status(500).json({

@@ -27,6 +27,8 @@ function getReadableAuthError(error: any) {
       return 'Too many attempts. Please wait a bit before trying again.';
     case 'auth/popup-closed-by-user':
       return 'Google sign-in was closed before completing.';
+    case 'auth/popup-blocked-by-browser':
+      return 'Popup was blocked by your browser. Trying redirect sign-in instead...';
     case 'auth/network-request-failed':
       return 'Network error. Please check your connection and try again.';
     case 'auth/invalid-credential':
@@ -45,7 +47,7 @@ function getReadableAuthError(error: any) {
 }
 
 export function AuthModal() {
-  const { showAuthModal, setShowAuthModal, signUpWithEmail, signInWithEmail, signIn, resetPassword } = useAuth();
+  const { showAuthModal, setShowAuthModal, signUpWithEmail, signInWithEmail, signIn, signInWithGoogleRedirect, resetPassword } = useAuth();
 
   const [isSignUpMode, setIsSignUpMode] = useState(false);
   const [isResetMode, setIsResetMode] = useState(false);
@@ -82,6 +84,30 @@ export function AuthModal() {
     setIsSignUpMode(true);
     setAuthError(null);
     resetAuthForm();
+  };
+
+  const handleGoogleSignIn = async () => {
+    setAuthError(null);
+    setAuthSubmitting(true);
+    try {
+      await signIn();
+    } catch (err: any) {
+      const code = err?.code || '';
+      // If popup is blocked, automatically try redirect
+      if (code === 'auth/popup-blocked-by-browser' || code === 'auth/cancelled-popup-request') {
+        setAuthError(null);
+        try {
+          await signInWithGoogleRedirect();
+          return; // Redirect will reload the page
+        } catch (redirectErr: any) {
+          setAuthError(getReadableAuthError(redirectErr));
+        }
+      } else {
+        setAuthError(getReadableAuthError(err));
+      }
+    } finally {
+      setAuthSubmitting(false);
+    }
   };
 
   return createPortal(
@@ -382,17 +408,7 @@ export function AuthModal() {
             <button
               type="button"
               disabled={authSubmitting}
-              onClick={async () => {
-                setAuthError(null);
-                setAuthSubmitting(true);
-                try {
-                  await signIn();
-                } catch (err: any) {
-                  setAuthError(getReadableAuthError(err));
-                } finally {
-                  setAuthSubmitting(false);
-                }
-              }}
+              onClick={handleGoogleSignIn}
               className="w-full bg-slate-raised border border-white/10 hover:border-brand-emerald-light text-white py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">

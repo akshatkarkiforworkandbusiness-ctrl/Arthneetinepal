@@ -3,6 +3,7 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 const ALLOWED_ORIGINS = [
   'https://arthneetinepal.web.app',
   'https://arthneetinepal.firebaseapp.com',
+  'https://arthneetinepal.vercel.app',
   'https://ujjwaldhungana.github.io',
   'http://localhost:3000',
   'http://localhost:5173',
@@ -16,7 +17,7 @@ export function handleCors(req: VercelRequest, res: VercelResponse): boolean {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
-  
+
   if (req.method === 'OPTIONS') {
     res.status(204).end();
     return true;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MarketSummary, TopStocks, MarketIndex } from '../lib/nepseApi';
 import { Portfolio } from '../types/trading';
@@ -15,6 +15,26 @@ interface AIMarketAssistantProps {
 interface Message {
   role: 'user' | 'model';
   content: string;
+}
+
+function renderMarkdown(text: string): string {
+  return text
+    // Bold
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    // Italic
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    // Inline code
+    .replace(/`([^`]+)`/g, '<code class="bg-white/20 px-1 rounded text-[11px]">$1</code>')
+    // Headers
+    .replace(/^### (.*$)/gm, '<h3 class="text-sm font-bold mt-3 mb-1">$1</h3>')
+    .replace(/^## (.*$)/gm, '<h2 class="text-base font-bold mt-3 mb-1">$1</h2>')
+    .replace(/^# (.*$)/gm, '<h1 class="text-lg font-bold mt-3 mb-1">$1</h1>')
+    // Unordered lists
+    .replace(/^[*-] (.*$)/gm, '<li class="ml-4 list-disc">$1</li>')
+    // Ordered lists
+    .replace(/^\d+\. (.*$)/gm, '<li class="ml-4 list-decimal">$1</li>')
+    // Line breaks
+    .replace(/\n/g, '<br/>');
 }
 
 export default function AIMarketAssistant({
@@ -55,7 +75,8 @@ export default function AIMarketAssistant({
     }
   }, [messages, isTyping, isOpen]);
 
-  const buildSystemPrompt = () => {
+  // Memoize system prompt to avoid rebuilding on every render
+  const systemPrompt = useMemo(() => {
     let prompt = `You are "Arthneeti AI", an expert financial analyst and market intelligence assistant specializing in the Nepal Stock Exchange (NEPSE).\n\n`;
     
     prompt += `IMPORTANT RULES:\n`;
@@ -85,6 +106,8 @@ export default function AIMarketAssistant({
     if (summary) {
       prompt += `Total Turnover: Rs. ${summary.total_turnover.toLocaleString()}\n`;
       prompt += `Total Transactions: ${summary.total_transactions.toLocaleString()}\n`;
+    } else {
+      prompt += `Market summary data is currently unavailable.\n`;
     }
     
     if (indices && indices.length > 0) {
@@ -96,22 +119,30 @@ export default function AIMarketAssistant({
       indices.slice(1, 6).forEach(i => {
         prompt += `- ${i.index}: ${i.close} (${i.percentChange}%)\n`;
       });
+    } else {
+      prompt += `Index data is currently unavailable.\n`;
     }
 
     if (topStocks) {
-      prompt += `\nTop Gainers:\n`;
-      topStocks.top_gainers.slice(0, 3).forEach(s => prompt += `- ${s.symbol}: Rs ${s.ltp} (+${s.percentChange}%)\n`);
-      
-      prompt += `\nTop Losers:\n`;
-      topStocks.top_losers.slice(0, 3).forEach(s => prompt += `- ${s.symbol}: Rs ${s.ltp} (${s.percentChange}%)\n`);
-      
-      prompt += `\nTop Turnover:\n`;
-      topStocks.top_turnover.slice(0, 3).forEach(s => prompt += `- ${s.symbol}: Rs ${s.turnover.toLocaleString()}\n`);
+      if (topStocks.top_gainers.length > 0) {
+        prompt += `\nTop Gainers:\n`;
+        topStocks.top_gainers.slice(0, 3).forEach(s => prompt += `- ${s.symbol}: Rs ${s.ltp} (+${s.percentChange}%)\n`);
+      }
+      if (topStocks.top_losers.length > 0) {
+        prompt += `\nTop Losers:\n`;
+        topStocks.top_losers.slice(0, 3).forEach(s => prompt += `- ${s.symbol}: Rs ${s.ltp} (${s.percentChange}%)\n`);
+      }
+      if (topStocks.top_turnover.length > 0) {
+        prompt += `\nTop Turnover:\n`;
+        topStocks.top_turnover.slice(0, 3).forEach(s => prompt += `- ${s.symbol}: Rs ${s.turnover.toLocaleString()}\n`);
+      }
+    } else {
+      prompt += `\nTop stock data is currently unavailable.\n`;
     }
 
-    prompt += `\nUse this live context to answer the user's questions about today's market.`;
+    prompt += `\nUse this live context to answer the user's questions about today's market. If data is unavailable, acknowledge it and provide general guidance.`;
     return prompt;
-  };
+  }, [summary, topStocks, indices, marketOpen, portfolio]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -122,7 +153,6 @@ export default function AIMarketAssistant({
     setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
     setIsTyping(true);
 
-    const systemPrompt = buildSystemPrompt();
     const history = messages.map(msg => ({
       role: msg.role === 'model' ? 'assistant' : 'user',
       content: msg.content
@@ -213,7 +243,7 @@ export default function AIMarketAssistant({
                 {/* Greeting */}
                 <div className="flex justify-start">
                   <div className="max-w-[85%] rounded-2xl p-3 font-sans text-[13px] leading-relaxed shadow-sm bg-white/30 text-brandwood rounded-bl-sm border border-blush-mist">
-                    <div dangerouslySetInnerHTML={{ __html: GREETING.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>') }} />
+                    <div dangerouslySetInnerHTML={{ __html: renderMarkdown(GREETING) }} />
                   </div>
                 </div>
                 {messages.map((msg, idx) => (
@@ -223,7 +253,7 @@ export default function AIMarketAssistant({
                         ? 'bg-brandwood text-white rounded-br-sm' 
                         : 'bg-white/30 text-brandwood rounded-bl-sm border border-blush-mist'
                     }`}>
-                      <div dangerouslySetInnerHTML={{ __html: msg.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>') }} />
+                      <div dangerouslySetInnerHTML={{ __html: renderMarkdown(msg.content) }} />
                     </div>
                   </div>
                 ))}

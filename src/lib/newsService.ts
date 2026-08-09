@@ -47,6 +47,52 @@ function getTodayDate(): string {
   return new Date().toISOString().split('T')[0];
 }
 
+/**
+ * Robustly extract a JSON array from AI response text.
+ * Handles markdown code fences, trailing commas, and nested content.
+ */
+function extractJsonArray(text: string): any[] {
+  // Strip markdown code fences
+  let cleaned = text
+    .replace(/```json\s*/g, '')
+    .replace(/```\s*/g, '')
+    .trim();
+
+  // Try direct parse first
+  try {
+    const parsed = JSON.parse(cleaned);
+    if (Array.isArray(parsed)) return parsed;
+    if (typeof parsed === 'object' && parsed !== null) return [parsed];
+  } catch { /* continue */ }
+
+  // Extract JSON array using regex
+  const arrayMatch = cleaned.match(/\[[\s\S]*\]/);
+  if (arrayMatch) {
+    try {
+      // Fix trailing commas before closing bracket
+      const fixed = arrayMatch[0].replace(/,\s*([\]}])/g, '$1');
+      const parsed = JSON.parse(fixed);
+      if (Array.isArray(parsed)) return parsed;
+    } catch { /* continue */ }
+  }
+
+  // Try to extract individual JSON objects
+  const objectMatches = cleaned.match(/\{[^{}]*\}/g);
+  if (objectMatches && objectMatches.length > 0) {
+    const results: any[] = [];
+    for (const objStr of objectMatches) {
+      try {
+        const fixed = objStr.replace(/,\s*([}])/g, '$1');
+        const parsed = JSON.parse(fixed);
+        results.push(parsed);
+      } catch { /* skip invalid objects */ }
+    }
+    if (results.length > 0) return results;
+  }
+
+  return [];
+}
+
 export async function researchSectorNews(sector: Sector): Promise<SectorNewsResult> {
   const response = await fetch('/api/news', {
     method: 'POST',
@@ -63,12 +109,28 @@ export async function researchSectorNews(sector: Sector): Promise<SectorNewsResu
 
   const data = await response.json();
   const text = data.choices?.[0]?.message?.content || '[]';
-  let articles: NewsArticle[] = [];
-  try {
-    const cleaned = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
-    articles = JSON.parse(cleaned);
-  } catch {
-    articles = [{ title: `Latest ${sector} News`, summary: text.substring(0, 500), date: 'Today', source: 'NVIDIA AI' }];
+  
+  let articles: NewsArticle[] = extractJsonArray(text);
+
+  // Validate articles have required fields
+  articles = articles
+    .filter(a => a && typeof a === 'object' && (a.title || a.summary))
+    .map(a => ({
+      title: a.title || `Latest ${sector} News`,
+      summary: a.summary || 'No summary available.',
+      date: a.date || 'Today',
+      source: a.source || 'NVIDIA AI',
+      url: a.url || '/news',
+    }));
+
+  // If no valid articles, create a fallback
+  if (articles.length === 0) {
+    articles = [{
+      title: `Latest ${sector} News`,
+      summary: text.substring(0, 500) || 'News data temporarily unavailable.',
+      date: 'Today',
+      source: 'NVIDIA AI',
+    }];
   }
 
   return {

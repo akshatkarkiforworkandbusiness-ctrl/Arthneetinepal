@@ -1,13 +1,16 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { 
   User, 
   onAuthStateChanged, 
   signInWithPopup, 
+  signInWithRedirect,
+  getRedirectResult,
   signOut,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
-  updateProfile as firebaseUpdateProfile
+  updateProfile as firebaseUpdateProfile,
+  browserPopupRedirectResolver
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db, googleProvider, handleFirestoreError, OperationType } from '../lib/firebase';
@@ -28,11 +31,13 @@ interface AuthContextType {
   profile: UserProfile | null;
   isAdmin: boolean;
   loading: boolean;
+  profileLoading: boolean;
   showOnboarding: boolean;
   setShowOnboarding: (show: boolean) => void;
   showAuthModal: boolean;
   setShowAuthModal: (show: boolean) => void;
   signIn: () => Promise<void>;
+  signInWithGoogleRedirect: () => Promise<void>;
   logout: () => Promise<void>;
   handleJoinAction: () => Promise<void>;
   updateProfile: (data: { name: string; topics: string[]; email?: string; schoolId?: string; publicPortfolio?: boolean }) => Promise<void>;
@@ -43,35 +48,67 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+async function fetchUserProfile(user: User): Promise<UserProfile | null> {
+  const docRef = doc(db, 'users', user.uid);
+  try {
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return docSnap.data() as UserProfile;
+    }
+    return null;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.GET, `users/${user.uid}`, false);
+    return null;
+  }
+}
+
+async function fetchIsAdmin(uid: string): Promise<boolean> {
+  try {
+    const adminRef = doc(db, 'admins', uid);
+    const adminSnap = await getDoc(adminRef);
+    return adminSnap.exists();
+  } catch {
+    return false;
+  }
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
+  const loadUserProfile = useCallback(async (firebaseUser: User) => {
+    setProfileLoading(true);
+    try {
+      const [profileData, adminStatus] = await Promise.all([
+        fetchUserProfile(firebaseUser),
+        fetchIsAdmin(firebaseUser.uid),
+      ]);
+      setProfile(profileData);
+      setIsAdmin(adminStatus);
+    } finally {
+      setProfileLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
-      if (user) {
-        const docRef = doc(db, 'users', user.uid);
-        const adminRef = doc(db, 'admins', user.uid);
-        try {
-          const [docSnap, adminSnap] = await Promise.all([
-            getDoc(docRef),
-            getDoc(adminRef)
-          ]);
-          if (docSnap.exists()) {
-            setProfile(docSnap.data() as UserProfile);
-          } else {
-            setProfile(null);
-          }
-          setIsAdmin(adminSnap.exists());
-        } catch (error) {
-          handleFirestoreError(error, OperationType.GET, `users/${user.uid}`, false);
-          setIsAdmin(false);
-        }
+    // Handle redirect result on page load
+    getRedirectResult(auth).then((result) => {
+      if (result?.user) {
+        setShowAuthModal(false);
+      }
+    }).catch((error) => {
+      console.error('Redirect result error:', error);
+    });
+
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setUser(firebaseUser);
+      if (firebaseUser) {
+        await loadUserProfile(firebaseUser);
       } else {
         setProfile(null);
         setIsAdmin(false);
@@ -80,16 +117,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return unsubscribe;
-  }, []);
+  }, [loadUserProfile]);
 
   const signIn = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
       setShowAuthModal(false);
     } catch (error: any) {
-      if (error.code === 'auth/popup-closed-by-user') {
+      if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
         return;
       }
+      // If popup is blocked or fails, throw so the UI can offer redirect fallback
+      throw error;
+    }
+  };
+
+  const signInWithGoogleRedirect = async () => {
+    try {
+      await signInWithRedirect(auth, googleProvider);
+    } catch (error) {
+      console.error('Redirect sign-in error:', error);
       throw error;
     }
   };
@@ -193,11 +240,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       profile,
       isAdmin,
       loading, 
+      profileLoading,
       showOnboarding, 
       setShowOnboarding, 
       showAuthModal,
       setShowAuthModal,
       signIn, 
+      signInWithGoogleRedirect,
       logout, 
       handleJoinAction, 
       updateProfile,

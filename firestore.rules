@@ -40,7 +40,6 @@ service cloud.firestore {
         && data.role == 'member'
         && data.topics is list
         && data.name is string && data.name.size() <= 100
-        && data.joinedAt == request.time
         && (!('schoolId' in data) || (data.schoolId is string && data.schoolId.size() <= 100))
         && (!('publicPortfolio' in data) || data.publicPortfolio is bool);
     }
@@ -127,12 +126,14 @@ service cloud.firestore {
     // User Profiles
     match /users/{userId} {
       allow read: if isSignedIn();
-      allow create: if isOwner(userId) && isValidUser(incoming()) && isValidId(userId);
+      allow create: if isOwner(userId) && isValidUser(incoming()) && isValidId(userId)
+        && incoming().joinedAt == request.time;
       allow update: if isOwner(userId)
-        && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'topics', 'joinedAt', 'publicPortfolio'])
-        && (incoming().joinedAt == existing().joinedAt)
+        && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'topics', 'schoolId', 'publicPortfolio'])
+        && (existing().joinedAt == incoming().joinedAt)
         && incoming().name is string && incoming().name.size() <= 100
         && incoming().topics is list
+        && (!('schoolId' in incoming()) || (incoming().schoolId is string && incoming().schoolId.size() <= 100))
         && (!('publicPortfolio' in incoming()) || incoming().publicPortfolio is bool);
 
       // Learning progress subcollection

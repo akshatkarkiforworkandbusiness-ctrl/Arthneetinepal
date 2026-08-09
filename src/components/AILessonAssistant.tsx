@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Brain, X, Sparkles, Loader2, Send } from 'lucide-react';
 
@@ -15,6 +15,19 @@ interface AILessonAssistantProps {
 interface Message {
   role: 'user' | 'model';
   content: string;
+}
+
+function renderMarkdown(text: string): string {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/`([^`]+)`/g, '<code class="bg-white/10 px-1 rounded text-[11px]">$1</code>')
+    .replace(/^### (.*$)/gm, '<h3 class="text-sm font-bold mt-3 mb-1">$1</h3>')
+    .replace(/^## (.*$)/gm, '<h2 class="text-base font-bold mt-3 mb-1">$1</h2>')
+    .replace(/^# (.*$)/gm, '<h1 class="text-lg font-bold mt-3 mb-1">$1</h1>')
+    .replace(/^[*-] (.*$)/gm, '<li class="ml-4 list-disc">$1</li>')
+    .replace(/^\d+\. (.*$)/gm, '<li class="ml-4 list-decimal">$1</li>')
+    .replace(/\n/g, '<br/>');
 }
 
 export default function AILessonAssistant({
@@ -37,7 +50,6 @@ export default function AILessonAssistant({
 
   // Initialize API
   useEffect(() => {
-    // API key check is no longer needed client-side since we proxy through serverless function
     apiKeyRef.current = 'proxy';
   }, []);
 
@@ -46,16 +58,23 @@ export default function AILessonAssistant({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
-  // Construct the "System Instruction" dynamically based on the lesson
-  const buildSystemPrompt = () => {
+  // Memoize system prompt
+  const systemPrompt = useMemo(() => {
     let prompt = `You are an expert AI tutor for Arthneeti, specifically helping a student understand the lesson: "${lessonTitle}".\n\n`;
-    prompt += `LESSON SUMMARY:\n${lessonSummary}\n\n`;
+    
+    if (lessonSummary) {
+      prompt += `LESSON SUMMARY:\n${lessonSummary}\n\n`;
+    } else {
+      prompt += `LESSON SUMMARY: No detailed summary available for this lesson. Provide general guidance based on the lesson title.\n\n`;
+    }
     
     if (lessonFaqs && lessonFaqs.length > 0) {
       prompt += `FREQUENTLY ASKED QUESTIONS:\n`;
       lessonFaqs.forEach(faq => {
         prompt += `Q: ${faq.question}\nA: ${faq.answer}\n\n`;
       });
+    } else {
+      prompt += `No FAQs available for this lesson.\n\n`;
     }
 
     if (lessonQuizzes && lessonQuizzes.length > 0) {
@@ -67,13 +86,14 @@ export default function AILessonAssistant({
     }
 
     prompt += `INSTRUCTIONS:\n`;
-    prompt += `- Answer the student's questions using ONLY the information provided above.\n`;
+    prompt += `- Answer the student's questions using the information provided above.\n`;
+    prompt += `- If lesson data is limited, provide helpful general guidance on the topic and encourage the student to review the lesson material.\n`;
     prompt += `- If they ask something unrelated to finance, economics, or this lesson, politely guide them back to the topic.\n`;
     prompt += `- Be encouraging, clear, and act as a professional financial tutor.\n`;
     prompt += `- Do not reveal that you are reading from a prompt. Act natural.\n`;
 
     return prompt;
-  };
+  }, [lessonTitle, lessonSummary, lessonFaqs, lessonQuizzes]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,8 +103,6 @@ export default function AILessonAssistant({
     setInput('');
     setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
     setIsTyping(true);
-
-    const systemPrompt = buildSystemPrompt();
     
     const historyOpenAI = messages.map(msg => ({
       role: msg.role === 'model' ? 'assistant' : 'user',
@@ -166,7 +184,7 @@ export default function AILessonAssistant({
               <Sparkles size={14} className="text-brandwood" />
               <span className="text-[10px] font-bold uppercase tracking-widest">AI Tutor</span>
             </div>
-            <div dangerouslySetInnerHTML={{ __html: GREETING.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>') }} />
+            <div dangerouslySetInnerHTML={{ __html: renderMarkdown(GREETING) }} />
           </div>
         </div>
         {messages.map((msg, idx) => (
@@ -182,8 +200,7 @@ export default function AILessonAssistant({
                   <span className="text-[10px] font-bold uppercase tracking-widest">AI Tutor</span>
                 </div>
               )}
-              {/* Basic markdown rendering */}
-              <div dangerouslySetInnerHTML={{ __html: msg.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>') }} />
+              <div dangerouslySetInnerHTML={{ __html: renderMarkdown(msg.content) }} />
             </div>
           </div>
         ))}

@@ -2,11 +2,31 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 import { handleCors } from '../_lib/cors';
 import { verifyUser } from '../_lib/auth';
 import { adminDb, FieldValue } from '../_lib/firebaseAdmin';
+import { cached } from '../_lib/cache';
 
 interface TradeBody {
   symbol: string;
   side: 'buy' | 'sell';
   qty: number;
+}
+
+const STOCK_CACHE_TTL_MS = 30_000; // 30 seconds
+const STATUS_CACHE_TTL_MS = 60_000; // 1 minute
+
+async function fetchStockData(): Promise<any[]> {
+  return cached('nepse:stocks', STOCK_CACHE_TTL_MS, async () => {
+    const res = await fetch('https://shubhamnpk.github.io/yonepse/data/nepse_data.json');
+    if (!res.ok) throw new Error(`Failed to fetch stock prices: ${res.status}`);
+    return res.json();
+  });
+}
+
+async function fetchMarketStatus(): Promise<any> {
+  return cached('nepse:status', STATUS_CACHE_TTL_MS, async () => {
+    const res = await fetch('https://shubhamnpk.github.io/yonepse/data/market/status.json');
+    if (!res.ok) throw new Error(`Failed to fetch market status: ${res.status}`);
+    return res.json();
+  });
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -29,19 +49,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const upperSymbol = symbol.toUpperCase().trim();
 
   try {
-    // 1. Check market status
-    const statusRes = await fetch("https://shubhamnpk.github.io/yonepse/data/market/status.json");
-    if (!statusRes.ok) throw new Error("Failed to fetch market status");
-    const statusData = await statusRes.json() as any;
+    // 1. Check market status (cached)
+    const statusData = await fetchMarketStatus();
     if (!statusData.is_open) {
       return res.status(400).json({ error: "Market is closed. NEPSE trading is only open Sunday-Thursday, 11 AM - 3 PM NPT." });
     }
 
-    // 2. Fetch stock data to get the price
-    const stocksRes = await fetch("https://shubhamnpk.github.io/yonepse/data/nepse_data.json");
-    if (!stocksRes.ok) throw new Error("Failed to fetch stock prices");
-    const stocksData = await stocksRes.json() as any[];
-    const stock = stocksData.find(s => s.symbol === upperSymbol);
+    // 2. Fetch stock data (cached)
+    const stocksData = await fetchStockData();
+    const stock = stocksData.find((s: any) => s.symbol === upperSymbol);
     if (!stock || !stock.ltp) {
       return res.status(400).json({ error: `Stock symbol ${upperSymbol} not found or has no price data.` });
     }
@@ -50,7 +66,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const portfolioRef = adminDb.collection('portfolios').doc(uid);
     
     // Execute Firestore Transaction
-    const result = await adminDb.runTransaction(async (transaction) => {
+    const result = await adminDb.runTransaction(async (transaction: any) => {
       const portfolioSnap = await transaction.get(portfolioRef);
       if (!portfolioSnap.exists) {
         throw new Error("Portfolio not initialized. Please complete the module to unlock trading.");
@@ -93,7 +109,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // Compute current holdings value to find Total Portfolio Value
       let totalHoldingsValue = 0;
       for (const [sym, pos] of Object.entries(portfolio.holdings as Record<string, { qty: number; avgCost: number }>)) {
-        const hStock = stocksData.find(s => s.symbol === sym);
+        const hStock = stocksData.find((s: any) => s.symbol === sym);
         const hPrice = hStock ? Number(hStock.ltp) : pos.avgCost;
         totalHoldingsValue += pos.qty * hPrice;
       }
