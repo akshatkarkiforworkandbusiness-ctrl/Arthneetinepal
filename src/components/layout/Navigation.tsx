@@ -9,10 +9,12 @@ import { AuthModal } from './AuthModal';
 
 const navLinks = [
   { name: 'Discover', path: '/discover' },
+  { name: 'Research', path: '/news-feed' },
   { name: 'Learn', path: '/learn' },
   { name: 'Community', path: '/community' },
   { name: 'Events', path: '/events' },
   { name: 'Trade', path: '/trade-game' },
+  { name: 'Leaderboard', path: '/leaderboard' },
 ];
 
 export function Navigation() {

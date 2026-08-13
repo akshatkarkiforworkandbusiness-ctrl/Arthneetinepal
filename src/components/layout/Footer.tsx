@@ -42,10 +42,13 @@ export function Footer() {
             <div className="flex flex-col gap-3">
               {[
                 { name: 'Discover', path: '/discover' },
+                { name: 'Research', path: '/news-feed' },
                 { name: 'About Us', path: '/about-us' },
                 { name: 'Community', path: '/community' },
                 { name: 'Events', path: '/events' },
                 { name: 'Learn', path: '/learn' },
+                { name: 'Trade', path: '/trade-game' },
+                { name: 'Leaderboard', path: '/leaderboard' },
               ].map(link => (
                 <Link key={link.name} to={link.path} className="text-white/70 hover:text-white hover:translate-x-1 transition-all text-sm inline-block">
                   {link.name}
