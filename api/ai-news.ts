@@ -23,12 +23,12 @@ const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (handleCors(req, res)) return;
 
-  if (req.method !== 'GET' && req.method !== 'POST') {
+  if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { allSectors, sector } = req.body as { allSectors?: boolean; sector?: string };
+    const { allSectors, sector } = (req.body || {}) as { allSectors?: boolean; sector?: string };
 
     const apiKey = process.env.NVIDIA_API_KEY;
     if (!apiKey) {
@@ -37,7 +37,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
-    const sectorsToResearch = allSectors ? SECTORS : [sector || SECTORS[0]];
+    const sectorsToResearch = allSectors ? SECTORS : [sector && typeof sector === 'string' ? sector : SECTORS[0]];
 
     // Research all sectors in parallel
     const sectorPromises = sectorsToResearch.map(async (sec) => {
@@ -56,6 +56,9 @@ Return ONLY a valid JSON array with no markdown.`;
         // Try all models in parallel, take first success
         const modelResults = await Promise.allSettled(
           MODELS.map(async (model) => {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000);
+
             const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
               method: 'POST',
               headers: {
@@ -68,7 +71,9 @@ Return ONLY a valid JSON array with no markdown.`;
                 temperature: 0.3,
                 max_tokens: 1024,
               }),
+              signal: controller.signal,
             });
+            clearTimeout(timeoutId);
 
             if (!response.ok) {
               const errText = await response.text().catch(() => '');

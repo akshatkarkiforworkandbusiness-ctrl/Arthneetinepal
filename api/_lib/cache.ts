@@ -30,7 +30,7 @@ export function cacheGet<T>(key: string): T | null {
 }
 
 export function cacheSet<T>(key: string, data: T, ttlMs: number): void {
-  store.set(key, { data, ts: Date.now() + ttlMs });
+  store.set(key, { data, ts: Date.now() });
 }
 
 export function cacheHas(key: string, ttlMs: number): boolean {

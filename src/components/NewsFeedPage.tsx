@@ -541,7 +541,7 @@ export default function NewsFeedPage() {
           >
             <h4 className="text-xl font-display font-medium text-brandwood mb-3">{dailyDigest.title}</h4>
             <div
-              className="text-text-muted text-sm leading-relaxed line-clamp-4"
+              className="text-text-muted text-sm leading-relaxed line-clamp-4 [&_h3]:text-base [&_h3]:font-bold [&_h3]:mb-2 [&_p]:mb-2 [&_ul]:list-disc [&_ul]:ml-4 [&_li]:mb-1"
               dangerouslySetInnerHTML={{ __html: dailyDigest.content }}
             />
             <div className="flex items-center gap-4 mt-4 text-[10px] text-text-muted">

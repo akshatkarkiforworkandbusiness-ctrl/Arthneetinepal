@@ -13,15 +13,15 @@ const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (handleCors(req, res)) return;
 
-  if (req.method !== 'GET' && req.method !== 'POST') {
+  if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { sector } = req.body as { sector: string };
+    const { sector } = (req.body || {}) as { sector: string };
 
-    if (!sector) {
-      return res.status(400).json({ error: 'Sector is required' });
+    if (!sector || typeof sector !== 'string') {
+      return res.status(400).json({ error: 'Sector is required and must be a string' });
     }
 
     const apiKey = process.env.NVIDIA_API_KEY;
@@ -56,6 +56,9 @@ Example:
     const cacheKey = `sector-news:${sector}`;
     const data = await cached(cacheKey, CACHE_TTL_MS, async () => {
       // Try all models in parallel, take first success
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+
       const modelResults = await Promise.allSettled(
         MODELS.map(async (model) => {
           const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
@@ -70,6 +73,7 @@ Example:
               temperature: 0.3,
               max_tokens: 4096,
             }),
+            signal: controller.signal,
           });
 
           if (!response.ok) {
@@ -80,6 +84,7 @@ Example:
           return response.json();
         })
       );
+      clearTimeout(timeoutId);
 
       // Return first successful result
       for (const result of modelResults) {

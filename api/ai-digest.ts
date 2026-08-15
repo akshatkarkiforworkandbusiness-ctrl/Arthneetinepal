@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { handleCors } from './_lib/cors';
 
 const MODELS = [
   'meta/llama-3.1-70b-instruct',
@@ -6,33 +7,20 @@ const MODELS = [
   'meta/llama-3.3-70b-instruct',
 ];
 
-const CORS_HEADERS: Record<string, string> = {
-  'Access-Control-Allow-Origin': 'https://arthneetinepal.web.app',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-};
-
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method === 'OPTIONS') {
-    return res.status(204).end();
-  }
+  if (handleCors(req, res)) return;
 
-  if (req.method !== 'GET' && req.method !== 'POST') {
+  if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  for (const [key, value] of Object.entries(CORS_HEADERS)) {
-    res.setHeader(key, value);
-  }
-
   try {
-    const { articles, date, apiKey: clientApiKey } = req.body as {
+    const { articles, date } = (req.body || {}) as {
       articles: Array<{ title: string; summary: string; sector: string; source: string }>;
       date: string;
-      apiKey?: string;
     };
 
-    const apiKey = process.env.NVIDIA_API_KEY || clientApiKey;
+    const apiKey = process.env.NVIDIA_API_KEY;
     if (!apiKey) {
       return res.status(500).json({
         error: 'NVIDIA API key not configured.',
@@ -59,6 +47,9 @@ Return ONLY a JSON object: {"title": "...", "content": "..."}`;
 
     for (const model of MODELS) {
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
+
         const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
           method: 'POST',
           headers: {
@@ -71,7 +62,9 @@ Return ONLY a JSON object: {"title": "...", "content": "..."}`;
             temperature: 0.3,
             max_tokens: 2048,
           }),
+          signal: controller.signal,
         });
+        clearTimeout(timeoutId);
 
         if (response.ok) {
           const data = await response.json();

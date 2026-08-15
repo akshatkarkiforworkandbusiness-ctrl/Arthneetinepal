@@ -162,6 +162,7 @@ export default function EventsPage() {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) { toast.error('Image must be under 5MB'); return; }
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
     setImageFile(file);
     setImagePreview(URL.createObjectURL(file));
   };
@@ -495,8 +496,6 @@ export default function EventsPage() {
         )}
       </AnimatePresence>
 
-      {/* Admin Setup Button (temporary - remove after setting up admin) */}
-      {!isAdmin && <AdminSetup />}
     </main>
   );
 }

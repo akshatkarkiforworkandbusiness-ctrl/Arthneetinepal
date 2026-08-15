@@ -11,9 +11,16 @@ const ALLOWED_ORIGINS = [
 
 export function handleCors(req: VercelRequest, res: VercelResponse): boolean {
   const origin = req.headers.origin || '';
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
 
-  res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+  if (!ALLOWED_ORIGINS.includes(origin)) {
+    if (req.method === 'OPTIONS') {
+      res.status(403).json({ error: 'Origin not allowed' });
+      return true;
+    }
+    return false;
+  }
+
+  res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');

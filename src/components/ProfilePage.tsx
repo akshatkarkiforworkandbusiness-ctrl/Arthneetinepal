@@ -345,14 +345,16 @@ export default function ProfilePage() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
                 {myPosts.map((post, i) => (
-                  <motion.a
+                  <motion.div
                     key={post.id}
-                    href={`/post/${post.id}`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    className="group p-6 rounded-3xl bg-white border border-gray-100 hover:border-purple-200 hover:shadow-xl hover:shadow-purple-100/50 transition-all duration-300"
                   >
+                    <Link
+                      to={`/post/${post.id}`}
+                      className="group p-6 rounded-3xl bg-white border border-gray-100 hover:border-purple-200 hover:shadow-xl hover:shadow-purple-100/50 transition-all duration-300 block"
+                    >
                     <div className="flex justify-between items-start mb-4">
                       <span className={`px-3 py-1 rounded-xl text-[10px] font-bold uppercase tracking-wider ${
                         post.type === 'research' ? 'bg-blue-50 text-blue-600 border border-blue-100' :
@@ -372,7 +374,8 @@ export default function ProfilePage() {
                     <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
                       {post.category}
                     </p>
-                  </motion.a>
+                    </Link>
+                  </motion.div>
                 ))}
               </div>
 

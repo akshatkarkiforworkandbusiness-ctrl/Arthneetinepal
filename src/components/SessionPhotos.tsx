@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 const sessions = [
   {
     id: 1,
-    image: '/Pitcures for Arthneeti/Image 5 — Problem solving session.jpg',
+    image: '/Pitcures for Arthneeti/Image 5 - Problem solving session.jpg',
     title: 'Problem Solving Session',
     titleNepali: 'समस्या समाधान कार्यशाला',
     location: 'Xavier A Levels, Kathmandu',
@@ -13,7 +13,7 @@ const sessions = [
   },
   {
     id: 2,
-    image: '/Pitcures for Arthneeti/Image 1 — Inaugural session (503020 Rule).jpg',
+    image: '/Pitcures for Arthneeti/Image 1 - Inaugural session (503020 Rule).jpg',
     title: 'Inaugural Session',
     titleNepali: 'उद्घाटन कार्यशाला',
     location: 'First Workshop',
@@ -23,7 +23,7 @@ const sessions = [
   },
   {
     id: 3,
-    image: '/Pitcures for Arthneeti/Image 3 — St. Lawrence School.png',
+    image: '/Pitcures for Arthneeti/Image 3 - St. Lawrence School.png',
     title: 'St. Lawrence School',
     titleNepali: 'सेन्ट लारेन्स विद्यालय',
     location: 'Kathmandu',
@@ -33,7 +33,7 @@ const sessions = [
   },
   {
     id: 4,
-    image: '/Pitcures for Arthneeti/Image 4 — Kathmandu Valley Public School.png',
+    image: '/Pitcures for Arthneeti/Image 4 - Kathmandu Valley Public School.png',
     title: 'Kathmandu Valley Public School',
     titleNepali: 'काठमाडौं उपत्यका सार्वजनिक विद्यालय',
     location: 'Kathmandu',
@@ -43,7 +43,7 @@ const sessions = [
   },
   {
     id: 5,
-    image: '/Pitcures for Arthneeti/Image 6 — Think Big. Invest Smart. Lead Nepal..jpg',
+    image: '/Pitcures for Arthneeti/Image 6 - Think Big. Invest Smart. Lead Nepal..jpg',
     title: 'Interactive Workshop',
     titleNepali: 'अन्तरक्रियात्मक कार्यशाला',
     location: 'Multiple Schools',

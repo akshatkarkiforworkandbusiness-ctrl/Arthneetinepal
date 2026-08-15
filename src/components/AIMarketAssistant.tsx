@@ -18,7 +18,12 @@ interface Message {
 }
 
 function renderMarkdown(text: string): string {
-  return text
+  const sanitized = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  return sanitized
     // Bold
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     // Italic

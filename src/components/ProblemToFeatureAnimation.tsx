@@ -157,10 +157,11 @@ export default function ProblemToFeatureAnimation({ onComplete }: ProblemToFeatu
   const hexPositions = useMemo(() => getHexPositions(6, 140), []);
 
   useEffect(() => {
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         onComplete: () => {
-          setTimeout(onComplete, 1200);
+          timeouts.push(setTimeout(onComplete, 1200));
         },
       });
       timelineRef.current = tl;
@@ -277,7 +278,10 @@ export default function ProblemToFeatureAnimation({ onComplete }: ProblemToFeatu
       );
     }, containerRef);
 
-    return () => ctx.revert();
+    return () => {
+      timeouts.forEach(t => clearTimeout(t));
+      ctx.revert();
+    };
   }, [onComplete, initialPositions, hexPositions]);
 
   const handleSkip = useCallback(() => {

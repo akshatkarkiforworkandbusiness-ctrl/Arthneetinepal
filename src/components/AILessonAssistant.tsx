@@ -18,7 +18,12 @@ interface Message {
 }
 
 function renderMarkdown(text: string): string {
-  return text
+  const sanitized = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  return sanitized
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
     .replace(/`([^`]+)`/g, '<code class="bg-white/10 px-1 rounded text-[11px]">$1</code>')

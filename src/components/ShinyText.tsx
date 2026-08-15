@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 
 interface ShinyTextProps {
   text: string;
@@ -13,6 +13,22 @@ interface ShinyTextProps {
   disabled?: boolean;
   className?: string;
 }
+
+const shinyStyleInjected = typeof document !== 'undefined' ? (() => {
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes shinySweep {
+      0% { background-position: 250% center; }
+      100% { background-position: -250% center; }
+    }
+    @keyframes shinySweepReverse {
+      0% { background-position: -250% center; }
+      100% { background-position: 250% center; }
+    }
+  `;
+  document.head.appendChild(style);
+  return true;
+})() : false;
 
 const ShinyText = ({
   text,
@@ -30,6 +46,7 @@ const ShinyText = ({
   const gradientDirection = direction === 'left' ? 'to right' : 'to left';
   const animationDuration = `${speed}s`;
   const animationDelay = `${delay}s`;
+  const animationName = direction === 'left' ? 'shinySweep' : 'shinySweepReverse';
 
   return (
     <div
@@ -46,7 +63,7 @@ const ShinyText = ({
         WebkitTextFillColor: disabled ? color : 'transparent',
         animation: disabled
           ? 'none'
-          : `shinySweep ${animationDuration} ${yoyo ? 'alternate' : 'normal'} linear infinite`,
+          : `${animationName} ${animationDuration} ${yoyo ? 'alternate' : 'normal'} linear infinite`,
         animationDelay: animationDelay,
         animationPlayState: pauseOnHover ? 'var(--play-state, running)' : 'running',
       }}
@@ -58,18 +75,6 @@ const ShinyText = ({
       }}
     >
       <span className="relative z-10 pointer-events-none">{text}</span>
-      <style>
-        {`
-          @keyframes shinySweep {
-            0% {
-              background-position: ${direction === 'left' ? '250% center' : '-250% center'};
-            }
-            100% {
-              background-position: ${direction === 'left' ? '-250% center' : '250% center'};
-            }
-          }
-        `}
-      </style>
     </div>
   );
 };

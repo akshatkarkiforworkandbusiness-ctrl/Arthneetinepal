@@ -15,7 +15,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const isCron = req.headers['x-vercel-cron'] === 'true';
   const uid = await verifyUser(req);
   const isAdminUser = uid ? (await adminDb.collection('admins').doc(uid).get()).exists : false;
-  const isDev = process.env.NODE_ENV === 'development' || !process.env.VERCEL;
+  const isDev = process.env.NODE_ENV === 'development';
 
   if (!isCron && !isAdminUser && !isDev) {
     return res.status(401).json({ error: 'Unauthorized' });
@@ -23,7 +23,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     // 1. Fetch live stock prices
-    const stocksRes = await fetch("https://shubhamnpk.github.io/yonepse/data/nepse_data.json");
+    const stocksController = new AbortController();
+    const stocksTimeout = setTimeout(() => stocksController.abort(), 15000);
+    const stocksRes = await fetch("https://shubhamnpk.github.io/yonepse/data/nepse_data.json", { signal: stocksController.signal });
+    clearTimeout(stocksTimeout);
     if (!stocksRes.ok) throw new Error("Failed to fetch stock prices");
     const stocksData = await stocksRes.json() as any[];
 

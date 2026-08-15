@@ -47,9 +47,9 @@ export default function LeaderboardPage({ isEmbedded = false }: { isEmbedded?: b
        setLoading(false);
        return;
      }
-     setHasNoSchool(false);
-     setLoading(true);
-     const scopeVal = activeScope === 'school' ? profile!.schoolId! : 'national';
+      setHasNoSchool(false);
+      setLoading(true);
+      const scopeVal = activeScope === 'school' ? (profile?.schoolId || '') : 'national';
 
      // Query the latest leaderboard snapshot matching scope & period
      const q = query(
