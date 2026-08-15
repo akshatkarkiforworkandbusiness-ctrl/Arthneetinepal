@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Mail, Briefcase, User as UserIcon, Award, BookOpen, Star, X, Check, Plus, TrendingUp, Bookmark, Heart } from 'lucide-react';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
@@ -386,9 +386,9 @@ export default function ProfilePage() {
                      {isOwnProfile ? 'Start sharing your insights with the community to build your intellectual portfolio.' : 'This member hasn\u2019t contributed anything yet.'}
                    </p>
                    {isOwnProfile && (
-                     <a href="/community" className="mt-6 px-6 py-3 bg-gradient-to-r from-purple-600 to-teal-500 text-white rounded-2xl text-sm font-bold uppercase tracking-wider hover:from-purple-700 hover:to-teal-600 transition-all shadow-lg shadow-purple-200">
+                     <Link to="/community" className="mt-6 px-6 py-3 bg-gradient-to-r from-purple-600 to-teal-500 text-white rounded-2xl text-sm font-bold uppercase tracking-wider hover:from-purple-700 hover:to-teal-600 transition-all shadow-lg shadow-purple-200">
                        Start Contributing
-                     </a>
+                     </Link>
                    )}
                 </div>
               )}

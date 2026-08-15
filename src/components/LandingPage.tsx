@@ -198,9 +198,10 @@ export default function LandingPage() {
       '11': { key: 'HYDRO', name: 'Hydropower Index' },
     };
 
+    const controller = new AbortController();
+
     const fetchLiveData = async () => {
       try {
-        const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 6000);
         const [indexRes, subIndexRes] = await Promise.all([
           fetch(`${NEPSE_API}/NepseIndex`, { signal: controller.signal }),
@@ -241,7 +242,10 @@ export default function LandingPage() {
 
     fetchLiveData();
     const liveInterval = setInterval(fetchLiveData, 60_000);
-    return () => clearInterval(liveInterval);
+    return () => {
+      clearInterval(liveInterval);
+      controller.abort();
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

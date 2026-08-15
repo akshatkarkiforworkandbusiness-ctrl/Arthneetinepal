@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { 
   TrendingUp, TrendingDown, DollarSign, Briefcase, History, 
@@ -286,14 +287,14 @@ export default function TradingPage() {
             </div>
             <div className="flex gap-3">
               {!hasAppliedFL && (
-                <a href="/learn/financial-literacy" className="px-5 py-3 bg-[#003893] hover:bg-[#002f80] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all">
+                <Link to="/learn/financial-literacy" className="px-5 py-3 bg-[#003893] hover:bg-[#002f80] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all">
                   FL Exam (+10%)
-                </a>
+                </Link>
               )}
               {!hasAppliedER && (
-                <a href="/learn/economics-research" className="px-5 py-3 bg-[#003893] hover:bg-[#002f80] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all">
+                <Link to="/learn/economics-research" className="px-5 py-3 bg-[#003893] hover:bg-[#002f80] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all">
                   ER Exam (+10%)
-                </a>
+                </Link>
               )}
             </div>
           </div>
