@@ -129,7 +129,7 @@ function mapStock(raw: RawStock): StockRow | null {
     ltp: Number(raw.ltp) || 0,
     change: Number(raw.change) || 0,
     percentChange: Number(raw.percent_change) || 0,
-    open: Number(raw.previous_close) || 0,
+    open: Number((raw as any).open) || Number(raw.previous_close) || 0,
     high: Number(raw.high) || 0,
     low: Number(raw.low) || 0,
     close: Number(raw.previous_close) || 0,

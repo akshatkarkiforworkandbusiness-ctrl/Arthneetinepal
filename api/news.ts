@@ -1,6 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { handleCors } from './_lib/cors';
+import { verifyUser } from './_lib/auth';
 import { cached } from './_lib/cache';
+import { checkRateLimit } from './_lib/rateLimit';
 
 const MODELS = [
   'meta/llama-3.1-70b-instruct',
@@ -8,7 +10,10 @@ const MODELS = [
   'meta/llama-3.3-70b-instruct',
 ];
 
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const VALID_SECTORS = ['Banking', 'Hydropower', 'Microfinance', 'IPO Market', 'Mutual Funds', 'Inflation', 'Remittance'];
+const CACHE_TTL_MS = 5 * 60 * 1000;
+const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_WINDOW_MS = 60_000;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (handleCors(req, res)) return;
@@ -17,22 +22,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const uid = await verifyUser(req);
+  if (!uid) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const rateKey = `news:${uid}`;
+  if (!checkRateLimit(rateKey, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS)) {
+    return res.status(429).json({ error: 'Rate limit exceeded. Please try again later.' });
+  }
+
   try {
     const { sector } = (req.body || {}) as { sector: string };
 
-    if (!sector || typeof sector !== 'string') {
-      return res.status(400).json({ error: 'Sector is required and must be a string' });
+    if (!sector || typeof sector !== 'string' || !VALID_SECTORS.includes(sector.trim())) {
+      return res.status(400).json({ error: `Invalid sector. Must be one of: ${VALID_SECTORS.join(', ')}` });
     }
+
+    const sanitizedSector = sector.trim();
 
     const apiKey = process.env.NVIDIA_API_KEY;
     if (!apiKey) {
       return res.status(500).json({
-        error: 'NVIDIA API key not configured. Please set NVIDIA_API_KEY in Vercel project settings > Environment Variables.',
+        error: 'NVIDIA API key not configured.',
       });
     }
 
     const prompt = `You are a financial news researcher for Nepal's stock market (NEPSE).
-Research and summarize the LATEST news about the "${sector}" sector in Nepal.
+Research and summarize the LATEST news about the "${sanitizedSector}" sector in Nepal.
 Return a JSON array of recent news articles. Each article must have:
 - "title": concise headline
 - "summary": 2-3 sentence summary of key developments

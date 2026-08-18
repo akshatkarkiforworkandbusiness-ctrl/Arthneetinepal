@@ -181,7 +181,7 @@ export default function LandingPage() {
       })) as Topic[];
       setLatestTopics(topics);
     }, (error) => {
-      console.warn('Failed to fetch latest topics:', error);
+      if (import.meta.env.DEV) console.warn('Failed to fetch latest topics:', error);
     });
 
     return () => unsubscribeLatest();
@@ -546,7 +546,7 @@ export default function LandingPage() {
       <section className="bg-slate-900 py-28 px-6 overflow-hidden relative">
         {/* Full background Image */}
         <div className="absolute inset-0 pointer-events-none z-0">
-          <img src="/Pitcures for Arthneeti/Image 2 — SOS Disability Center.jpg" alt="Arthneeti for Children - SOS" className="w-full h-full object-cover opacity-30" />
+          <img src="/Pictures for Arthneeti/Image 2 — SOS Disability Center.jpg" alt="Arthneeti for Children - SOS" className="w-full h-full object-cover opacity-30" />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/40" />
         </div>
 
@@ -894,7 +894,7 @@ export default function LandingPage() {
                 </Link>
                 <div className="flex items-center gap-3 mt-6 pt-6 border-t border-slate-200">
                   <div className="w-8 h-8 rounded-xl bg-emerald-100 border border-emerald-200 flex items-center justify-center text-[10px] font-bold text-emerald-600 uppercase">
-                    {topic.author[0]}
+                    {(topic.author || 'A')[0]}
                   </div>
                   <span className="text-xs text-slate-500 font-medium">{topic.author}</span>
                 </div>

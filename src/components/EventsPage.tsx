@@ -75,7 +75,7 @@ export default function EventsPage() {
         setEventsLoading(false);
       },
       (error) => {
-        console.error('Events onSnapshot error:', error);
+        if (import.meta.env.DEV) console.error('Events onSnapshot error:', error);
         // Try fallback query without orderBy (in case index is missing)
         const fallbackQ = query(collection(db, 'events'), limit(PAGE_SIZE));
         fallbackUnsub = onSnapshot(fallbackQ,
@@ -86,7 +86,7 @@ export default function EventsPage() {
             setEventsLoading(false);
           },
           (fallbackError) => {
-            console.error('Events fallback error:', fallbackError);
+            if (import.meta.env.DEV) console.error('Events fallback error:', fallbackError);
             setEventsLoading(false);
           }
         );
@@ -117,12 +117,12 @@ export default function EventsPage() {
       try {
         const snap = await getDocs(collection(db, 'events'));
         const images = [
-          '/Pitcures for Arthneeti/Image 1 — Inaugural session (503020 Rule).jpg',
-          '/Pitcures for Arthneeti/Image 2 — SOS Disability Center.jpg',
-          '/Pitcures for Arthneeti/Image 3 — St. Lawrence School.png',
-          '/Pitcures for Arthneeti/Image 4 — Kathmandu Valley Public School.png',
-          '/Pitcures for Arthneeti/Image 5 — Problem solving session.jpg',
-          '/Pitcures for Arthneeti/Image 6 — Think Big. Invest Smart. Lead Nepal..jpg',
+          '/Pictures for Arthneeti/Image 1 — Inaugural session (503020 Rule).jpg',
+          '/Pictures for Arthneeti/Image 2 — SOS Disability Center.jpg',
+          '/Pictures for Arthneeti/Image 3 — St. Lawrence School.png',
+          '/Pictures for Arthneeti/Image 4 — Kathmandu Valley Public School.png',
+          '/Pictures for Arthneeti/Image 5 — Problem solving session.jpg',
+          '/Pictures for Arthneeti/Image 6 — Think Big. Invest Smart. Lead Nepal..jpg',
         ];
 
         // 1. Update existing events that don't have images
@@ -144,14 +144,14 @@ export default function EventsPage() {
             description: "Financial literacy and investing session for students.",
             location: "Kathmandu Valley",
             category: "Session",
-            dateTime: Timestamp.fromDate(new Date(2025, 5, 15 + createIdx, 10, 0, 0)),
+            dateTime: Timestamp.fromDate(new Date(Date.now() + createIdx * 7 * 24 * 60 * 60 * 1000 + 10 * 60 * 60 * 1000)),
             createdAt: serverTimestamp(),
             imageUrl: images[createIdx]
           });
           createIdx++;
         }
       } catch (err) {
-        console.warn("Seeding events skipped or failed", err);
+        if (import.meta.env.DEV) console.warn("Seeding events skipped or failed", err);
       }
     };
     seedAndApplyImages();
@@ -177,8 +177,17 @@ export default function EventsPage() {
   /* ── Submit ── */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.date || !formData.time) {
+      toast.error('Please select a date and time for the event.');
+      return;
+    }
     setUploading(true);
     const dateTime = new Date(`${formData.date}T${formData.time}`);
+    if (isNaN(dateTime.getTime())) {
+      toast.error('Invalid date or time. Please check your input.');
+      setUploading(false);
+      return;
+    }
     const path = editingEvent ? `events/${editingEvent.id}` : 'events';
 
     try {

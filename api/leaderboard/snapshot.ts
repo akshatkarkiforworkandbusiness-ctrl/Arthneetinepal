@@ -11,13 +11,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Verification: either Vercel Cron header, Admin user, or local development
-  const isCron = req.headers['x-vercel-cron'] === 'true';
+  // Verification: either Admin user or Vercel Cron (via secret header)
+  const isCron = req.headers['x-vercel-cron'] === '1' && req.headers['authorization'] === `Bearer ${process.env.CRON_SECRET}`;
   const uid = await verifyUser(req);
   const isAdminUser = uid ? (await adminDb.collection('admins').doc(uid).get()).exists : false;
-  const isDev = process.env.NODE_ENV === 'development';
 
-  if (!isCron && !isAdminUser && !isDev) {
+  if (!isCron && !isAdminUser) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 

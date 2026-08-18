@@ -508,7 +508,7 @@ export default function TradingGamePage() {
                           </td>
                           <td className="py-3 px-4 text-right text-white">{trade.quantity}</td>
                           <td className="py-3 px-4 text-right text-[#9f9fa0]">Rs. {trade.price}</td>
-                          <td className="py-3 px-4 text-right text-white">Rs. {trade.total.toLocaleString()}</td>
+                          <td className="py-3 px-4 text-right text-white">Rs. {(trade.total || (trade.quantity * trade.price)).toLocaleString()}</td>
                         </tr>
                       ))}
                     </tbody>

@@ -47,7 +47,7 @@ export default function TradingPage() {
       }
       setLoading(false);
     }, (error) => {
-      console.error("Error loading portfolio:", error);
+      if (import.meta.env.DEV) console.error("Error loading portfolio:", error);
       setLoading(false);
     });
 
@@ -59,7 +59,7 @@ export default function TradingPage() {
     const unsubTrades = onSnapshot(tradesQuery, (snap) => {
       setTrades(snap.docs.map(d => ({ id: d.id, ...d.data() } as Trade)));
     }, (error) => {
-      console.error("Error loading trades:", error);
+      if (import.meta.env.DEV) console.error("Error loading trades:", error);
     });
 
     return () => {
@@ -76,7 +76,7 @@ export default function TradingPage() {
       const data = await fetchStocks();
       setStocks(data);
     } catch (error) {
-      console.error("Failed to load stocks:", error);
+      if (import.meta.env.DEV) console.error("Failed to load stocks:", error);
       toast.error("Failed to fetch live NEPSE prices.");
     } finally {
       setLoadingStocks(false);
@@ -157,7 +157,7 @@ export default function TradingPage() {
         error: 'Failed to share trade.'
       });
     } catch (error) {
-      console.error("Error sharing trade:", error);
+      if (import.meta.env.DEV) console.error("Error sharing trade:", error);
     }
   };
 
@@ -256,8 +256,9 @@ export default function TradingPage() {
             <span className="text-xs text-[#9f9fa0] font-medium">Public Portfolio Visibility:</span>
             <button
               onClick={() => {
-                const newVal = !profile?.publicPortfolio;
-                updateProfile({ name: profile?.name || '', topics: profile?.topics || [], publicPortfolio: newVal });
+                if (!profile) return;
+                const newVal = !profile.publicPortfolio;
+                updateProfile({ name: profile.name, topics: profile.topics, publicPortfolio: newVal });
                 toast.success(newVal ? "Your portfolio is now public!" : "Your portfolio is now private.");
               }}
               className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors ${

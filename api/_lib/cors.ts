@@ -5,9 +5,12 @@ const ALLOWED_ORIGINS = [
   'https://arthneetinepal.firebaseapp.com',
   'https://arthneetinepal.vercel.app',
   'https://ujjwaldhungana.github.io',
-  'http://localhost:3000',
-  'http://localhost:5173',
 ];
+
+// Allow localhost only in development
+if (process.env.NODE_ENV !== 'production') {
+  ALLOWED_ORIGINS.push('http://localhost:3000', 'http://localhost:5173');
+}
 
 export function handleCors(req: VercelRequest, res: VercelResponse): boolean {
   const origin = req.headers.origin || '';

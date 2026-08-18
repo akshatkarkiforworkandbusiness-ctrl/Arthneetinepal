@@ -719,7 +719,7 @@ export default function ExplorePage() {
                 <AlertCircle size={30} className="text-brand-emerald mb-2 block" />
                 <p className="text-sm font-bold text-brandwood mb-1">Research Failed</p>
                 <p className="text-[10px] text-text-muted px-4 font-sans">
-                  {newsError.includes('API key') || newsError.includes('400') || newsError.includes('401') ? 'Invalid NVIDIA API Key. Please update VITE_NVIDIA_API_KEY in your .env file.' : newsError}
+                  {newsError.includes('API key') || newsError.includes('400') || newsError.includes('401') ? 'AI service temporarily unavailable. Please try again later.' : newsError}
                 </p>
               </div>
             ) : sectorNews && sectorNews.articles.length > 0 ? (

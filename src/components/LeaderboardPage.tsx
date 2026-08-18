@@ -69,7 +69,7 @@ export default function LeaderboardPage({ isEmbedded = false }: { isEmbedded?: b
       }
       setLoading(false);
     }, (error) => {
-      console.error("Error loading leaderboard:", error);
+      if (import.meta.env.DEV) console.error("Error loading leaderboard:", error);
       setLoading(false);
     });
 

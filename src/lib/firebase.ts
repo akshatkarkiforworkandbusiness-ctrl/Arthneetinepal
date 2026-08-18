@@ -80,6 +80,8 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
     operationType,
     path
   };
-  console.error('Firestore Error: ', JSON.stringify(errInfo));
+  if (import.meta.env.DEV) {
+    console.error('Firestore Error: ', JSON.stringify(errInfo));
+  }
   if (shouldThrow) throw new Error(JSON.stringify(errInfo));
 }

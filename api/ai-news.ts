@@ -1,6 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { handleCors } from './_lib/cors';
+import { verifyUser } from './_lib/auth';
 import { cached } from './_lib/cache';
+import { checkRateLimit } from './_lib/rateLimit';
 
 const MODELS = [
   'meta/llama-3.1-70b-instruct',
@@ -8,7 +10,7 @@ const MODELS = [
   'meta/llama-3.3-70b-instruct',
 ];
 
-const SECTORS = [
+const VALID_SECTORS = [
   'Banking',
   'Hydropower',
   'Microfinance',
@@ -18,13 +20,25 @@ const SECTORS = [
   'Remittance',
 ];
 
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL_MS = 5 * 60 * 1000;
+const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_WINDOW_MS = 60_000;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (handleCors(req, res)) return;
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const uid = await verifyUser(req);
+  if (!uid) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const rateKey = `ai-news:${uid}`;
+  if (!checkRateLimit(rateKey, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS)) {
+    return res.status(429).json({ error: 'Rate limit exceeded. Please try again later.' });
   }
 
   try {
@@ -37,7 +51,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
-    const sectorsToResearch = allSectors ? SECTORS : [sector && typeof sector === 'string' ? sector : SECTORS[0]];
+    // Validate sector against allowlist to prevent prompt injection
+    let sectorsToResearch: string[];
+    if (allSectors) {
+      sectorsToResearch = VALID_SECTORS;
+    } else {
+      const requestedSector = typeof sector === 'string' ? sector.trim() : '';
+      if (!requestedSector || !VALID_SECTORS.includes(requestedSector)) {
+        return res.status(400).json({ error: `Invalid sector. Must be one of: ${VALID_SECTORS.join(', ')}` });
+      }
+      sectorsToResearch = [requestedSector];
+    }
 
     // Research all sectors in parallel
     const sectorPromises = sectorsToResearch.map(async (sec) => {

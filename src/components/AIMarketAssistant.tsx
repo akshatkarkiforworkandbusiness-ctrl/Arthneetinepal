@@ -60,15 +60,8 @@ export default function AIMarketAssistant({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const apiKeyRef = useRef<string | null>(null);
 
-  // Initialize Groq API
   useEffect(() => {
-    const groqKey = import.meta.env.VITE_GROQ_API_KEY;
-    
-    if (groqKey && groqKey.length > 10) {
-      apiKeyRef.current = groqKey;
-    } else {
-      setError(`No API key available. Set VITE_GROQ_API_KEY in your .env file.`);
-    }
+    apiKeyRef.current = 'server-proxy';
   }, []);
 
   useEffect(() => {
@@ -164,35 +157,35 @@ export default function AIMarketAssistant({
     }));
 
     const callGroq = async (): Promise<string> => {
-      const res = await fetch(
-        `https://api.groq.com/openai/v1/chat/completions`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${apiKeyRef.current}`
-          },
-          body: JSON.stringify({
-            model: "llama-3.3-70b-versatile",
-            messages: [
-              { role: "system", content: systemPrompt },
-              ...history.map(msg => ({
-                role: msg.role,
-                content: msg.content
-              })),
-              { role: "user", content: userMsg }
-            ],
-            temperature: 0.2,
-            max_tokens: 2048
-          })
-        }
-      );
+      const { getAuth } = await import('firebase/auth');
+      const auth = getAuth();
+      const token = auth.currentUser ? await auth.currentUser.getIdToken() : '';
+
+      const res = await fetch('/api/market-tutor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...history.map(msg => ({
+              role: msg.role,
+              content: msg.content
+            })),
+            { role: 'user', content: userMsg }
+          ],
+          temperature: 0.2,
+          max_tokens: 2048
+        })
+      });
       if (!res.ok) {
         const errData = await res.json() as any;
-        throw new Error(errData.error?.message || "Groq API failed");
+        throw new Error(errData.error?.message || 'AI service failed');
       }
       const data = await res.json() as any;
-      return data.choices?.[0]?.message?.content || "No response generated.";
+      return data.choices?.[0]?.message?.content || 'No response generated.';
     };
 
     try {

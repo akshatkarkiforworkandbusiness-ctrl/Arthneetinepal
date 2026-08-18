@@ -240,15 +240,13 @@ export default function CommunityPage() {
         for (const post of posts) {
           try {
             await setDoc(doc(db, 'posts', post.id), post.data);
-            console.log('Seeded:', post.id);
           } catch (e) {
-            console.error('Failed to seed:', post.id, e);
+            if (import.meta.env.DEV) console.error('Failed to seed:', post.id, e);
           }
         }
         await setDoc(seededKey, { seededAt: serverTimestamp() });
-        console.log('Seeding complete — all 10 posts written');
       } catch (error) {
-        console.warn('Seeding skipped or failed:', error);
+        if (import.meta.env.DEV) console.warn('Seeding skipped or failed:', error);
       }
     };
     seedDiscussionPosts();
@@ -261,7 +259,6 @@ useEffect(() => {
   const unsubscribe = onSnapshot(qPosts, 
     (snapshot) => {
       const allPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Post));
-      console.log('Posts loaded:', allPosts.length, allPosts.map(p => ({ id: p.id, type: p.type, title: p.title })));
       setPosts(allPosts);
       setLoading(false);
     },

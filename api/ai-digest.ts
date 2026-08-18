@@ -1,11 +1,16 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { handleCors } from './_lib/cors';
+import { verifyUser } from './_lib/auth';
+import { checkRateLimit } from './_lib/rateLimit';
 
 const MODELS = [
   'meta/llama-3.1-70b-instruct',
   'meta/llama-3.1-8b-instruct',
   'meta/llama-3.3-70b-instruct',
 ];
+
+const RATE_LIMIT_MAX = 3;
+const RATE_LIMIT_WINDOW_MS = 60_000;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (handleCors(req, res)) return;
@@ -14,11 +19,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const uid = await verifyUser(req);
+  if (!uid) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const rateKey = `ai-digest:${uid}`;
+  if (!checkRateLimit(rateKey, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS)) {
+    return res.status(429).json({ error: 'Rate limit exceeded. Please try again later.' });
+  }
+
   try {
     const { articles, date } = (req.body || {}) as {
       articles: Array<{ title: string; summary: string; sector: string; source: string }>;
       date: string;
     };
+
+    if (!Array.isArray(articles)) {
+      return res.status(400).json({ error: 'articles must be an array' });
+    }
 
     const apiKey = process.env.NVIDIA_API_KEY;
     if (!apiKey) {
@@ -27,7 +46,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
-    const articleList = articles.map((a, i) => `${i + 1}. [${a.sector}] ${a.title}: ${a.summary?.substring(0, 200)}`).join('\n');
+    const articleList = articles.slice(0, 20).map((a, i) => `${i + 1}. [${(a.sector || '').substring(0, 50)}] ${(a.title || '').substring(0, 100)}: ${(a.summary || '').substring(0, 200)}`).join('\n');
 
     const prompt = `Generate a comprehensive daily financial digest for Nepal's stock market (NEPSE) for ${date}.
 

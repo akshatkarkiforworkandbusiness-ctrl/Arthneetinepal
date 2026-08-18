@@ -2,14 +2,11 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { handleCors } from './_lib/cors';
 import { verifyUser } from './_lib/auth';
 import { cached } from './_lib/cache';
-import { checkRateLimit } from './_lib/rateLimit';
 
-const CEREBRAS_API_URL = 'https://api.cerebras.ai/v1/chat/completions';
-const MODEL = 'llama-3.3-70b';
-const CACHE_TTL_MS = 60_000;
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const MODEL = 'llama-3.3-70b-versatile';
+const CACHE_TTL_MS = 30_000;
 const MAX_TOKENS_CAP = 2048;
-const RATE_LIMIT_MAX = 10;
-const RATE_LIMIT_WINDOW_MS = 60_000;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (handleCors(req, res)) return;
@@ -23,14 +20,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const rateKey = `ai-tutor:${uid}`;
-  if (!checkRateLimit(rateKey, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS)) {
-    return res.status(429).json({ error: 'Rate limit exceeded. Please try again later.' });
-  }
-
-  const apiKey = process.env.CEREBRAS_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: 'CEREBRAS_API_KEY not configured on server' });
+    return res.status(500).json({ error: 'GROQ_API_KEY not configured on server' });
   }
 
   const { messages, temperature = 0.2, max_tokens = 2048 } = req.body || {};
@@ -38,21 +30,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'messages array is required' });
   }
 
-  if (messages.length > 50) {
-    return res.status(400).json({ error: 'Too many messages. Maximum 50 allowed.' });
-  }
-
   const cappedTokens = Math.min(Math.max(1, Number(max_tokens) || 2048), MAX_TOKENS_CAP);
 
   try {
     const promptHash = JSON.stringify(messages.slice(-4).map((m: any) => (m.content || '').substring(0, 200)));
-    const cacheKey = `tutor:${uid}:${promptHash}:${temperature}`;
+    const cacheKey = `market-tutor:${uid}:${promptHash}:${temperature}`;
 
     const data = await cached(cacheKey, CACHE_TTL_MS, async () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-      const response = await fetch(CEREBRAS_API_URL, {
+      const response = await fetch(GROQ_API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -70,7 +58,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({})) as any;
-        throw new Error(errData.error?.message || `Cerebras API failed with status ${response.status}`);
+        throw new Error(errData.error?.message || `Groq API failed with status ${response.status}`);
       }
 
       return response.json();
@@ -78,7 +66,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     return res.status(200).json(data);
   } catch (error) {
-    console.error('[ai-tutor] Error:', error);
+    console.error('[market-tutor] Error:', error);
     return res.status(500).json({
       error: error instanceof Error ? error.message : 'Internal server error',
     });

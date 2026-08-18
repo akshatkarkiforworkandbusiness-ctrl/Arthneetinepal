@@ -15,7 +15,10 @@ const STATUS_CACHE_TTL_MS = 60_000; // 1 minute
 
 async function fetchStockData(): Promise<any[]> {
   return cached('nepse:stocks', STOCK_CACHE_TTL_MS, async () => {
-    const res = await fetch('https://shubhamnpk.github.io/yonepse/data/nepse_data.json');
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    const res = await fetch('https://shubhamnpk.github.io/yonepse/data/nepse_data.json', { signal: controller.signal });
+    clearTimeout(timeout);
     if (!res.ok) throw new Error(`Failed to fetch stock prices: ${res.status}`);
     return res.json();
   });
@@ -23,7 +26,10 @@ async function fetchStockData(): Promise<any[]> {
 
 async function fetchMarketStatus(): Promise<any> {
   return cached('nepse:status', STATUS_CACHE_TTL_MS, async () => {
-    const res = await fetch('https://shubhamnpk.github.io/yonepse/data/market/status.json');
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    const res = await fetch('https://shubhamnpk.github.io/yonepse/data/market/status.json', { signal: controller.signal });
+    clearTimeout(timeout);
     if (!res.ok) throw new Error(`Failed to fetch market status: ${res.status}`);
     return res.json();
   });
@@ -42,8 +48,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const { symbol, side, qty } = req.body as TradeBody;
 
-  if (!symbol || !side || !qty || qty <= 0 || !['buy', 'sell'].includes(side)) {
-    return res.status(400).json({ error: 'Invalid request parameters' });
+  if (!symbol || !side || !qty || qty <= 0 || qty > 10000 || !['buy', 'sell'].includes(side)) {
+    return res.status(400).json({ error: 'Invalid request parameters. Quantity must be between 1 and 10,000.' });
   }
 
   const upperSymbol = symbol.toUpperCase().trim();

@@ -196,11 +196,10 @@ export default function NewsFeedPage() {
     setResearching(true);
 
     try {
-      const nvidiaKey = import.meta.env.VITE_NVIDIA_API_KEY || '';
       const response = await fetch('/api/ai-news', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ allSectors: true, apiKey: nvidiaKey })
+        body: JSON.stringify({ allSectors: true })
       });
 
       if (!response.ok) {
@@ -255,7 +254,7 @@ export default function NewsFeedPage() {
         toast.success(`Posted ${posted} new article${posted > 1 ? 's' : ''}`);
       }
     } catch (error) {
-      console.error('Research error:', error);
+      if (import.meta.env.DEV) console.error('Research error:', error);
       toast.error(`Failed to research news: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setResearching(false);
@@ -275,7 +274,6 @@ export default function NewsFeedPage() {
 
     setResearching(true);
     try {
-      const nvidiaKey = import.meta.env.VITE_NVIDIA_API_KEY || '';
       const response = await fetch('/api/ai-digest', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -287,7 +285,6 @@ export default function NewsFeedPage() {
             source: p.source,
           })),
           date: today,
-          apiKey: nvidiaKey,
         })
       });
 
@@ -317,7 +314,7 @@ export default function NewsFeedPage() {
       await addDoc(collection(db, 'posts'), postData);
       toast.success('Daily digest published!');
     } catch (error) {
-      console.error('Digest error:', error);
+      if (import.meta.env.DEV) console.error('Digest error:', error);
       toast.error('Failed to generate digest');
     } finally {
       setResearching(false);
@@ -350,7 +347,7 @@ export default function NewsFeedPage() {
         });
       }
     } catch (error) {
-      console.error('Cleanup error:', error);
+      if (import.meta.env.DEV) console.error('Cleanup error:', error);
     }
   }, [mostEngagedYesterday]);
 
