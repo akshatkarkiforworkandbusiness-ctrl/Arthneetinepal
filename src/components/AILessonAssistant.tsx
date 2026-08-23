@@ -115,10 +115,15 @@ export default function AILessonAssistant({
     }));
 
     const callCerebras = async (): Promise<string> => {
+      const { getAuth } = await import('firebase/auth');
+      const auth = getAuth();
+      const token = auth.currentUser ? await auth.currentUser.getIdToken() : '';
+
       const res = await fetch('/api/ai-tutor', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({
           messages: [

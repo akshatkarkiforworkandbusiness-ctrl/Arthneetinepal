@@ -196,9 +196,16 @@ export default function NewsFeedPage() {
     setResearching(true);
 
     try {
+      const { getAuth } = await import('firebase/auth');
+      const auth = getAuth();
+      const token = auth.currentUser ? await auth.currentUser.getIdToken() : '';
+
       const response = await fetch('/api/ai-news', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ allSectors: true })
       });
 
@@ -274,9 +281,16 @@ export default function NewsFeedPage() {
 
     setResearching(true);
     try {
+      const { getAuth } = await import('firebase/auth');
+      const auth = getAuth();
+      const token = auth.currentUser ? await auth.currentUser.getIdToken() : '';
+
       const response = await fetch('/api/ai-digest', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           articles: todayPosts.filter(p => p.hourlyPost).map(p => ({
             title: p.title,

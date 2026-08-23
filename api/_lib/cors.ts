@@ -7,8 +7,9 @@ const ALLOWED_ORIGINS = [
   'https://ujjwaldhungana.github.io',
 ];
 
-// Allow localhost only in development
-if (process.env.NODE_ENV !== 'production') {
+// Allow localhost in development or when not on Vercel
+const isDev = process.env.NODE_ENV !== 'production' || process.env.VERCEL !== '1';
+if (isDev) {
   ALLOWED_ORIGINS.push('http://localhost:3000', 'http://localhost:5173');
 }
 

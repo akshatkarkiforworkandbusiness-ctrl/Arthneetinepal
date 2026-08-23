@@ -120,19 +120,19 @@ export function AuthModal() {
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
-            className="bg-white p-8 md:p-10 rounded-lg-2xl max-w-md w-full shadow-2xl relative text-white z-10 my-8 border border-white/10"
+            className="bg-white p-8 md:p-10 rounded-lg-2xl max-w-md w-full shadow-2xl relative z-10 my-8 border border-gray-200"
           >
             <button 
               onClick={closeAuthModal}
-              className="absolute top-6 right-6 text-text-muted hover:text-white transition-colors cursor-pointer"
+              className="absolute top-6 right-6 text-gray-400 hover:text-gray-700 transition-colors cursor-pointer"
             >
               <X size={24} />
             </button>
 
-            <h2 className="font-sans tracking-tight font-semibold text-3xl italic mb-2 text-white">
+            <h2 className="font-sans tracking-tight font-semibold text-3xl italic mb-2 text-gray-900">
               {isResetMode ? 'Reset Password' : isSignUpMode ? 'Create Account' : 'Welcome Back'}
             </h2>
-            <p className="text-text-muted text-xs mb-6">
+            <p className="text-gray-500 text-xs mb-6">
               {isResetMode 
                 ? "Enter your email and we'll send a link to reset your password." 
                 : isSignUpMode ? 'Join the Arthneeti student movement for finance.' : 'Log in to connect with the community.'}
@@ -146,8 +146,8 @@ export function AuthModal() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => { setIsResetMode(false); setResetSent(false); setAuthError(null); }}
-                    className="w-full bg-slate-raised border border-white/10 hover:border-brand-emerald-light text-white py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer"
+                    onClick={() => { setIsResetMode(false); setAuthError(null); }}
+                    className="w-full bg-gray-100 border border-gray-200 hover:border-emerald-500 text-gray-700 py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer"
                   >
                     Back to Log In
                   </button>
@@ -179,19 +179,19 @@ export function AuthModal() {
                   setResetSent(true);
                 }} className="space-y-4">
                   <div>
-                    <label className="text-[9px] font-black uppercase tracking-widest text-text-muted mb-1.5 block">Email Address</label>
+                    <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 mb-1.5 block">Email Address</label>
                     <input 
                       type="email"
                       required
                       placeholder="name@email.com"
                       value={resetEmail}
                       onChange={e => setResetEmail(e.target.value)}
-                      className="w-full bg-[#0f1011] border border-white/[0.06] rounded-lg p-3 text-xs outline-none focus:border-[#847dff] text-white transition-all font-medium"
+                      className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-xs outline-none focus:border-emerald-500 text-gray-900 transition-all font-medium"
                     />
                   </div>
 
                   {authError && (
-                    <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-[10px] leading-relaxed font-semibold">
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-[10px] leading-relaxed font-semibold">
                       {authError}
                     </div>
                   )}
@@ -199,7 +199,7 @@ export function AuthModal() {
                   <button 
                     type="submit"
                     disabled={resetSubmitting}
-                    className="w-full bg-brand-emerald hover:bg-white hover:text-brand-emerald text-white py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                   >
                     {resetSubmitting && (
                       <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-lg animate-spin" />
@@ -210,7 +210,7 @@ export function AuthModal() {
                   <button
                     type="button"
                     onClick={() => { setIsResetMode(false); setAuthError(null); }}
-                    className="w-full text-text-muted hover:text-white text-[10px] font-bold text-center cursor-pointer"
+                    className="w-full text-gray-500 hover:text-gray-700 text-[10px] font-bold text-center cursor-pointer"
                   >
                     ← Back to Log In
                   </button>
@@ -218,12 +218,12 @@ export function AuthModal() {
               )
             ) : (
             <>
-            <div className="flex bg-slate-raised p-1.5 rounded-lg border border-white/10 mb-6">
+            <div className="flex bg-gray-100 p-1.5 rounded-lg border border-gray-200 mb-6">
               <button
                 type="button"
                 onClick={switchToLogin}
                 className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all cursor-pointer ${
-                  !isSignUpMode ? 'bg-brand-emerald-light text-white shadow-md' : 'text-text-muted hover:text-white'
+                  !isSignUpMode ? 'bg-emerald-600 text-white shadow-md' : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
                 Log In
@@ -232,7 +232,7 @@ export function AuthModal() {
                 type="button"
                 onClick={switchToSignUp}
                 className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all cursor-pointer ${
-                  isSignUpMode ? 'bg-brand-emerald-light text-white shadow-md' : 'text-text-muted hover:text-white'
+                  isSignUpMode ? 'bg-emerald-600 text-white shadow-md' : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
                 Sign Up
@@ -285,32 +285,32 @@ export function AuthModal() {
               
               {isSignUpMode && (
                 <div>
-                  <label className="text-[9px] font-black uppercase tracking-widest text-text-muted mb-1.5 block">Full Name</label>
+                  <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 mb-1.5 block">Full Name</label>
                   <input 
                     type="text"
                     required
                     placeholder="e.g. Aayush Shrestha"
                     value={authForm.name}
                     onChange={e => setAuthForm({...authForm, name: e.target.value})}
-                    className="w-full bg-[#0f1011] border border-white/[0.06] rounded-lg p-3 text-xs outline-none focus:border-[#847dff] text-white transition-all font-medium"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-xs outline-none focus:border-emerald-500 text-gray-900 transition-all font-medium"
                   />
                 </div>
               )}
 
               <div>
-                <label className="text-[9px] font-black uppercase tracking-widest text-text-muted mb-1.5 block">Email Address</label>
+                <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 mb-1.5 block">Email Address</label>
                 <input 
                   type="email"
                   required
                   placeholder="name@email.com"
                   value={authForm.email}
                   onChange={e => setAuthForm({...authForm, email: e.target.value})}
-                  className="w-full bg-[#0f1011] border border-white/[0.06] rounded-lg p-3 text-xs outline-none focus:border-[#847dff] text-white transition-all font-medium"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-xs outline-none focus:border-emerald-500 text-gray-900 transition-all font-medium"
                 />
               </div>
 
               <div>
-                <label className="text-[9px] font-black uppercase tracking-widest text-text-muted mb-1.5 block">Password</label>
+                <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 mb-1.5 block">Password</label>
                 <div className="relative">
                   <input 
                     type={showPassword ? 'text' : 'password'}
@@ -319,18 +319,18 @@ export function AuthModal() {
                     minLength={6}
                     value={authForm.password}
                     onChange={e => setAuthForm({...authForm, password: e.target.value})}
-                    className="w-full bg-[#0f1011] border border-white/[0.06] rounded-lg p-3 pr-10 text-xs outline-none focus:border-[#847dff] text-white transition-all font-medium"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 pr-10 text-xs outline-none focus:border-emerald-500 text-gray-900 transition-all font-medium"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-white transition-colors cursor-pointer"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors cursor-pointer"
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
                 {isSignUpMode && authForm.password.length > 0 && authForm.password.length < 6 && (
-                  <p className="text-[9px] text-amber-400 mt-1">Password must be at least 6 characters.</p>
+                  <p className="text-[9px] text-amber-600 mt-1">Password must be at least 6 characters.</p>
                 )}
                 {!isSignUpMode && (
                   <div className="text-right mt-1.5">
@@ -342,7 +342,7 @@ export function AuthModal() {
                         setResetSent(false);
                         setIsResetMode(true);
                       }}
-                      className="text-[9px] font-black uppercase tracking-widest text-brand-emerald-light hover:underline cursor-pointer"
+                      className="text-[9px] font-black uppercase tracking-widest text-emerald-600 hover:underline cursor-pointer"
                     >
                       Forgot password?
                     </button>
@@ -352,7 +352,7 @@ export function AuthModal() {
 
               {isSignUpMode && (
                 <div>
-                  <label className="text-[9px] font-black uppercase tracking-widest text-text-muted mb-2 block">Interests (Select all that apply)</label>
+                  <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 mb-2 block">Interests (Select all that apply)</label>
                   <div className="flex flex-wrap gap-2">
                     {interestOptions.map(option => {
                       const isSelected = authForm.interests.includes(option);
@@ -368,8 +368,8 @@ export function AuthModal() {
                           }}
                           className={`px-3 py-1.5 rounded-lg text-[8px] font-black uppercase tracking-widest border transition-all cursor-pointer ${
                             isSelected 
-                              ? 'bg-brand-emerald border-brand-emerald text-white' 
-                              : 'border-white/10 text-text-muted hover:border-brand-emerald-light/50'
+                              ? 'bg-emerald-600 border-emerald-600 text-white' 
+                              : 'border-gray-200 text-gray-500 hover:border-emerald-500/50'
                           }`}
                         >
                           {option}
@@ -381,7 +381,7 @@ export function AuthModal() {
               )}
 
               {authError && (
-                <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-[10px] leading-relaxed font-semibold">
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-[10px] leading-relaxed font-semibold">
                   {authError}
                 </div>
               )}
@@ -389,7 +389,7 @@ export function AuthModal() {
               <button 
                 type="submit"
                 disabled={authSubmitting}
-                className="w-full bg-brand-emerald hover:bg-white hover:text-brand-emerald text-white py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
                 {authSubmitting && (
                   <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-lg animate-spin" />
@@ -400,16 +400,16 @@ export function AuthModal() {
 
             <div className="relative my-6 flex items-center justify-center">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-white/10" />
+                <div className="w-full border-t border-gray-200" />
               </div>
-              <span className="relative px-3 bg-[#090a0b] text-[9px] font-black uppercase tracking-widest text-text-muted">or continue with</span>
+              <span className="relative px-3 bg-white text-[9px] font-black uppercase tracking-widest text-gray-400">or continue with</span>
             </div>
 
             <button
               type="button"
               disabled={authSubmitting}
               onClick={handleGoogleSignIn}
-              className="w-full bg-slate-raised border border-white/10 hover:border-brand-emerald-light text-white py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              className="w-full bg-gray-100 border border-gray-200 hover:border-emerald-500 text-gray-700 py-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
