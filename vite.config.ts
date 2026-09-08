@@ -14,13 +14,25 @@ export default defineConfig(({mode}) => {
         '@': path.resolve(__dirname, '.'),
       },
     },
+    build: {
+      sourcemap: true,
+      chunkSizeWarningLimit: 600,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['react', 'react-dom', 'react-router-dom'],
+            firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+            ui: ['framer-motion', 'motion', 'lucide-react', 'sonner'],
+            charts: ['apexcharts', 'react-apexcharts', 'recharts'],
+            three: ['three', '@react-three/fiber', '@react-three/drei', 'gsap'],
+          },
+        },
+      },
+    },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modify—file watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
       proxy: {
-        // Proxy /api requests to Vercel dev server when running `npm run dev`
-        // For local API development, use: npx vercel dev (serves both frontend + API)
         '/api': {
           target: 'http://localhost:3000',
           changeOrigin: true,
