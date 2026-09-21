@@ -94,10 +94,15 @@ function extractJsonArray(text: string): any[] {
 }
 
 export async function researchSectorNews(sector: Sector): Promise<SectorNewsResult> {
+  const { getAuth } = await import('firebase/auth');
+  const auth = getAuth();
+  const token = auth.currentUser ? await auth.currentUser.getIdToken() : '';
+
   const response = await fetch('/api/news', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
     },
     body: JSON.stringify({ sector })
   });

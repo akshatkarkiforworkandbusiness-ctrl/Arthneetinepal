@@ -1,14 +1,13 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Play, Check, BookOpen, Download, Award, Brain, Gift } from 'lucide-react';
+import { Play, Check, BookOpen, Download, Award, Gift } from 'lucide-react';
 import CertificateModal from './CertificateModal';
 import { db } from '../lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import LessonCommentSection from './LessonCommentSection';
 import LessonQuiz from './LessonQuiz';
-import AILessonAssistant from './AILessonAssistant';
 import { awardLessonCompletion, markLessonComplete } from '../lib/rewards';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -2741,7 +2740,6 @@ export default function LearnPage() {
   const [expandedFaq, setExpandedFaq]   = useState<number | null>(null);
   const [expandedLessonFaq, setExpandedLessonFaq] = useState<number | null>(null);
   const [searchQuery, setSearchQuery]   = useState('');
-  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const playerRef = useRef<HTMLDivElement>(null);
 
   // ── Load completed lessons from Firestore ──────────────────────────────────
@@ -2888,7 +2886,6 @@ export default function LearnPage() {
     setActiveLesson(lesson);
     setIsPlaying(true);
     setExpandedLessonFaq(null);
-    setIsAssistantOpen(false); // Close AI assistant when switching lessons
     navigate(`/learn/${lesson.id}`, { replace: true });
     setTimeout(() => {
       playerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -2965,15 +2962,8 @@ export default function LearnPage() {
                 <p className="text-text-muted font-sans mt-2 max-w-2xl">{activeLesson.desc}</p>
               </div>
 
-              {/* Actions: Mark Complete & Ask AI */}
+              {/* Actions: Mark Complete */}
               <div className="flex items-center gap-3 shrink-0">
-                <button
-                  onClick={() => setIsAssistantOpen(true)}
-                  className="flex items-center gap-2 px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all bg-gradient-to-r from-brand-emerald to-brandwood text-white shadow-elevated hover:opacity-90"
-                >
-                  <Brain size={16} />
-                  Ask AI Tutor
-                </button>
                 {user && (!activeLesson.quiz || activeLesson.quiz.length === 0) && (
                   <button
                     onClick={() => markComplete(activeLesson.id)}
@@ -3313,16 +3303,6 @@ export default function LearnPage() {
       }} 
       moduleTitle={certificateModule || ''} 
       moduleId={certificateModuleId || ''}
-    />
-    
-    <AILessonAssistant 
-      isOpen={isAssistantOpen}
-      onClose={() => setIsAssistantOpen(false)}
-      lessonTitle={activeLesson.title}
-      lessonSummary={activeLesson.desc + " " + activeLesson.chapters.join(", ")}
-      lessonFaqs={activeLesson.faqs}
-      lessonQuizzes={activeLesson.quiz}
-      lessonTag={activeLesson.tag}
     />
   </main>
 );

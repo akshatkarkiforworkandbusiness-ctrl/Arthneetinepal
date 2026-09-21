@@ -8,7 +8,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import ReactApexChart from 'react-apexcharts';
 import { Brand3DText } from './Brand3DText';
-import AIMarketAssistant from './AIMarketAssistant';
 import { CloudOff, Search, ArrowUp, ArrowDown, TrendingUp, MessageSquare, Compass, Scale, Newspaper, AlertCircle } from 'lucide-react';
 import { db } from '../lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
@@ -758,14 +757,6 @@ export default function ExplorePage() {
         </aside>
       </div>
 
-      {/* AI Market Assistant Floating Widget */}
-      <AIMarketAssistant 
-        summary={summary}
-        topStocks={topStocks}
-        indices={indices}
-        marketOpen={marketOpen}
-        portfolio={portfolio}
-      />
     </motion.main>
   );
 }
