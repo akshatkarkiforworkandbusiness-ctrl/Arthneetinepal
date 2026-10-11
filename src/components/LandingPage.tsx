@@ -9,7 +9,7 @@ import PlaybookHero from './PlaybookHero';
 import CinematicIntro from './CinematicIntro';
 import CurriculumRoadmap from './CurriculumRoadmap';
 import SessionPhotos from './SessionPhotos';
-import { LESSONS } from './LearnPage';
+import { LESSONS } from '../data/lessonsData';
 import { FAQ_DATA, FAQ_CATEGORIES } from '../data/faqData';
 import { ArrowRight, ArrowUp, ArrowDown, Play, Download, Heart, ChevronDown, Users, PlayCircle, FileText, HelpCircle, Star, Shield, LineChart } from 'lucide-react';
 import { query, collection, orderBy, limit, onSnapshot } from 'firebase/firestore';

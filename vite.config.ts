@@ -16,18 +16,12 @@ export default defineConfig(({mode}) => {
     },
     build: {
       sourcemap: true,
+      /* Chunking is left to Rollup, which splits per route now that App.tsx
+       * lazy-loads its pages. The previous manualChunks grouping filed shared
+       * utility modules (clsx, use-sync-external-store, gsap) into the
+       * "charts" and "three" chunks, so the entry bundle statically imported
+       * them and ~2.2 MB of vendor code loaded on every page view. */
       chunkSizeWarningLimit: 600,
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            vendor: ['react', 'react-dom', 'react-router-dom'],
-            firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
-            ui: ['framer-motion', 'motion', 'lucide-react', 'sonner'],
-            charts: ['apexcharts', 'react-apexcharts', 'recharts'],
-            three: ['three', '@react-three/fiber', '@react-three/drei', 'gsap'],
-          },
-        },
-      },
     },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
