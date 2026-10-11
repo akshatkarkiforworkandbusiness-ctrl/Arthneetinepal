@@ -1799,8 +1799,8 @@ export const LESSONS: Lesson[] = [
     desc: 'Reading NEPSE floor sheets, tracking broker accumulation vs distribution, using MACD & RSI divergence, Fibonacci retracements, and avoiding retail bull/bear traps.',
     duration: '24:00',
     tag: 'Technical Analysis',
-    videoUrl: 'https://www.youtube.com/embed/L7G0OfOUkms',
-    thumbnail: 'https://img.youtube.com/vi/L7G0OfOUkms/hqdefault.jpg',
+    videoUrl: 'https://www.youtube.com/embed/edg46sFu6zs',
+    thumbnail: 'https://img.youtube.com/vi/edg46sFu6zs/hqdefault.jpg',
     chapters: [
       'Understanding NEPSE Floor Sheets & Broker ID Tracking',
       'Detecting Institutional Accumulation vs. Retail Distribution',

@@ -382,13 +382,22 @@ export default function LearnPage() {
           
           {/* Video */}
           <div className="aspect-video w-full">
-            <iframe
-              src={activeLesson.videoUrl}
-              title={activeLesson.title}
-              className="w-full h-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
+            {activeLesson.videoUrl ? (
+              <iframe
+                src={activeLesson.videoUrl}
+                title={activeLesson.title}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            ) : (
+              /* Text-only lesson: an empty iframe src would reload the app inside
+               * itself, so render a placeholder panel instead. */
+              <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-surface-muted text-text-muted">
+                <BookOpen size={28} className="text-brand-emerald-light" />
+                <p className="font-sans text-sm">Video lesson coming soon — read the chapters below.</p>
+              </div>
+            )}
           </div>
 
           <div className="p-10 space-y-8">
@@ -601,10 +610,14 @@ export default function LearnPage() {
                     }`}
                   >
                     {/* Thumbnail */}
-                    <div className="relative aspect-video overflow-hidden">
+                    <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-brand-emerald to-electric-mint/30">
                       <img
                         src={lesson.thumbnail}
                         alt={lesson.title}
+                        /* A removed/unavailable YouTube video leaves a dead thumbnail
+                         * URL; fade it out so the branded gradient shows instead of a
+                         * broken-image icon. */
+                        onError={(e) => { e.currentTarget.style.opacity = '0'; }}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-brandwood/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
