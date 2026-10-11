@@ -142,19 +142,46 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     ([name, v]) => String(v).startsWith('FAIL') && !informational.has(name)
   );
 
-  res.status(failed.length ? 503 : 200).json({
-    ok: failed.length === 0,
-    node: process.version,
-    cwd: process.cwd(),
-    execArgv: process.execArgv,
-    nodeOptions: process.env.NODE_OPTIONS ?? null,
-    platform: `${process.platform}-${process.arch}`,
-    uptimeMs: Date.now() - started,
-    listings,
-    stages,
-    joseHoisted: hoisted,
-    firebaseAdmin: admin,
-    env,
-    echo: { hasBody: !!req.body, method: req.method, safe: safe(process.versions) },
-  });
+  // Production serves a *redacted* report: it keeps what monitoring actually
+  // needs — is every module loadable, is the admin SDK configured — without
+  // publishing the runtime's flags, the bundle layout or absolute paths. The
+  // full detail (which is what diagnosed both outages) is only served outside
+  // production, where it can't hand an attacker a fingerprint of the runtime.
+  const isProd = process.env.VERCEL_ENV === 'production' || process.env.VERCEL === '1';
+  const scrub = (v: unknown): unknown => {
+    if (typeof v !== 'string') return v;
+    return v.replace(/(?:\/var\/task|[A-Za-z]:\\)[^\s)'"`]*/g, (m) => m.split(/[\\/]/).pop() || m);
+  };
+  const scrubStages = Object.fromEntries(
+    Object.entries(stages).map(([k, v]) => [k, scrub(v)])
+  );
+
+  const body: Record<string, unknown> = isProd
+    ? {
+        ok: failed.length === 0,
+        node: process.version.replace(/\.\d+$/, '.x'),
+        platform: `${process.platform}-${process.arch}`,
+        uptimeMs: Date.now() - started,
+        stages: scrubStages,
+        joseHoisted: scrub(hoisted),
+        firebaseAdmin: admin,
+        env,
+      }
+    : {
+        ok: failed.length === 0,
+        node: process.version,
+        cwd: process.cwd(),
+        execArgv: process.execArgv,
+        nodeOptions: process.env.NODE_OPTIONS ?? null,
+        platform: `${process.platform}-${process.arch}`,
+        uptimeMs: Date.now() - started,
+        listings,
+        stages,
+        joseHoisted: hoisted,
+        firebaseAdmin: admin,
+        env,
+        echo: { hasBody: !!req.body, method: req.method, safe: safe(process.versions) },
+      };
+
+  res.status(failed.length ? 503 : 200).json(body);
 }
