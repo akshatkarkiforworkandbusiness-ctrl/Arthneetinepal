@@ -1,29 +1,21 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { createRequire } from 'node:module';
-import { readFileSync } from 'node:fs';
-// Static imports of the dependency-free helpers. These prove our own modules
-// load correctly. NO `import.meta` anywhere in this file: Vercel compiles these
-// functions to CommonJS, where `import.meta` is a parse error that kills the
-// whole module before a single line runs (that exact mistake made this endpoint
-// return FUNCTION_INVOCATION_FAILED in the previous commit).
-import { cacheHas } from './_lib/cache';
-import { checkRateLimit } from './_lib/rateLimit';
-import { handleCors } from './_lib/cors';
 
 /**
  * Diagnostic endpoint: /api/health
  *
  * Every /api/* handler returned FUNCTION_INVOCATION_FAILED before executing any
- * handler code, i.e. the module graph failed to load. A normal handler cannot
- * report that — the crash kills it first — so this file keeps its own import
- * graph trivially safe and loads everything else behind try/catch, turning a
- * load failure into a reported string.
+ * handler code, so the module graph fails to load. A normal handler cannot
+ * report that — the crash kills it first — so this file is built to survive it:
  *
- * Known upstream bug (reported by the previous revision of this file):
- *   jwks-rsa@4.1.0 (CommonJS) does require('jose'), but jose@6 is ESM-only, so
- *   Node throws ERR_REQUIRE_ESM while loading firebase-admin/auth — reached by
- *   every handler via _lib/auth -> _lib/firebaseAdmin.
- * The jose override pinned in package.json fixes that; stages 5-7 verify it.
+ *   - it has NO value imports at all (only `import type`, which the compiler
+ *     erases), because a top-level import is exactly the thing that kills a
+ *     module. Two earlier revisions of this file died that way, so everything
+ *     below is loaded with dynamic import() inside try/catch.
+ *
+ * The output answers, in one request: which files actually exist inside the
+ * deployed function, which of our modules can be loaded, whether jwks-rsa can
+ * require('jose') (the upstream bug behind every handler 500), and which
+ * server-side env vars are set (presence only — never values).
  */
 
 const ENV_KEYS = [
@@ -35,23 +27,15 @@ const ENV_KEYS = [
   'OPENROUTER_API_KEY',
 ];
 
-// A CJS require rooted at the deployment root (/var/task in production). Works
-// with or without an import.meta, and uses CommonJS extension resolution.
-const rootRequire = createRequire(`${process.cwd().replace(/[\\/]+$/, '')}/health-probe.cjs`);
-
-const versionOf = (pkgPath: string) => {
-  try {
-    return (JSON.parse(readFileSync(pkgPath, 'utf8')) as { version: string }).version;
-  } catch {
-    return '?';
-  }
-};
-
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Cache-Control', 'no-store');
 
   const started = Date.now();
   const stages: Record<string, string> = {};
+  const listings: Record<string, string> = {};
+  const safe = <T>(v: T): string => {
+    try { return JSON.stringify(v); } catch { return String(v); }
+  };
 
   const probe = async (name: string, load: () => Promise<unknown>) => {
     try {
@@ -63,40 +47,61 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   };
 
-  // 1. Baseline: if this fails the runtime itself is broken.
-  await probe('0-node-builtin', () => import('node:crypto'));
+  // 1. What is actually inside the deployed function bundle?
+  let fs: typeof import('node:fs') | null = null;
+  await probe('0-node-fs', async () => { fs = await import('node:fs'); });
+  if (fs) {
+    const list = (dir: string) => {
+      try { return (fs as typeof import('node:fs')).readdirSync(dir).sort().join(', '); }
+      catch (e) { return `THROWS: ${String((e as Error).message).slice(0, 120)}`; }
+    };
+    listings['/var/task'] = list('/var/task');
+    listings['/var/task/api'] = list('/var/task/api');
+    listings['/var/task/api/_lib'] = list('/var/task/api/_lib');
+    listings['/var/task/api/leaderboard'] = list('/var/task/api/leaderboard');
+    listings['/var/task/api/trading'] = list('/var/task/api/trading');
+    listings['/var/task/node_modules (j*)'] = list('/var/task/node_modules')
+      .split(', ').filter((f) => /^(jose|jwks-rsa)/.test(f)).join(', ') || '(none)';
+    listings['/var/task/node_modules/jwks-rsa/node_modules'] = list('/var/task/node_modules/jwks-rsa/node_modules');
+  }
 
-  // 2. Our own shared modules, loaded the same way the handlers load them.
-  await probe('1-local-_lib-cors', () => Promise.resolve(rootRequire('./api/_lib/cors')));
-  await probe('2-local-_lib-rateLimit', () => Promise.resolve(rootRequire('./api/_lib/rateLimit')));
-  await probe('3-local-_lib-firebaseAdmin', () => Promise.resolve(rootRequire('./api/_lib/firebaseAdmin')));
+  // 2. Our own modules — both extensionless and with an explicit .js, so we can
+  //    tell "file is missing" apart from "ESM extension resolution failed".
+  await probe('1-local-cors-extless', () => import('./_lib/cors'));
+  await probe('2-local-cors-dot-js', () => import('./_lib/cors.js'));
+  await probe('3-local-rateLimit-dot-js', () => import('./_lib/rateLimit.js'));
+  await probe('4-local-firebaseAdmin-dot-js', () => import('./_lib/firebaseAdmin.js'));
 
-  // 3. Load a real handler exactly as the platform does. This is the decisive
-  //    test: whatever it throws is precisely why /api/news etc. 500.
-  await probe('4-real-handler-news', () => Promise.resolve(rootRequire('./api/news')));
+  // 3. A real handler, loaded the way the platform loads it. Whatever this
+  //    reports is precisely why /api/news etc. 500.
+  await probe('5-real-handler-news-extless', () => import('./news'));
+  await probe('6-real-handler-news-dot-js', () => import('./news.js'));
 
-  // 4. The firebase-admin entry points (auth pulls jwks-rsa -> jose).
-  await probe('5-firebase-admin-app', () => import('firebase-admin/app'));
-  await probe('6-firebase-admin-firestore', () => import('firebase-admin/firestore'));
-  await probe('7-firebase-admin-auth', () => import('firebase-admin/auth'));
-  await probe('8-jwks-rsa', () => import('jwks-rsa'));
+  // 4. firebase-admin entry points (auth pulls jwks-rsa -> jose).
+  await probe('7-firebase-admin-app', () => import('firebase-admin/app'));
+  await probe('8-firebase-admin-firestore', () => import('firebase-admin/firestore'));
+  await probe('9-firebase-admin-auth', () => import('firebase-admin/auth'));
 
-  // 5. Replay jwks-rsa's own require('jose') from jwks-rsa's location — the
-  //    exact call that threw ERR_REQUIRE_ESM, so the definitive fix check.
+  // 5. Replay jwks-rsa's own require('jose') from jwks-rsa's location: the exact
+  //    call that threw ERR_REQUIRE_ESM, so the definitive check of the override.
+  const mod = await import('node:module');
+  const { createRequire } = mod;
+  const rootRequire = createRequire(`${process.cwd().replace(/[\\/]+$/, '')}/health-probe.cjs`);
+  const versionOf = (p: string) => {
+    try { return (JSON.parse((fs as typeof import('node:fs')).readFileSync(p, 'utf8')) as { version: string }).version; }
+    catch { return '?'; }
+  };
   try {
     const jwksRequire = createRequire(rootRequire.resolve('jwks-rsa/package.json'));
     const resolved = jwksRequire.resolve('jose');
     const version = versionOf(jwksRequire.resolve('jose/package.json'));
     jwksRequire('jose');
-    stages['9-require-jose-from-jwks-rsa'] = `ok v${version} (${resolved})`;
+    stages['10-require-jose-from-jwks-rsa'] = `ok v${version} (${resolved})`;
   } catch (e) {
-    stages['9-require-jose-from-jwks-rsa'] = `FAIL: ${String((e as Error)?.message).slice(0, 300)}`;
+    stages['10-require-jose-from-jwks-rsa'] = `FAIL: ${String((e as Error)?.message).slice(0, 300)}`;
   }
 
-  // 6. Informational only: the hoisted jose (ESM-only, kept for shadcn's MCP
-  //    SDK). May fail wherever require(esm) is unavailable — that is the
-  //    original bug's mechanism — but it is harmless now jwks-rsa has its own
-  //    CJS copy, so it never flips the health status.
+  // 6. Informational: the hoisted jose (ESM-only, kept for shadcn's MCP SDK).
   let hoisted = 'skipped';
   try {
     const resolved = rootRequire.resolve('jose');
@@ -109,11 +114,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   let admin: Record<string, unknown> | string;
   try {
-    const mod = rootRequire('./api/_lib/firebaseAdmin') as {
+    const m = (await import('./_lib/firebaseAdmin.js')) as {
       isFirebaseAdminReady(): boolean;
       getFirebaseAdminError(): string | null;
     };
-    admin = { ready: mod.isFirebaseAdminReady(), error: mod.getFirebaseAdminError() };
+    admin = { ready: m.isFirebaseAdminReady(), error: m.getFirebaseAdminError() };
   } catch (e) {
     admin = `threw: ${String((e as Error)?.message).slice(0, 300)}`;
   }
@@ -124,7 +129,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     env[k] = v === undefined ? 'missing' : v.length === 0 ? 'empty' : 'set';
   }
 
-  const failed = Object.entries(stages).filter(([, v]) => String(v).startsWith('FAIL'));
+  // Stage 1 (extensionless) and the informational hoisted probe never flip the
+  // health status; everything else does.
+  const failed = Object.entries(stages).filter(
+    ([name, v]) => String(v).startsWith('FAIL') && name !== '1-local-cors-extless'
+  );
 
   res.status(failed.length ? 503 : 200).json({
     ok: failed.length === 0,
@@ -134,17 +143,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     nodeOptions: process.env.NODE_OPTIONS ?? null,
     platform: `${process.platform}-${process.arch}`,
     uptimeMs: Date.now() - started,
+    listings,
     stages,
     joseHoisted: hoisted,
     firebaseAdmin: admin,
-    env, // presence only — never echoes secret values
-    helpers: {
-      cacheHas: typeof cacheHas === 'function',
-      checkRateLimit: typeof checkRateLimit === 'function',
-      handleCors: typeof handleCors === 'function',
-      cacheProbe: cacheHas('health', 60_000),
-      rateLimitProbe: checkRateLimit('health', 5, 60_000),
-    },
-    echo: { hasBody: !!req.body, method: req.method },
+    env,
+    echo: { hasBody: !!req.body, method: req.method, safe: safe(process.versions) },
   });
 }
