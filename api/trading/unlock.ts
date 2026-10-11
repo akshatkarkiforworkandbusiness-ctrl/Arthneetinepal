@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { handleCors } from '../_lib/cors';
-import { verifyUser } from '../_lib/auth';
-import { adminDb, FieldValue } from '../_lib/firebaseAdmin';
+import { handleCors } from '../_lib/cors.js';
+import { verifyUser } from '../_lib/auth.js';
+import { adminDb, FieldValue } from '../_lib/firebaseAdmin.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (handleCors(req, res)) return;

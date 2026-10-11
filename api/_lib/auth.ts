@@ -1,5 +1,5 @@
 import type { VercelRequest } from '@vercel/node';
-import { getAdminAuth, isFirebaseAdminReady, getFirebaseAdminError } from './firebaseAdmin';
+import { getAdminAuth, isFirebaseAdminReady, getFirebaseAdminError } from './firebaseAdmin.js';
 
 export async function verifyUser(req: VercelRequest): Promise<string | null> {
   if (!isFirebaseAdminReady()) {

@@ -33,26 +33,28 @@ interface IndexState {
 }
 
 const initialIndices: Record<string, IndexState> = {
+  // Seeds match the last known real close, so even the offline fallback is
+  // realistic. Live values replace them within a second of mount.
   NEPSE: {
     name: 'NEPSE Index',
-    value: 2054.32,
-    change: 18.42,
-    changePercent: 0.90,
-    sparkline: [2032, 2038, 2045, 2040, 2048, 2045, 2051, 2049, 2054.32]
+    value: 2591.80,
+    change: 17.15,
+    changePercent: 0.66,
+    sparkline: [2574, 2578, 2581, 2579, 2585, 2588, 2584, 2589, 2591.80]
   },
-  BANKING: {
-    name: 'Banking Index',
-    value: 1248.60,
-    change: -5.20,
-    changePercent: -0.41,
-    sparkline: [1260, 1258, 1254, 1251, 1248, 1253, 1251, 1247, 1248.60]
+  SENSITIVE: {
+    name: 'Sensitive Index',
+    value: 465.85,
+    change: 3.80,
+    changePercent: 0.82,
+    sparkline: [462, 463, 464, 463.5, 464.8, 465.2, 464.9, 465.5, 465.85]
   },
-  HYDRO: {
-    name: 'Hydropower Index',
-    value: 2480.15,
-    change: 42.80,
-    changePercent: 1.75,
-    sparkline: [2410, 2425, 2440, 2435, 2460, 2452, 2470, 2465, 2480.15]
+  FLOAT: {
+    name: 'Float Index',
+    value: 179.10,
+    change: 1.42,
+    changePercent: 0.80,
+    sparkline: [177.60, 178, 178.40, 178.20, 178.70, 178.90, 178.60, 178.95, 179.10]
   }
 };
 
@@ -191,11 +193,16 @@ export default function LandingPage() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   useEffect(() => {
-    const NEPSE_API = 'https://nepseapi.surajrimal.dev';
+    // YONEPSE publishes the headline NEPSE indices as static JSON on GitHub
+    // Pages — CORS-open, no API key, and already the source the rest of the
+    // app uses (src/lib/nepseApi.ts). The previous source,
+    // nepseapi.surajrimal.dev, returns 522 (Cloudflare origin down), so this
+    // ticker could never leave its simulated fallback.
+    const YONEPSE_INDICES = 'https://shubhamnpk.github.io/yonepse/data/market/indices.json';
     const INDEX_MAP: Record<string, { key: string; name: string }> = {
-      '58': { key: 'NEPSE', name: 'NEPSE Index' },
-      '3':  { key: 'BANKING', name: 'Banking Index' },
-      '11': { key: 'HYDRO', name: 'Hydropower Index' },
+      'NEPSE Index':     { key: 'NEPSE',     name: 'NEPSE Index' },
+      'Sensitive Index': { key: 'SENSITIVE', name: 'Sensitive Index' },
+      'Float Index':     { key: 'FLOAT',     name: 'Float Index' },
     };
 
     const controller = new AbortController();
@@ -203,31 +210,24 @@ export default function LandingPage() {
     const fetchLiveData = async () => {
       try {
         const timeoutId = setTimeout(() => controller.abort(), 6000);
-        const [indexRes, subIndexRes] = await Promise.all([
-          fetch(`${NEPSE_API}/NepseIndex`, { signal: controller.signal }),
-          fetch(`${NEPSE_API}/SubIndices`, { signal: controller.signal }),
-        ]);
+        const res = await fetch(YONEPSE_INDICES, { signal: controller.signal });
         clearTimeout(timeoutId);
-        if (!indexRes.ok) throw new Error('API error');
-        const indexData = await indexRes.json();
-        const subData = subIndexRes.ok ? await subIndexRes.json() : [];
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const rows: unknown = await res.json();
+        if (!Array.isArray(rows)) throw new Error('unexpected payload');
 
-        const all = [indexData, ...(Array.isArray(subData) ? subData : [])];
         const next: Record<string, IndexState> = { ...initialIndices };
-
-        all.forEach((entry: any) => {
-          const id = String(entry?.id ?? entry?.indexId ?? '');
-          const mapped = INDEX_MAP[id];
+        rows.forEach((entry: any) => {
+          const mapped = INDEX_MAP[String(entry?.index ?? '')];
           if (!mapped) return;
-          const value = parseFloat(entry.currentValue ?? entry.value ?? 0);
-          const change = parseFloat(entry.change ?? 0);
-          const changePercent = parseFloat(entry.perChange ?? entry.percentageChange ?? 0);
+          const value = Number(entry?.currentValue ?? entry?.close ?? 0);
+          if (!Number.isFinite(value) || value <= 0) return;
           const prev = next[mapped.key];
           next[mapped.key] = {
             name: mapped.name,
             value,
-            change,
-            changePercent,
+            change: Number(entry?.change ?? 0) || 0,
+            changePercent: Number(entry?.perChange ?? 0) || 0,
             sparkline: [...prev.sparkline.slice(1), value],
           };
         });
@@ -332,7 +332,7 @@ export default function LandingPage() {
             </div>
             <p className="text-[11px] text-text-muted max-w-xs sm:text-right">
               {marketDataSource === 'live'
-                ? `Data via NepseAPI. For educational use.${lastUpdated ? ` Updated ${lastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}` : ''}`
+                ? `Data via YONEPSE (public NEPSE data). For educational use.${lastUpdated ? ` Updated ${lastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}` : ''}`
                 : 'Showing simulated values for demonstration.'}
             </p>
           </div>

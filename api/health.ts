@@ -67,6 +67,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   // 2. Our own modules — both extensionless and with an explicit .js, so we can
   //    tell "file is missing" apart from "ESM extension resolution failed".
+  // 2. Our own modules — extensionless AND with an explicit .js. The
+  //    extensionless pair is deliberate: it is the resolution mode that fails
+  //    in production (Node's ESM loader never resolves extensionless
+  //    specifiers, and Vercel emits ESM), which is why every handler 500'd
+  //    even though the files were present. Both are excluded from the health
+  //    verdict below; they measure the platform, not our code.
   await probe('1-local-cors-extless', () => import('./_lib/cors'));
   await probe('2-local-cors-dot-js', () => import('./_lib/cors.js'));
   await probe('3-local-rateLimit-dot-js', () => import('./_lib/rateLimit.js'));
@@ -129,10 +135,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     env[k] = v === undefined ? 'missing' : v.length === 0 ? 'empty' : 'set';
   }
 
-  // Stage 1 (extensionless) and the informational hoisted probe never flip the
-  // health status; everything else does.
+  // The extensionless stages and the informational hoisted-jose probe never
+  // flip the verdict: they measure platform resolution rules, not our code.
+  const informational = new Set(['1-local-cors-extless', '5-real-handler-news-extless']);
   const failed = Object.entries(stages).filter(
-    ([name, v]) => String(v).startsWith('FAIL') && name !== '1-local-cors-extless'
+    ([name, v]) => String(v).startsWith('FAIL') && !informational.has(name)
   );
 
   res.status(failed.length ? 503 : 200).json({

@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { handleCors } from './_lib/cors';
-import { verifyUser } from './_lib/auth';
-import { cached } from './_lib/cache';
-import { checkRateLimit } from './_lib/rateLimit';
+import { handleCors } from './_lib/cors.js';
+import { verifyUser } from './_lib/auth.js';
+import { cached } from './_lib/cache.js';
+import { checkRateLimit } from './_lib/rateLimit.js';
 
 const MODELS = [
   'meta/llama-3.1-70b-instruct',
