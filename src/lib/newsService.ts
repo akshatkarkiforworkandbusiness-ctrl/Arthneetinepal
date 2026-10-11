@@ -145,11 +145,3 @@ export async function researchSectorNews(sector: Sector): Promise<SectorNewsResu
   };
 }
 
-export async function researchAllSectors(): Promise<SectorNewsResult[]> {
-  const results = await Promise.allSettled(
-    SECTORS.map(sector => researchSectorNews(sector))
-  );
-  return results
-    .filter((r): r is PromiseFulfilledResult<SectorNewsResult> => r.status === 'fulfilled')
-    .map(r => r.value);
-}
