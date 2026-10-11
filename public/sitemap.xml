@@ -1,63 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://ujjwaldhungana.github.io/Arthneti/</loc>
-    <lastmod>2026-06-03</lastmod>
+    <loc>https://arthneetinepal.vercel.app/</loc>
+    <lastmod>2026-10-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://ujjwaldhungana.github.io/Arthneti/discover</loc>
-    <lastmod>2026-06-03</lastmod>
+    <loc>https://arthneetinepal.vercel.app/discover</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://arthneetinepal.vercel.app/learn</loc>
+    <lastmod>2026-10-11</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://ujjwaldhungana.github.io/Arthneti/community</loc>
-    <lastmod>2026-06-03</lastmod>
+    <loc>https://arthneetinepal.vercel.app/community</loc>
+    <lastmod>2026-10-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ujjwaldhungana.github.io/Arthneti/about-us</loc>
-    <lastmod>2026-06-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://ujjwaldhungana.github.io/Arthneti/learn</loc>
-    <lastmod>2026-06-03</lastmod>
+    <loc>https://arthneetinepal.vercel.app/news-feed</loc>
+    <lastmod>2026-10-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ujjwaldhungana.github.io/Arthneti/events</loc>
-    <lastmod>2026-06-03</lastmod>
+    <loc>https://arthneetinepal.vercel.app/events</loc>
+    <lastmod>2026-10-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ujjwaldhungana.github.io/Arthneti/profile</loc>
-    <lastmod>2026-06-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <loc>https://arthneetinepal.vercel.app/trade</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ujjwaldhungana.github.io/Arthneti/nepse-investing-guide.html</loc>
-    <lastmod>2026-06-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <loc>https://arthneetinepal.vercel.app/trade-game</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ujjwaldhungana.github.io/Arthneti/nepal_financial_literacy_curriculum.html</loc>
-    <lastmod>2026-06-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <loc>https://arthneetinepal.vercel.app/leaderboard</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ujjwaldhungana.github.io/Arthneti/arthneeti-economics-guidebook.html</loc>
-    <lastmod>2026-06-03</lastmod>
+    <loc>https://arthneetinepal.vercel.app/about-us</loc>
+    <lastmod>2026-10-11</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://arthneetinepal.vercel.app/privacy-policy</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://arthneetinepal.vercel.app/terms-of-service</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
 </urlset>

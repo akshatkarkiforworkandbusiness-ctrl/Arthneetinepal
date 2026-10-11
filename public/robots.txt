@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Private, signed-in surfaces — no value to crawlers
+Disallow: /profile
+Disallow: /bookmarks
+Disallow: /notifications
+
+Sitemap: https://arthneetinepal.vercel.app/sitemap.xml

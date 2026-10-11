@@ -1,4 +1,4 @@
-import { VercelRequest } from '@vercel/node';
+import type { VercelRequest } from '@vercel/node';
 import { getAdminAuth, isFirebaseAdminReady, getFirebaseAdminError } from './firebaseAdmin';
 
 export async function verifyUser(req: VercelRequest): Promise<string | null> {
