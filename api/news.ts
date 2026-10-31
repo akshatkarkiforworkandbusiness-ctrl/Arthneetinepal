@@ -1,14 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { handleCors } from './_lib/cors';
-import { verifyUser } from './_lib/auth';
-import { cached } from './_lib/cache';
-import { checkRateLimit } from './_lib/rateLimit';
-
-const MODELS = [
-  'meta/llama-3.1-70b-instruct',
-  'meta/llama-3.1-8b-instruct',
-  'meta/llama-3.3-70b-instruct',
-];
+import { handleCors } from './_lib/cors.js';
+import { verifyUser } from './_lib/auth.js';
+import { cached } from './_lib/cache.js';
+import { checkRateLimit } from './_lib/rateLimit.js';
+import { complete, configuredProviders, extractJsonArray } from './_lib/ai.js';
 
 const VALID_SECTORS = ['Banking', 'Hydropower', 'Microfinance', 'IPO Market', 'Mutual Funds', 'Inflation', 'Remittance'];
 const CACHE_TTL_MS = 5 * 60 * 1000;
@@ -41,75 +36,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const sanitizedSector = sector.trim();
 
-    const apiKey = process.env.NVIDIA_API_KEY;
-    if (!apiKey) {
+    if (configuredProviders().length === 0) {
       return res.status(500).json({
-        error: 'NVIDIA API key not configured.',
+        error: 'No AI provider is configured. Set GROQ_API_KEY in the project environment.',
       });
     }
 
-    const prompt = `You are a financial news researcher for Nepal's stock market (NEPSE).
-Research and summarize the LATEST news about the "${sanitizedSector}" sector in Nepal.
-Return a JSON array of recent news articles. Each article must have:
-- "title": concise headline
-- "summary": 2-3 sentence summary of key developments
-- "date": approximate date (use "Today", "Yesterday", or "This week")
-- "source": where this news might be found (e.g., "NEPSE", "NRB", "Sharesansar", "Bizmandu")
-- "url": a likely URL path (optional, use "/nepse" or "/news" as placeholder)
+    const prompt = `You are a financial educator writing study material about Nepal's stock market (NEPSE).
+Write 3 short, realistic EXAMPLE scenarios about the "${sanitizedSector}" sector. These illustrate how the sector behaves; they are not live reporting.
 
-Focus on:
-- Recent policy changes from Nepal Rastra Bank (NRB) affecting this sector
-- NEPSE performance of stocks in this sector
-- New listings, mergers, acquisitions, or dividends
-- Government budget announcements impacting this sector
-- Economic indicators relevant to this sector
+Rules:
+- Describe typical developments such as a policy review, a dividend announcement, a new listing or a merger.
+- Do not invent specific figures, percentages, company profits or exact dates.
+- Use relative dates only: "Today", "Yesterday" or "This week".
 
-Return ONLY a valid JSON array with no markdown formatting or code blocks.
+Return ONLY a JSON array, no markdown, no commentary. Each item:
+{"title":"...","summary":"one or two sentences","date":"Today","source":"NEPSE|NRB|Sharesansar|Bizmandu","url":"/news"}
 
 Example:
-[{"title":"NRB eases margin lending rules for banks","summary":"Nepal Rastra Bank has relaxed margin lending norms for commercial banks...","date":"Today","source":"Sharesansar","url":"/news/nrb-margin-lending"}]
+[{"title":"NRB reviews margin lending norms","summary":"Nepal Rastra Bank periodically reviews how far banks may lend against shares, which shifts trading liquidity.","date":"Today","source":"NRB","url":"/news"}]
 `;
 
     const cacheKey = `sector-news:${sector}`;
     const data = await cached(cacheKey, CACHE_TTL_MS, async () => {
-      // Try all models in parallel, take first success
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000);
+      const result = await complete(prompt, {
+        maxTokens: 700,
+        // A model that answers in prose instead of JSON must not reach the cache.
+        validate: (content) => (extractJsonArray(content)?.length ?? 0) > 0,
+      });
 
-      const modelResults = await Promise.allSettled(
-        MODELS.map(async (model) => {
-          const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify({
-              model,
-              messages: [{ role: 'user', content: prompt }],
-              temperature: 0.3,
-              max_tokens: 4096,
-            }),
-            signal: controller.signal,
-          });
-
-          if (!response.ok) {
-            const errText = await response.text().catch(() => '');
-            throw new Error(`NVIDIA ${model}: ${response.status} - ${errText}`);
-          }
-
-          return response.json();
-        })
-      );
-      clearTimeout(timeoutId);
-
-      // Return first successful result
-      for (const result of modelResults) {
-        if (result.status === 'fulfilled') return result.value;
-      }
-
-      // All models failed
-      throw new Error('All NVIDIA models failed. Please check your API key and try again later.');
+      // The client reads the OpenAI response shape, so keep that contract.
+      return {
+        choices: [{ message: { content: result.content } }],
+        _meta: { provider: result.provider, model: result.model, ms: result.ms },
+      };
     });
 
     return res.status(200).json(data);

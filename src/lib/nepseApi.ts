@@ -1,5 +1,4 @@
 const YONEPSE_BASE = 'https://shubhamnpk.github.io/yonepse';
-const NEPSE_API_BASE = 'https://nepseapi.surajrimal.dev';
 
 const TIMEOUT_MS = 8000;
 const CACHE_TTL_MS = 30_000;
@@ -203,20 +202,4 @@ export async function fetchMarketStatus(): Promise<MarketStatus | null> {
     market_message: raw.last_checked,
   };
 }
-
-/* ── Fallback: NepseAPI-Unofficial ───────────────────────────────── */
-
-export async function fetchNepseIndexFallback(): Promise<{ value: number; change: number; percentChange: number } | null> {
-  try {
-    const res = await fetchWithTimeout(`${NEPSE_API_BASE}/NepseIndex`);
-    if (!res.ok) return null;
-    const data = await res.json();
-    return {
-      value: parseFloat(data.currentValue ?? data.value ?? 0),
-      change: parseFloat(data.change ?? 0),
-      percentChange: parseFloat(data.perChange ?? data.percentageChange ?? 0),
-    };
-  } catch {
-    return null;
-  }
-}
+

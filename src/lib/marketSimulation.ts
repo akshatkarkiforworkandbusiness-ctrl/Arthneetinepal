@@ -169,32 +169,17 @@ class MarketSimulationEngine {
   initialize(liveStocks: StockRow[]): void {
     if (this.state.isInitialized) return;
 
+    // Guard against an empty feed. `fetchStocks()` returns [] rather than
+    // throwing when the network call fails, so initializing on an empty array
+    // would latch isInitialized=true with no symbols — and the 2s notify loop
+    // would then keep overwriting the consumer's good stock list with [].
+    if (!Array.isArray(liveStocks) || liveStocks.length === 0) {
+      console.warn('[marketSimulation] Ignoring initialize() with no stock data.');
+      return;
+    }
+
     for (const stock of liveStocks) {
-      const sector = determineSector(stock.symbol, stock.name);
-      const volatility = getVolatilityForSector(sector);
-
-      const simulated: SimulatedStock = {
-        symbol: stock.symbol,
-        name: stock.name,
-        basePrice: stock.ltp,
-        currentPrice: stock.ltp,
-        open: stock.open || stock.ltp,
-        high: stock.high || stock.ltp,
-        low: stock.low || stock.ltp,
-        previousClose: stock.close || stock.ltp,
-        change: stock.change,
-        percentChange: stock.percentChange,
-        volume: stock.volume,
-        turnover: stock.turnover,
-        trades: stock.trades,
-        sector,
-        volatility,
-        lastUpdate: Date.now(),
-        priceHistory: [stock.ltp],
-        newsImpact: 0,
-      };
-
-      this.state.stocks.set(stock.symbol, simulated);
+      this.state.stocks.set(stock.symbol, this.buildSimulatedStock(stock));
     }
 
     this.state.isInitialized = true;
@@ -454,6 +439,8 @@ class MarketSimulationEngine {
    * Update base prices from live NEPSE data (refresh periodically)
    */
   updateBasePrices(liveStocks: StockRow[]): void {
+    if (!Array.isArray(liveStocks) || liveStocks.length === 0) return;
+
     for (const liveStock of liveStocks) {
       const simulated = this.state.stocks.get(liveStock.symbol);
       if (simulated && simulated.basePrice > 0) {
@@ -464,7 +451,37 @@ class MarketSimulationEngine {
           simulated.previousClose = liveStock.close || liveStock.ltp;
         }
       }
+      // A symbol that appeared in the feed after initialization (new listing)
+      // would otherwise never enter the map and stay untradeable all session.
+      else if (!simulated && liveStock.ltp > 0) {
+        this.state.stocks.set(liveStock.symbol, this.buildSimulatedStock(liveStock));
+      }
     }
+  }
+
+  /** Shared by initialize() and updateBasePrices() so new symbols get the same shape. */
+  private buildSimulatedStock(stock: StockRow): SimulatedStock {
+    const sector = determineSector(stock.symbol, stock.name);
+    return {
+      symbol: stock.symbol,
+      name: stock.name,
+      basePrice: stock.ltp,
+      currentPrice: stock.ltp,
+      open: stock.open || stock.ltp,
+      high: stock.high || stock.ltp,
+      low: stock.low || stock.ltp,
+      previousClose: stock.close || stock.ltp,
+      change: stock.change,
+      percentChange: stock.percentChange,
+      volume: stock.volume,
+      turnover: stock.turnover,
+      trades: stock.trades,
+      sector,
+      volatility: getVolatilityForSector(sector),
+      lastUpdate: Date.now(),
+      priceHistory: [stock.ltp],
+      newsImpact: 0,
+    };
   }
 }
 

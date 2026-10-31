@@ -1,7 +1,7 @@
-import { VercelRequest, VercelResponse } from '@vercel/node';
-import { handleCors } from '../_lib/cors';
-import { verifyUser } from '../_lib/auth';
-import { adminDb, FieldValue } from '../_lib/firebaseAdmin';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { handleCors } from '../_lib/cors.js';
+import { verifyUser, timingSafeEqualStr } from '../_lib/auth.js';
+import { adminDb, FieldValue, hasFirebaseAdminCredentials } from '../_lib/firebaseAdmin.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (handleCors(req, res)) return;
@@ -11,13 +11,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Verification: either Admin user or Vercel Cron (via secret header)
-  const isCron = req.headers['x-vercel-cron'] === '1' && req.headers['authorization'] === `Bearer ${process.env.CRON_SECRET}`;
+  // Verification: either Admin user or Vercel Cron (via secret header).
+  //
+  // The old check interpolated process.env.CRON_SECRET directly, so with the
+  // variable unset the expected value became the literal string "Bearer
+  // undefined" — which any caller could send to get cron-level access.
+  const cronSecret = process.env.CRON_SECRET;
+  const authHeader = req.headers['authorization'];
+  const isCron =
+    req.headers['x-vercel-cron'] === '1' &&
+    typeof cronSecret === 'string' && cronSecret.length > 0 &&
+    typeof authHeader === 'string' &&
+    timingSafeEqualStr(authHeader, `Bearer ${cronSecret}`);
   const uid = await verifyUser(req);
   const isAdminUser = uid ? (await adminDb.collection('admins').doc(uid).get()).exists : false;
 
   if (!isCron && !isAdminUser) {
     return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  /* Snapshotting reads every portfolio through the Admin SDK, which needs a
+   * service account. Without one this would fail deep inside the loop after
+   * having already fetched live prices — return a clear 503 up front. */
+  if (!hasFirebaseAdminCredentials()) {
+    return res.status(503).json({
+      error: 'Leaderboard snapshots are temporarily unavailable. Set FIREBASE_SERVICE_ACCOUNT_JSON.',
+    });
   }
 
   try {

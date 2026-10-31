@@ -9,14 +9,28 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
   const [phase, setPhase] = useState(0);
 
   useEffect(() => {
+    /* Kept deliberately short: this overlay sits above the nav (z-200 vs the
+     * header's z-50), so every second here is a second the user cannot reach
+     * the menu. It also only plays once per browser (see LandingPage). */
     const timers = [
-      setTimeout(() => setPhase(1), 400),      // Logo appears
-      setTimeout(() => setPhase(2), 1200),      // Mountain silhouette rises
-      setTimeout(() => setPhase(3), 2400),      // Tagline reveals
-      setTimeout(() => setPhase(4), 4000),      // Mission statement
-      setTimeout(() => onComplete(), 5500),     // Complete intro
+      setTimeout(() => setPhase(1), 300),      // Logo appears
+      setTimeout(() => setPhase(2), 800),      // Mountain silhouette rises
+      setTimeout(() => setPhase(3), 1400),     // Tagline reveals
+      setTimeout(() => setPhase(4), 2400),     // Mission statement
+      setTimeout(() => onComplete(), 3000),    // Complete intro
     ];
-    return () => timers.forEach(clearTimeout);
+
+    // Let the user bail out instantly with a click or the Escape key.
+    const skip = () => onComplete();
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') skip(); };
+    window.addEventListener('click', skip);
+    window.addEventListener('keydown', onKey);
+
+    return () => {
+      timers.forEach(clearTimeout);
+      window.removeEventListener('click', skip);
+      window.removeEventListener('keydown', onKey);
+    };
   }, [onComplete]);
 
   return (
@@ -202,10 +216,10 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
           {/* Skip Button */}
           <motion.button
             className="absolute bottom-8 right-8 text-white/30 text-xs tracking-widest uppercase hover:text-white/60 transition-colors z-20"
-            onClick={onComplete}
+            onClick={(e) => { e.stopPropagation(); onComplete(); }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.5 }}
+            transition={{ delay: 0.4 }}
           >
             Skip →
           </motion.button>

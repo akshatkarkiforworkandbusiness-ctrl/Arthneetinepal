@@ -1,9 +1,11 @@
 import { motion } from 'motion/react';
+import { SESSION_PHOTOS } from '../lib/photos';
+import { Photo } from './Photo';
 
 const sessions = [
   {
     id: 1,
-    image: '/Pitcures for Arthneeti/Image 5 - Problem solving session.jpg',
+    image: SESSION_PHOTOS.problemSolving,
     title: 'Problem Solving Session',
     titleNepali: 'समस्या समाधान कार्यशाला',
     location: 'Xavier A Levels, Kathmandu',
@@ -13,7 +15,7 @@ const sessions = [
   },
   {
     id: 2,
-    image: '/Pitcures for Arthneeti/Image 1 - Inaugural session (503020 Rule).jpg',
+    image: SESSION_PHOTOS.inaugural,
     title: 'Inaugural Session',
     titleNepali: 'उद्घाटन कार्यशाला',
     location: 'First Workshop',
@@ -23,7 +25,7 @@ const sessions = [
   },
   {
     id: 3,
-    image: '/Pitcures for Arthneeti/Image 3 - St. Lawrence School.png',
+    image: SESSION_PHOTOS.stLawrence,
     title: 'St. Lawrence School',
     titleNepali: 'सेन्ट लारेन्स विद्यालय',
     location: 'Kathmandu',
@@ -33,7 +35,7 @@ const sessions = [
   },
   {
     id: 4,
-    image: '/Pitcures for Arthneeti/Image 4 - Kathmandu Valley Public School.png',
+    image: SESSION_PHOTOS.kvps,
     title: 'Kathmandu Valley Public School',
     titleNepali: 'काठमाडौं उपत्यका सार्वजनिक विद्यालय',
     location: 'Kathmandu',
@@ -43,7 +45,7 @@ const sessions = [
   },
   {
     id: 5,
-    image: '/Pitcures for Arthneeti/Image 6 - Think Big. Invest Smart. Lead Nepal..jpg',
+    image: SESSION_PHOTOS.thinkBig,
     title: 'Interactive Workshop',
     titleNepali: 'अन्तरक्रियात्मक कार्यशाला',
     location: 'Multiple Schools',
@@ -89,7 +91,7 @@ export default function SessionPhotos() {
               className="lg:col-span-7 relative group overflow-hidden rounded-2xl cursor-pointer"
             >
               <div className="aspect-[16/10] overflow-hidden">
-                <img 
+                <Photo 
                   src={featured.image}
                   alt={featured.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -123,7 +125,7 @@ export default function SessionPhotos() {
                 className="relative group overflow-hidden rounded-2xl cursor-pointer"
               >
                 <div className="aspect-square overflow-hidden">
-                  <img 
+                  <Photo 
                     src={session.image}
                     alt={session.title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"

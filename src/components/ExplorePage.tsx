@@ -220,10 +220,20 @@ export default function ExplorePage() {
     );
   }, [stocks, searchQuery]);
 
-  const displayedPrice = hoverIndex !== null ? chartData[hoverIndex]?.value : activeStock?.ltp;
-  const displayedDate = hoverIndex !== null ? chartData[hoverIndex]?.date : 'Current Price';
-  const pricePercentChange = hoverIndex !== null && chartData.length > 0
-    ? parseFloat((((chartData[hoverIndex].value - chartData[0].value) / chartData[0].value) * 100).toFixed(2))
+  /* hoverIndex is only cleared on symbol change and chart mouse-leave, so it
+   * can outlive the data it points into. Switching to a shorter timeframe (or
+   * reaching the chart by keyboard, where no mouseleave ever fires) left it
+   * pointing past the end of chartData and crashed the whole route on render.
+   * Lines 223-224 were already optional-chained; line 226 was missed. */
+  const safeHoverIndex =
+    hoverIndex !== null && hoverIndex >= 0 && hoverIndex < chartData.length
+      ? hoverIndex
+      : null;
+
+  const displayedPrice = safeHoverIndex !== null ? chartData[safeHoverIndex]?.value : activeStock?.ltp;
+  const displayedDate = safeHoverIndex !== null ? chartData[safeHoverIndex]?.date : 'Current Price';
+  const pricePercentChange = safeHoverIndex !== null && chartData.length > 0 && chartData[0].value
+    ? parseFloat((((chartData[safeHoverIndex].value - chartData[0].value) / chartData[0].value) * 100).toFixed(2))
     : activeStock?.percentChange ?? 0;
 
   const isGainer = (activeStock?.change ?? 0) >= 0;
@@ -245,7 +255,7 @@ export default function ExplorePage() {
       setSectorNews(result);
     } catch (err: unknown) {
       console.error('Sector News Error:', err);
-      setNewsError(err instanceof Error ? err.message : 'Failed to fetch AI research. Please check your API key.');
+      setNewsError(err instanceof Error ? err.message : 'Failed to fetch AI research. Please try again.');
     } finally {
       setNewsLoading(false);
     }
@@ -419,7 +429,7 @@ export default function ExplorePage() {
               return (
                 <button
                   key={tf}
-                  onClick={() => setTimeframe(tf)}
+                  onClick={() => { setTimeframe(tf); setHoverIndex(null); }}
                   className={`relative px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors duration-300 z-10 ${
                     isActive ? 'text-white' : 'text-text-muted hover:text-brandwood hover:bg-white'
                   }`}

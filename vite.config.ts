@@ -16,25 +16,25 @@ export default defineConfig(({mode}) => {
     },
     build: {
       sourcemap: true,
+      /* Chunking is left to Rollup, which splits per route now that App.tsx
+       * lazy-loads its pages. The previous manualChunks grouping filed shared
+       * utility modules (clsx, use-sync-external-store, gsap) into the
+       * "charts" and "three" chunks, so the entry bundle statically imported
+       * them and ~2.2 MB of vendor code loaded on every page view. */
       chunkSizeWarningLimit: 600,
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            vendor: ['react', 'react-dom', 'react-router-dom'],
-            firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
-            ui: ['framer-motion', 'motion', 'lucide-react', 'sonner'],
-            charts: ['apexcharts', 'react-apexcharts', 'recharts'],
-            three: ['three', '@react-three/fiber', '@react-three/drei', 'gsap'],
-          },
-        },
-      },
     },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
       hmr: process.env.DISABLE_HMR !== 'true',
       proxy: {
+        /* `/api` is served by the Vercel functions in ./api, NOT by Vite.
+         * `npm run dev` serves the frontend on 5173 and `npm run dev:api` runs
+         * `vercel dev` on 3000, so the proxy has something real to hit.
+         *
+         * If Vite itself ran on 3000 this proxy would point back at Vite, and
+         * every /api call would silently return index.html instead of JSON. */
         '/api': {
-          target: 'http://localhost:3000',
+          target: env.API_PROXY_TARGET || 'http://localhost:3000',
           changeOrigin: true,
         },
       },

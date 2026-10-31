@@ -38,12 +38,17 @@ function LessonCommentItem({ comment, lessonId, onReply }: {
           )}
         </div>
         <p className="text-sm text-gray-300 font-sans leading-relaxed">{comment.text}</p>
-        <button
-          onClick={() => onReply(comment.id, comment.authorName)}
-          className="text-[9px] font-black uppercase tracking-widest text-gray-500 hover:text-royal transition-colors cursor-pointer"
-        >
-          Reply
-        </button>
+        {/* Only root comments get a Reply button. Replying to a reply stored
+         * parentId = <reply.id>, which getReplies(root.id) never matches — so
+         * the comment was saved but rendered nowhere. */}
+        {!comment.parentId && (
+          <button
+            onClick={() => onReply(comment.id, comment.authorName)}
+            className="text-[9px] font-black uppercase tracking-widest text-gray-500 hover:text-royal transition-colors cursor-pointer"
+          >
+            Reply
+          </button>
+        )}
       </div>
     </div>
   );

@@ -27,7 +27,9 @@ const CommentItem: React.FC<CommentItemProps> = ({
   const [isLiked, setIsLiked] = useState(false);
 
   const handleLike = async () => {
-    if (!user) return;
+    // isLiked was set but never read, so every click incremented the counter
+    // again — a single user could drive a comment's like count arbitrarily.
+    if (!user || isLiked) return;
     setIsLiked(true);
     setLikeCount(prev => prev + 1);
     try {

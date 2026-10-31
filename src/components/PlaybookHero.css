@@ -1,36 +1,51 @@
 .playbook-hero-container {
   position: relative;
-  min-height: 200vh;
+  min-height: auto;
   background: #ffffff;
   overflow: hidden;
 }
 
+/* Decorative glow that follows the pointer. Its position is written straight
+ * to the DOM by PlaybookHero (rAF-throttled) rather than through React state,
+ * so moving the mouse no longer re-renders the whole hero. */
 .cursor-glow {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 400px;
   height: 400px;
   background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
   border-radius: 50%;
   pointer-events: none;
-  transform: translate(-50%, -50%);
+  transform: translate3d(-50%, -50%, 0);
   z-index: 0;
+  opacity: 0;
+  will-change: transform;
   transition: opacity 0.3s ease;
 }
 
 .playbook-hero-content {
-  position: sticky;
-  top: 0;
-  height: 100vh;
+  position: relative;
+  height: auto;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding: 100px 24px 0 24px;
+  padding: 96px 24px 80px 24px;
+}
+
+@media (min-width: 768px) {
+  .playbook-hero-content {
+    padding: 140px 24px 80px 24px;
+  }
 }
 
 .hero-main-content {
   position: relative;
-  z-index: 50;
+  /* Above the glow (0) and the bento grid (20) inside the hero — but never
+   * above the site header (z-50), which the old value tied with, letting the
+   * hero CTAs paint over the navigation once the page was scrolled. */
+  z-index: 10;
   max-width: 1024px;
   display: flex;
   flex-direction: column;
@@ -53,18 +68,18 @@
 }
 
 .hero-title {
-  font-size: 60px;
+  font-size: 48px;
   line-height: 1.1;
   letter-spacing: -0.02em;
   font-weight: 700;
   color: #0f172a;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
   font-family: 'DM Sans', sans-serif;
 }
 
 @media (min-width: 768px) {
   .hero-title {
-    font-size: 90px;
+    font-size: 72px;
   }
 }
 
@@ -76,19 +91,19 @@
 .hero-subtitle {
   font-size: 18px;
   color: #475569;
-  margin-bottom: 48px;
+  margin-bottom: 40px;
   max-width: 600px;
   line-height: 1.6;
 }
 
 @media (min-width: 768px) {
   .hero-subtitle {
-    font-size: 24px;
+    font-size: 22px;
   }
 }
 
 .prompt-box-container {
-  margin-bottom: 48px;
+  margin-bottom: 40px;
   perspective: 1000px;
 }
 
@@ -190,36 +205,51 @@
   transform: translateY(-2px);
 }
 
-/* Bento Grid */
+/* ── Feature grid ──────────────────────────────────────────────────
+ * This used to be a floating bento grid that only locked into place after
+ * the user scrolled through 200vh. It is now a plain responsive grid so
+ * every feature is visible on load, with no scrolling required.
+ */
 .bento-grid-container {
-  position: absolute;
-  top: 60%;
-  left: 50%;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
+  position: relative;
   z-index: 20;
+  width: 100%;
+  max-width: 1024px;
+  margin: 56px auto 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (min-width: 900px) {
+  .bento-grid-container {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .bento-card {
-  position: absolute;
-  width: 200px;
-  height: 160px;
-  margin-left: -100px;
-  margin-top: -80px;
+  position: relative;
+  width: auto;
+  height: auto;
+  min-height: 160px;
+  margin: 0;
 }
 
+/* The layer used to be absolutely positioned to fill a fixed-height card, so
+ * any card whose copy ran long (every card on a narrow phone) spilled out of
+ * its own border and collided with the card below. It is now part of the
+ * layout flow: cards grow with their content and stretch evenly inside the
+ * grid row on wider screens. */
 .state-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: relative;
+  height: 100%;
+  min-height: inherit;
   border-radius: 24px;
   padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 12px;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 1);
@@ -238,6 +268,10 @@
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
+}
+
+.bento-card:hover .state-layer {
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 
 .color-emerald { border-color: #a7f3d0; background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(236, 253, 245, 0.8)); }
@@ -283,15 +317,28 @@
   margin-top: auto;
 }
 
-.central-solution-card {
-  z-index: 50;
-  width: 260px;
-  height: 160px;
+/* The problem each feature replaces — kept as context, deliberately muted. */
+.bento-card-problem {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 600;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(148, 163, 184, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-@media (max-width: 768px) {
-  .bento-grid-container {
-    transform: scale(0.6);
-    transform-origin: center top;
-  }
+.central-solution-card {
+  grid-column: 1 / -1;
+  min-height: auto;
+}
+
+.central-solution-card .state-layer {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
 }

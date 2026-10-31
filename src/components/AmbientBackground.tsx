@@ -7,7 +7,7 @@ export const AmbientBackground: React.FC = () => {
   if (reduceMotion) {
     return (
       <div 
-        className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-40 bg-[#F7FAF9]" 
+        className="fixed inset-0 pointer-events-none -z-10 overflow-hidden opacity-40 bg-[#F7FAF9]" 
         aria-hidden="true" 
       />
     );
@@ -15,7 +15,7 @@ export const AmbientBackground: React.FC = () => {
 
   return (
     <div 
-      className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#F7FAF9] opacity-70"
+      className="fixed inset-0 pointer-events-none -z-10 overflow-hidden bg-[#F7FAF9] opacity-70"
       aria-hidden="true"
     >
       {/* Soft gradient blob 1 - Club Green */}

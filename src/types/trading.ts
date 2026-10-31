@@ -1,6 +1,12 @@
 export interface Holding {
   quantity: number;
   avgCost: number; // average price paid per share, NPR
+  /**
+   * Epoch ms of the first purchase of this position. Persisted on buy so the
+   * >1-year CGT rate is actually reachable — previously this was read but
+   * never written, which silently made every sell short-term (7.5%).
+   */
+  firstBuyAt?: number;
 }
 
 export interface TradingFees {

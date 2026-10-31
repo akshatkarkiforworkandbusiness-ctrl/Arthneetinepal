@@ -12,6 +12,7 @@ import { Calendar, Plus, X, ImagePlus, Loader2, MapPin, Clock, Download, Edit2, 
 import AnimatedEventCard from './AnimatedEventCard';
 import { Brand3DText } from './Brand3DText';
 import AdminSetup from './AdminSetup';
+import { SESSION_PHOTO_LIST } from '../lib/photos';
 
 const EventScene = lazy(() => import('./EventScene'));
 
@@ -116,14 +117,7 @@ export default function EventsPage() {
       if (!isAdmin) return;
       try {
         const snap = await getDocs(collection(db, 'events'));
-        const images = [
-          '/Pictures for Arthneeti/Image 1 — Inaugural session (503020 Rule).jpg',
-          '/Pictures for Arthneeti/Image 2 — SOS Disability Center.jpg',
-          '/Pictures for Arthneeti/Image 3 — St. Lawrence School.png',
-          '/Pictures for Arthneeti/Image 4 — Kathmandu Valley Public School.png',
-          '/Pictures for Arthneeti/Image 5 — Problem solving session.jpg',
-          '/Pictures for Arthneeti/Image 6 — Think Big. Invest Smart. Lead Nepal..jpg',
-        ];
+        const images = SESSION_PHOTO_LIST;
 
         // 1. Update existing events that don't have images
         let imgIdx = 0;

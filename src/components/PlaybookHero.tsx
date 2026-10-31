@@ -1,12 +1,11 @@
-import { motion, useScroll, useTransform, MotionValue } from 'motion/react';
+import { motion } from 'motion/react';
 import { useState, useEffect, useRef } from 'react';
 import './PlaybookHero.css';
-import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { 
-  Sparkles, ArrowRight, LineChart, BadgeCheck, FileText, Bot, 
+  Sparkles, ArrowRight, LineChart, BadgeCheck, Bot, 
   AlertCircle, MessageSquareWarning, FileQuestion, BookX, TrendingDown, RadioReceiver, 
-  Users, GraduationCap, PieChart, ShieldCheck
+  Users, GraduationCap, PieChart, ShieldCheck, Check
 } from 'lucide-react';
 
 const PROMPTS = [
@@ -17,118 +16,109 @@ const PROMPTS = [
   "How does compound interest work?"
 ];
 
+/* Each entry pairs a pain point with the feature that removes it. The feature
+ * is what renders — the problem is kept as a muted "Solves:" line so the
+ * problem → solution story survives without needing a scroll to reveal it. */
 const ASSETS = [
   { 
     id: 'ipo',
-    problem: { title: 'Confusing IPOs', content: 'Missing Allotments', icon: AlertCircle, color: 'rose' },
-    feature: { title: 'IPO Dashboard', content: 'Live Results', icon: BadgeCheck, color: 'blue' }
+    problem: { title: 'Confusing IPOs', content: 'Missing Allotments', icon: AlertCircle },
+    feature: { title: 'IPO Dashboard', content: 'Live allotment results and application tracking in one place.', icon: BadgeCheck, color: 'blue' }
   },
   { 
     id: 'tips',
-    problem: { title: 'Fake Stock Tips', content: 'Unverified Groups', icon: MessageSquareWarning, color: 'orange' },
-    feature: { title: 'Verified Community', content: 'Expert Analysis', icon: Users, color: 'emerald' }
+    problem: { title: 'Fake Stock Tips', content: 'Unverified Groups', icon: MessageSquareWarning },
+    feature: { title: 'Verified Community', content: 'Moderated discussion with expert analysis you can check.', icon: Users, color: 'emerald' }
   },
   { 
     id: 'data',
-    problem: { title: 'Scattered Data', content: 'No Unified View', icon: FileQuestion, color: 'amber' },
-    feature: { title: 'Live Market Data', content: 'Real-time Stats', icon: LineChart, color: 'indigo' }
+    problem: { title: 'Scattered Data', content: 'No Unified View', icon: FileQuestion },
+    feature: { title: 'Live Market Data', content: 'NEPSE indices and sector stats gathered into a single view.', icon: LineChart, color: 'indigo' }
   },
   { 
     id: 'literacy',
-    problem: { title: 'Financial Literacy', content: 'Where to start?', icon: BookX, color: 'rose' },
-    feature: { title: 'Structured Learning', content: 'Gyan Badges', icon: GraduationCap, color: 'purple' }
+    problem: { title: 'Financial Literacy', content: 'Where to start?', icon: BookX },
+    feature: { title: 'Structured Learning', content: 'A bilingual curriculum that awards Gyan Badges as you progress.', icon: GraduationCap, color: 'purple' }
   },
   { 
     id: 'trading',
-    problem: { title: 'Complex Trading', content: 'Hard to track', icon: TrendingDown, color: 'rose' },
-    feature: { title: 'Portfolio Tracker', content: 'Seamless Sync', icon: PieChart, color: 'emerald' }
+    problem: { title: 'Complex Trading', content: 'Hard to track', icon: TrendingDown },
+    feature: { title: 'Portfolio Tracker', content: 'Practise with a simulated portfolio synced to your progress.', icon: PieChart, color: 'teal' }
   },
   { 
     id: 'news',
-    problem: { title: 'Unverified News', content: 'Rumor Investing', icon: RadioReceiver, color: 'orange' },
-    feature: { title: 'AI Market Insights', content: 'Arthneeti AI', icon: Bot, color: 'teal' }
+    problem: { title: 'Unverified News', content: 'Rumor Investing', icon: RadioReceiver },
+    feature: { title: 'AI Market Insights', content: 'Arthneeti AI researches every sector so you do not have to.', icon: Bot, color: 'amber' }
   },
 ];
 
-// Helper Component to avoid calling hooks in a loop
-const AssetCard = ({ asset, index, scrollYProgress }: { asset: typeof ASSETS[0], index: number, scrollYProgress: MotionValue<number> }) => {
-  const seed = (index * 17.5 + 43.1) % 100;
-  const randomX = (seed - 50) * 15;
-  const randomY = ((seed * 7) % 100 - 50) * 10 - 200;
-  const randomRotation = (seed - 50) * 1.5;
-
-  const angle = (index * 60) * (Math.PI / 180);
-  const radiusX = 350;
-  const radiusY = 220;
-  const gridX = Math.cos(angle) * radiusX;
-  const gridY = Math.sin(angle) * radiusY;
-
-  // Timings:
-  // Move: 0.0 -> 0.25
-  // Transform colors: 0.15 -> 0.25 (as they land)
-  const x = useTransform(scrollYProgress, [0, 0.25], [randomX, gridX]);
-  const y = useTransform(scrollYProgress, [0, 0.25], [randomY, gridY]);
-  const rotate = useTransform(scrollYProgress, [0, 0.25], [randomRotation, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.25], [0.8, 1]);
-  const containerOpacity = useTransform(scrollYProgress, [0, 0.1], [0.8, 1]);
-
-  const problemOpacity = useTransform(scrollYProgress, [0.15, 0.25], [1, 0]);
-  const featureOpacity = useTransform(scrollYProgress, [0.15, 0.25], [0, 1]);
-  const problemScale = useTransform(scrollYProgress, [0.15, 0.25], [1, 0.9]);
-  const featureScale = useTransform(scrollYProgress, [0.15, 0.25], [0.9, 1]);
-
+const FeatureCard = ({ asset, index }: { asset: typeof ASSETS[0], index: number }) => {
   const ProblemIcon = asset.problem.icon;
   const FeatureIcon = asset.feature.icon;
 
   return (
     <motion.div
       className="bento-card"
-      style={{ x, y, rotate, scale, opacity: containerOpacity }}
+      initial={{ opacity: 0, y: 24, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.5, delay: 0.15 + index * 0.07, ease: [0.22, 1, 0.36, 1] }}
     >
-      <motion.div 
-        className={`state-layer color-${asset.problem.color}`}
-        style={{ opacity: problemOpacity, scale: problemScale }}
-      >
-        <div className="bento-card-header">
-          <span className="bento-card-icon"><ProblemIcon size={20} /></span>
-          <span className="bento-card-title">{asset.problem.title}</span>
+      <div className={`state-layer color-${asset.feature.color}`}>
+        <div>
+          <div className="bento-card-header">
+            <span className="bento-card-icon"><FeatureIcon size={20} /></span>
+            <span className="bento-card-title">{asset.feature.title}</span>
+          </div>
+          <div className="bento-card-content">{asset.feature.content}</div>
         </div>
-        <div className="bento-card-content">{asset.problem.content}</div>
-      </motion.div>
-
-      <motion.div 
-        className={`state-layer color-${asset.feature.color}`}
-        style={{ opacity: featureOpacity, scale: featureScale }}
-      >
-        <div className="bento-card-header">
-          <span className="bento-card-icon"><FeatureIcon size={20} /></span>
-          <span className="bento-card-title">{asset.feature.title}</span>
+        <div className="bento-card-problem">
+          <Check size={12} className="text-emerald-600 shrink-0" />
+          <span>Solves: {asset.problem.title} — {asset.problem.content}</span>
+          <ProblemIcon size={12} className="text-slate-400 shrink-0" />
         </div>
-        <div className="bento-card-content">{asset.feature.content}</div>
-      </motion.div>
+      </div>
     </motion.div>
   );
 };
 
 export default function PlaybookHero() {
-  const { user, handleJoinAction } = useAuth();
   const [promptIndex, setPromptIndex] = useState(0);
   const [typedText, setTypedText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const glowRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  });
-
+  /* Decorative pointer glow. Written straight to the DOM on animation frames:
+   * doing this through state re-rendered the entire hero (typing animation
+   * included) on every single mousemove. */
   useEffect(() => {
+    const glow = glowRef.current;
+    const container = containerRef.current;
+    if (!glow || !container) return;
+
+    const isCoarse = window.matchMedia('(pointer: coarse)').matches;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (isCoarse || prefersReducedMotion) {
+      glow.style.display = 'none';
+      return;
+    }
+
+    let frame = 0;
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const rect = container.getBoundingClientRect();
+        glow.style.opacity = '1';
+        glow.style.transform =
+          `translate3d(${e.clientX - rect.left}px, ${e.clientY - rect.top}px, 0) translate(-50%, -50%)`;
+      });
     };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(frame);
+    };
   }, []);
 
   useEffect(() => {
@@ -153,21 +143,10 @@ export default function PlaybookHero() {
     return () => clearTimeout(timeout);
   }, [typedText, isDeleting, promptIndex]);
 
-  // Central Card Timings:
-  // Show up precisely as the grid locks into place (0.2 -> 0.3)
-  const centralScale = useTransform(scrollYProgress, [0.2, 0.3], [0.5, 1.2]);
-  const centralOpacity = useTransform(scrollYProgress, [0.2, 0.3], [0, 1]);
-
   return (
     <div ref={containerRef} className="playbook-hero-container">
       {/* Background glow tracking mouse */}
-      <div 
-        className="cursor-glow"
-        style={{
-          left: mousePosition.x,
-          top: mousePosition.y + window.scrollY,
-        }}
-      />
+      <div ref={glowRef} className="cursor-glow" aria-hidden="true" />
 
       <div className="playbook-hero-content">
         <motion.div
@@ -206,10 +185,12 @@ export default function PlaybookHero() {
           </p>
 
           <div className="hero-actions">
-            <Link to="/dashboard" className="btn-primary">
+            {/* These used to point at /dashboard and /explore — neither route
+                exists, so the catch-all bounced users straight back to "/". */}
+            <Link to="/discover" className="btn-primary">
               Launch Dashboard <ArrowRight size={20} className="ml-2" />
             </Link>
-            <Link to="/explore" className="btn-secondary">
+            <Link to="/trade-game" className="btn-secondary">
               <LineChart size={20} /> Explore Markets
             </Link>
           </div>
@@ -217,28 +198,22 @@ export default function PlaybookHero() {
 
         <div className="bento-grid-container">
           {ASSETS.map((asset, index) => (
-            <AssetCard 
-              key={asset.id} 
-              asset={asset} 
-              index={index} 
-              scrollYProgress={scrollYProgress} 
-            />
+            <FeatureCard key={asset.id} asset={asset} index={index} />
           ))}
           
           {/* Central Arthneeti Solution Card */}
           <motion.div
             className="bento-card central-solution-card"
-            style={{
-              x: 0,
-              y: 0,
-              scale: centralScale,
-              opacity: centralOpacity,
-            }}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.65, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="state-layer color-teal flex flex-col items-center justify-center p-6 border-2 border-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.3)]">
-              <ShieldCheck size={32} className="text-emerald-600 mb-3" />
-              <div className="text-center font-bold text-2xl text-slate-800 mb-1">ARTHNEETI</div>
-              <div className="text-center text-sm text-slate-600 font-medium">The Unified Ecosystem</div>
+            <div className="state-layer color-teal border-2 border-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.3)]">
+              <ShieldCheck size={32} className="text-emerald-600 shrink-0" />
+              <div className="text-left">
+                <div className="font-bold text-2xl text-slate-800 mb-1">ARTHNEETI</div>
+                <div className="text-sm text-slate-600 font-medium">One unified ecosystem — pick any feature from the menu above.</div>
+              </div>
             </div>
           </motion.div>
         </div>

@@ -22,7 +22,15 @@ function getReadableAuthError(error: any) {
     case 'auth/weak-password':
       return 'Password should be at least 6 characters.';
     case 'auth/operation-not-allowed':
-      return 'This sign-in method is not enabled.';
+      return 'This sign-in method has not been enabled for Arthneeti yet. Please email us and we will turn it on.';
+    case 'auth/unauthorized-domain':
+      return 'This website’s address has not been approved in Arthneeti’s Firebase project yet, so sign-in is blocked here. This is a one-time setup step on our side — it is not a problem with your account.';
+    case 'auth/invalid-api-key':
+      return 'Arthneeti’s sign-in configuration is invalid. Please let us know — this needs a fix on our side.';
+    case 'auth/configuration-not-found':
+      return 'This sign-in method is not configured for Arthneeti yet. Please let us know so we can enable it.';
+    case 'auth/app-not-authorized':
+      return 'This app has not been authorized by Arthneeti’s Firebase project. Please let us know.';
     case 'auth/too-many-requests':
       return 'Too many attempts. Please wait a bit before trying again.';
     case 'auth/popup-closed-by-user':
@@ -41,6 +49,8 @@ function getReadableAuthError(error: any) {
       return 'The reset link is invalid or has expired. Please request a new one.';
     case 'auth/expired-action-code':
       return 'The reset link has expired. Please request a new one.';
+    case 'permission-denied':
+      return 'Your account does not have access to that yet. Please sign out and back in, or let us know.';
     default:
       return error?.message || 'An error occurred during authentication.';
   }

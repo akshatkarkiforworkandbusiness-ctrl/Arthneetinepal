@@ -1,5 +1,21 @@
-import { VercelRequest } from '@vercel/node';
-import { getAdminAuth, isFirebaseAdminReady, getFirebaseAdminError } from './firebaseAdmin';
+import type { VercelRequest } from '@vercel/node';
+import { createHash, timingSafeEqual } from 'node:crypto';
+import { getAdminAuth, isFirebaseAdminReady, hasFirebaseAdminCredentials, getFirebaseAdminError } from './firebaseAdmin.js';
+
+/**
+ * Constant-time string comparison for shared secrets (CRON_SECRET, API keys).
+ *
+ * `a === b` short-circuits on the first differing byte, which leaks the
+ * position of the first mismatch through response timing. Hashing both sides
+ * first makes the comparison fixed-length and independent of the inputs'
+ * lengths, so timingSafeEqual stays safe even when the attacker supplies a
+ * much longer string.
+ */
+export function timingSafeEqualStr(a: string, b: string): boolean {
+  const ha = createHash('sha256').update(a, 'utf8').digest();
+  const hb = createHash('sha256').update(b, 'utf8').digest();
+  return timingSafeEqual(ha, hb);
+}
 
 export async function verifyUser(req: VercelRequest): Promise<string | null> {
   if (!isFirebaseAdminReady()) {
@@ -17,7 +33,13 @@ export async function verifyUser(req: VercelRequest): Promise<string | null> {
   }
 
   try {
-    const decodedToken = await getAdminAuth().verifyIdToken(token, true);
+    /* checkRevoked calls getUser() under the hood, which needs a service
+     * account. Without one we still verify the signature and claims — that is
+     * what actually authenticates the request — and skip the revocation sweep. */
+    const decodedToken = await getAdminAuth().verifyIdToken(
+      token,
+      hasFirebaseAdminCredentials()
+    );
     return decodedToken.uid;
   } catch (error: any) {
     // Distinguish between different failure modes

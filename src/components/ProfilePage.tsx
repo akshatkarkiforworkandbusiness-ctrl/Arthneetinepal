@@ -190,6 +190,28 @@ export default function ProfilePage() {
     </div>
   );
 
+  /* users/{userId} is `allow read: if isSignedIn()`, so a signed-out visitor
+   * opening another member's profile always gets permission-denied. The
+   * publicProfile state then stayed null and the page claimed "Member Not
+   * Found" — a false statement about a profile that exists. Prompt instead. */
+  if (!isOwnProfile && !user) {
+    return (
+      <main className="max-w-3xl mx-auto px-6 py-32 text-center">
+        <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-teal-400 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+          <UserIcon size={40} className="text-white" />
+        </div>
+        <h2 className="text-3xl text-gray-900 font-sans tracking-tight font-bold mb-3">Sign In to View Profiles</h2>
+        <p className="text-gray-500 mb-8 max-w-sm mx-auto text-sm leading-relaxed">Member profiles are visible to signed-in community members only.</p>
+        <button
+           onClick={handleJoinAction}
+           className="bg-gradient-to-r from-purple-600 to-teal-500 text-white px-10 py-4 rounded-2xl text-sm font-bold uppercase tracking-wider hover:from-purple-700 hover:to-teal-600 transition-all shadow-lg shadow-purple-200 hover:shadow-xl hover:shadow-purple-300 hover:-translate-y-0.5 cursor-pointer"
+        >
+           Sign In with Google
+        </button>
+      </main>
+    );
+  }
+
   if (!isOwnProfile && loadingProfile) {
     return (
       <main className="max-w-5xl mx-auto px-6 py-16">

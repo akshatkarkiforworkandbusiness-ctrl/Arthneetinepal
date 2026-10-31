@@ -10,7 +10,7 @@
  * - Share trade recap: NPR 500
  */
 
-import { doc, getDoc, updateDoc, increment, serverTimestamp, collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, increment, serverTimestamp, collection, addDoc, query, where, getDocs, runTransaction } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from './firebase';
 import { Portfolio, REWARD_AMOUNTS } from '../types/trading';
 
@@ -175,25 +175,36 @@ export async function awardReward(
 export async function claimRewards(uid: string): Promise<{ success: boolean; amount: number; message: string }> {
   try {
     const portfolioRef = doc(db, 'portfolios', uid);
-    const portfolioSnap = await getDoc(portfolioRef);
-    
-    if (!portfolioSnap.exists()) {
-      return { success: false, amount: 0, message: 'Portfolio not found' };
-    }
 
-    const portfolio = portfolioSnap.data() as Portfolio;
-    const rewardBalance = portfolio.rewardBalance || 0;
+    /* Read-modify-write in one transaction. The old version did getDoc() then
+     * updateDoc() as two separate operations, so two quick clicks both read
+     * the same rewardBalance and both credited cashBalance — duplicating the
+     * rewards. */
+    const result = await runTransaction(db, async (tx) => {
+      const snap = await tx.get(portfolioRef);
+      if (!snap.exists()) {
+        return { success: false, amount: 0, message: 'Portfolio not found' };
+      }
 
-    if (rewardBalance <= 0) {
-      return { success: false, amount: 0, message: 'No rewards to claim' };
-    }
+      const portfolio = snap.data() as Portfolio;
+      const rewardBalance = portfolio.rewardBalance || 0;
 
-    // Transfer rewards to cash balance
-    await updateDoc(portfolioRef, {
-      cashBalance: increment(rewardBalance),
-      rewardBalance: 0,
-      updatedAt: serverTimestamp(),
+      if (rewardBalance <= 0) {
+        return { success: false, amount: 0, message: 'No rewards to claim' };
+      }
+
+      tx.update(portfolioRef, {
+        cashBalance: increment(rewardBalance),
+        rewardBalance: 0,
+        updatedAt: serverTimestamp(),
+      });
+
+      return { success: true, amount: rewardBalance, message: '' };
     });
+
+    if (!result.success) return result;
+
+    const rewardBalance = result.amount;
 
     // Record the claim
     const claimsRef = collection(db, 'rewardClaims');

@@ -53,7 +53,11 @@ export default function TradingGamePage() {
         unsubPortfolio = subscribeToPortfolio(user.uid, (updated) => {
           setPortfolio(updated);
         });
-      } catch {
+      } catch (error) {
+        // Was an empty catch — a denied portfolio write left the page stuck on
+        // its spinner with nothing in the console in production.
+        console.error('Failed to load portfolio:', error);
+        toast.error('We could not load your portfolio. Please refresh and try again.');
         setLoading(false);
       }
     };

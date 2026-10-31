@@ -39,7 +39,15 @@ export default function AdminSetup() {
       window.location.reload();
     } catch (err: any) {
       console.error('Error making admin:', err);
-      setError(err.message || 'Failed to make admin. Check Firestore rules.');
+      /* The `admins` collection is no longer self-writable — the old rule let
+       * any signed-in visitor promote themselves. Admins are now provisioned
+       * from the Firebase console (see docs/FIREBASE_SETUP.md §3). */
+      const denied = err?.code === 'permission-denied' || /permission-denied/i.test(err?.message ?? '');
+      setError(
+        denied
+          ? 'Self-service admin is disabled. Provision yourself from the Firebase console — see docs/FIREBASE_SETUP.md.'
+          : err.message || 'Failed to make admin. Check Firestore rules.'
+      );
     } finally {
       setLoading(false);
     }

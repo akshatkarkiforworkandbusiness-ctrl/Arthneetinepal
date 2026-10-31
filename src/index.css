@@ -77,6 +77,20 @@
 }
 
 @layer base {
+  html {
+    /* In-page anchors — the landing page's sticky section menu — scroll
+     * smoothly and stop below the fixed header + sub-navigation instead of
+     * underneath them. */
+    scroll-behavior: smooth;
+    scroll-padding-top: 7.5rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
   body {
     @apply font-body antialiased bg-background text-text-primary;
   }

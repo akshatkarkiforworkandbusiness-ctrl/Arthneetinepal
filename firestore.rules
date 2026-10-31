@@ -108,6 +108,23 @@ service cloud.firestore {
         && (!('topPerformer' in data) || data.topPerformer is bool);
     }
 
+    // The canonical Portfolio schema — MUST stay in sync with
+    // src/types/trading.ts. `request.resource.data` on an update is the fully
+    // merged document, so every key the server writes (unlock/execute) has to
+    // appear here or client-side reward/trade writes get rejected forever.
+    // The trailing `legacy*` keys are older server shapes kept so existing
+    // documents remain writable until api/trading/unlock.ts migrates them.
+    function PORTFOLIO_KEYS() {
+      return [
+        'cashBalance', 'holdings', 'totalValue', 'updatedAt',
+        'startingCapital', 'seasonId', 'appliedBonuses', 'dailyTradesCount', 'lastTradeDay',
+        'rewardBalance', 'totalRewardsEarned', 'lastLoginDate', 'completedLessons',
+        'totalPostsCreated', 'totalLikesGiven',
+        'uid', 'cash', 'createdAt', 'lastTradeAt', 'totalTrades', 'schoolId',
+        'lastTradeBySymbol'
+      ];
+    }
+
     // -------------------------------------------------------------------------
     // RULES
     // -------------------------------------------------------------------------
@@ -118,9 +135,13 @@ service cloud.firestore {
     }
 
     // Admins
+    // Read: an admin may check their own doc; everyone else is denied, which is
+    // what makes isAdmin() cheap and safe.
+    // Create: was `isSignedIn()`, i.e. ANY signed-in user could write
+    // `admins/<their-uid>` and grant themselves admin. Now server/manager only.
     match /admins/{userId} {
       allow read: if isOwner(userId);
-      allow create: if isSignedIn();
+      allow create, update, delete: if false;
     }
 
     // User Profiles
@@ -141,15 +162,65 @@ service cloud.firestore {
         allow read: if isSignedIn();
         allow write: if isOwner(userId) && isValidProgress(incoming());
       }
+
+      // Bookmarks subcollection — was undeclared, so the global deny at the
+      // bottom of this file blocked it and "Save for later" always failed.
+      match /bookmarks/{postId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(postId)
+          && incoming().keys().hasOnly(['postId', 'bookmarkedAt'])
+          && incoming().postId == postId
+          && incoming().bookmarkedAt == request.time;
+        // Only `postId`/`bookmarkedAt` may ever change, i.e. nothing.
+        allow update: if false;
+        allow delete: if isOwner(userId);
+      }
+
+      // Notifications subcollection — also previously undeclared. The client
+      // only reads these and marks them read; creation happens server-side.
+      match /notifications/{notifId} {
+        allow read: if isOwner(userId);
+        allow create: if isAdmin();
+        allow update: if isOwner(userId)
+          && incoming().diff(existing()).affectedKeys().hasOnly(['read'])
+          && incoming().read is bool;
+        allow delete: if isOwner(userId) || isAdmin();
+      }
     }
 
     // Posts
     match /posts/{postId} {
       allow read: if true;
-      allow create: if (isVerified() && isValidPost(incoming())) || (isSignedIn() && incoming().seeded == true) || (isAdmin() && isValidPost(incoming()));
+      // Seeded/system content (client-side seeding + AI news) must bypass the
+      // authorId == request.auth.uid check — that branch is load-bearing — but
+      // it must never bypass shape validation: only 'system'/'system-seed'
+      // authors, known types/categories, bounded engagement counters, bounded
+      // content sizes, and server-set timestamps.
+      allow create: if (isVerified() && isValidPost(incoming()))
+        || (isAdmin() && isValidPost(incoming()))
+        || (isSignedIn() && incoming().seeded == true
+          && incoming().authorId in ['system', 'system-seed']
+          && incoming().type in ['discussion', 'research', 'question', 'trade-recap', 'news']
+          && incoming().category in ['Finance', 'Economics', 'Business', 'Policy', 'Other']
+          && incoming().likes is int && incoming().likes >= 0 && incoming().likes <= 100000
+          && incoming().commentCount is int && incoming().commentCount >= 0 && incoming().commentCount <= 100000
+          && (!('engagementScore' in incoming()) || (incoming().engagementScore is int && incoming().engagementScore >= 0 && incoming().engagementScore <= 100000))
+          && incoming().createdAt == request.time
+          && incoming().content is string && incoming().content.size() <= 1000000
+          && (!('title' in incoming()) || (incoming().title is string && incoming().title.size() <= 200))
+          && (!('author' in incoming()) || (incoming().author is string && incoming().author.size() <= 100))
+          && (!('abstract' in incoming()) || (incoming().abstract is string && incoming().abstract.size() <= 5000))
+          && (!('imageUrl' in incoming()) || (incoming().imageUrl is string && incoming().imageUrl.size() <= 1000))
+          && (!('pdfUrl' in incoming()) || (incoming().pdfUrl is string && incoming().pdfUrl.size() <= 1000)));
+      // Engagement counters may only move by ±1 and never go negative; nothing
+      // in the app sets them to arbitrary values (all writes use increment()).
       allow update: if (isSignedIn() && (
-        (incoming().diff(existing()).affectedKeys().hasOnly(['likes']) && (incoming().likes == existing().likes + 1 || incoming().likes == existing().likes - 1)) ||
-        (incoming().diff(existing()).affectedKeys().hasOnly(['commentCount']))
+        (incoming().diff(existing()).affectedKeys().hasOnly(['likes'])
+          && (incoming().likes == existing().likes + 1 || incoming().likes == existing().likes - 1)
+          && incoming().likes >= 0) ||
+        (incoming().diff(existing()).affectedKeys().hasOnly(['commentCount'])
+          && (incoming().commentCount == existing().commentCount + 1 || incoming().commentCount == existing().commentCount - 1)
+          && incoming().commentCount >= 0)
       )) || (isOwner(existing().authorId) && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'content', 'abstract', 'category', 'updatedAt']) && request.time < existing().createdAt + duration.value(24, 'h')) || isAdmin();
       
       allow delete: if (isOwner(existing().authorId) && existing().commentCount == 0) || isAdmin();
@@ -158,7 +229,10 @@ service cloud.firestore {
       match /comments/{commentId} {
         allow read: if true;
         allow create: if isVerified() && isValidComment(incoming());
-        allow update: if (isSignedIn() && incoming().diff(existing()).affectedKeys().hasOnly(['likes'])) || isAdmin();
+        allow update: if (isSignedIn()
+          && incoming().diff(existing()).affectedKeys().hasOnly(['likes'])
+          && (incoming().likes == existing().likes + 1 || incoming().likes == existing().likes - 1)
+          && incoming().likes >= 0) || isAdmin();
         allow delete: if isAdmin();
       }
 
@@ -173,7 +247,10 @@ service cloud.firestore {
     match /lessons/{lessonId}/comments/{commentId} {
       allow read: if true;
       allow create: if isSignedIn() && isValidComment(incoming());
-      allow update: if (isSignedIn() && incoming().diff(existing()).affectedKeys().hasOnly(['likes'])) || isAdmin();
+      allow update: if (isSignedIn()
+        && incoming().diff(existing()).affectedKeys().hasOnly(['likes'])
+        && (incoming().likes == existing().likes + 1 || incoming().likes == existing().likes - 1)
+        && incoming().likes >= 0) || isAdmin();
       allow delete: if isAdmin();
     }
 
@@ -212,25 +289,22 @@ service cloud.firestore {
     // Meta
     match /meta/{docId} {
       allow read: if true;
-      allow write: if isAdmin() || (isSignedIn() && docId == 'seeded');
+      // Only the seeding flag may be written by non-admins, and only in the
+      // exact shape the app writes it ({ seededAt: serverTimestamp() }).
+      allow create, update: if isAdmin() || (isSignedIn() && docId == 'seeded'
+        && request.resource.data.keys().hasOnly(['seededAt'])
+        && request.resource.data.seededAt == request.time);
+      allow delete: if isAdmin();
     }
 
     // Portfolios
     match /portfolios/{userId} {
       allow read: if isOwner(userId) || (isSignedIn() && get(/databases/$(database)/documents/users/$(userId)).data.publicPortfolio == true);
       allow create: if isOwner(userId)
-        && request.resource.data.keys().hasOnly([
-          'cashBalance', 'holdings', 'totalValue', 'updatedAt',
-          'rewardBalance', 'totalRewardsEarned', 'completedLessons',
-          'totalPostsCreated', 'totalLikesGiven'
-        ])
+        && request.resource.data.keys().hasOnly(PORTFOLIO_KEYS())
         && request.resource.data.cashBalance is number && request.resource.data.cashBalance >= 0;
       allow update: if isOwner(userId)
-        && request.resource.data.keys().hasOnly([
-          'cashBalance', 'holdings', 'totalValue', 'updatedAt',
-          'rewardBalance', 'totalRewardsEarned', 'completedLessons',
-          'totalPostsCreated', 'totalLikesGiven'
-        ])
+        && request.resource.data.keys().hasOnly(PORTFOLIO_KEYS())
         && request.resource.data.cashBalance is number && request.resource.data.cashBalance >= 0;
       allow delete: if false;
 

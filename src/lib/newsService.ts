@@ -96,20 +96,28 @@ function extractJsonArray(text: string): any[] {
 export async function researchSectorNews(sector: Sector): Promise<SectorNewsResult> {
   const { getAuth } = await import('firebase/auth');
   const auth = getAuth();
-  const token = auth.currentUser ? await auth.currentUser.getIdToken() : '';
+
+  /* /api/news verifies a Firebase ID token on every request, so calling it
+   * signed-out is guaranteed to come back 401. Fail early with an actionable
+   * message instead of surfacing a bare "Unauthorized". */
+  if (!auth.currentUser) {
+    throw new Error('Please sign in to run AI research.');
+  }
+
+  const token = await auth.currentUser.getIdToken();
 
   const response = await fetch('/api/news', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ sector })
   });
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || `Backend error: ${response.status} ${response.statusText}`);
+    throw new Error(errorData.error || `Research failed (HTTP ${response.status}). Please try again.`);
   }
 
   const data = await response.json();
@@ -145,11 +153,3 @@ export async function researchSectorNews(sector: Sector): Promise<SectorNewsResu
   };
 }
 
-export async function researchAllSectors(): Promise<SectorNewsResult[]> {
-  const results = await Promise.allSettled(
-    SECTORS.map(sector => researchSectorNews(sector))
-  );
-  return results
-    .filter((r): r is PromiseFulfilledResult<SectorNewsResult> => r.status === 'fulfilled')
-    .map(r => r.value);
-}

@@ -6,7 +6,7 @@ const sampleDiscussions = [
     type: 'discussion',
     title: 'Understanding Compound Interest: The 8th Wonder of the World',
     author: 'Aarav Sharma',
-    authorId: 'system-seed',
+    authorId: 'system',
     category: 'Finance',
     content: `<p>Did you know that if you invest NPR 10,000 per month at a 12% annual return, you'll have over NPR 1 crore in just 20 years? That's the power of compound interest!</p>
 <p>Here's the breakdown:</p>
@@ -28,7 +28,7 @@ const sampleDiscussions = [
     type: 'discussion',
     title: 'NEPSE Index Analysis: Why Banking Sector Dominates Nepal\'s Stock Market',
     author: 'Pranish Koirala',
-    authorId: 'system-seed',
+    authorId: 'system',
     category: 'Finance',
     content: `<p>The Nepal Stock Exchange (NEPSE) index is heavily influenced by banking stocks. Let's dive into why this matters for investors.</p>
 <p><strong>Key Facts:</strong></p>
@@ -51,7 +51,7 @@ const sampleDiscussions = [
     type: 'discussion',
     title: 'Personal Budgeting 101: The 50/30/20 Rule That Changed My Life',
     author: 'Sita Thapa',
-    authorId: 'system-seed',
+    authorId: 'system',
     category: 'Finance',
     content: `<p>After struggling with savings for years, I discovered the 50/30/20 budgeting rule and it completely transformed my financial life.</p>
 <p><strong>The Rule:</strong></p>
@@ -76,7 +76,7 @@ const sampleDiscussions = [
     type: 'discussion',
     title: 'Hydropower Stocks: Nepal\'s Green Energy Goldmine?',
     author: 'Bikash Gurung',
-    authorId: 'system-seed',
+    authorId: 'system',
     category: 'Finance',
     content: `<p>Nepal has huge hydropower potential - over 83,000 MW! But only 2,800 MW is currently developed. Is this an opportunity for stock investors?</p>
 <p><strong>Top Hydropower Stocks to Watch:</strong></p>
@@ -103,7 +103,7 @@ const sampleDiscussions = [
     type: 'discussion',
     title: 'Building an Emergency Fund: Your First Step to Financial Freedom',
     author: 'Anisha Rai',
-    authorId: 'system-seed',
+    authorId: 'system',
     category: 'Finance',
     content: `<p>Before you start investing, you need an emergency fund. This is non-negotiable!</p>
 <p><strong>Why You Need One:</strong></p>
@@ -135,7 +135,7 @@ const sampleDiscussions = [
     type: 'discussion',
     title: 'Insurance in Nepal: Term vs Endowment - Which is Better?',
     author: 'Rajesh Maharjan',
-    authorId: 'system-seed',
+    authorId: 'system',
     category: 'Finance',
     content: `<p>Many Nepalis confuse insurance with investment. Let's clear that up!</p>
 <p><strong>Term Insurance:</strong></p>
@@ -164,7 +164,7 @@ const sampleDiscussions = [
     type: 'discussion',
     title: 'Mutual Funds in Nepal: A Beginner\'s Guide to Starting Small',
     author: 'Karma Lama',
-    authorId: 'system-seed',
+    authorId: 'system',
     category: 'Finance',
     content: `<p>Think you need lakhs to start investing? Think again! Mutual funds let you start with just NPR 1,000.</p>
 <p><strong>What Are Mutual Funds?</strong></p>
@@ -197,7 +197,7 @@ const sampleDiscussions = [
     type: 'discussion',
     title: 'Gold vs Stocks: Where Should Nepalis Invest in 2024?',
     author: 'Deepak Shrestha',
-    authorId: 'system-seed',
+    authorId: 'system',
     category: 'Finance',
     content: `<p>Gold has been traditional safe haven for Nepalis. But is it still the best option?</p>
 <p><strong>Gold Performance (Last 10 Years):</strong></p>
@@ -230,7 +230,7 @@ const sampleDiscussions = [
     type: 'discussion',
     title: 'Tax Planning for Salaried Employees in Nepal: Save Legally!',
     author: 'Priya Adhikari',
-    authorId: 'system-seed',
+    authorId: 'system',
     category: 'Finance',
     content: `<p>Did you know you can save up to NPR 50,000 in taxes legally? Here's how!</p>
 <p><strong>Tax Deductions Available:</strong></p>
@@ -261,7 +261,7 @@ const sampleDiscussions = [
     type: 'discussion',
     title: 'IPO Investment Strategy: How to Apply and When to Hold',
     author: 'Sanjay Bhattarai',
-    authorId: 'system-seed',
+    authorId: 'system',
     category: 'Finance',
     content: `<p>Nepal's IPO market has been booming. Here's how to make the most of it.</p>
 <p><strong>Recent IPO Performance:</strong></p>
@@ -292,17 +292,32 @@ const sampleDiscussions = [
   },
 ];
 
-export async function seedDiscussionPosts() {
-  console.log('Seeding discussion posts...');
-  
+/**
+ * Writes the sample discussion posts.
+ *
+ * Each post carries `seeded: true`, which is the only branch in
+ * firestore.rules that does not run `isValidPost()`. Without it these writes
+ * were rejected 100% of the time — `authorId: 'system-seed'` is neither the
+ * caller's uid nor the literal `'system'` the rules require — while the button
+ * still reported success.
+ *
+ * @returns how many posts were actually created, so the caller can tell the
+ *          truth instead of assuming all ten landed.
+ */
+export async function seedDiscussionPosts(): Promise<{ added: number; failed: number }> {
+  let added = 0;
+  let failed = 0;
+
   for (const post of sampleDiscussions) {
     try {
-      await addDoc(collection(db, 'posts'), post);
-      console.log(`✓ Added: ${post.title.substring(0, 50)}...`);
+      await addDoc(collection(db, 'posts'), { ...post, seeded: true });
+      added++;
     } catch (error) {
+      failed++;
       console.error(`✗ Failed to add: ${post.title}`, error);
     }
   }
-  
-  console.log('Done seeding discussion posts!');
+
+  console.log(`Seed complete: ${added} added, ${failed} failed.`);
+  return { added, failed };
 }

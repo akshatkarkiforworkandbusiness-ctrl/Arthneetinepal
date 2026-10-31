@@ -59,7 +59,7 @@ interface SectorFeed {
 
 export default function NewsFeedPage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, handleJoinAction } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [researching, setResearching] = useState(false);
@@ -161,7 +161,17 @@ export default function NewsFeedPage() {
         orderBy('engagementScore', 'desc'),
         limit(1)
       );
-      const snap = await getDocs(q);
+      const snap = await getDocs(q).catch((error) => {
+        // A missing composite index (newsDate + type + engagementScore) rejects
+        // this query. Treat it as "nothing to show" instead of an uncaught
+        // promise rejection that breaks the Research page.
+        if (import.meta.env.DEV) console.warn('Failed to fetch most engaged post:', error);
+        return null;
+      });
+      if (!snap) {
+        setMostEngagedYesterday(null);
+        return;
+      }
       if (!snap.empty) {
         setMostEngagedYesterday(snap.docs[0].data() as Post);
       } else {
@@ -191,8 +201,22 @@ export default function NewsFeedPage() {
   }, []);
 
   // Auto-post research every hour during posting hours
-  const researchAllSectors = useCallback(async () => {
+  const researchAllSectors = useCallback(async (options?: { silent?: boolean }) => {
     if (researching) return;
+
+    const silent = options?.silent === true;
+
+    /* /api/ai-news requires a signed-in user. Prompt instead of firing a
+     * request we know will come back 401. Background callers pass `silent`:
+     * a timer must never slam the sign-up modal over the page. */
+    if (!user) {
+      if (!silent) {
+        handleJoinAction();
+        toast.error('Please sign in to run AI research.');
+      }
+      return;
+    }
+
     setResearching(true);
 
     try {
@@ -266,11 +290,20 @@ export default function NewsFeedPage() {
     } finally {
       setResearching(false);
     }
-  }, [researching]);
+  }, [researching, user, handleJoinAction]);
 
   // Generate daily digest
-  const generateDailyDigest = useCallback(async () => {
+  const generateDailyDigest = useCallback(async (options?: { silent?: boolean }) => {
     const today = getNepalDate();
+    const silent = options?.silent === true;
+
+    if (!user) {
+      if (!silent) {
+        handleJoinAction();
+        toast.error('Please sign in to generate the daily digest.');
+      }
+      return;
+    }
 
     // Check if digest already exists
     const existingDigest = todayPosts.find(p => p.isDailyDigest && p.digestDate === today);
@@ -333,7 +366,7 @@ export default function NewsFeedPage() {
     } finally {
       setResearching(false);
     }
-  }, [todayPosts]);
+  }, [todayPosts, user, handleJoinAction]);
 
   // Clean up old hourly posts - keep only most engaged from previous day
   const cleanupOldPosts = useCallback(async () => {
@@ -371,16 +404,20 @@ export default function NewsFeedPage() {
   researchRef.current = researchAllSectors;
 
   useEffect(() => {
-    // Run immediately on mount
-    researchRef.current();
+    // Only auto-run for signed-in users. This used to fire unconditionally on
+    // mount, so an anonymous visitor landed on /news-feed and had the sign-up
+    // modal thrown over the content in the first render cycle — then again
+    // every hour the tab stayed open.
+    if (!user) return;
 
-    // Then every hour
+    researchRef.current({ silent: true });
+
     const id = setInterval(() => {
-      researchRef.current();
+      researchRef.current({ silent: true });
     }, 60 * 60 * 1000);
 
     return () => clearInterval(id);
-  }, []);
+  }, [user]);
 
   // Auto-trigger daily digest at 5:30 PM and cleanup at 9 AM
   useEffect(() => {
@@ -391,7 +428,7 @@ export default function NewsFeedPage() {
 
       // Auto-generate digest at 5:30 PM (17:30)
       if (hour === 17 && min === 30 && !dailyDigest) {
-        generateDailyDigest();
+        generateDailyDigest({ silent: true });
       }
 
       // Auto-cleanup at 9:00 AM
@@ -462,9 +499,17 @@ export default function NewsFeedPage() {
               )}
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+            {!user && (
+              <button
+                onClick={handleJoinAction}
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-brand-emerald text-white rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-brand-emerald/90 transition-all shadow-elevated"
+              >
+                Sign in to use Research
+              </button>
+            )}
             <button
-              onClick={researchAllSectors}
+              onClick={() => researchAllSectors()}
               disabled={researching}
               className="flex items-center gap-2 px-6 py-3 bg-white border border-blush-mist text-brandwood rounded-2xl text-xs font-bold uppercase tracking-widest hover:border-brand-emerald/50 hover:bg-white transition-all shadow-sm disabled:opacity-50"
             >
@@ -472,7 +517,7 @@ export default function NewsFeedPage() {
               {researching ? 'Researching...' : 'Research Now'}
             </button>
             <button
-              onClick={generateDailyDigest}
+              onClick={() => generateDailyDigest()}
               disabled={researching || !!dailyDigest}
               className="flex items-center gap-2 px-6 py-3 bg-brand-emerald text-white rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-brand-emerald/90 transition-all shadow-elevated disabled:opacity-50"
             >

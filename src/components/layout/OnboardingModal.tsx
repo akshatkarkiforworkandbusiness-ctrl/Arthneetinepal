@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -18,23 +18,39 @@ export function OnboardingModal() {
   const [setupForm, setSetupForm] = useState({ name: '', email: '', interests: [] as string[], schoolId: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const initialized = useRef(false);
 
+  /* Prefill the form once auth resolves.
+   *
+   * This previously used an `initialized` ref as a one-shot guard. The modal is
+   * mounted app-level via Navigation, so its first effect always ran while
+   * AuthContext still had `user = null, profile = null` — it latched the ref
+   * and every later run early-returned. The form therefore never prefilled,
+   * and since the email input is readOnly the user was shown a permanently
+   * blank field they could not fill in.
+   *
+   * Gating on "form still pristine" gives the same protection against
+   * clobbering the user's edits without depending on effect ordering. */
   useEffect(() => {
-    if (initialized.current) return;
-    initialized.current = true;
+    if (!showOnboarding) return;
+
+    const isPristine =
+      setupForm.name === '' &&
+      setupForm.email === '' &&
+      setupForm.interests.length === 0 &&
+      setupForm.schoolId === '';
+    if (!isPristine) return;
 
     if (profile) {
-      setSetupForm({ 
-        name: profile.name, 
-        email: profile.email || user?.email || '', 
+      setSetupForm({
+        name: profile.name,
+        email: profile.email || user?.email || '',
         interests: profile.topics || [],
         schoolId: profile.schoolId || ''
       });
     } else if (user) {
       setSetupForm({ name: user.displayName || '', email: user.email || '', interests: [], schoolId: '' });
     }
-  }, [profile, user]);
+  }, [profile, user, showOnboarding]);
 
   const isGoogleUser = user?.providerData?.some(p => p.providerId === 'google.com');
 

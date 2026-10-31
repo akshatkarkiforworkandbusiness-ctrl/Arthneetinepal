@@ -1,14 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { handleCors } from './_lib/cors';
-import { verifyUser } from './_lib/auth';
-import { cached } from './_lib/cache';
-import { checkRateLimit } from './_lib/rateLimit';
-
-const MODELS = [
-  'meta/llama-3.1-70b-instruct',
-  'meta/llama-3.1-8b-instruct',
-  'meta/llama-3.3-70b-instruct',
-];
+import { handleCors } from './_lib/cors.js';
+import { verifyUser } from './_lib/auth.js';
+import { cached } from './_lib/cache.js';
+import { checkRateLimit } from './_lib/rateLimit.js';
+import { complete, configuredProviders, extractJsonArray } from './_lib/ai.js';
 
 const VALID_SECTORS = [
   'Banking',
@@ -44,10 +39,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const { allSectors, sector } = (req.body || {}) as { allSectors?: boolean; sector?: string };
 
-    const apiKey = process.env.NVIDIA_API_KEY;
-    if (!apiKey) {
+    if (configuredProviders().length === 0) {
       return res.status(500).json({
-        error: 'NVIDIA API key not configured. Set NVIDIA_API_KEY in Vercel project settings.',
+        error: 'No AI provider is configured. Set GROQ_API_KEY in the project environment.',
       });
     }
 
@@ -66,79 +60,49 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Research all sectors in parallel
     const sectorPromises = sectorsToResearch.map(async (sec) => {
       const cacheKey = `news:${sec}`;
-      return cached(cacheKey, CACHE_TTL_MS, async () => {
-        const prompt = `Research and summarize the LATEST news about the "${sec}" sector in Nepal's stock market (NEPSE). Return a JSON array with 1 article. Each article must have:
-- "title": concise headline
-- "summary": 2-3 sentence summary
-- "date": "Today"
-- "source": news source (e.g., "NEPSE", "NRB", "Sharesansar")
-- "url": "/news" (placeholder)
+      /* The fallback lives OUTSIDE cached(). It used to be returned from the
+       * cached function itself, so a single transient provider failure stored
+       * the "temporarily unavailable" placeholder under the same key as real
+       * news — and served it as a genuine article for the whole TTL. Throwing
+       * means nothing gets cached and the next request retries for real. */
+      let article: {
+        sector: string; title: string; summary: string;
+        date: string; source: string; url: string;
+      };
 
-Focus on: NRB policy, NEPSE performance, dividends, listings, economic indicators.
-Return ONLY a valid JSON array with no markdown.`;
+      try {
+        article = await cached(cacheKey, CACHE_TTL_MS, async () => {
+          const prompt = `You are a financial educator writing study material about Nepal's stock market (NEPSE).
+Write 1 short, realistic EXAMPLE scenario about the "${sec}" sector. It illustrates how the sector behaves; it is not live reporting.
+Do not invent specific figures, percentages, company profits or exact dates. Use "Today" for the date.
 
-        // Try all models in parallel, take first success
-        const modelResults = await Promise.allSettled(
-          MODELS.map(async (model) => {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 30000);
+Return ONLY a JSON array, no markdown:
+[{"title":"...","summary":"one or two sentences","date":"Today","source":"NEPSE|NRB|Sharesansar","url":"/news"}]`;
 
-            const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${apiKey}`,
-              },
-              body: JSON.stringify({
-                model,
-                messages: [{ role: 'user', content: prompt }],
-                temperature: 0.3,
-                max_tokens: 1024,
-              }),
-              signal: controller.signal,
-            });
-            clearTimeout(timeoutId);
+          const result = await complete(prompt, {
+            maxTokens: 300,
+            validate: (content) => (extractJsonArray(content)?.length ?? 0) > 0,
+          });
 
-            if (!response.ok) {
-              const errText = await response.text().catch(() => '');
-              throw new Error(`NVIDIA ${model}: ${response.status} - ${errText}`);
-            }
+          const parsed =
+            extractJsonArray<{ title?: string; summary?: string; date?: string; source?: string; url?: string }>(
+              result.content,
+            ) ?? [];
+          const first = parsed[0] ?? {};
 
-            const data = await response.json();
-            const content = data.choices?.[0]?.message?.content || '[]';
-
-            let parsed: any[];
-            try {
-              // Strip markdown code fences and extract JSON array
-              const cleaned = content
-                .replace(/```json\s*/g, '')
-                .replace(/```\s*/g, '')
-                .trim();
-              const jsonMatch = cleaned.match(/\[[\s\S]*\]/);
-              parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(cleaned);
-            } catch {
-              parsed = [];
-            }
-
-            if (parsed.length === 0) throw new Error('Empty parsed result');
-
-            return {
-              sector: sec,
-              title: parsed[0].title || `Latest News: ${sec}`,
-              summary: parsed[0].summary || '',
-              date: parsed[0].date || 'Today',
-              source: parsed[0].source || 'NVIDIA AI',
-              url: parsed[0].url || '/news',
-            };
-          })
-        );
-
-        // Return first successful result
-        for (const result of modelResults) {
-          if (result.status === 'fulfilled') return result.value;
-        }
-        // All models failed — return a fallback article
-        return {
+          return {
+            sector: sec,
+            title: first.title || `Latest News: ${sec}`,
+            summary: first.summary || '',
+            date: first.date || 'Today',
+            source: first.source || 'Arthneeti',
+            url: first.url || '/news',
+          };
+        });
+      } catch {
+        // Every provider failed. Keep the feed usable instead of failing the
+        // whole batch — but do not let this become the cached value.
+        article = {
           sector: sec,
           title: `Latest ${sec} Sector Update`,
           summary: 'News data temporarily unavailable. Please check back later.',
@@ -146,7 +110,9 @@ Return ONLY a valid JSON array with no markdown.`;
           source: 'Arthneeti',
           url: '/news',
         };
-      });
+      }
+
+      return article;
     });
 
     const allArticles = await Promise.all(sectorPromises);

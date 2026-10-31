@@ -9,7 +9,10 @@ import PlaybookHero from './PlaybookHero';
 import CinematicIntro from './CinematicIntro';
 import CurriculumRoadmap from './CurriculumRoadmap';
 import SessionPhotos from './SessionPhotos';
-import { LESSONS } from './LearnPage';
+import SectionNav from './layout/SectionNav';
+import { Photo } from './Photo';
+import { SESSION_PHOTOS } from '../lib/photos';
+import { LESSONS } from '../data/lessonsData';
 import { FAQ_DATA, FAQ_CATEGORIES } from '../data/faqData';
 import { ArrowRight, ArrowUp, ArrowDown, Play, Download, Heart, ChevronDown, Users, PlayCircle, FileText, HelpCircle, Star, Shield, LineChart } from 'lucide-react';
 import { query, collection, orderBy, limit, onSnapshot } from 'firebase/firestore';
@@ -33,28 +36,42 @@ interface IndexState {
 }
 
 const initialIndices: Record<string, IndexState> = {
+  // Seeds match the last known real close, so even the offline fallback is
+  // realistic. Live values replace them within a second of mount.
   NEPSE: {
     name: 'NEPSE Index',
-    value: 2054.32,
-    change: 18.42,
-    changePercent: 0.90,
-    sparkline: [2032, 2038, 2045, 2040, 2048, 2045, 2051, 2049, 2054.32]
+    value: 2591.80,
+    change: 17.15,
+    changePercent: 0.66,
+    sparkline: [2574, 2578, 2581, 2579, 2585, 2588, 2584, 2589, 2591.80]
   },
-  BANKING: {
-    name: 'Banking Index',
-    value: 1248.60,
-    change: -5.20,
-    changePercent: -0.41,
-    sparkline: [1260, 1258, 1254, 1251, 1248, 1253, 1251, 1247, 1248.60]
+  SENSITIVE: {
+    name: 'Sensitive Index',
+    value: 465.85,
+    change: 3.80,
+    changePercent: 0.82,
+    sparkline: [462, 463, 464, 463.5, 464.8, 465.2, 464.9, 465.5, 465.85]
   },
-  HYDRO: {
-    name: 'Hydropower Index',
-    value: 2480.15,
-    change: 42.80,
-    changePercent: 1.75,
-    sparkline: [2410, 2425, 2440, 2435, 2460, 2452, 2470, 2465, 2480.15]
+  FLOAT: {
+    name: 'Float Index',
+    value: 179.10,
+    change: 1.42,
+    changePercent: 0.80,
+    sparkline: [177.60, 178, 178.40, 178.20, 178.70, 178.90, 178.60, 178.95, 179.10]
   }
 };
+
+/* Anchors for the sticky section menu — the ids live on the sections below. */
+const LANDING_SECTIONS = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'impact', label: 'Impact' },
+  { id: 'curriculum', label: 'Curriculum' },
+  { id: 'markets', label: 'Markets' },
+  { id: 'features', label: 'Features' },
+  { id: 'mission', label: 'Mission' },
+  { id: 'resources', label: 'Resources' },
+  { id: 'community', label: 'Community' },
+];
 
 const mockPamphlets = [
   {
@@ -83,6 +100,7 @@ const mockPamphlets = [
 export default function LandingPage() {
   const { user, handleJoinAction } = useAuth();
   const [latestTopics, setLatestTopics] = useState<Topic[]>([]);
+  const [topicsLoaded, setTopicsLoaded] = useState(false);
   const reduce = useReducedMotion();
 
   const [marketIndices, setMarketIndices] = useState<Record<string, IndexState>>(initialIndices);
@@ -115,7 +133,7 @@ export default function LandingPage() {
               trigger: tickerRef.current,
               start: 'top 85%',
               end: 'top 60%',
-              toggleActions: 'play none none reverse',
+              toggleActions: 'play none none none',
             }
           }
         );
@@ -133,7 +151,7 @@ export default function LandingPage() {
             scrollTrigger: {
               trigger: resourcesRef.current,
               start: 'top 80%',
-              toggleActions: 'play none none reverse',
+              toggleActions: 'play none none none',
             }
           }
         );
@@ -151,7 +169,7 @@ export default function LandingPage() {
             scrollTrigger: {
               trigger: ctaRef.current,
               start: 'top 85%',
-              toggleActions: 'play none none reverse',
+              toggleActions: 'play none none none',
             }
           }
         );
@@ -180,8 +198,10 @@ export default function LandingPage() {
         ...doc.data()
       })) as Topic[];
       setLatestTopics(topics);
+      setTopicsLoaded(true);
     }, (error) => {
       if (import.meta.env.DEV) console.warn('Failed to fetch latest topics:', error);
+      setTopicsLoaded(true);
     });
 
     return () => unsubscribeLatest();
@@ -191,11 +211,16 @@ export default function LandingPage() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   useEffect(() => {
-    const NEPSE_API = 'https://nepseapi.surajrimal.dev';
+    // YONEPSE publishes the headline NEPSE indices as static JSON on GitHub
+    // Pages — CORS-open, no API key, and already the source the rest of the
+    // app uses (src/lib/nepseApi.ts). The previous source,
+    // nepseapi.surajrimal.dev, returns 522 (Cloudflare origin down), so this
+    // ticker could never leave its simulated fallback.
+    const YONEPSE_INDICES = 'https://shubhamnpk.github.io/yonepse/data/market/indices.json';
     const INDEX_MAP: Record<string, { key: string; name: string }> = {
-      '58': { key: 'NEPSE', name: 'NEPSE Index' },
-      '3':  { key: 'BANKING', name: 'Banking Index' },
-      '11': { key: 'HYDRO', name: 'Hydropower Index' },
+      'NEPSE Index':     { key: 'NEPSE',     name: 'NEPSE Index' },
+      'Sensitive Index': { key: 'SENSITIVE', name: 'Sensitive Index' },
+      'Float Index':     { key: 'FLOAT',     name: 'Float Index' },
     };
 
     const controller = new AbortController();
@@ -203,31 +228,24 @@ export default function LandingPage() {
     const fetchLiveData = async () => {
       try {
         const timeoutId = setTimeout(() => controller.abort(), 6000);
-        const [indexRes, subIndexRes] = await Promise.all([
-          fetch(`${NEPSE_API}/NepseIndex`, { signal: controller.signal }),
-          fetch(`${NEPSE_API}/SubIndices`, { signal: controller.signal }),
-        ]);
+        const res = await fetch(YONEPSE_INDICES, { signal: controller.signal });
         clearTimeout(timeoutId);
-        if (!indexRes.ok) throw new Error('API error');
-        const indexData = await indexRes.json();
-        const subData = subIndexRes.ok ? await subIndexRes.json() : [];
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const rows: unknown = await res.json();
+        if (!Array.isArray(rows)) throw new Error('unexpected payload');
 
-        const all = [indexData, ...(Array.isArray(subData) ? subData : [])];
         const next: Record<string, IndexState> = { ...initialIndices };
-
-        all.forEach((entry: any) => {
-          const id = String(entry?.id ?? entry?.indexId ?? '');
-          const mapped = INDEX_MAP[id];
+        rows.forEach((entry: any) => {
+          const mapped = INDEX_MAP[String(entry?.index ?? '')];
           if (!mapped) return;
-          const value = parseFloat(entry.currentValue ?? entry.value ?? 0);
-          const change = parseFloat(entry.change ?? 0);
-          const changePercent = parseFloat(entry.perChange ?? entry.percentageChange ?? 0);
+          const value = Number(entry?.currentValue ?? entry?.close ?? 0);
+          if (!Number.isFinite(value) || value <= 0) return;
           const prev = next[mapped.key];
           next[mapped.key] = {
             name: mapped.name,
             value,
-            change,
-            changePercent,
+            change: Number(entry?.change ?? 0) || 0,
+            changePercent: Number(entry?.perChange ?? 0) || 0,
             sparkline: [...prev.sparkline.slice(1), value],
           };
         });
@@ -270,6 +288,22 @@ export default function LandingPage() {
     return () => clearInterval(interval);
   }, [marketDataSource]);
 
+  /* The video lightbox: Escape closes it, and the page behind it stops
+   * scrolling so the visitor does not lose their place in the section. */
+  useEffect(() => {
+    if (!selectedVideoEmbed) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSelectedVideoEmbed(null);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [selectedVideoEmbed]);
+
   const getSparklinePath = (points: number[]) => {
     if (points.length === 0) return '';
     const width = 120;
@@ -302,17 +336,26 @@ export default function LandingPage() {
       {/* Cinematic Intro */}
       {showIntro && <CinematicIntro onComplete={handleIntroComplete} />}
 
+      {/* Sticky section menu — keeps every feature one click away at any scroll depth */}
+      <SectionNav items={LANDING_SECTIONS} />
+
       {/* Hero Section */}
-      <PlaybookHero />
+      <div id="overview">
+        <PlaybookHero />
+      </div>
 
       {/* Session Photos Section (Improved) */}
-      <SessionPhotos />
+      <div id="impact">
+        <SessionPhotos />
+      </div>
 
       {/* Curriculum Roadmap Section (Visual) */}
-      <CurriculumRoadmap />
+      <div id="curriculum">
+        <CurriculumRoadmap />
+      </div>
 
       {/* Market Ticker Sparkline Section */}
-      <section ref={tickerRef} className="bg-surface py-16 px-6 border-b border-border">
+      <section id="markets" ref={tickerRef} className="bg-surface py-16 px-6 border-b border-border">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
             <div className="flex items-center gap-2">
@@ -332,7 +375,7 @@ export default function LandingPage() {
             </div>
             <p className="text-[11px] text-text-muted max-w-xs sm:text-right">
               {marketDataSource === 'live'
-                ? `Data via NepseAPI. For educational use.${lastUpdated ? ` Updated ${lastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}` : ''}`
+                ? `Data via YONEPSE (public NEPSE data). For educational use.${lastUpdated ? ` Updated ${lastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}` : ''}`
                 : 'Showing simulated values for demonstration.'}
             </p>
           </div>
@@ -399,7 +442,7 @@ export default function LandingPage() {
       </section>
 
       {/* 3 Product Pillars Feature Showcase Section */}
-      <section className="py-24 px-6 bg-surface-muted border-b border-border">
+      <section id="features" className="py-24 px-6 bg-surface-muted border-b border-border">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <span className="text-xs font-bold text-club-green uppercase tracking-[0.3em] block mb-2">Platform Pillars</span>
@@ -543,11 +586,11 @@ export default function LandingPage() {
       </section>
 
       {/* Social Mission & Equity Support Section */}
-      <section className="bg-slate-900 py-28 px-6 overflow-hidden relative">
+      <section id="mission" className="bg-slate-900 py-28 px-6 overflow-hidden relative">
         {/* Full background Image */}
         <div className="absolute inset-0 pointer-events-none z-0">
-          <img src="/Pictures for Arthneeti/Image 2 — SOS Disability Center.jpg" alt="Arthneeti for Children - SOS" className="w-full h-full object-cover opacity-30" />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/40" />
+          <Photo src={SESSION_PHOTOS.sosCenter} alt="Arthneeti for Children - SOS" className="w-full h-full object-cover opacity-45" />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/35" />
         </div>
 
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-20 relative z-10">
@@ -594,7 +637,7 @@ export default function LandingPage() {
       </section>
 
       {/* Resource Library Section */}
-      <section ref={resourcesRef} className="py-24 px-6 bg-slate-50 border-y border-slate-200">
+      <section id="resources" ref={resourcesRef} className="py-24 px-6 bg-slate-50 border-y border-slate-200">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <span className="text-[10px] font-bold text-emerald-600 mb-2 block uppercase tracking-[0.4em]">Resources</span>
@@ -853,7 +896,7 @@ export default function LandingPage() {
       </section>
 
       {/* Dynamic Community Discussion Section */}
-      <section className="py-24 px-6 bg-white">
+      <section id="community" className="py-24 px-6 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
             <div className="text-center md:text-left">
@@ -901,9 +944,22 @@ export default function LandingPage() {
               </motion.div>
             ))}
 
-            {latestTopics.length === 0 && (
-              <div className="col-span-full py-20 text-center border-2 border-dashed border-slate-200 rounded-3xl bg-slate-50">
-                <p className="text-slate-400 italic text-sm font-sans">Connecting to community database server...</p>
+            {!topicsLoaded && (
+              <div className="col-span-full py-16 text-center border-2 border-dashed border-slate-200 rounded-3xl bg-slate-50">
+                <p className="text-slate-400 italic text-sm font-sans">Loading the latest discussions…</p>
+              </div>
+            )}
+
+            {topicsLoaded && latestTopics.length === 0 && (
+              <div className="col-span-full py-16 text-center border-2 border-dashed border-slate-200 rounded-3xl bg-slate-50">
+                <p className="text-slate-600 font-bold mb-1 font-display">No discussions yet</p>
+                <p className="text-slate-400 text-sm font-sans mb-6">Be the first to start a research thread with the community.</p>
+                <Link
+                  to="/community"
+                  className="inline-flex items-center gap-2 bg-club-green text-white rounded-2xl px-6 py-3 font-sans font-bold hover:bg-emerald-700 transition-colors"
+                >
+                  Start a discussion <ArrowRight size={16} />
+                </Link>
               </div>
             )}
           </div>
@@ -911,7 +967,7 @@ export default function LandingPage() {
       </section>
 
       {/* Final CTA Section */}
-      <section ref={ctaRef} className="py-24 px-6 bg-emerald-600 relative overflow-hidden">
+      <section id="join" ref={ctaRef} className="py-24 px-6 bg-emerald-600 relative overflow-hidden">
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-full h-full">

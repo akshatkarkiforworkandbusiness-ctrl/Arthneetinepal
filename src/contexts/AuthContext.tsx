@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { 
   User, 
   onAuthStateChanged, 
@@ -81,17 +81,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
+  const profileReqId = useRef(0);
+
   const loadUserProfile = useCallback(async (firebaseUser: User) => {
+    /* Guarded by a monotonically increasing request id. onAuthStateChanged can
+     * fire again while a previous load is still in flight (fast logout →
+     * login, token refresh). Without this, whichever fetch resolved *last*
+     * wrote setProfile — so the previous account's profile could land on top
+     * of the new one and the UI would show the wrong user's data. */
+    const reqId = ++profileReqId.current;
     setProfileLoading(true);
     try {
       const [profileData, adminStatus] = await Promise.all([
         fetchUserProfile(firebaseUser),
         fetchIsAdmin(firebaseUser.uid),
       ]);
+      if (reqId !== profileReqId.current) return; // superseded
       setProfile(profileData);
       setIsAdmin(adminStatus);
     } finally {
-      setProfileLoading(false);
+      if (reqId === profileReqId.current) setProfileLoading(false);
     }
   }, []);
 
@@ -185,7 +194,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setProfile(profileData);
       setShowOnboarding(false);
     } catch (error) {
+      /* Previously this was swallowed (shouldThrow defaults to false), so a
+       * denied profile write looked exactly like a successful signup: the
+       * modal simply never closed and no message appeared. Surface it. */
       handleFirestoreError(error, OperationType.WRITE, path);
+      const code = (error as any)?.code || '';
+      throw new Error(
+        code === 'permission-denied'
+          ? 'Your account was created, but we could not save your profile. Please refresh the page and try again.'
+          : 'Your account was created, but saving your profile failed. Please try again.'
+      );
     }
   };
 

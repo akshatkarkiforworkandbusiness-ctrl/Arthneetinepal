@@ -41,18 +41,24 @@ export async function getOrCreatePortfolio(uid: string): Promise<Portfolio> {
 /**
  * Subscribes to live portfolio updates via onSnapshot.
  * Returns an unsubscribe function.
+ *
+ * The callback receives `null` when the document does not exist yet. The old
+ * version simply never called back in that case, so a fresh user's UI sat on
+ * its loading state forever with no error.
  */
-export function subscribeToPortfolio(uid: string, callback: (p: Portfolio) => void): Unsubscribe {
+export function subscribeToPortfolio(
+  uid: string,
+  callback: (p: Portfolio | null) => void
+): Unsubscribe {
   const portfolioRef = doc(db, 'portfolios', uid);
   return onSnapshot(
     portfolioRef,
     (snap) => {
-      if (snap.exists()) {
-        callback(snap.data() as Portfolio);
-      }
+      callback(snap.exists() ? (snap.data() as Portfolio) : null);
     },
     (error) => {
-      handleFirestoreError(error, OperationType.GET, `portfolios/${uid}`, false);
+      handleFirestoreError(error, OperationType.GET, `portfolios/${uid}`);
+      callback(null);
     }
   );
 }
@@ -64,7 +70,7 @@ export function calculateTradingFees(
   side: 'buy' | 'sell',
   quantity: number,
   price: number,
-  holding?: { avgCost: number; purchaseDate?: Date }
+  holding?: { avgCost: number; firstBuyAt?: number; purchaseDate?: Date }
 ): TradingFees {
   const total = quantity * price;
   
@@ -82,11 +88,14 @@ export function calculateTradingFees(
   if (side === 'sell' && holding) {
     const profit = (price - holding.avgCost) * quantity;
     if (profit > 0) {
-      // Determine holding period
-      const holdingDays = holding.purchaseDate 
-        ? Math.floor((Date.now() - holding.purchaseDate.getTime()) / (1000 * 60 * 60 * 24))
+      // Holding period — prefer the persisted firstBuyAt; fall back to the
+      // legacy Date field, then to "just bought" (short-term rate).
+      const boughtAt = holding.firstBuyAt
+        ?? holding.purchaseDate?.getTime();
+      const holdingDays = boughtAt
+        ? Math.floor((Date.now() - boughtAt) / (1000 * 60 * 60 * 24))
         : 0;
-      
+
       const cgtRate = holdingDays > TRADING_FEE_RATES.CGT_THRESHOLD_DAYS 
         ? TRADING_FEE_RATES.CGT_LONG_TERM 
         : TRADING_FEE_RATES.CGT_SHORT_TERM;
@@ -94,13 +103,19 @@ export function calculateTradingFees(
     }
   }
   
-  const totalFees = brokerage + sebonFee + capitalGainsTax;
-  
+  const r = (n: number) => Math.round(n * 100) / 100;
+
+  const brokerageRounded = r(brokerage);
+  const sebonRounded = r(sebonFee);
+  const cgtRounded = r(capitalGainsTax);
+
+  // Sum the *rounded* parts. Summing first and rounding once let the displayed
+  // breakdown differ from the charged total by a rupee in either direction.
   return {
-    brokerage: Math.round(brokerage * 100) / 100,
-    sebonFee: Math.round(sebonFee * 100) / 100,
-    capitalGainsTax: Math.round(capitalGainsTax * 100) / 100,
-    totalFees: Math.round(totalFees * 100) / 100,
+    brokerage: brokerageRounded,
+    sebonFee: sebonRounded,
+    capitalGainsTax: cgtRounded,
+    totalFees: r(brokerageRounded + sebonRounded + cgtRounded),
   };
 }
 
@@ -142,7 +157,9 @@ export async function executeTrade(
         side,
         quantity,
         simulatedPrice,
-        existingHolding ? { avgCost: existingHolding.avgCost } : undefined
+        existingHolding
+          ? { avgCost: existingHolding.avgCost, firstBuyAt: existingHolding.firstBuyAt }
+          : undefined
       );
 
       // Calculate total cost including fees
@@ -159,7 +176,9 @@ export async function executeTrade(
         // Deduct cash (including fees)
         const newCashBalance = portfolio.cashBalance - totalCost;
 
-        // Update holdings — weighted average cost
+        // Update holdings — weighted average cost. firstBuyAt is stamped only
+        // when the position is opened, so the CGT holding period measures from
+        // the original purchase even across top-ups.
         let newAvgCost: number;
         let newQuantity: number;
         if (existingHolding) {
@@ -173,7 +192,11 @@ export async function executeTrade(
 
         const newHoldings = {
           ...portfolio.holdings,
-          [upperSymbol]: { quantity: newQuantity, avgCost: newAvgCost },
+          [upperSymbol]: {
+            quantity: newQuantity,
+            avgCost: newAvgCost,
+            firstBuyAt: existingHolding?.firstBuyAt ?? Date.now(),
+          },
         };
 
         // Recompute totalValue using simulated prices
@@ -253,59 +276,47 @@ export async function executeTrade(
 }
 
 /**
- * Fetches the top N portfolios for the leaderboard.
- * Only returns users with publicPortfolio == true.
+ * Fetches the top N portfolios for the in-game leaderboard.
  *
- * Uses a batched approach: fetch top portfolios, then batch-check
- * publicPortfolio status to avoid N+1 queries.
+ * Reads the `leaderboards` snapshot written by /api/leaderboard/snapshot,
+ * NOT the `portfolios` collection directly. The old implementation queried
+ * `portfolios` with a bare orderBy, but that rule is
+ *   `isOwner(userId) || (isSignedIn() && get(users/$(userId)).publicPortfolio)`
+ * — a per-document `get()` Firestore cannot prove for an arbitrary list
+ * result, so the query was always rejected with permission-denied and the
+ * catch returned [] silently. `leaderboards` is `allow read: if true`.
  */
 export async function getLeaderboard(
   limitCount = 20
 ): Promise<Array<{ uid: string; name: string; totalValue: number }>> {
-  const portfoliosRef = collection(db, 'portfolios');
-  const q = query(portfoliosRef, orderBy('totalValue', 'desc'), limit(limitCount * 3));
-
   try {
+    const q = query(
+      collection(db, 'leaderboards'),
+      where('scope', '==', 'national'),
+      where('period', '==', 'season'),
+      orderBy('computedAt', 'desc'),
+      limit(1)
+    );
+
     const snapshot = await getDocs(q);
-    const results: Array<{ uid: string; name: string; totalValue: number }> = [];
-    const candidateDocs = snapshot.docs;
+    if (snapshot.empty) return [];
 
-    if (candidateDocs.length === 0) return [];
+    const entries = (snapshot.docs[0].data().entries ?? []) as Array<{
+      uid: string;
+      displayName?: string;
+      portfolioValue?: number;
+    }>;
 
-    // Batch fetch user profiles (max 10 per IN query)
-    const allUids = candidateDocs.map(d => d.id);
-    const publicUserIds = new Set<string>();
-    const userNames = new Map<string, string>();
-
-    for (let i = 0; i < allUids.length; i += 10) {
-      const batch = allUids.slice(i, i + 10);
-      const usersRef = collection(db, 'users');
-      const usersQuery = query(usersRef, where('__name__', 'in', batch));
-      const usersSnap = await getDocs(usersQuery);
-      usersSnap.forEach(docSnap => {
-        const data = docSnap.data();
-        userNames.set(docSnap.id, data.name || 'Anonymous');
-        if (data.publicPortfolio === true) {
-          publicUserIds.add(docSnap.id);
-        }
-      });
-    }
-
-    for (const docSnap of candidateDocs) {
-      if (results.length >= limitCount) break;
-      const uid = docSnap.id;
-      if (!publicUserIds.has(uid)) continue;
-
-      results.push({
-        uid,
-        name: userNames.get(uid) || 'Anonymous',
-        totalValue: docSnap.data().totalValue || 0,
-      });
-    }
-
-    return results;
+    return entries
+      .filter((e) => typeof e?.uid === 'string')
+      .slice(0, limitCount)
+      .map((e) => ({
+        uid: e.uid,
+        name: e.displayName || 'Anonymous',
+        totalValue: Number(e.portfolioValue) || 0,
+      }));
   } catch (error) {
-    handleFirestoreError(error, OperationType.LIST, 'portfolios', false);
+    handleFirestoreError(error, OperationType.LIST, 'leaderboards', false);
     return [];
   }
 }

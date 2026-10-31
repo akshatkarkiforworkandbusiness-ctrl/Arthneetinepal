@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, Instagram } from 'lucide-react';
+import { Mail, Phone, Instagram, ArrowUp } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -36,7 +36,7 @@ export function Footer() {
         </div>
 
         {/* Explore Links */}
-        <div className="flex flex-col md:items-center">
+        <nav aria-label="Footer" className="flex flex-col md:items-center">
           <div className="w-full md:w-auto">
             <h3 className="text-xl font-bold mb-6">Explore</h3>
             <div className="flex flex-col gap-3">
@@ -56,7 +56,7 @@ export function Footer() {
               ))}
             </div>
           </div>
-        </div>
+        </nav>
         
         {/* Instagram CTA */}
         <div className="flex flex-col md:items-end">
@@ -77,6 +77,12 @@ export function Footer() {
       
       <div className="max-w-6xl mx-auto mt-16 pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between text-white/50 text-xs">
         <p>© {new Date().getFullYear()} Arthneeti. All rights reserved.</p>
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="flex items-center gap-1.5 mt-4 md:mt-0 text-white/70 hover:text-white transition-colors cursor-pointer order-last md:order-none"
+        >
+          <ArrowUp size={14} /> Back to top
+        </button>
         <div className="flex gap-6 mt-4 md:mt-0">
           <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
           <Link to="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link>
