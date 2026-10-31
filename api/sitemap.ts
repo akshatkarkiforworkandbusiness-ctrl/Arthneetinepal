@@ -37,6 +37,7 @@ const STATIC_ROUTES: StaticRoute[] = [
   { path: '/community', changefreq: 'daily', priority: '0.8' },
   { path: '/news-feed', changefreq: 'daily', priority: '0.8' },
   { path: '/events', changefreq: 'weekly', priority: '0.7' },
+  { path: '/trade', changefreq: 'weekly', priority: '0.7' },
   { path: '/trade-game', changefreq: 'weekly', priority: '0.7' },
   { path: '/leaderboard', changefreq: 'daily', priority: '0.6' },
   { path: '/about-us', changefreq: 'monthly', priority: '0.6' },
