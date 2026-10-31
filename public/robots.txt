@@ -6,4 +6,7 @@ Disallow: /profile
 Disallow: /bookmarks
 Disallow: /notifications
 
+# SPA shell fallback (rewrite target) — empty until JS runs
+Disallow: /shell.html
+
 Sitemap: https://arthneetinepal.vercel.app/sitemap.xml

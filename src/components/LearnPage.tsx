@@ -10,6 +10,7 @@ import LessonCommentSection from './LessonCommentSection';
 import LessonQuiz from './LessonQuiz';
 import { awardLessonCompletion, markLessonComplete } from '../lib/rewards';
 import { LESSONS, type FAQ, type Lesson } from '../data/lessonsData';
+import { usePageSeo } from '../lib/seo';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -188,6 +189,35 @@ export default function LearnPage() {
   const [expandedLessonFaq, setExpandedLessonFaq] = useState<number | null>(null);
   const [searchQuery, setSearchQuery]   = useState('');
   const playerRef = useRef<HTMLDivElement>(null);
+
+  /* Per-lesson <head> tags. /learn (index) and /learn/:lessonId share this
+   * component, so the index gets the curriculum title while a lesson URL
+   * gets its own title/desc — the 27 lesson pages are our main SEO surface. */
+  usePageSeo(
+    lessonId
+      ? {
+          title: `${activeLesson.title} — Free Lesson | Arthneeti`,
+          description: activeLesson.desc,
+          path: `/learn/${activeLesson.id}`,
+          type: 'article',
+          jsonLd: {
+            '@context': 'https://schema.org',
+            '@type': 'LearningResource',
+            name: activeLesson.title,
+            description: activeLesson.desc,
+            inLanguage: 'en',
+            educationalLevel: activeLesson.level,
+            timeRequired: activeLesson.duration,
+            provider: { '@type': 'Organization', name: 'Arthneeti' },
+          },
+        }
+      : {
+          title: 'Learn Finance & NEPSE — Free Curriculum with Certificates | Arthneeti',
+          description:
+            'Free financial literacy curriculum for Nepal — 27 lessons on NEPSE, IPOs, mutual funds, banking and macroeconomics, with quizzes and certificates.',
+          path: '/learn',
+        }
+  );
 
   /* activeLesson was initialised from the route param exactly once, so
    * navigating from /learn/a to /learn/b (in-app, e.g. from the sidebar)

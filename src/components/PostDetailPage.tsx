@@ -19,6 +19,7 @@ import type { Post } from '../types/post';
 import { AuthorCard } from './AuthorCard';
 import { RelatedPosts } from './RelatedPosts';
 import { CommentSection } from './CommentSection';
+import { usePageSeo, excerptFromHtml, SITE_URL } from '../lib/seo';
 
 export default function PostDetailPage() {
   const { postId } = useParams<{ postId: string }>();
@@ -35,6 +36,36 @@ export default function PostDetailPage() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [editData, setEditData] = useState({ title: '', content: '', abstract: '', category: 'Finance' as any });
+
+  /* Per-post <head> tags. Social scrapers (WhatsApp/Facebook — how Nepali
+   * users share links) never run JS, so the prerendered snapshot must carry
+   * the real title/description; this hook writes them into <head> which
+   * scripts/prerender.mjs then serialises into the static HTML. */
+  const postTitle = post?.title?.trim();
+  const postDescription =
+    post?.abstract?.trim() ||
+    (post ? excerptFromHtml(post.content, 155) : '') ||
+    'Read this post on Arthneeti — Nepali finance, NEPSE investing & economics.';
+
+  usePageSeo({
+    title: postTitle ? `${postTitle} | Arthneeti` : 'Post | Arthneeti',
+    description: postDescription,
+    path: `/post/${postId ?? ''}`,
+    type: 'article',
+    image: post?.imageUrl,
+    jsonLd: post
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          headline: postTitle || 'Community post',
+          description: postDescription,
+          author: { '@type': 'Person', name: post.author },
+          publisher: { '@type': 'Organization', name: 'Arthneeti', url: `${SITE_URL}/` },
+          mainEntityOfPage: `${SITE_URL}/post/${postId}`,
+          ...(post.imageUrl ? { image: post.imageUrl } : {}),
+        }
+      : undefined,
+  });
 
   const isAuthor = !!user && !!post && user.uid === post.authorId;
   

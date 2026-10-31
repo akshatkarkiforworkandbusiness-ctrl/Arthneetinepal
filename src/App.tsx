@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Navigation, Footer } from './components/Layout';
+import RouteSeo from './components/RouteSeo';
 import { AuthProvider } from './contexts/AuthContext';
 import { Toaster } from '@/components/ui/sonner';
 import AmbientBackground from './components/AmbientBackground';
@@ -26,6 +27,7 @@ const BookmarksPage = lazy(() => import('./components/BookmarksPage'));
 const NotificationsPage = lazy(() => import('./components/NotificationsPage'));
 const PrivacyPolicyPage = lazy(() => import('./components/PrivacyPolicyPage'));
 const TermsOfServicePage = lazy(() => import('./components/TermsOfServicePage'));
+const MethodologyPage = lazy(() => import('./components/MethodologyPage'));
 
 function PageFallback() {
   return (
@@ -90,6 +92,7 @@ function AnimatedRoutes() {
             <Route path="/certificate/:uid/:moduleId" element={<PublicCertificatePage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
             <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+            <Route path="/methodology" element={<MethodologyPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
@@ -118,6 +121,9 @@ export default function App() {
           <AmbientBackground />
 
           <ScrollToTop />
+          {/* Sets per-route <title>/meta/canonical the moment the URL changes;
+           * see src/lib/seo.ts. Must be inside <Router> (reads useLocation). */}
+          <RouteSeo />
           <a
             href="#main-content"
             className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[300] focus:bg-white focus:text-club-green focus:font-bold focus:px-4 focus:py-2 focus:rounded-xl focus:border focus:border-club-green focus:shadow-elevated"
